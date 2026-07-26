@@ -1,0 +1,29 @@
+{
+  "name": "amis-editor-vue",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "rsbuild dev",
+    "build": "rsbuild build",
+    "preview": "rsbuild preview",
+    "typecheck": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "@element-plus/icons-vue": "^2.3.2",
+    "element-plus": "^2.14.3",
+    "pinia": "^4.0.2",
+    "vue": "^3.5.40"
+  },
+  "devDependencies": {
+    "@codemirror/lang-json": "^6.0.2",
+    "@rsbuild/core": "^2.1.8",
+    "@rsbuild/plugin-babel": "^2.0.1",
+    "@rsbuild/plugin-vue": "^2.0.1",
+    "@rsbuild/plugin-vue-jsx": "^2.0.1",
+    "@types/node": "^26.1.1",
+    "codemirror": "^6.0.2",
+    "typescript": "^7.0.2",
+    "vue-tsc": "^3.3.8"
+  }
+}

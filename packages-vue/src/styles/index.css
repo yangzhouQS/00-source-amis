@@ -1,0 +1,393 @@
+/* ====== 全局重置与布局 ====== */
+* {
+  box-sizing: border-box;
+}
+html,
+body,
+#app {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+}
+body {
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue',
+    Arial, 'PingFang SC', 'Microsoft YaHei', sans-serif;
+  font-size: 13px;
+  color: #303133;
+  background: #f5f7fa;
+}
+
+/* 编辑器整体 */
+.amis-editor {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+}
+.amis-editor__body {
+  flex: 1;
+  display: flex;
+  min-height: 0;
+}
+
+/* ====== 顶部工具栏 ====== */
+.amis-toolbar {
+  height: 48px;
+  flex: 0 0 48px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background: #fff;
+  border-bottom: 1px solid #e4e7ed;
+  z-index: 10;
+}
+.amis-toolbar__brand {
+  font-size: 15px;
+  font-weight: 600;
+  color: #303133;
+}
+.amis-toolbar__sub {
+  margin-left: 8px;
+  font-size: 11px;
+  font-weight: 400;
+  color: #909399;
+}
+.amis-toolbar__actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+/* ====== 左侧面板 ====== */
+.amis-left {
+  width: 280px;
+  flex: 0 0 280px;
+  background: #fff;
+  border-right: 1px solid #e4e7ed;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.amis-left__tabs {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.amis-left__tabs .el-tabs__content {
+  flex: 1;
+  overflow: hidden;
+}
+.amis-left__pane {
+  height: 100%;
+  overflow: auto;
+}
+
+/* 组件库 */
+.amis-comp-lib__grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 8px;
+  padding: 4px 0;
+}
+.amis-comp-lib__item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  padding: 8px 6px;
+  border: 1px solid #ebeef5;
+  border-radius: 4px;
+  background: #fafafa;
+  cursor: grab;
+  font-size: 12px;
+  user-select: none;
+  transition: all 0.15s;
+}
+.amis-comp-lib__item:hover {
+  border-color: #409eff;
+  color: #409eff;
+  background: #fff;
+}
+.amis-comp-lib__drag {
+  font-size: 12px;
+  color: #c0c4cc;
+}
+.amis-comp-lib__item:hover .amis-comp-lib__drag {
+  color: #409eff;
+}
+
+/* 大纲树 */
+.amis-outline {
+  padding: 8px 4px;
+}
+.amis-outline__node {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex: 1;
+  padding-right: 8px;
+}
+.amis-outline__label {
+  flex: 1;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+.amis-outline__actions {
+  display: none;
+  align-items: center;
+  gap: 2px;
+}
+.amis-outline__node:hover .amis-outline__actions {
+  display: inline-flex;
+}
+.amis-outline__btn {
+  display: inline-flex;
+  padding: 2px;
+  cursor: pointer;
+  color: #909399;
+  border-radius: 3px;
+}
+.amis-outline__btn:hover {
+  color: #409eff;
+  background: #ecf5ff;
+}
+.amis-outline__btn--danger:hover {
+  color: #f56c6c;
+  background: #fef0f0;
+}
+
+/* ====== 中间画布 ====== */
+.amis-canvas {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  min-width: 0;
+  background: #f0f2f5;
+}
+.amis-canvas__bar {
+  height: 36px;
+  flex: 0 0 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  background: #fff;
+  border-bottom: 1px solid #e4e7ed;
+}
+.amis-canvas__title {
+  font-weight: 600;
+}
+.amis-canvas__hint {
+  font-size: 11px;
+  color: #909399;
+}
+.amis-canvas__viewport {
+  flex: 1;
+  padding: 16px;
+  overflow: auto;
+  position: relative;
+}
+.amis-canvas__viewport.is-dragover {
+  box-shadow: inset 0 0 0 2px #409eff;
+}
+.amis-canvas__dropmask {
+  position: absolute;
+  inset: 16px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(64, 158, 255, 0.08);
+  border: 2px dashed #409eff;
+  border-radius: 6px;
+  color: #409eff;
+  font-weight: 600;
+  pointer-events: none;
+}
+.amis-canvas .amis-canvas__iframe,
+.amis-canvas__iframe {
+  width: 100%;
+  height: 100%;
+  min-height: 600px;
+  border: 0;
+  background: #fff;
+  border-radius: 6px;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.08);
+}
+
+/* ====== 右侧面板 ====== */
+.amis-right {
+  width: 340px;
+  flex: 0 0 340px;
+  background: #fff;
+  border-left: 1px solid #e4e7ed;
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+.amis-right__tabs {
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+}
+.amis-right__tabs .el-tabs__content {
+  flex: 1;
+  overflow: hidden;
+}
+.amis-right__pane {
+  height: 100%;
+  overflow: auto;
+  padding: 0;
+}
+.amis-prop {
+  padding: 12px;
+}
+.amis-prop__head {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.amis-prop__eid {
+  font-family: monospace;
+  font-size: 11px;
+  color: #909399;
+  word-break: break-all;
+}
+.amis-prop__empty,
+.amis-events__empty {
+  padding: 40px 0;
+}
+.amis-prop__path {
+  font-family: monospace;
+  font-size: 12px;
+  color: #909399;
+  word-break: break-all;
+}
+
+/* 事件面板 */
+.amis-events {
+  padding: 12px;
+}
+.amis-events__add {
+  margin-bottom: 12px;
+}
+.amis-events__list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+.amis-events__item {
+  border: 1px solid #ebeef5;
+  border-radius: 6px;
+  padding: 10px;
+  background: #fafafa;
+}
+.amis-events__item-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 8px;
+}
+.amis-events__del {
+  cursor: pointer;
+  color: #909399;
+  padding: 2px;
+}
+.amis-events__del:hover {
+  color: #f56c6c;
+}
+.amis-events__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+.amis-events__label {
+  width: 60px;
+  flex: 0 0 60px;
+  font-size: 12px;
+  color: #606266;
+}
+
+/* ====== 源码面板 ====== */
+.amis-source {
+  flex: 0 0 auto;
+  height: 280px;
+  background: #fff;
+  border-top: 1px solid #e4e7ed;
+  display: flex;
+  flex-direction: column;
+}
+.amis-source__bar {
+  height: 36px;
+  flex: 0 0 36px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 16px;
+  border-bottom: 1px solid #ebeef5;
+}
+.amis-source__title {
+  font-weight: 600;
+}
+.amis-source__hint {
+  flex: 1;
+  font-size: 11px;
+  color: #909399;
+}
+.amis-source__hint.is-error {
+  color: #f56c6c;
+}
+.amis-source__close {
+  display: inline-flex;
+  align-items: center;
+  cursor: pointer;
+  color: #909399;
+  padding: 2px 4px;
+  border-radius: 3px;
+}
+.amis-source__close:hover {
+  color: #f56c6c;
+  background: #fef0f0;
+}
+.amis-source__editor {
+  flex: 1;
+  overflow: hidden;
+  min-height: 0;
+  text-align: left;
+}
+.amis-source__editor .cm-editor {
+  height: 100%;
+  font-size: 12px;
+}
+.amis-source__editor .cm-scroller {
+  font-family: 'Consolas', 'Monaco', monospace;
+}
+
+/* Element Plus tabs 头部紧凑 */
+.el-tabs--border-card > .el-tabs__header {
+  margin: 0;
+}
+
+/* 插件管理 */
+.amis-pluginmgr__install {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 8px;
+}
+.amis-pluginmgr__install .el-input {
+  flex: 1;
+}
+.amis-pluginmgr__tip {
+  font-size: 11px;
+  color: #909399;
+  margin: 0 0 12px;
+}
+.amis-pluginmgr__tip code {
+  background: #f5f7fa;
+  padding: 1px 4px;
+  border-radius: 3px;
+}
+.amis-pluginmgr__muted {
+  color: #c0c4cc;
+}
