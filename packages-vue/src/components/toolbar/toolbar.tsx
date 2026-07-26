@@ -15,13 +15,13 @@ export default defineComponent({
   name: 'Toolbar',
   setup() {
     const store = useEditorStore();
-    const { canUndo, canRedo, sourceVisible } = storeToRefs(store);
+    const { canUndo, canRedo } = storeToRefs(store);
     const pluginMgrVisible = ref(false);
 
     const handleUndo = () => store.undo();
     const handleRedo = () => store.redo();
-    const handleToggleSource = () => {
-      store.sourceVisible = !store.sourceVisible;
+    const handleFocusSource = () => {
+      store.activeLeftTab = 'source';
     };
     const handleExport = () => {
       const data = JSON.stringify(store.exportSchema(), null, 2);
@@ -75,8 +75,7 @@ export default defineComponent({
           </ElButtonGroup>
           <ElButton
             size="small"
-            onClick={handleToggleSource}
-            type={sourceVisible.value ? 'primary' : 'default'}
+            onClick={handleFocusSource}
           >
             <ElIcon>
               <DocIcon />

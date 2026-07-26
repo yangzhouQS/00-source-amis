@@ -1,7 +1,4 @@
 import { defineComponent, onMounted, onBeforeUnmount, ref, watch } from 'vue';
-import { storeToRefs } from 'pinia';
-import { ElIcon } from 'element-plus';
-import { Close } from '@element-plus/icons-vue';
 import { basicSetup, EditorView } from 'codemirror';
 import { json } from '@codemirror/lang-json';
 import { useEditorStore } from '@/store/editor-store';
@@ -10,7 +7,6 @@ export default defineComponent({
   name: 'SourceCodePanel',
   setup() {
     const store = useEditorStore();
-    const { sourceVisible } = storeToRefs(store);
     const editorHost = ref<HTMLDivElement>();
     const errorMsg = ref('');
     let view: EditorView | null = null;
@@ -69,20 +65,10 @@ export default defineComponent({
     );
 
     return () => (
-      <div class="amis-source" v-show={sourceVisible.value}>
-        <div class="amis-source__bar">
-          <span class="amis-source__title">源码 Schema（可编辑，实时双向同步）</span>
-          <span class={{ 'amis-source__hint': true, 'is-error': !!errorMsg.value }}>
-            {errorMsg.value || 'JSON · CodeMirror'}
-          </span>
-          <span
-            class="amis-source__close"
-            title="收起"
-            onClick={() => (store.sourceVisible = false)}
-          >
-            <ElIcon><Close /></ElIcon>
-          </span>
-        </div>
+      <div class="amis-source">
+        {errorMsg.value && (
+          <div class="amis-source__error">{errorMsg.value}</div>
+        )}
         <div class="amis-source__editor" ref={editorHost} />
       </div>
     );

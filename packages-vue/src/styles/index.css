@@ -59,26 +59,54 @@ body {
   gap: 8px;
 }
 
-/* ====== 左侧面板 ====== */
+/* ====== 左侧面板（竖向 tabs） ====== */
 .amis-left {
-  width: 280px;
-  flex: 0 0 280px;
+  width: 340px;
+  flex: 0 0 340px;
   background: #fff;
   border-right: 1px solid #e4e7ed;
   display: flex;
   flex-direction: column;
   min-height: 0;
+  overflow: hidden;
 }
-.amis-left__tabs {
+.amis-left__tabs.el-tabs {
+  width: 100%;
   height: 100%;
-  display: flex;
-  flex-direction: column;
+}
+.amis-left__tabs .el-tabs__header {
+  margin: 0;
+  width: 88px;
+  flex: 0 0 88px;
+  border-right: 1px solid #e4e7ed;
+  background: #fafbfc;
+}
+.amis-left__tabs .el-tabs__nav-wrap.is-left {
+  width: 100%;
+}
+.amis-left__tabs .el-tabs__item {
+  height: 52px;
+  line-height: 52px;
+  text-align: center;
+  font-size: 13px;
+  width: 88px;
+  text-align: center;
+}
+.amis-left__tabs .el-tabs__item.is-active {
+  background: #ecf5ff;
+  color: #409eff;
+  font-weight: 600;
+}
+.amis-left__tabs .el-tabs__active-bar.is-left {
+  display: none;
 }
 .amis-left__tabs .el-tabs__content {
   flex: 1;
+  min-width: 0;
+  height: 100%;
   overflow: hidden;
 }
-.amis-left__pane {
+.amis-left__pane.el-tab-pane {
   height: 100%;
   overflow: auto;
 }
@@ -309,52 +337,26 @@ body {
   color: #606266;
 }
 
-/* ====== 源码面板 ====== */
+/* ====== 源码（左侧分区内容） ====== */
 .amis-source {
-  flex: 0 0 auto;
-  height: 280px;
-  background: #fff;
-  border-top: 1px solid #e4e7ed;
+  height: 100%;
   display: flex;
   flex-direction: column;
+  min-height: 0;
+  text-align: left;
 }
-.amis-source__bar {
-  height: 36px;
-  flex: 0 0 36px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 0 16px;
-  border-bottom: 1px solid #ebeef5;
-}
-.amis-source__title {
-  font-weight: 600;
-}
-.amis-source__hint {
-  flex: 1;
+.amis-source__error {
+  flex: 0 0 auto;
+  padding: 4px 8px;
   font-size: 11px;
-  color: #909399;
-}
-.amis-source__hint.is-error {
-  color: #f56c6c;
-}
-.amis-source__close {
-  display: inline-flex;
-  align-items: center;
-  cursor: pointer;
-  color: #909399;
-  padding: 2px 4px;
-  border-radius: 3px;
-}
-.amis-source__close:hover {
   color: #f56c6c;
   background: #fef0f0;
+  border-bottom: 1px solid #fde2e2;
 }
 .amis-source__editor {
   flex: 1;
   overflow: hidden;
   min-height: 0;
-  text-align: left;
 }
 .amis-source__editor .cm-editor {
   height: 100%;

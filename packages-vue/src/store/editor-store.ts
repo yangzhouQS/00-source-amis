@@ -44,9 +44,8 @@ export const useEditorStore = defineStore('editor', {
   state: () => ({
     schema: createDefaultSchema() as AmisSchema,
     selectedPath: '' as string | null,
-    activeLeftTab: 'components' as 'components' | 'outline',
+    activeLeftTab: 'components' as 'components' | 'outline' | 'source',
     activeRightTab: 'property' as 'property' | 'events',
-    sourceVisible: true,
     amisVersion: '6.13.0',
     history: { past: [], future: [] } as HistoryState
   }),

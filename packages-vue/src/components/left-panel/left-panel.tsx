@@ -4,6 +4,7 @@ import { ElTabs, ElTabPane } from 'element-plus';
 import { useEditorStore } from '@/store/editor-store';
 import ComponentLibrary from './component-library';
 import OutlinePanel from './outline-panel';
+import SourceCodePanel from '@/components/source-code/source-code-panel';
 
 export default defineComponent({
   name: 'LeftPanel',
@@ -15,14 +16,17 @@ export default defineComponent({
       <div class="amis-left">
         <ElTabs
           v-model={activeLeftTab.value}
+          tabPosition="left"
           class="amis-left__tabs"
-          type="border-card"
         >
           <ElTabPane label="组件库" name="components" class="amis-left__pane">
             <ComponentLibrary />
           </ElTabPane>
           <ElTabPane label="大纲" name="outline" class="amis-left__pane">
             <OutlinePanel />
+          </ElTabPane>
+          <ElTabPane label="源码" name="source" class="amis-left__pane">
+            <SourceCodePanel />
           </ElTabPane>
         </ElTabs>
       </div>
