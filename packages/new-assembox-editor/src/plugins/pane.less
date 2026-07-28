@@ -1,0 +1,211 @@
+@import "../skeleton/styles/theme.less";
+
+/* 组件库面板 */
+.assem-components-pane {
+  height: 100%;
+  overflow: auto;
+  padding: 8px;
+
+  .el-collapse {
+    border: none;
+  }
+
+  .assem-category {
+    margin-bottom: 12px;
+  }
+
+  .assem-category-title {
+    margin: 8px 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: #909399;
+  }
+
+  .assem-category-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+
+  .assem-component-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    height: 64px;
+    padding: 4px;
+    font-size: 11px;
+    cursor: grab;
+    user-select: none;
+    background: #f5f7fa;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    transition: all 0.15s;
+
+    &:hover {
+      color: var(--color-brand);
+      background: var(--color-brand-light);
+      border-color: var(--color-brand);
+    }
+
+    &:active {
+      cursor: grabbing;
+    }
+
+    .assem-component-icon {
+      font-size: 18px;
+    }
+
+    .assem-component-name {
+      max-width: 100%;
+      overflow: hidden;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}
+
+/* 设置面板 */
+.assem-settings-pane {
+  height: 100%;
+  overflow: auto;
+
+  .assem-settings-header {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 12px;
+    border-bottom: 1px solid var(--color-border);
+
+    .assem-settings-title {
+      font-size: 14px;
+      font-weight: 600;
+    }
+
+    .assem-settings-type {
+      padding: 1px 6px;
+      font-size: 11px;
+      color: #909399;
+      background: #f0f2f5;
+      border-radius: 2px;
+    }
+  }
+
+  .assem-setter-missing {
+    font-size: 12px;
+    color: #f56c6c;
+  }
+
+  .assem-node-id {
+    padding: 2px 6px;
+    font-family: monospace;
+    font-size: 11px;
+    color: #606266;
+    background: #f5f7fa;
+    border-radius: 2px;
+  }
+}
+
+/* 大纲面板 */
+.assem-outline-pane {
+  height: 100%;
+  overflow: auto;
+  padding: 4px;
+
+  .el-tree {
+    background: transparent;
+  }
+}
+
+/* 历史面板 */
+.assem-history-pane {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .assem-history-toolbar {
+    flex-shrink: 0;
+    padding: 8px;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .assem-history-list {
+    flex: 1;
+    overflow: auto;
+    padding: 8px;
+  }
+
+  .assem-history-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 6px 8px;
+    font-size: 12px;
+    color: #606266;
+    cursor: default;
+    border-radius: 4px;
+
+    &:hover {
+      background: var(--color-hover);
+    }
+
+    .assem-history-icon {
+      font-size: 14px;
+      color: #909399;
+    }
+
+    .assem-history-label {
+      flex: 1;
+    }
+
+    .assem-history-index {
+      font-size: 11px;
+      color: #c0c4cc;
+    }
+  }
+}
+
+/* Schema 面板 */
+.assem-schema-pane {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 8px;
+
+  .assem-schema-toolbar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .assem-schema-textarea {
+    flex: 1;
+
+    .el-textarea__inner {
+      height: 100%;
+      font-family: monospace;
+      font-size: 12px;
+    }
+  }
+}
+
+/* 事件列表 */
+.assem-event-list {
+  padding: 8px;
+
+  .assem-event-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px;
+    margin-bottom: 4px;
+    background: #f5f7fa;
+    border-radius: 4px;
+
+    .assem-event-name {
+      font-size: 13px;
+    }
+  }
+}

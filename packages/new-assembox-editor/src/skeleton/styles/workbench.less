@@ -1,0 +1,203 @@
+@import "./theme.less";
+
+:root {
+  --font-family: "PingFang SC", "Microsoft YaHei", Helvetica, Arial, sans-serif;
+  --font-size-label: 14px;
+  --font-size-text: 12px;
+  --global-border-radius: 3px;
+  --left-area-width: 48px;
+  --right-area-width: 300px;
+  --top-area-height: 48px;
+  --dock-fixed-pane-width: 280px;
+  --color-brand: #0079f2;
+  --color-brand-light: rgba(0, 121, 242, 0.15);
+  --color-pane-background: #ffffff;
+  --color-text: #303133;
+  --color-border: #e4e7ed;
+  --color-hover: #f5f7fa;
+}
+
+html,
+body {
+  position: relative;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  font-family: var(--font-family);
+  color: var(--color-text);
+  background-color: #edeff3;
+}
+
+#app {
+  height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.d-none {
+  display: none !important;
+}
+
+.editor-workbench {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background-color: #edeff3;
+
+  .editor-top-area {
+    display: flex;
+    width: 100%;
+    height: var(--top-area-height);
+    padding: 8px 12px;
+    margin-bottom: 2px;
+    background-color: var(--color-pane-background);
+    border-bottom: 1px solid var(--color-border);
+    align-items: center;
+  }
+
+  .editor-workbench-body {
+    position: relative;
+    display: flex;
+    flex: 1;
+    min-height: 0;
+
+    .editor-left-area {
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      flex-shrink: 0;
+      width: var(--left-area-width);
+      height: 100%;
+      background-color: var(--color-pane-background);
+      border-right: 1px solid var(--color-border);
+
+      .editor-left-area-top,
+      .editor-left-area-bottom {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+      }
+    }
+
+    .editor-left-fixed-pane,
+    .editor-left-float-pane {
+      flex-shrink: 0;
+      width: var(--dock-fixed-pane-width);
+      height: 100%;
+      background-color: var(--color-pane-background);
+      border-right: 1px solid var(--color-border);
+      overflow: hidden;
+    }
+
+    .editor-left-float-pane {
+      position: absolute;
+      z-index: 10;
+      left: var(--left-area-width);
+      box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
+    }
+
+    .editor-main-area {
+      position: relative;
+      flex: 1;
+      height: 100%;
+      overflow: hidden;
+      padding: 10px;
+
+      .design-container {
+        position: relative;
+        width: 100%;
+        height: 100%;
+        background: #edeff3;
+        border-radius: 4px;
+        box-shadow: 0 1px 4px 0 rgba(31, 50, 88, 0.13%);
+        overflow: hidden;
+      }
+    }
+
+    .editor-right-area {
+      position: relative;
+      flex-shrink: 0;
+      width: var(--right-area-width);
+      height: 100%;
+      background-color: var(--color-pane-background);
+      border-left: 1px solid var(--color-border);
+      transition: width 0.3s;
+      overflow: hidden;
+
+      &.hidden {
+        width: 0;
+        border-left: none;
+      }
+    }
+  }
+}
+
+/* Panel */
+.assem-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .assem-panel-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 40px;
+    padding: 0 12px;
+    border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0;
+
+    .assem-panel-title {
+      font-size: var(--font-size-label);
+      font-weight: 600;
+    }
+  }
+
+  .assem-panel-body {
+    flex: 1;
+    overflow: auto;
+    min-height: 0;
+  }
+}
+
+/* Dock 图标按钮 */
+.assem-dock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--left-area-width);
+  height: var(--left-area-width);
+  cursor: pointer;
+  color: #606266;
+  transition: all 0.2s;
+
+  &:hover {
+    color: var(--color-brand);
+    background-color: var(--color-hover);
+  }
+
+  &.assem-dock-active {
+    color: var(--color-brand);
+    background-color: var(--color-brand-light);
+  }
+
+  &.assem-dock-disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .assem-dock-inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+
+    .assem-dock-label {
+      font-size: 10px;
+      line-height: 1;
+    }
+  }
+}

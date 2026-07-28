@@ -1,0 +1,32 @@
+{
+  "name": "@cs/new-assembox-editor",
+  "version": "0.1.0",
+  "description": "新版 assembox 可视化编辑器（声明式插件系统 / 响应式 Store / 标准化画布）",
+  "type": "module",
+  "main": "src/index.ts",
+  "module": "src/index.ts",
+  "scripts": {
+    "dev": "vite",
+    "build": "vue-tsc --noEmit && vite build",
+    "typecheck": "vue-tsc --noEmit",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "element-plus": "^2.13.7",
+    "@element-plus/icons-vue": "^2.3.2",
+    "vue": "^3.5.34"
+  },
+  "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.7",
+    "@vitejs/plugin-vue-jsx": "^4.1.1",
+    "typescript": "^5.9.3",
+    "vite": "^6.2.0",
+    "vue-tsc": "^3.3.2",
+    "less": "^4.6.4"
+  },
+  "peerDependencies": {
+    "element-plus": "^2.13.0",
+    "@element-plus/icons-vue": "^2.3.0",
+    "vue": "^3.5.0"
+  }
+}
