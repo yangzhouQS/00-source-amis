@@ -15,9 +15,9 @@ export const ComponentsPane = defineComponent({
     editor: {type: Object as PropType<Editor>, required: true}
   },
   setup(props) {
-    /** 拖拽开始 */
-    const onDragStart = (e: DragEvent, meta: ComponentMeta) => {
-      props.editor.dnd.startDragComponent(e, meta.type);
+    /** 拖拽开始（自模拟引擎，mousedown 触发） */
+    const onMouseDown = (e: MouseEvent, meta: ComponentMeta) => {
+      props.editor.startComponentDrag(e, meta.type);
     };
 
     /** 点击插入到根 */
@@ -48,14 +48,14 @@ export const ComponentsPane = defineComponent({
                   title={groupName}
                   name={groupName}
                 >
-                  {renderCategories(categories, onDragStart, onClickInsert)}
+                  {renderCategories(categories, onMouseDown, onClickInsert)}
                 </ElCollapseItem>
               ))}
             </ElCollapse>
           ) : (
             renderCategories(
               groups.values().next().value ?? new Map(),
-              onDragStart,
+              onMouseDown,
               onClickInsert
             )
           )}
@@ -67,7 +67,7 @@ export const ComponentsPane = defineComponent({
 
 function renderCategories(
   categories: Map<string, ComponentMeta[]>,
-  onDragStart: (e: DragEvent, m: ComponentMeta) => void,
+  onMouseDown: (e: MouseEvent, m: ComponentMeta) => void,
   onClickInsert: (m: ComponentMeta) => void
 ) {
   return Array.from(categories.entries()).map(([catName, items]) => (
@@ -78,8 +78,7 @@ function renderCategories(
           <div
             key={meta.type}
             class="assem-component-item"
-            draggable
-            onDragstart={(e: DragEvent) => onDragStart(e, meta)}
+            onMousedown={(e: MouseEvent) => onMouseDown(e, meta)}
             onClick={() => onClickInsert(meta)}
             title={meta.description || meta.name}
           >

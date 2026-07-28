@@ -18,6 +18,7 @@ import type {Editor} from '../core/editor';
 import type {IframeBridge} from '../simulator/iframe/iframe-bridge';
 import type {ComponentMapping} from '../simulator/iframe/protocol';
 import {BemTools} from './bem-tools';
+import {CanvasSensor} from './drag/canvas-sensor';
 import './iframe-host.less';
 
 export const IframeDesignerHost = defineComponent({
@@ -58,6 +59,28 @@ export const IframeDesignerHost = defineComponent({
           'design'
         );
         ready.value = true;
+        // 注册 iframe 拖拽感应区（自模拟引擎）
+        const doc = bridge.getContentDocument?.();
+        if (doc && iframe) {
+          const sensor = new CanvasSensor(
+            {
+              id: 'iframe-canvas',
+              getContentDocument: () => bridge.getContentDocument(),
+              getBounds: () => iframe.getBoundingClientRect(),
+              toGlobal: (lx, ly) => {
+                const r = iframe.getBoundingClientRect();
+                return {x: lx + r.left, y: ly + r.top};
+              },
+              elementFromPoint: (lx, ly) => {
+                const d = bridge.getContentDocument();
+                return d ? d.elementFromPoint(lx, ly) : null;
+              }
+            },
+            props.editor.nodeTree,
+            props.editor.store
+          );
+          props.editor.dragon.addSensor(sensor);
+        }
       });
 
       // schema 变化 → 全量重渲染 iframe

@@ -21,6 +21,8 @@ import {InProcessBridge} from '../simulator/in-process-bridge';
 import {IframeBridge} from '../simulator/iframe/iframe-bridge';
 import type {SimulatorBridge} from '../simulator/bridge';
 import {DndManager} from '../designer/dnd-manager';
+import {Dragon} from '../designer/drag/dragon';
+import type {DragObject, DropLocation} from '../designer/drag/types';
 import * as TOKENS from '../registry/tokens';
 import type {PageSchema, PageNode, NodeId} from '../schema/types';
 import type {PluginContext} from './plugin-types';
@@ -54,6 +56,8 @@ export class Editor {
   /** 画布模式 */
   readonly canvasMode: 'inline' | 'iframe';
   readonly dnd: DndManager;
+  /** 自模拟拖拽引擎（替代 HTML5 drag，跨 iframe 可靠） */
+  readonly dragon: Dragon;
 
   private destroyed = false;
 
@@ -83,13 +87,18 @@ export class Editor {
       });
     }
 
-    // dnd
+    // dnd（保留兼容旧 API）
     this.dnd = new DndManager(
       this.store,
       this.componentRegistry,
       this.nodeTree,
-      this.bridge
+      this.bridge,
+      this
     );
+
+    // 拖拽引擎（自模拟，主用）
+    this.dragon = new Dragon();
+    this.wireDragon();
 
     // 注入到 DI 容器（token 化，类型安全）
     this.di.register(TOKENS.EDITOR, this);
@@ -103,6 +112,84 @@ export class Editor {
     this.di.register(TOKENS.ACTION_REGISTRY, this.actionRegistry);
     this.di.register(TOKENS.SKELETON, this.skeleton);
     this.di.register(TOKENS.SELECTION, this.selection);
+  }
+
+  /** 连接拖拽引擎：投放执行 + 拖拽态副作用 */
+  private wireDragon(): void {
+    // 投放执行
+    this.dragon.on({
+      onDrop: (dragObject: DragObject, location: DropLocation) => {
+        if (dragObject.type === 'nodeData' && dragObject.data) {
+          // 新增组件
+          const node = this.componentRegistry.createNode(dragObject.data.type);
+          if (node) {
+            this.insert(
+              location.containerId,
+              location.region,
+              node,
+              location.index
+            );
+          }
+        } else if (dragObject.type === 'node' && dragObject.nodeId) {
+          // 移动现有节点
+          if (!this.isDescendantNode(dragObject.nodeId, location.containerId)) {
+            this.move(
+              dragObject.nodeId,
+              location.containerId,
+              location.region,
+              location.index
+            );
+          }
+        }
+      }
+    });
+    // 拖拽态副作用（光标 + renderer 拖拽态）
+    this.dragon.setDragStateSetter((active: boolean) => {
+      this.bridge.setDraggingState(active);
+      document.body.style.cursor = active ? 'copy' : '';
+      document.body.style.userSelect = active ? 'none' : '';
+      return () => {
+        this.bridge.setDraggingState(false);
+        document.body.style.cursor = '';
+        document.body.style.userSelect = '';
+      };
+    });
+  }
+
+  /** 判断 descendant 是否为 ancestor 的后代 */
+  private isDescendantNode(
+    descendantId: import('../schema/types').NodeId,
+    ancestorId: import('../schema/types').NodeId
+  ): boolean {
+    if (descendantId === ancestorId) return true;
+    let cur = this.nodeTree.getParent(ancestorId);
+    while (cur) {
+      if (cur === descendantId) return true;
+      cur = this.nodeTree.getParent(cur);
+    }
+    return false;
+  }
+
+  /** 从组件面板发起拖拽（便捷 API） */
+  startComponentDrag(e: MouseEvent, componentType: string): void {
+    const meta = this.componentRegistry.get(componentType);
+    this.dragon.boost(
+      {type: 'nodeData', data: meta, title: meta?.name ?? componentType},
+      e
+    );
+  }
+
+  /** 画布内节点拖拽（便捷 API） */
+  startNodeDrag(e: MouseEvent, nodeId: import('../schema/types').NodeId): void {
+    const node = ops.getNodeById(this.store.schema, nodeId);
+    this.dragon.boost(
+      {
+        type: 'node',
+        nodeId,
+        title: ops.getNodeLabel(node ?? ({} as any)) || '节点'
+      },
+      e
+    );
   }
 
   // --------------------- 启动 / 销毁 ---------------------

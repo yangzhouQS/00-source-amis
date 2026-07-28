@@ -49,7 +49,13 @@ async function main() {
 
   // 5. 挂载 Workbench
   const app = createApp({
-    render: () => <Workbench skeleton={editor.skeleton} store={editor.store} />
+    render: () => (
+      <Workbench
+        skeleton={editor.skeleton}
+        store={editor.store}
+        editor={editor}
+      />
+    )
   });
 
   // 注册 Element Plus 图标

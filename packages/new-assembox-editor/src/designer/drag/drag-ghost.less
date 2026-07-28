@@ -1,0 +1,29 @@
+.assem-drag-ghost-group {
+  position: fixed;
+  z-index: 99999;
+  box-sizing: border-box;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  width: 100px;
+  overflow: hidden;
+  text-align: center;
+  pointer-events: none;
+  background-color: rgba(0, 121, 242, 0.9);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+  border-radius: 3px;
+  transform: translate(8px, 8px);
+}
+
+.assem-drag-ghost {
+  padding: 4px 8px;
+
+  .assem-drag-ghost-title {
+    overflow: hidden;
+    font-size: 12px;
+    color: #fff;
+    text-align: center;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+}

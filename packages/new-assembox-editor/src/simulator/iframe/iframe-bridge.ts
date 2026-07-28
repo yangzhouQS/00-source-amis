@@ -240,7 +240,8 @@ export class IframeBridge implements SimulatorBridge, SimulatorHostApi {
   }
 
   rerender(): void {
-    this.callRenderer(r => r.rerender());
+    // iframe 模式：以 host store 为源真值，全量推送给 renderer
+    this.callRenderer(r => r.renderSchema(ops.cloneSchema(this.store.schema)));
   }
 
   onRenderReady(cb: () => void): void {
@@ -252,6 +253,11 @@ export class IframeBridge implements SimulatorBridge, SimulatorHostApi {
 
   getNodeTree(): NodeTree {
     return this.tree;
+  }
+
+  /** 获取 iframe contentDocument（供 DnD 绑定） */
+  getContentDocument(): Document | null {
+    return this.iframe?.contentDocument ?? null;
   }
 
   getRect(nodeId: NodeId): DOMRect | null {

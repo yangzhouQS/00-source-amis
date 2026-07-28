@@ -93,6 +93,19 @@ export {DesignerHost} from './designer/designer-host';
 export {IframeDesignerHost} from './designer/iframe-designer-host';
 export {BemTools} from './designer/bem-tools';
 export {DndManager} from './designer/dnd-manager';
+// 自模拟拖拽引擎
+export {Dragon, isShaken} from './designer/drag/dragon';
+export {CanvasSensor} from './designer/drag/canvas-sensor';
+export type {CanvasSensorOptions} from './designer/drag/canvas-sensor';
+export {DragGhost} from './designer/drag/drag-ghost';
+export type {
+  DragObject,
+  DragObjectType,
+  LocateEvent,
+  DropLocation,
+  DragSensor,
+  DragonCallbacks
+} from './designer/drag/types';
 
 // 内置 setter / action
 export {registerBuiltinSetters} from './setters';

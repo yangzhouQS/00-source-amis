@@ -11,6 +11,9 @@ import {
   h,
   defineComponent,
   reactive,
+  ref,
+  onMounted,
+  onBeforeUnmount,
   type App,
   type VNode
 } from 'vue';
@@ -116,6 +119,7 @@ export class IframeSimulatorRenderer implements SimulatorRendererApi {
     return h(
       IframeNodeWrapper,
       {
+        key: node.$$id,
         node,
         parentId,
         region,
@@ -243,8 +247,9 @@ export class IframeSimulatorRenderer implements SimulatorRendererApi {
 
   setDraggingState(active: boolean): void {
     this.dragging = active;
+    // 仅调整光标与选区，不能设置 pointer-events:none（否则会阻断 HTML5 拖放事件）
     document.body.style.cursor = active ? 'copy' : '';
-    document.body.style.pointerEvents = active ? 'none' : '';
+    document.body.style.userSelect = active ? 'none' : '';
   }
 
   setNativeSelection(enable: boolean): void {
@@ -287,6 +292,7 @@ export class IframeSimulatorRenderer implements SimulatorRendererApi {
 /**
  * 节点包装组件：标记 DOM、捕获事件、回报
  * 与 host 侧 NodeRenderer 同构
+ * 回调以显式 props 声明（避免 on* 前缀被当作事件透传）
  */
 const IframeNodeWrapper = defineComponent({
   name: 'IframeNodeWrapper',
@@ -296,43 +302,50 @@ const IframeNodeWrapper = defineComponent({
     region: {type: String, default: 'body'},
     isContainer: {type: Boolean, default: false},
     dragging: {type: Function, default: () => false},
-    designMode: {type: Function, default: () => 'design'}
+    designMode: {type: Function, default: () => 'design'},
+    onMountedEl: {type: Function, default: null},
+    onUnmount: {type: Function, default: null},
+    onClick: {type: Function, default: null},
+    onHover: {type: Function, default: null}
   },
-  emits: ['mountedEl', 'unmount', 'click', 'hover'],
-  setup(props, {emit, slots}) {
-    const renderFn = () => {
+  setup(props, {slots}) {
+    const wrapperRef = ref<HTMLElement | null>(null);
+
+    onMounted(() => {
+      if (wrapperRef.value) {
+        (props.onMountedEl as any)?.(wrapperRef.value);
+      }
+    });
+    onBeforeUnmount(() => {
+      (props.onUnmount as any)?.();
+    });
+
+    return () => {
       const isDesign = (props.designMode as any)() === 'design';
       const dragging = (props.dragging as any)();
       return h(
         'div',
         {
+          ref: wrapperRef,
           class: ['assem-iframe-node-wrapper'],
           style: {...(props.node.style || {})},
           onClick: (e: MouseEvent) => {
             if (!isDesign || dragging) return;
-            emit('click', e);
+            (props.onClick as any)?.(e);
             e.stopPropagation();
           },
           onMouseover: (e: MouseEvent) => {
             if (!isDesign || dragging) return;
-            emit('hover', props.node.$$id);
+            (props.onHover as any)?.(props.node.$$id);
             e.stopPropagation();
           },
           onMouseleave: () => {
             if (!isDesign || dragging) return;
-            emit('hover', null);
+            (props.onHover as any)?.(null);
           }
         },
         slots.default?.()
       );
     };
-    return renderFn;
-  },
-  mounted() {
-    const el = (this.$el as HTMLElement) || null;
-    if (el) (this.$props as any).onMountedEl?.(el);
-  },
-  beforeUnmount() {
-    (this.$props as any).onUnmount?.();
   }
 });

@@ -20,6 +20,7 @@ import {
   type RendererContext
 } from '../simulator/renderer';
 import {BemTools} from './bem-tools';
+import {CanvasSensor} from './drag/canvas-sensor';
 import {ref as vueRef} from 'vue';
 import './designer-host.less';
 
@@ -45,8 +46,19 @@ export const DesignerHost = defineComponent({
     onMounted(() => {
       const el = canvasRef.value;
       if (el) {
-        // 挂载 DnD
-        props.editor.dnd.attach(el);
+        // 注册拖拽感应区（同 DOM）
+        const sensor = new CanvasSensor(
+          {
+            id: 'inline-canvas',
+            getContentDocument: () => document,
+            getBounds: () => el.getBoundingClientRect(),
+            toGlobal: (lx, ly) => ({x: lx, y: ly}),
+            elementFromPoint: (lx, ly) => document.elementFromPoint(lx, ly)
+          },
+          props.editor.nodeTree,
+          props.editor.store
+        );
+        props.editor.dragon.addSensor(sensor);
         // 点击空白处取消选中
         el.addEventListener('click', (e: MouseEvent) => {
           if (e.target === el) {

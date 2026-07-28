@@ -13,18 +13,22 @@ import {
   MainArea,
   RightArea
 } from './layouts/areas';
+import {DragGhost} from '../designer/drag/drag-ghost';
+import type {Editor} from '../core/editor';
 import './styles/workbench.less';
 
 export interface WorkbenchProps {
   skeleton: Skeleton;
   store: EditorStore;
+  editor?: Editor;
 }
 
 export const Workbench = defineComponent({
   name: 'EditorWorkbench',
   props: {
     skeleton: {type: Object as PropType<Skeleton>, required: true},
-    store: {type: Object as PropType<EditorStore>, required: true}
+    store: {type: Object as PropType<EditorStore>, required: true},
+    editor: {type: Object as PropType<Editor>, default: null}
   },
   setup(props) {
     return () => (
@@ -45,6 +49,8 @@ export const Workbench = defineComponent({
             visible={props.store.state.rightPanelVisible}
           />
         </div>
+        {/* 拖拽跟随提示 */}
+        {props.editor ? <DragGhost dragon={props.editor.dragon} /> : null}
       </div>
     );
   }
