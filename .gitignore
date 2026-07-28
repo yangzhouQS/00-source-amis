@@ -41,3 +41,5 @@ revision.json
 
 !/.vscode/iconConfig.json
 publish.sh
+/01-lc
+/assembox
