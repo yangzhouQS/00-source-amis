@@ -74,9 +74,23 @@ export type {NodeInstance} from './simulator/node-tree';
 export type {SimulatorBridge} from './simulator/bridge';
 export {InProcessBridge} from './simulator/in-process-bridge';
 export {SchemaRenderer, NodeRenderer} from './simulator/renderer';
+// iframe 模拟器
+export {IframeBridge} from './simulator/iframe/iframe-bridge';
+export type {IframeBridgeOptions} from './simulator/iframe/iframe-bridge';
+export {IframeSimulatorRenderer} from './simulator/iframe/simulator-renderer';
+export type {
+  SimulatorRendererApi,
+  SimulatorHostApi,
+  ComponentMapping,
+  InitPayload,
+  HostMessage,
+  RendererMessage
+} from './simulator/iframe/protocol';
+export {HOST_CMD, RENDERER_EVT, PROTOCOL_NS} from './simulator/iframe/protocol';
 
 // 设计器层
 export {DesignerHost} from './designer/designer-host';
+export {IframeDesignerHost} from './designer/iframe-designer-host';
 export {BemTools} from './designer/bem-tools';
 export {DndManager} from './designer/dnd-manager';
 

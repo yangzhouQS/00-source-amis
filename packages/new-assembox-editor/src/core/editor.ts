@@ -18,6 +18,8 @@ import {ActionRegistry} from '../registry/action-registry';
 import {Skeleton} from '../skeleton/skeleton';
 import {NodeTree} from '../simulator/node-tree';
 import {InProcessBridge} from '../simulator/in-process-bridge';
+import {IframeBridge} from '../simulator/iframe/iframe-bridge';
+import type {SimulatorBridge} from '../simulator/bridge';
 import {DndManager} from '../designer/dnd-manager';
 import * as TOKENS from '../registry/tokens';
 import type {PageSchema, PageNode, NodeId} from '../schema/types';
@@ -32,6 +34,8 @@ export interface EditorOptions {
   schema?: PageSchema;
   /** 额外插件 */
   plugins?: PluginProvider[];
+  /** 画布渲染模式：inline=同 DOM，iframe=iframe 隔离渲染 */
+  canvasMode?: 'inline' | 'iframe';
 }
 
 export class Editor {
@@ -46,7 +50,9 @@ export class Editor {
   readonly pluginManager: PluginManager;
   readonly skeleton = new Skeleton();
   readonly nodeTree = new NodeTree();
-  readonly bridge: InProcessBridge;
+  readonly bridge: SimulatorBridge;
+  /** 画布模式 */
+  readonly canvasMode: 'inline' | 'iframe';
   readonly dnd: DndManager;
 
   private destroyed = false;
@@ -60,12 +66,22 @@ export class Editor {
     this.selection = new Selection(this.store);
     this.pluginManager = new PluginManager(this.bus, options.plugins);
 
-    // bridge
-    this.bridge = new InProcessBridge(this.store, this.nodeTree, {
-      onClick: (id, _e) => this.handleClick(id),
-      onHover: id => this.handleHover(id),
-      onRenderReady: () => this.handleRenderReady()
-    });
+    // bridge（按画布模式选择）
+    this.canvasMode = options.canvasMode ?? 'inline';
+    if (this.canvasMode === 'iframe') {
+      this.bridge = new IframeBridge(this.store, this.nodeTree, {
+        onClick: (id, _e) => this.handleClick(id),
+        onHover: id => this.handleHover(id),
+        onReady: () => this.handleRenderReady(),
+        onScroll: () => this.handleRenderReady()
+      });
+    } else {
+      this.bridge = new InProcessBridge(this.store, this.nodeTree, {
+        onClick: (id, _e) => this.handleClick(id),
+        onHover: id => this.handleHover(id),
+        onRenderReady: () => this.handleRenderReady()
+      });
+    }
 
     // dnd
     this.dnd = new DndManager(

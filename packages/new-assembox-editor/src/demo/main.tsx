@@ -16,9 +16,10 @@ async function main() {
   // 1. 注册内置插件（组件库/设置/画布/大纲/源码/历史）
   registerBuiltinPlugins();
 
-  // 2. 创建编辑器实例
+  // 2. 创建编辑器实例（iframe 隔离渲染画布）
   const editor = createEditor({
     platform: 'desktop',
+    canvasMode: 'iframe',
     schema: {
       type: 'page',
       $$id: 'root',

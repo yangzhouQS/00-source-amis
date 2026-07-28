@@ -17,8 +17,17 @@ export default defineConfig({
       }
     }
   },
+  // 多页面：主应用 index.html + iframe 画布 canvas.html
+  build: {
+    rollupOptions: {
+      input: {
+        main: resolve(__dirname, "index.html"),
+        canvas: resolve(__dirname, "canvas.html")
+      }
+    }
+  },
   server: {
     port: 5174,
-    open: true
+    open: "/index.html"
   }
 });
