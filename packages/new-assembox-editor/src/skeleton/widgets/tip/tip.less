@@ -21,4 +21,49 @@
   box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
   animation: assem-tip-fade 150ms ease-out;
   word-break: break-all;
+
+  /* 三角箭头（CSS border trick，参考 lowcode .lc-arrow） */
+  &::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 0;
+    border: 6px solid transparent;
+  }
+
+  /* tip 在 trigger 右侧 → 箭头在左边缘，朝左指向 trigger */
+  &--right::after {
+    right: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    border-right-color: rgba(0, 0, 0, 0.78);
+    border-left-width: 0;
+  }
+
+  /* tip 在 trigger 左侧 → 箭头在右边缘，朝右指向 trigger */
+  &--left::after {
+    left: 100%;
+    top: 50%;
+    transform: translateY(-50%);
+    border-left-color: rgba(0, 0, 0, 0.78);
+    border-right-width: 0;
+  }
+
+  /* tip 在 trigger 上方 → 箭头在下边缘，朝下指向 trigger */
+  &--top::after {
+    top: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-top-color: rgba(0, 0, 0, 0.78);
+    border-bottom-width: 0;
+  }
+
+  /* tip 在 trigger 下方 → 箭头在上边缘，朝上指向 trigger */
+  &--bottom::after {
+    bottom: 100%;
+    left: 50%;
+    transform: translateX(-50%);
+    border-bottom-color: rgba(0, 0, 0, 0.78);
+    border-top-width: 0;
+  }
 }
