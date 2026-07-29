@@ -187,7 +187,7 @@ export const BemTools = defineComponent({
                         handleAction(action.name, activeId);
                       }}
                     >
-                      {IconComp ? <IconComp /> : action.title}
+                      {IconComp ? <IconComp size={16} /> : action.title}
                     </button>
                   );
 
