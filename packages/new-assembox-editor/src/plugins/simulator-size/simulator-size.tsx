@@ -3,8 +3,16 @@
  * 顶栏 Widget：默认/平板/手机 切换，驱动 iframe 宽度
  */
 import {defineComponent, PropType} from 'vue';
+import {ElRadioButton, ElRadioGroup} from 'element-plus';
+import {Monitor, Cellphone, Iphone} from '@element-plus/icons-vue';
 import type {Editor} from '../../core/editor';
 import {DEVICE_PRESETS} from '../../core/store';
+
+const ICON_MAP: Record<string, any> = {
+  default: Monitor,
+  tablet: Iphone,
+  phone: Cellphone
+};
 
 export const SimulatorSize = defineComponent({
   name: 'SimulatorSize',
@@ -15,36 +23,28 @@ export const SimulatorSize = defineComponent({
     return () => {
       const current = props.editor.store.state.device.key;
       return (
-        <div
-          style={{
-            display: 'flex',
-            gap: '4px',
-            alignItems: 'center',
-            padding: '0 8px'
+        <ElRadioGroup
+          modelValue={current}
+          size="small"
+          onUpdate:modelValue={(val: string) => {
+            const preset = DEVICE_PRESETS.find(d => d.key === val);
+            if (preset) props.editor.store.setDevice(preset);
           }}
         >
           {DEVICE_PRESETS.map(d => {
-            const active = current === d.key;
+            const Icon = ICON_MAP[d.key];
             return (
-              <button
-                key={d.key}
-                title={d.label}
-                onClick={() => props.editor.store.setDevice(d)}
-                style={{
-                  padding: '2px 8px',
-                  cursor: 'pointer',
-                  border: active ? '1px solid #409eff' : '1px solid #dcdfe6',
-                  background: active ? '#ecf5ff' : '#fff',
-                  color: active ? '#409eff' : '#606266',
-                  borderRadius: '3px',
-                  fontSize: '12px'
-                }}
-              >
+              <ElRadioButton key={d.key} value={d.key}>
+                {Icon ? (
+                  <el-icon style="margin-right:2px">
+                    <Icon />
+                  </el-icon>
+                ) : null}
                 {d.label}
-              </button>
+              </ElRadioButton>
             );
           })}
-        </div>
+        </ElRadioGroup>
       );
     };
   }

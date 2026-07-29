@@ -38,10 +38,13 @@ export const EditorToolbar = defineComponent({
           class={ns.b()}
           style={{
             'display': 'flex',
+            'flex-wrap': 'nowrap',
             'align-items': 'center',
-            'gap': '8px',
+            'gap': '6px',
             'padding': '0 12px',
-            'width': '100%'
+            'width': '100%',
+            'height': '100%',
+            'overflow': 'hidden'
           }}
         >
           {/* 设计/预览切换 */}

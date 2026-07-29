@@ -50,13 +50,16 @@ body {
 
   .assem-workbench__top-area {
     display: flex;
+    flex-wrap: nowrap;
     width: 100%;
     height: var(--top-area-height);
-    padding: 8px 12px;
+    padding: 6px 8px;
     margin-bottom: 2px;
     background-color: var(--color-pane-background);
     border-bottom: 1px solid var(--color-border);
     align-items: center;
+    overflow: hidden;
+    gap: 4px;
   }
 
   .assem-workbench__body {
