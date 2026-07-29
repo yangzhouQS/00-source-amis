@@ -8,9 +8,14 @@ import {
   ref,
   computed,
   onMounted,
-  onBeforeUnmount,
-  h as hFn
+  onBeforeUnmount
 } from 'vue';
+import {
+  ArrowUp,
+  ArrowDown,
+  CopyDocument,
+  Delete
+} from '@element-plus/icons-vue';
 import type {NodeTree} from '../simulator/node-tree';
 import type {EditorStore} from '../core/store';
 import type {Editor} from '../core/editor';
@@ -21,6 +26,14 @@ import {Tip} from '../skeleton/widgets/tip';
 import './bem-tools.less';
 
 const ns = useAssemNamespace('bem-tools');
+
+/** 内置动作图标映射 */
+const iconMap: Record<string, any> = {
+  moveUp: ArrowUp,
+  moveDown: ArrowDown,
+  copy: CopyDocument,
+  delete: Delete
+};
 
 interface BoxPos {
   left: number;
@@ -160,7 +173,7 @@ export const BemTools = defineComponent({
                   const disabled = props.editor
                     ? props.editor.componentActions.isDisabled(action, ctx)
                     : false;
-                  const IconComp = action.icon;
+                  const IconComp = action.icon || iconMap[action.name];
 
                   const btn = (
                     <button
