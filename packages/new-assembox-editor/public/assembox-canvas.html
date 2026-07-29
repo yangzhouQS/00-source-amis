@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8" />
+  <title>assembox canvas</title>
+  <!-- 样式（CDN） -->
+  <link rel="stylesheet" href="https://cdn.yearrow.com/fonts/cs-common/1.0.0/iconfont.css" />
+  <link rel="stylesheet" href="https://cdn.yearrow.com/files/@cs/element-pro/1.7.6/theme/index.css" />
+  <link rel="stylesheet" href="https://cdn.yearrow.com/files/@cs/table-pro/1.0.4/theme/index.css" />
+  <link rel="stylesheet" href="/assembox-libs/element-plus.css" />
+  <!-- 全局库（CDN，按依赖顺序） -->
+  <script src="https://cdn.yearrow.com/files/vue/3.4.34/vue.global.prod.js"></script>
+  <script src="https://cdn.yearrow.com/files/vue-router/4.2.5/vue-router.global.prod.js"></script>
+  <script src="https://cdn.yearrow.com/files/axios/1.7.0/axios.min.js"></script>
+  <script src="https://cdn.yearrow.com/files/decimal.js/10.4.3/decimal.js"></script>
+  <script src="https://cdn.yearrow.com/files/@antv/g2plot/2.4.32/g2plot.min.js"></script>
+  <script src="https://cdn.yearrow.com/files/element-plus/2.8.5/index.full.min.js"></script>
+  <script src="https://cdn.yearrow.com/files/@element-plus/icons-vue/2.3.1/global.iife.min.js"></script>
+  <script src="https://cdn.yearrow.com/files/@cs/element-pro/1.7.6/element-pro.iife.js"></script>
+  <script src="https://cdn.yearrow.com/files/@cs/table-pro/1.0.4/table-pro.iife.js"></script>
+  <script src="https://cdn.yearrow.com/files/@cs/better-print/1.2.8/better-print.iife.js"></script>
+  <script src="https://cdn.yearrow.com/files/@cs/excel-conduct-library/2.1.15/excel-conduct-library.iife.js"></script>
+  <script src="https://cdn.yearrow.com/files/@cs/assembox-desktop/3.8.2/assembox-desktop.iife.js"></script>
+  <!-- 兜底全局（部分版本 iife 引用 lodash/dayjs 作全局，CDN 集未含，用本地补） -->
+  <script src="/assembox-libs/lodash.min.js"></script>
+  <script src="/assembox-libs/dayjs.min.js"></script>
+  <script>
+    // 显式注册/归一化全局（按约定，确保 window 上可用）
+    // element-pro/table-pro/assembox-desktop 的 iife 已暴露同名全局，此处兜底确保
+    window.lodash = window.lodash || window._;
+    // 预置可能被引用但本测试不实际使用的全局占位（避免 ReferenceError）
+    window.ExcelConductLibrary = window.ExcelConductLibrary || {};
+    window.PrintCore = window.PrintCore || {};
+    // 调试：打印关键全局是否就绪
+    console.log("[canvas-globals]", {
+      Vue: !!window.Vue,
+      ElementPlus: !!window.ElementPlus,
+      ElementPro: !!window.ElementPro,
+      TablePro: !!window.TablePro,
+      AssemboxDesktop: !!window.AssemboxDesktop
+    });
+  </script>
+</head>
+<body>
+  <div id="app"></div>
+  <script type="module" src="/src/simulator/assembox/assembox-canvas-entry.ts"></script>
+</body>
+</html>

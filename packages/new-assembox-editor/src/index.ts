@@ -114,3 +114,9 @@ export {registerBuiltinActions} from './actions/builtin-actions';
 export {builtinPlugins} from './plugins/builtin-plugins';
 export {registerBuiltinPlugins} from './plugins/register';
 import './plugins/register';
+
+// assembox-desktop 契约集成（P0）
+export {AssemboxBridge} from './simulator/assembox/assembox-bridge';
+export type {AssemboxBridgeCallbacks} from './simulator/assembox/assembox-bridge';
+export {EidRegistry} from './simulator/assembox/eid-registry';
+export type {EidNodeInfo} from './simulator/assembox/eid-registry';
