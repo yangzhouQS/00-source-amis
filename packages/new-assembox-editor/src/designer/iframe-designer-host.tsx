@@ -118,6 +118,15 @@ export const IframeDesignerHost = defineComponent({
             class={ns.e('canvas')}
             src={props.canvasSrc}
             title="assembox-canvas"
+            style={
+              props.editor.store.state.device.width
+                ? {
+                    width: `${props.editor.store.state.device.width}px`,
+                    margin: '0 auto',
+                    display: 'block'
+                  }
+                : undefined
+            }
           />
           {!ready.value ? (
             <div class={ns.e('loading')}>

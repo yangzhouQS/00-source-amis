@@ -163,7 +163,9 @@ export const EVENT = {
   // 画布
   SIMULATOR_READY: 'simulator-ready',
   SCHEMA_CHANGE: 'schema-change',
-  HISTORY_CHANGE: 'history-change'
+  HISTORY_CHANGE: 'history-change',
+  // 编辑器
+  SAVE: 'save'
 } as const;
 
 export type EventType = (typeof EVENT)[keyof typeof EVENT];

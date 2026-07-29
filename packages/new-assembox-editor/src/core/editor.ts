@@ -21,6 +21,7 @@ import {InProcessBridge} from '../simulator/in-process-bridge';
 import {IframeBridge} from '../simulator/iframe/iframe-bridge';
 import type {SimulatorBridge} from '../simulator/bridge';
 import {Dragon} from '../designer/drag/dragon';
+import {KeyboardManager} from './keyboard-manager';
 import type {DragObject, DropLocation} from '../designer/drag/types';
 import * as TOKENS from '../registry/tokens';
 import type {PageSchema, PageNode, NodeId} from '../schema/types';
@@ -58,6 +59,10 @@ export class Editor {
   readonly canvasMode: 'inline' | 'iframe';
   /** 自模拟拖拽引擎（替代 HTML5 drag，跨 iframe 可靠） */
   readonly dragon: Dragon;
+  /** 快捷键管理器 */
+  readonly keyboard: KeyboardManager;
+  /** 剪贴板（复制/粘贴用） */
+  clipboard: PageNode | null = null;
 
   private destroyed = false;
 
@@ -101,6 +106,9 @@ export class Editor {
     // 拖拽引擎（自模拟，跨 iframe 可靠）
     this.dragon = new Dragon();
     this.wireDragon();
+
+    // 快捷键
+    this.keyboard = new KeyboardManager(this);
 
     // 注入到 DI 容器（token 化，类型安全）
     this.di.register(TOKENS.EDITOR, this);
@@ -219,6 +227,7 @@ export class Editor {
     this.bus.trigger(EVENT.EDITOR_INIT, {editor: this});
     this.store.setReady(true);
     this.bus.trigger(EVENT.EDITOR_READY, {editor: this});
+    this.keyboard.attach();
   }
 
   /** 销毁 */
@@ -227,6 +236,7 @@ export class Editor {
     this.destroyed = true;
     this.bus.trigger(EVENT.EDITOR_DESTROY, {});
     this.dragon.destroy();
+    this.keyboard.detach();
     this.bridge.dispose?.();
     this.pluginManager.destroy();
     this.nodeTree.clear();
@@ -246,6 +256,29 @@ export class Editor {
   /** 获取 schema（深拷贝） */
   getSchema(): PageSchema {
     return ops.cloneSchema(this.store.schema);
+  }
+
+  /** 复制节点到剪贴板 */
+  copy(nodeId: NodeId): void {
+    const node = ops.getNodeById(this.store.schema, nodeId);
+    if (node) this.clipboard = ops.cloneNode(node);
+  }
+
+  /** 粘贴剪贴板节点（插入到目标节点之后） */
+  paste(nodeId: NodeId): void {
+    if (!this.clipboard) return;
+    const parent = ops.getParentById(this.store.schema, nodeId);
+    if (!parent) return;
+    const loc = ops.locateChild(parent, nodeId);
+    if (!loc) return;
+    const cloned = ops.cloneNode(this.clipboard);
+    this.insert(parent.$$id, loc.region, cloned, loc.index + 1);
+    this.select(cloned.$$id);
+  }
+
+  /** 保存（触发 SAVE 事件，由宿主消费做持久化） */
+  save(): void {
+    this.bus.trigger(EVENT.SAVE, {schema: this.store.schema});
   }
 
   /** 插入节点 */

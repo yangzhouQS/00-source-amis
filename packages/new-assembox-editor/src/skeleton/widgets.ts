@@ -5,6 +5,7 @@
 import {reactive, ref, h, type UnwrapNestedRefs} from 'vue';
 import type {WidgetConfig, WidgetLike, WidgetType, AreaName} from './types';
 import {useAssemNamespace} from '../hooks/use-assem-namespace';
+import {ErrorBoundary} from './error-boundary';
 
 // BEM 命名空间实例（模块级，骨架层共用）
 const widgetNs = useAssemNamespace('widget');
@@ -74,7 +75,10 @@ export class Widget implements WidgetLike {
   protected renderContent(): any {
     const {content, contentProps = {}} = this.config;
     if (!content) return null;
-    return h(content, {...contentProps, widget: this});
+    return h(ErrorBoundary, {
+      content,
+      contentProps: {...contentProps, widget: this}
+    });
   }
 
   setActive(flag: boolean): void {
@@ -134,7 +138,10 @@ export class Panel extends Widget {
   renderBodyContent(): any {
     const {content, contentProps = {}} = this.config;
     if (!content) return null;
-    return h(content, {...contentProps, panel: this});
+    return h(ErrorBoundary, {
+      content,
+      contentProps: {...contentProps, panel: this}
+    });
   }
 
   protected renderContent(): any {

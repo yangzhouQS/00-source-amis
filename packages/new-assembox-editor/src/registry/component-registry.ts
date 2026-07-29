@@ -70,11 +70,19 @@ export class ComponentRegistry {
    */
   createNode(
     type: string,
+    snippetId?: string,
     overrides?: Partial<PageNode>
   ): PageNode | undefined {
     const meta = this.byType.get(type);
     if (!meta) return undefined;
-    const scaffold = meta.scaffold ?? {};
+    // 选 scaffold：指定 snippetId > 首个 snippet > scaffold
+    let scaffold: Partial<PageNode> = meta.scaffold ?? {};
+    if (meta.snippets?.length) {
+      const snip = snippetId
+        ? meta.snippets.find(s => (s.id ?? s.title) === snippetId)
+        : meta.snippets[0];
+      if (snip) scaffold = snip.schema;
+    }
     const node: PageNode = {
       type,
       $$id: genNodeId(type),

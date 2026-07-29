@@ -168,6 +168,14 @@ export interface ContextMenuItem {
 export type VueComponent = any;
 
 /** 组件元信息（组件注册表条目） */
+/** 拖入脚手架预设（一组件多套初始 schema） */
+export interface Scaffold {
+  id?: string;
+  title?: string;
+  schema: Partial<PageNode>;
+  screenshot?: string;
+}
+
 export interface ComponentMeta {
   /** 组件类型，对应 schema.type */
   type: string;
@@ -183,6 +191,8 @@ export interface ComponentMeta {
   tags?: string[];
   /** 拖入画布时的默认 schema 片段 */
   scaffold?: Partial<PageNode>;
+  /** 多套拖入预设（createNode 按 snippetId 取，无则取首个或 scaffold） */
+  snippets?: Scaffold[];
   /** 属性 → setter 配置 */
   props?: PropConfig[];
   /** 可配置事件 */

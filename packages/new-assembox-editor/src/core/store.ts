@@ -22,6 +22,21 @@ export interface HistoryEntry {
   timestamp: number;
 }
 
+/** 画布设备预设（尺寸预览） */
+export interface DevicePreset {
+  key: string;
+  label: string;
+  /** 画布宽度（px），null = 100% 自适应 */
+  width: number | null;
+}
+
+/** 内置设备预设 */
+export const DEVICE_PRESETS: DevicePreset[] = [
+  {key: 'default', label: '默认', width: null},
+  {key: 'tablet', label: '平板', width: 768},
+  {key: 'phone', label: '手机', width: 375}
+];
+
 export interface EditorState {
   schema: PageSchema;
   selectedIds: NodeId[];
@@ -30,6 +45,8 @@ export interface EditorState {
   panels: PanelItem[];
   toolbars: ToolbarItem[];
   platform: 'desktop' | 'mobile';
+  /** 画布设备预设（尺寸预览） */
+  device: DevicePreset;
   ready: boolean;
   /** 右侧面板可见性 */
   rightPanelVisible: boolean;
@@ -57,6 +74,7 @@ export class EditorStore {
       panels: [],
       toolbars: [],
       platform: 'desktop',
+      device: DEVICE_PRESETS[0],
       ready: false,
       rightPanelVisible: true
     });
@@ -65,6 +83,11 @@ export class EditorStore {
   /** 当前 schema（响应式） */
   get schema(): PageSchema {
     return this.state.schema;
+  }
+
+  /** 设置画布设备预设（尺寸预览） */
+  setDevice(device: DevicePreset): void {
+    this.state.device = device;
   }
 
   /** 加载 schema（重置历史） */

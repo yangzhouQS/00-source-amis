@@ -12,6 +12,7 @@ import {registerBuiltinSetters} from '../setters';
 import {registerBuiltinActions} from '../actions/builtin-actions';
 import {DesignerHost} from '../designer/designer-host';
 import {IframeDesignerHost} from '../designer/iframe-designer-host';
+import {SimulatorSize} from './simulator-size/simulator-size';
 import {defineComponent, PropType} from 'vue';
 import type {Editor} from '../core/editor';
 import {
@@ -208,9 +209,30 @@ export const coreRegistryPlugin: EditorPluginObject = {
   }
 };
 
+/**
+ * 画布尺寸切换插件（顶栏 Widget）
+ */
+export const simulatorSizePlugin: EditorPluginObject = {
+  id: 'builtin-simulator-size',
+  name: '画布尺寸',
+  scene: ['global'],
+  contributes: {
+    skeleton: [
+      {
+        area: 'topArea',
+        type: 'Widget',
+        name: 'simulatorSize',
+        content: SimulatorSize,
+        props: {}
+      }
+    ]
+  }
+};
+
 /** 所有内置插件 */
 export const builtinPlugins: EditorPluginObject[] = [
   coreRegistryPlugin,
+  simulatorSizePlugin,
   designerPlugin,
   componentsPanePlugin,
   outlinePanePlugin,
