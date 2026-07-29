@@ -30,17 +30,33 @@ export interface NodeInstance {
 export class NodeTree {
   private map = new Map<NodeId, NodeInstance>();
   private parentMap = new Map<NodeId, NodeId>();
+  /** parentId → 子实例（索引，避免拖拽中全量遍历） */
+  private childrenMap = new Map<NodeId, NodeInstance[]>();
 
   /** 注册节点实例 */
   register(inst: NodeInstance): void {
     this.map.set(inst.$$id, inst);
-    if (inst.parentId) this.parentMap.set(inst.$$id, inst.parentId);
+    if (inst.parentId) {
+      this.parentMap.set(inst.$$id, inst.parentId);
+      const arr = this.childrenMap.get(inst.parentId) ?? [];
+      arr.push(inst);
+      this.childrenMap.set(inst.parentId, arr);
+    }
   }
 
   /** 注销 */
   unregister(id: NodeId): void {
+    const inst = this.map.get(id);
     this.map.delete(id);
     this.parentMap.delete(id);
+    if (inst?.parentId) {
+      const arr = this.childrenMap.get(inst.parentId);
+      if (arr) {
+        const idx = arr.indexOf(inst);
+        if (idx >= 0) arr.splice(idx, 1);
+        if (arr.length === 0) this.childrenMap.delete(inst.parentId);
+      }
+    }
   }
 
   /** 获取 */
@@ -68,10 +84,16 @@ export class NodeTree {
   clear(): void {
     this.map.clear();
     this.parentMap.clear();
+    this.childrenMap.clear();
   }
 
   /** 所有实例 */
   all(): NodeInstance[] {
     return Array.from(this.map.values());
+  }
+
+  /** 获取指定父节点的子实例（索引查询，O(1) + 子节点数） */
+  getChildren(parentId: NodeId): NodeInstance[] {
+    return this.childrenMap.get(parentId) ?? [];
   }
 }

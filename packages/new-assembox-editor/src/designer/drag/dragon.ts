@@ -41,8 +41,16 @@ export class Dragon {
   private lastLocation: DropLocation | null = null;
   /** 当前激活感应区 */
   private activeSensor: DragSensor | null = null;
-  /** 事件回调 */
-  private callbacks: DragonCallbacks = {};
+  /** 事件回调（多订阅：每个事件类型独立数组，支持多个监听器） */
+  private readonly listenerSets: Record<
+    keyof DragonCallbacks,
+    Array<Function>
+  > = {
+    onDragstart: [],
+    onDrag: [],
+    onDragend: [],
+    onDrop: []
+  };
   /** 清理函数（每次 boost 注册的监听器移除） */
   private cleanupMove: Array<() => void> = [];
   /** 拖拽态外部副作用清理 */
@@ -52,13 +60,37 @@ export class Dragon {
     return this._dragging;
   }
 
-  /** 注册回调 */
+  /** 注册回调（支持多订阅，返回取消订阅函数） */
   on(callbacks: DragonCallbacks): () => void {
-    const prev = this.callbacks;
-    this.callbacks = {...prev, ...callbacks};
+    const added: Array<[keyof DragonCallbacks, Function]> = [];
+    (Object.keys(callbacks) as Array<keyof DragonCallbacks>).forEach(key => {
+      const fn = callbacks[key] as unknown as Function;
+      if (typeof fn === 'function') {
+        this.listenerSets[key].push(fn);
+        added.push([key, fn]);
+      }
+    });
     return () => {
-      this.callbacks = prev;
+      added.forEach(([key, fn]) => {
+        const set = this.listenerSets[key];
+        const idx = set.indexOf(fn);
+        if (idx >= 0) set.splice(idx, 1);
+      });
     };
+  }
+
+  /** 触发事件（遍历所有订阅者，单个出错不影响其它） */
+  private emit<K extends keyof DragonCallbacks>(
+    key: K,
+    ...args: Parameters<NonNullable<DragonCallbacks[K]>>
+  ): void {
+    this.listenerSets[key].slice().forEach(fn => {
+      try {
+        (fn as Function)(...args);
+      } catch (err) {
+        console.error(`[Dragon] "${String(key)}" 回调出错:`, err);
+      }
+    });
   }
 
   /** 添加感应区 */
@@ -109,7 +141,7 @@ export class Dragon {
     let copy = false;
 
     const checkEsc = (e: KeyboardEvent) => {
-      if (e.keyCode === 27) {
+      if (e.key === 'Escape' || e.keyCode === 27) {
         // ESC 取消
         this.lastLocation = null;
         this.activeSensor?.deactiveSensor();
@@ -195,7 +227,7 @@ export class Dragon {
         );
       }
       this.lastLocation = location;
-      this.callbacks.onDrag?.(locateEvent, location);
+      this.emit('onDrag', locateEvent, location);
     };
 
     /** 真正进入拖拽态 */
@@ -203,7 +235,7 @@ export class Dragon {
       this._dragging = true;
       this.dragStateCleanup = this.setDraggingState(true) ?? null;
       const locateEvent = createLocateEvent(boostEvent);
-      this.callbacks.onDragstart?.(locateEvent);
+      this.emit('onDragstart', locateEvent);
     };
 
     /** mousemove：首次抖动 → dragstart，之后 → drag */
@@ -233,10 +265,10 @@ export class Dragon {
         this._dragging = false;
         // 执行投放
         if (dragObj && loc) {
-          this.callbacks.onDrop?.(dragObj, loc);
+          this.emit('onDrop', dragObj, loc);
         }
         if (dragObj) {
-          this.callbacks.onDragend?.(dragObj, loc);
+          this.emit('onDragend', dragObj, loc);
         }
       }
       this.activeSensor?.deactiveSensor();
@@ -302,5 +334,23 @@ export class Dragon {
     } catch {
       /* ignore */
     }
+  }
+
+  /** 销毁：终止活跃拖拽 + 清理感应区 + 释放回调 */
+  destroy(): void {
+    if (this._dragging) {
+      this.removeAllListeners();
+      this._dragging = false;
+    }
+    this.sensors.forEach(s => s.destroy?.());
+    this.sensors = [];
+    (Object.keys(this.listenerSets) as Array<keyof DragonCallbacks>).forEach(
+      k => {
+        this.listenerSets[k] = [];
+      }
+    );
+    this.dragObject = null;
+    this.activeSensor = null;
+    this.lastLocation = null;
   }
 }

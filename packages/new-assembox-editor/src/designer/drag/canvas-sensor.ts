@@ -113,10 +113,8 @@ export class CanvasSensor implements DragSensor {
     canvasY: number
   ): number {
     const children = this.tree
-      .all()
-      .filter(
-        inst => inst.parentId === containerId && inst.parentRegion === 'body'
-      );
+      .getChildren(containerId)
+      .filter(inst => inst.parentRegion === 'body');
     if (!children.length) return 0;
 
     const measured = children
@@ -146,18 +144,22 @@ export class CanvasSensor implements DragSensor {
     return measured.length;
   }
 
-  /** 计算指示线位置（感应区文档坐标） */
+  /** 计算指示线位置（感应区文档坐标，支持横/竖布局） */
   private computeIndicator(
     containerId: NodeId,
     index: number
-  ): {x: number; y: number; width: number; horizontal: boolean} {
+  ): {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    horizontal: boolean;
+  } {
     const containerEl = this.tree.getEl(containerId);
     const containerRect = containerEl?.getBoundingClientRect();
     const children = this.tree
-      .all()
-      .filter(
-        inst => inst.parentId === containerId && inst.parentRegion === 'body'
-      )
+      .getChildren(containerId)
+      .filter(inst => inst.parentRegion === 'body')
       .sort((a, b) => {
         const ra = a.el?.getBoundingClientRect();
         const rb = b.el?.getBoundingClientRect();
@@ -165,24 +167,58 @@ export class CanvasSensor implements DragSensor {
         return ra.top - rb.top || ra.left - rb.left;
       });
 
-    const left = containerRect?.left ?? 0;
-    const width = containerRect?.width ?? 0;
+    const cLeft = containerRect?.left ?? 0;
+    const cTop = containerRect?.top ?? 0;
+    const cWidth = containerRect?.width ?? 0;
+    const cHeight = containerRect?.height ?? 0;
 
+    // 主轴判定：水平跨度 > 垂直跨度 × 1.2 视为横向布局
+    const measured = children
+      .map(c => c.el?.getBoundingClientRect())
+      .filter((r): r is DOMRect => !!r);
+    const horizontal =
+      measured.length > 0 &&
+      Math.max(...measured.map(m => m.right)) -
+        Math.min(...measured.map(m => m.left)) >
+        (Math.max(...measured.map(m => m.bottom)) -
+          Math.min(...measured.map(m => m.top))) *
+          1.2;
+
+    if (horizontal) {
+      // 横向布局：竖向指示线（在插入位置 x，贯穿容器高度）
+      let x: number;
+      if (index >= children.length) {
+        const last = children[children.length - 1]?.el?.getBoundingClientRect();
+        x = last ? last.right : cLeft;
+      } else {
+        const ref = children[index]?.el?.getBoundingClientRect();
+        x = ref ? ref.left : cLeft;
+      }
+      return {x, y: cTop, width: 2, height: cHeight, horizontal: true};
+    }
+
+    // 纵向布局：横向指示线（在插入位置 y，贯穿容器宽度）
     let y: number;
     if (index >= children.length) {
       const last = children[children.length - 1]?.el?.getBoundingClientRect();
-      y = last ? last.bottom : containerRect?.top ?? 0;
+      y = last ? last.bottom : cTop;
     } else {
       const ref = children[index]?.el?.getBoundingClientRect();
-      y = ref ? ref.top : containerRect?.top ?? 0;
+      y = ref ? ref.top : cTop;
     }
-    return {x: left, y, width, horizontal: false};
+    return {x: cLeft, y, width: cWidth, height: 2, horizontal: false};
   }
 
-  /** 渲染指示线到感应区文档 */
+  /** 渲染指示线到感应区文档（支持横/竖两种方向） */
   private renderIndicator(
     doc: Document,
-    indicator: {x: number; y: number; width: number; horizontal: boolean}
+    indicator: {
+      x: number;
+      y: number;
+      width: number;
+      height: number;
+      horizontal: boolean;
+    }
   ): void {
     if (this.indicatorEl && this.indicatorEl.ownerDocument !== doc) {
       this.clearIndicator();
@@ -191,7 +227,7 @@ export class CanvasSensor implements DragSensor {
       this.indicatorEl = doc.createElement('div');
       this.indicatorEl.className = 'assem-drag-indicator';
       this.indicatorEl.style.cssText =
-        'position:absolute;height:2px;background:#0079f2;z-index:99999;pointer-events:none;box-shadow:0 0 0 1px rgba(0,121,242,0.4);transition:top 0.05s,left 0.05s,width 0.05s;';
+        'position:absolute;background:#0079f2;z-index:99999;pointer-events:none;box-shadow:0 0 0 1px rgba(0,121,242,0.4);transition:top 0.05s,left 0.05s;';
     }
     if (!this.indicatorEl.parentElement) {
       doc.body.appendChild(this.indicatorEl);
@@ -201,8 +237,12 @@ export class CanvasSensor implements DragSensor {
     const sy = win?.scrollY ?? 0;
     this.indicatorEl.style.left = `${indicator.x + sx}px`;
     this.indicatorEl.style.top = `${indicator.y + sy}px`;
-    this.indicatorEl.style.width = `${indicator.width}px`;
-    this.indicatorEl.style.display = indicator.horizontal ? 'none' : 'block';
+    this.indicatorEl.style.width = `${
+      indicator.horizontal ? 2 : indicator.width
+    }px`;
+    this.indicatorEl.style.height = `${
+      indicator.horizontal ? indicator.height : 2
+    }px`;
   }
 
   /** 清除指示线 */

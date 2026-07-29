@@ -48,7 +48,13 @@ export interface DropLocation {
   /** 插入索引 */
   index: number;
   /** 指示线位置（感应区文档坐标，供指示器渲染） */
-  indicator?: {x: number; y: number; width: number; horizontal: boolean};
+  indicator?: {
+    x: number;
+    y: number;
+    width: number;
+    height: number;
+    horizontal: boolean;
+  };
 }
 
 /** 拖拽感应区接口（同 DOM 容器 / iframe 各实现一个） */
@@ -73,6 +79,8 @@ export interface DragSensor {
   ): DropLocation | null;
   /** 取消激活（清除指示线） */
   deactiveSensor(): void;
+  /** 销毁感应区（清理指示线等资源） */
+  destroy?(): void;
 }
 
 /** Dragon 事件回调 */

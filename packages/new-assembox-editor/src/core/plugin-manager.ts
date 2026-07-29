@@ -170,7 +170,7 @@ export class PluginManager {
               err
             );
           }
-          if (event.stoped) break;
+          if (event.stopped) break;
         }
       });
       this.unsubscribers.push(off);
@@ -189,11 +189,29 @@ export class PluginManager {
   }
 
   buildToolbars(node: any, toolbars: any[]): void {
-    this.instances.forEach(p => p.buildToolbars?.(node, toolbars));
+    this.instances.forEach(p => {
+      try {
+        p.buildToolbars?.(node, toolbars);
+      } catch (err) {
+        console.error(
+          `[PluginManager] 插件 "${p.id}" buildToolbars 出错:`,
+          err
+        );
+      }
+    });
   }
 
   buildContextMenu(node: any, menus: any[]): void {
-    this.instances.forEach(p => p.buildContextMenu?.(node, menus));
+    this.instances.forEach(p => {
+      try {
+        p.buildContextMenu?.(node, menus);
+      } catch (err) {
+        console.error(
+          `[PluginManager] 插件 "${p.id}" buildContextMenu 出错:`,
+          err
+        );
+      }
+    });
   }
 
   /** 获取所有激活插件 */

@@ -70,10 +70,7 @@ export class InProcessBridge implements SimulatorBridge {
   }
 
   rerender(): void {
-    // 触发响应式更新（commit 一个空变更）
-    this.store.commit('rerender', schema => {
-      /* noop */
-    });
+    // 同 DOM 模式：schema 变更由 store.schemaRef 响应式驱动重渲染，无需手动触发
   }
 
   onRenderReady(cb: () => void): void {

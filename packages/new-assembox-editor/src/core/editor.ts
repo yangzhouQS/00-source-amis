@@ -20,7 +20,6 @@ import {NodeTree} from '../simulator/node-tree';
 import {InProcessBridge} from '../simulator/in-process-bridge';
 import {IframeBridge} from '../simulator/iframe/iframe-bridge';
 import type {SimulatorBridge} from '../simulator/bridge';
-import {DndManager} from '../designer/dnd-manager';
 import {Dragon} from '../designer/drag/dragon';
 import type {DragObject, DropLocation} from '../designer/drag/types';
 import * as TOKENS from '../registry/tokens';
@@ -55,7 +54,6 @@ export class Editor {
   readonly bridge: SimulatorBridge;
   /** 画布模式 */
   readonly canvasMode: 'inline' | 'iframe';
-  readonly dnd: DndManager;
   /** 自模拟拖拽引擎（替代 HTML5 drag，跨 iframe 可靠） */
   readonly dragon: Dragon;
 
@@ -87,16 +85,7 @@ export class Editor {
       });
     }
 
-    // dnd（保留兼容旧 API）
-    this.dnd = new DndManager(
-      this.store,
-      this.componentRegistry,
-      this.nodeTree,
-      this.bridge,
-      this
-    );
-
-    // 拖拽引擎（自模拟，主用）
+    // 拖拽引擎（自模拟，跨 iframe 可靠）
     this.dragon = new Dragon();
     this.wireDragon();
 
@@ -241,7 +230,8 @@ export class Editor {
     if (this.destroyed) return;
     this.destroyed = true;
     this.bus.trigger(EVENT.EDITOR_DESTROY, {});
-    this.dnd.destroy();
+    this.dragon.destroy();
+    this.bridge.dispose?.();
     this.pluginManager.destroy();
     this.nodeTree.clear();
     this.bus.destroy();
@@ -254,6 +244,7 @@ export class Editor {
   loadSchema(schema: PageSchema): void {
     this.store.loadSchema(schema);
     this.bus.trigger(EVENT.SCHEMA_CHANGE, {schema});
+    this.bridge.rerender();
   }
 
   /** 获取 schema（深拷贝） */
@@ -293,6 +284,7 @@ export class Editor {
       ops.updateNode(schema, nodeId, patch);
     });
     this.bus.trigger(EVENT.AFTER_UPDATE, {nodeId, patch});
+    this.bridge.rerender();
   }
 
   /** 更新节点属性（便捷） */

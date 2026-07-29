@@ -83,15 +83,6 @@ export const IframeDesignerHost = defineComponent({
         }
       });
 
-      // schema 变化 → 全量重渲染 iframe
-      watch(
-        () => props.editor.store.schemaRef.value,
-        schema => {
-          if (ready.value) bridge.renderSchema(schema);
-        },
-        {deep: false}
-      );
-
       // 组件注册变化 → 更新映射
       watch(
         () => props.editor.componentRegistry.allMetas().length,
@@ -134,6 +125,7 @@ export const IframeDesignerHost = defineComponent({
             store={props.editor.store}
             tree={props.editor.nodeTree}
             containerRef={iframeRef.value?.parentElement ?? null}
+            iframeEl={iframeRef.value}
           />
         </div>
       </div>

@@ -154,18 +154,24 @@ export function moveNode(
 ): boolean {
   const target = getNodeById(schema, toParentId);
   if (!target) return false;
-  // 同父移动需要校正 index
   const oldParent = getParentById(schema, nodeId);
-  const removed = removeNode(schema, nodeId);
-  if (!removed) return false;
-  let finalIndex = index;
+  // 同父移动需校正 index：在移除前记录旧位置（移除后 locateChild 将失效）
+  let sameParentShift = 0;
   if (oldParent && oldParent.$$id === toParentId) {
-    const loc = locateChild(target, nodeId);
-    if (loc && index !== undefined && index > loc.index) {
-      finalIndex = index - 1;
+    const oldLoc = locateChild(oldParent, nodeId);
+    if (oldLoc && index !== undefined && index > oldLoc.index) {
+      sameParentShift = -1;
     }
   }
-  insertNode(schema, toParentId, region, removed, finalIndex);
+  const removed = removeNode(schema, nodeId);
+  if (!removed) return false;
+  insertNode(
+    schema,
+    toParentId,
+    region,
+    removed,
+    index === undefined ? index : index + sameParentShift
+  );
   return true;
 }
 

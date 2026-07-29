@@ -3,15 +3,7 @@
  * 聚合：SchemaRenderer + BemTools + DnD 容器
  * 提供 RendererContext，绑定画布点击/悬浮/拖放
  */
-import {
-  defineComponent,
-  PropType,
-  ref,
-  onMounted,
-  onBeforeUnmount,
-  provide,
-  watch
-} from 'vue';
+import {defineComponent, PropType, ref, onMounted, provide} from 'vue';
 import {ElEmpty} from 'element-plus';
 import type {Editor} from '../core/editor';
 import {
@@ -69,22 +61,6 @@ export const DesignerHost = defineComponent({
       // 通知 ready
       props.editor.bridge.renderSchema(props.editor.store.schema);
     });
-
-    onBeforeUnmount(() => {
-      props.editor.dnd.destroy();
-    });
-
-    // 拖拽态联动
-    const origSetDragging = props.editor.dnd['setDragging'].bind(
-      props.editor.dnd
-    );
-    // 通过事件桥接 draggingRef
-    watch(
-      () => props.editor.store.state.ready,
-      () => {
-        /* noop */
-      }
-    );
 
     return () => {
       const schema = props.editor.store.schemaRef.value;

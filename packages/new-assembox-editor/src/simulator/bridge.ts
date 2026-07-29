@@ -42,4 +42,6 @@ export interface SimulatorBridge {
   getNodeTree(): NodeTree;
   /** 获取节点 DOM 几何 */
   getRect(nodeId: NodeId): DOMRect | null;
+  /** 销毁（释放 iframe / 事件监听等资源，幂等） */
+  dispose?(): void;
 }

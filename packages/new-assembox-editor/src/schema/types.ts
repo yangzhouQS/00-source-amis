@@ -34,8 +34,8 @@ export interface PropConfig {
   setter?: string;
   /** setter 附加参数 */
   setterProps?: Record<string, any>;
-  /** 是否隐藏 */
-  hidden?: boolean | ((schema: PageNode) => boolean);
+  /** 是否隐藏（函数形式接收字段当前值） */
+  hidden?: boolean | ((value: any) => boolean);
   /** 所属分组 */
   group?: string;
   /** 描述 */

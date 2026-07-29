@@ -92,7 +92,6 @@ export {HOST_CMD, RENDERER_EVT, PROTOCOL_NS} from './simulator/iframe/protocol';
 export {DesignerHost} from './designer/designer-host';
 export {IframeDesignerHost} from './designer/iframe-designer-host';
 export {BemTools} from './designer/bem-tools';
-export {DndManager} from './designer/dnd-manager';
 // 自模拟拖拽引擎
 export {Dragon, isShaken} from './designer/drag/dragon';
 export {CanvasSensor} from './designer/drag/canvas-sensor';

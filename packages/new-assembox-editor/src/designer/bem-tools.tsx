@@ -29,7 +29,12 @@ export const BemTools = defineComponent({
     store: {type: Object as PropType<EditorStore>, required: true},
     tree: {type: Object as PropType<NodeTree>, required: true},
     /** 画布容器 ref（坐标相对它） */
-    containerRef: {type: Object as PropType<HTMLElement | null>, default: null}
+    containerRef: {type: Object as PropType<HTMLElement | null>, default: null},
+    /** iframe 元素（iframe 画布模式时传入，用于坐标偏移换算） */
+    iframeEl: {
+      type: Object as PropType<HTMLIFrameElement | null>,
+      default: null
+    }
   },
   setup(props) {
     const tick = ref(0);
@@ -67,9 +72,19 @@ export const BemTools = defineComponent({
       if (!el || !container) return null;
       const rect = el.getBoundingClientRect();
       const cRect = container.getBoundingClientRect();
+      // iframe 模式：el 位于 iframe 内，rect 相对 iframe viewport，需叠加 iframe 元素在 host 视口的偏移
+      // 注：未处理 iframe transform: scale（当前 canvas 为 1:1），缩放场景需额外补偿
+      let left = rect.left;
+      let top = rect.top;
+      const iframe = props.iframeEl;
+      if (iframe) {
+        const iRect = iframe.getBoundingClientRect();
+        left += iRect.left;
+        top += iRect.top;
+      }
       return {
-        left: rect.left - cRect.left + container.scrollLeft,
-        top: rect.top - cRect.top + container.scrollTop,
+        left: left - cRect.left + container.scrollLeft,
+        top: top - cRect.top + container.scrollTop,
         width: rect.width,
         height: rect.height
       };

@@ -13,7 +13,7 @@ export interface EditorEvent<C = any> {
   /** 是否被阻止默认行为 */
   prevented: boolean;
   /** 是否停止后续监听 */
-  stoped: boolean;
+  stopped: boolean;
   /** 额外数据 */
   data?: any;
   /** 异步 pending promises（等待异步监听完成） */
@@ -39,13 +39,13 @@ function createEvent<C>(type: string, context: C): EditorEvent<C> {
     type,
     context,
     prevented: false,
-    stoped: false,
+    stopped: false,
     pending: undefined,
     preventDefault() {
       event.prevented = true;
     },
     stopPropagation() {
-      event.stoped = true;
+      event.stopped = true;
     },
     setData(data: any) {
       event.data = data;
@@ -104,7 +104,7 @@ export class EventBus {
     // 复制一份，避免遍历中增删
     const snapshot = arr.slice();
     for (const fn of snapshot) {
-      if (event.stoped) break;
+      if (event.stopped) break;
       let ret: any;
       try {
         ret = fn(event);
