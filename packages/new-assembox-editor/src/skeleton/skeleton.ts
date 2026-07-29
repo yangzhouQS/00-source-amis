@@ -1,10 +1,10 @@
 /**
  * 骨架布局管理器
- * 修复旧版 BUG：centerArea 命名错误、bottomArea 未实例化
- * 提供清晰的区域注册 API：skeleton.add(config)
+ * - skeleton.add(config)：按 type 推断 area + 创建对应形态（Widget/Panel/PanelDock/Dock）
+ * - toggleFloatStatus：面板在 leftFixedArea ↔ leftFloatArea 间迁移（浮动/固定切换）
  */
-import {Widget, Panel, PanelDock, WidgetContainer} from './widgets';
-import type {WidgetConfig, AreaName} from './types';
+import {Widget, Panel, PanelDock, Dock, WidgetContainer} from './widgets';
+import type {WidgetConfig, WidgetType, AreaName} from './types';
 
 export interface Area {
   readonly name: AreaName;
@@ -19,7 +19,7 @@ class AreaImpl implements Area {
   readonly visible;
   constructor(name: AreaName, exclusive = false) {
     this.name = name;
-    this.container = new WidgetContainer(exclusive);
+    this.container = new WidgetContainer(name, exclusive);
     this.visible = {value: true};
   }
 }
@@ -37,7 +37,6 @@ export class Skeleton {
   readonly panelMap = new Map<string, Panel>();
 
   constructor() {
-    // 修复：centerArea 用正确名称；bottomArea 正确实例化
     this.topArea = new AreaImpl('topArea');
     this.leftArea = new AreaImpl('leftArea');
     this.leftFixedArea = new AreaImpl('leftFixedArea', true); // 互斥
@@ -69,12 +68,26 @@ export class Skeleton {
     }
   }
 
+  /** 按 type 推断默认 area */
+  static inferArea(type: WidgetType): AreaName {
+    switch (type) {
+      case 'PanelDock':
+      case 'Panel':
+        return 'leftFixedArea';
+      case 'Dock':
+        return 'leftArea';
+      case 'Widget':
+      default:
+        return 'centerArea';
+    }
+  }
+
   /**
    * 添加 widget 到区域（核心 API）
-   * @returns 创建的 widget（可用于 disable/enable）
+   * 未指定 area 时按 type 推断；Dock/PanelDock/Panel/Widget 四形态
    */
   add(config: WidgetConfig): Widget {
-    const areaName = config.area ?? 'leftArea';
+    const areaName = config.area ?? Skeleton.inferArea(config.type);
     const area = this.getArea(areaName);
     if (!area) throw new Error(`[Skeleton] 区域 "${areaName}" 不存在`);
 
@@ -83,7 +96,6 @@ export class Skeleton {
     let dockPanelArea: AreaImpl | null = null;
     let dockPanelName: string | null = null;
     if (config.type === 'PanelDock') {
-      // 创建 dock + 联动 panel
       dockPanelAreaName = config.panelProps?.area ?? 'leftFixedArea';
       dockPanelArea = this.getArea(dockPanelAreaName) ?? this.leftFixedArea;
       dockPanelName = config.panelProps?.panelName ?? `panel_${config.name}`;
@@ -97,22 +109,26 @@ export class Skeleton {
           content: config.content,
           contentProps: config.contentProps,
           props: config.props,
+          panelProps: config.panelProps,
           disabledPanelCache: config.disabledPanelCache ?? true
         });
+        panel.skeleton = this;
         panel.parent = panelArea.container;
         this.panelMap.set(panelName, panel);
         panelArea.container.add(panel);
-        // dock 持有 panel 引用
         (dock as PanelDock).panel = panel;
         return panel;
       });
     } else if (config.type === 'Panel') {
       widget = new Panel(config);
       this.panelMap.set(config.name, widget as Panel);
+    } else if (config.type === 'Dock') {
+      widget = new Dock(config);
     } else {
       widget = new Widget(config);
     }
 
+    widget.skeleton = this;
     area.container.add(widget);
 
     // centerArea / rightArea 的面板默认激活（画布、设置面板常驻显示）
@@ -131,6 +147,29 @@ export class Skeleton {
       dockPanelArea.container.active(dockPanelName);
     }
     return widget;
+  }
+
+  /** 浮动/固定切换（leftFixedArea ↔ leftFloatArea 迁移） */
+  toggleFloatStatus(panel: Panel): void {
+    const isInFloat = panel.parent?.areaName === 'leftFloatArea';
+    if (isInFloat) {
+      // 浮动 → 固定
+      this.leftFloatArea.container.remove(panel);
+      this.leftFixedArea.container.add(panel);
+      this.leftFixedArea.container.active(panel);
+      this.leftFloatArea.container.current.value = null;
+    } else {
+      // 固定 → 浮动
+      this.leftFixedArea.container.remove(panel);
+      this.leftFloatArea.container.add(panel);
+      this.leftFloatArea.container.active(panel);
+      this.leftFixedArea.container.current.value = null;
+    }
+  }
+
+  /** 按 name 获取 panel（延迟查找，解耦创建顺序） */
+  getPanel(name: string): Panel | undefined {
+    return this.panelMap.get(name);
   }
 
   /** 移除 widget */

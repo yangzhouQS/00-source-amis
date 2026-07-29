@@ -1,25 +1,42 @@
 /**
  * 区域渲染组件
  * 读取 skeleton.<area>.container.items 响应式渲染
- * 保留旧版验证过的布局结构；类名统一 BEM（workbench block 的 element）
+ * TopArea 支持 left/center/right 三槽；LeftFloatPane 接入 FocusTracker 失焦关闭
  */
-import {defineComponent, PropType, computed} from 'vue';
+import {defineComponent, PropType, computed, ref} from 'vue';
 import type {Area} from '../skeleton';
 import {useAssemNamespace} from '../../hooks/use-assem-namespace';
+import {useFocusOut} from '../focus-tracker';
 
 const ns = useAssemNamespace('workbench');
 
-/** 顶部区域 */
+/** 顶部区域（left/center/right 三槽） */
 export const TopArea = defineComponent({
   name: 'TopArea',
   props: {area: {type: Object as PropType<Area>, required: true}},
   setup(props) {
     const isEmpty = computed(() => props.area.container.isEmpty());
+    const groups = computed(() => {
+      const left: any[] = [];
+      const center: any[] = [];
+      const right: any[] = [];
+      props.area.container.items.forEach(w => {
+        const align = w.config.props?.align ?? 'left';
+        const node = w.content;
+        if (align === 'center') center.push(node);
+        else if (align === 'right') right.push(node);
+        else left.push(node);
+      });
+      return {left, center, right};
+    });
     return () => {
       if (isEmpty.value || !props.area.visible.value) return null;
+      const {left, center, right} = groups.value;
       return (
         <div class={[ns.e('top-area'), ns.is('visible')]}>
-          {props.area.container.items.map(w => w.content)}
+          <div class={ns.e('top-area-left')}>{left}</div>
+          <div class={ns.e('top-area-center')}>{center}</div>
+          <div class={ns.e('top-area-right')}>{right}</div>
         </div>
       );
     };
@@ -74,17 +91,32 @@ export const LeftFixedPane = defineComponent({
   }
 });
 
-/** 左侧浮动面板 */
+/** 左侧浮动面板（FocusTracker 失焦关闭） */
 export const LeftFloatPane = defineComponent({
   name: 'LeftFloatPane',
   props: {area: {type: Object as PropType<Area>, required: true}},
   setup(props) {
+    const paneEl = ref<HTMLElement | null>(null);
     const hasActive = computed(() => !!props.area.container.current.value);
+
+    useFocusOut(
+      paneEl,
+      () => {
+        const cur = props.area.container.current.value;
+        if (cur) props.area.container.unactive(cur as any);
+      },
+      target => {
+        // 保护范围：左侧 dock 图标栏（点击切换而非关闭）
+        return !!target.closest('.assem-workbench__left-area');
+      }
+    );
+
     return () => {
       if (props.area.container.isEmpty() || !props.area.visible.value)
         return null;
       return (
         <div
+          ref={paneEl}
           class={[ns.e('left-float-pane'), ns.is('hidden', !hasActive.value)]}
         >
           {props.area.container.items.map(w => w.content)}

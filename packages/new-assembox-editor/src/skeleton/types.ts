@@ -12,7 +12,7 @@ export type AreaName =
   | 'rightArea'
   | 'bottomArea';
 
-export type WidgetType = 'Widget' | 'Panel' | 'PanelDock';
+export type WidgetType = 'Widget' | 'Panel' | 'PanelDock' | 'Dock';
 
 export interface WidgetConfig {
   type: WidgetType;
@@ -26,13 +26,23 @@ export interface WidgetConfig {
   panelProps?: {
     panelName?: string;
     area?: AreaName;
+    /** 是否可浮动/固定切换 */
+    floatable?: boolean;
+    /** 隐藏标题栏（含操作行） */
+    hideTitleBar?: boolean;
   };
   /** 显示配置（标题/图标/对齐） */
   props?: {
     title?: string;
     icon?: any;
-    align?: 'top' | 'bottom';
+    align?: 'top' | 'bottom' | 'left' | 'center' | 'right';
     description?: string;
+    /** 排序（升序，越小越靠前） */
+    index?: number;
+    /** Dock 点击回调（独立图标按钮，非联动面板） */
+    onClick?: () => void;
+    /** Dock 跳转链接 */
+    href?: string;
   };
   /** 是否禁用面板缓存（非激活时卸载内容） */
   disabledPanelCache?: boolean;

@@ -1,9 +1,10 @@
 /**
- * Widget / Panel / PanelDock 实现
- * 响应式驱动渲染（修复旧版 editor.skeleton.refresh 全量重渲染的问题）
+ * Widget / Panel / PanelDock / Dock 实现
+ * 响应式驱动渲染；Panel 标题栏支持 fix/float 切换 + close
  */
 import {reactive, ref, h, type UnwrapNestedRefs} from 'vue';
 import type {WidgetConfig, WidgetLike, WidgetType, AreaName} from './types';
+import type {Skeleton} from './skeleton';
 import {useAssemNamespace} from '../hooks/use-assem-namespace';
 import {ErrorBoundary} from './error-boundary';
 
@@ -30,6 +31,8 @@ export class Widget implements WidgetLike {
   panel: Panel | null = null;
   /** 所属区域容器引用 */
   parent: WidgetContainer | null = null;
+  /** 骨架实例引用（面板操作行用，skeleton.add 时注入） */
+  skeleton: Skeleton | null = null;
 
   constructor(config: WidgetConfig) {
     this.name = config.name;
@@ -102,14 +105,56 @@ export class Widget implements WidgetLike {
   }
 }
 
-/** 面板外壳（标题栏 + 内容）函数式组件 */
+/** 面板操作行（fix/float 切换 + close） */
+const PanelOps = (panel: Panel) => {
+  const cfg = panel.config;
+  const floatable = cfg.panelProps?.floatable ?? true;
+  const isInFloat = panel.parent?.areaName === 'leftFloatArea';
+  const ops: any[] = [];
+  if (floatable) {
+    ops.push(
+      h(
+        'button',
+        {
+          class: panelNs.e('op'),
+          title: isInFloat ? '固定' : '浮动',
+          onClick: (e: Event) => {
+            e.stopPropagation();
+            panel.skeleton?.toggleFloatStatus(panel);
+          }
+        },
+        isInFloat ? '★' : '☆'
+      )
+    );
+  }
+  ops.push(
+    h(
+      'button',
+      {
+        class: panelNs.e('op'),
+        title: '关闭',
+        onClick: (e: Event) => {
+          e.stopPropagation();
+          panel.parent?.unactive(panel);
+        }
+      },
+      '×'
+    )
+  );
+  return h('div', {class: panelNs.e('ops')}, ops);
+};
+
+/** 面板外壳（标题栏 + 操作行 + 内容）函数式组件 */
 const PanelView = (props: {panel: Panel}) => {
   const panel = props.panel;
-  const title = panel.config.props?.title;
+  const cfg = panel.config;
+  const title = cfg.props?.title;
+  const hideTitleBar = cfg.panelProps?.hideTitleBar;
   return h('div', {class: panelNs.b()}, [
-    title
+    title && !hideTitleBar
       ? h('div', {class: panelNs.e('header')}, [
-          h('span', {class: panelNs.e('title')}, title)
+          h('span', {class: panelNs.e('title')}, title),
+          PanelOps(panel)
         ])
       : null,
     h('div', {class: panelNs.e('body')}, [panel.renderBodyContent()])
@@ -149,6 +194,16 @@ export class Panel extends Widget {
   }
 }
 
+/** Dock 图标渲染（PanelDock/Dock 共用） */
+function renderDockIcon(config: WidgetConfig): any {
+  const icon = config.props?.icon;
+  const title = config.props?.title;
+  return h('div', {class: dockNs.e('inner')}, [
+    icon ? h(icon) : null,
+    title ? h('span', {class: dockNs.e('label')}, title) : null
+  ]);
+}
+
 /** PanelDock（左侧图标按钮 + 联动 Panel） */
 export class PanelDock extends Widget {
   panel: Panel | null = null;
@@ -166,7 +221,7 @@ export class PanelDock extends Widget {
           class: [dockNs.b(), dockNs.is('disabled')],
           title: this.config.props?.description
         },
-        [this.renderIcon()]
+        [renderDockIcon(this.config)]
       );
     }
     return h(
@@ -176,21 +231,49 @@ export class PanelDock extends Widget {
         title: this.config.props?.description,
         onClick: () => this.togglePanel()
       },
-      [this.renderIcon()]
+      [renderDockIcon(this.config)]
     );
   }
 
-  protected renderIcon(): any {
-    const icon = this.config.props?.icon;
-    const title = this.config.props?.title;
-    return h('div', {class: dockNs.e('inner')}, [
-      icon ? h(icon) : null,
-      title ? h('span', {class: dockNs.e('label')}, title) : null
-    ]);
-  }
-
   togglePanel(): void {
-    this.panel?.toggle();
+    const p = this.panel;
+    if (!p?.parent) {
+      p?.toggle();
+      return;
+    }
+    // 通过容器 active/unactive 实现互斥 + current 更新
+    if (p.active) p.parent.unactive(p);
+    else p.parent.active(p);
+  }
+}
+
+/** Dock（独立图标按钮，onClick/href，无联动面板） */
+export class Dock extends Widget {
+  get content(): any {
+    const onActivate = () => {
+      const {onClick, href} = this.config.props ?? {};
+      if (onClick) onClick();
+      else if (href) window.open(href, '_blank');
+    };
+    if (this.state.disabled) {
+      return h(
+        'div',
+        {
+          class: [dockNs.b(), dockNs.is('disabled')],
+          title: this.config.props?.description
+        },
+        [renderDockIcon(this.config)]
+      );
+    }
+    return h(
+      'div',
+      {
+        class: dockNs.b(),
+        title: this.config.props?.description,
+        onClick: onActivate
+      },
+      [renderDockIcon(this.config)]
+    );
   }
 }
 
@@ -201,17 +284,35 @@ export class WidgetContainer {
   /** 当前激活的 widget（互斥区域用） */
   current = ref<Widget | null>(null);
   exclusive: boolean;
+  /** 所属区域名（面板操作行判断 fixed/float 用） */
+  areaName: AreaName;
 
-  constructor(exclusive = false) {
+  constructor(areaName: AreaName, exclusive = false) {
+    this.areaName = areaName;
     this.exclusive = exclusive;
+  }
+
+  /** 取 widget 的排序 index（越小越靠前） */
+  private static idx(w: Widget): number {
+    return w.config.props?.index ?? w.config.index ?? Infinity;
   }
 
   add(item: Widget): Widget {
     if (this.maps.has(item.name)) {
       const idx = this.items.findIndex(w => w.name === item.name);
       if (idx >= 0) this.items[idx] = item;
+      else this.items.push(item);
     } else {
-      this.items.push(item);
+      // 按 index 升序插入
+      const itemIdx = WidgetContainer.idx(item);
+      let insertAt = this.items.length;
+      for (let i = 0; i < this.items.length; i++) {
+        if (itemIdx < WidgetContainer.idx(this.items[i])) {
+          insertAt = i;
+          break;
+        }
+      }
+      this.items.splice(insertAt, 0, item);
     }
     this.maps.set(item.name, item);
     item.parent = this;

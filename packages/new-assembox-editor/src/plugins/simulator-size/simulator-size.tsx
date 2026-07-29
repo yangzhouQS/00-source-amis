@@ -26,7 +26,7 @@ export const SimulatorSize = defineComponent({
         <ElRadioGroup
           modelValue={current}
           size="small"
-          onUpdate:modelValue={(val: string) => {
+          onUpdate:modelValue={(val: any) => {
             const preset = DEVICE_PRESETS.find(d => d.key === val);
             if (preset) props.editor.store.setDevice(preset);
           }}

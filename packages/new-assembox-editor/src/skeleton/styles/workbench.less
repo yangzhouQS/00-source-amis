@@ -60,6 +60,20 @@ body {
     align-items: center;
     overflow: hidden;
     gap: 4px;
+
+    .assem-workbench__top-area-left,
+    .assem-workbench__top-area-right {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+    }
+    .assem-workbench__top-area-center {
+      flex: 1;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+    }
   }
 
   .assem-workbench__body {
@@ -157,6 +171,27 @@ body {
     .assem-panel__title {
       font-size: var(--font-size-label);
       font-weight: 600;
+    }
+
+    .assem-panel__ops {
+      display: flex;
+      gap: 2px;
+    }
+
+    .assem-panel__op {
+      padding: 2px 6px;
+      font-size: 12px;
+      line-height: 1;
+      cursor: pointer;
+      color: #909399;
+      background: transparent;
+      border: none;
+      border-radius: 3px;
+
+      &:hover {
+        color: var(--color-brand);
+        background: var(--color-hover);
+      }
     }
   }
 

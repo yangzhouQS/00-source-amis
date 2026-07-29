@@ -14,6 +14,15 @@ declare module '*?worker' {
   export default workerConstructor;
 }
 
+declare module 'monaco-editor/editor/editor.worker.js?worker' {
+  const editorWorker: {new (): Worker};
+  export default editorWorker;
+}
+declare module 'monaco-editor/language/json/json.worker.js?worker' {
+  const jsonWorker: {new (): Worker};
+  export default jsonWorker;
+}
+
 declare module 'monaco-editor';
 declare module '@guolao/vue-monaco-editor';
 

@@ -12,7 +12,9 @@ import {registerDemoComponents} from './components';
 // Monaco 本地加载（避免 CDN 依赖，代理环境 CDN 不可达）
 import {loader} from '@guolao/vue-monaco-editor';
 import * as monaco from 'monaco-editor';
+// @ts-ignore vite ?worker import（运行时由 vite 处理，类型声明 vue-tsc 不识别）
 import EditorWorker from 'monaco-editor/editor/editor.worker.js?worker';
+// @ts-ignore vite ?worker import
 import JsonWorker from 'monaco-editor/language/json/json.worker.js?worker';
 
 (self as any).MonacoEnvironment = {
@@ -21,7 +23,7 @@ import JsonWorker from 'monaco-editor/language/json/json.worker.js?worker';
     return new EditorWorker();
   }
 };
-loader.config({monaco});
+loader.config({monaco} as any);
 
 // 暴露 ElMessage 给动作系统（toast 动作用）
 (window as any).ElMessage = ElMessage;
