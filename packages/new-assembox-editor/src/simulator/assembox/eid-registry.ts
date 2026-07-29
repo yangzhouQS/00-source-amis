@@ -23,6 +23,46 @@ function genEid(): string {
   );
 }
 
+/**
+ * 健壮地取组件根元素：
+ * 优先 proxy.$el；为空/注释/fragment 时回退到 vnode.el / subTree.el，
+ * 并在 subTree 为 fragment 时向下找第一个真实元素。
+ */
+function resolveEl(instance: any): HTMLElement | null {
+  const candidates: any[] = [
+    instance?.proxy?.$el,
+    instance?.$el,
+    instance?.vnode?.el,
+    instance?.subTree?.el,
+    instance?.proxy?.vnode?.el
+  ];
+  for (const c of candidates) {
+    if (c && c.nodeType === 1) return c as HTMLElement;
+  }
+  // subTree 为 fragment（多根/注释）时，向下找首个真实元素
+  const sub = instance?.subTree ?? instance?.proxy?.subTree;
+  const found = findFirstElement(sub);
+  return found;
+}
+
+function findFirstElement(vnode: any): HTMLElement | null {
+  if (!vnode) return null;
+  if (vnode.nodeType === 1) return vnode;
+  const el: any = vnode.el;
+  if (el && el.nodeType === 1) return el;
+  if (Array.isArray(vnode.children)) {
+    for (const c of vnode.children) {
+      const f = findFirstElement(c);
+      if (f) return f;
+    }
+  }
+  if (vnode.component) {
+    const f = findFirstElement(vnode.component.subTree);
+    if (f) return f;
+  }
+  return null;
+}
+
 export class EidRegistry {
   private map = new Map<string, EidNodeInfo>();
   private byEl = new Map<HTMLElement, string>();
@@ -34,7 +74,12 @@ export class EidRegistry {
       if (!node || typeof node !== 'object' || visited.has(node)) return;
       visited.add(node);
       let effectiveParent = parentEid;
-      if (node.__nodeType) {
+      // 仅给「实际组件节点」(baseNode 等) 分配 $$eid；跳过 renderNode/columnNode 派发包装
+      // （派发包装不会被标记，若作为父节点会破坏子节点的父链匹配）
+      const isWrapper =
+        node.__nodeType &&
+        ['renderNode', 'columnNode'].includes(node.__nodeType);
+      if (node.__nodeType && !isWrapper) {
         const eid = genEid();
         node.$$eid = eid;
         this.map.set(eid, {
@@ -65,9 +110,8 @@ export class EidRegistry {
 
   /** 挂载期：按父链 + __nodeName 匹配 $$eid 并回填 el/instance */
   matchAndRegister(instance: any): EidNodeInfo | null {
-    const el: HTMLElement | null =
-      instance?.proxy?.$el ?? instance?.$el ?? null;
-    if (!el || (el as any).nodeType !== 1) return null;
+    const el = resolveEl(instance);
+    if (!el) return null;
     const __nodeName = instance?.props?.__nodeName;
     const __nodeType = instance?.props?.__nodeType;
     // 跳过派发包装节点
@@ -117,8 +161,7 @@ export class EidRegistry {
   }
 
   unregisterByInstance(instance: any): void {
-    const el: HTMLElement | null =
-      instance?.proxy?.$el ?? instance?.$el ?? null;
+    const el = resolveEl(instance);
     if (!el) return;
     const eid = this.byEl.get(el);
     if (!eid) return;

@@ -55,6 +55,7 @@ const testSchema = {
                         border: true,
                         background: true,
                         boxType: 'element',
+                        contentType: 'element',
                         paddingSize: 'small',
                         defaultSlot: {
                           __nodeId: 'e1',

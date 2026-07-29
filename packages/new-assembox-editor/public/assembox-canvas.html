@@ -3,6 +3,62 @@
 <head>
   <meta charset="UTF-8" />
   <title>assembox canvas</title>
+  <style>
+      html,
+      body,
+      #app {
+          margin: 0;
+          padding: 0;
+          width: 100%;
+          height: 100%;
+          min-height: 100vh;
+          font-family: "PingFang SC", "Microsoft YaHei", Helvetica, Arial, sans-serif;
+          background: #fff;
+      }
+
+      #app {
+          min-height: 100vh;
+          height: 100%;
+      }
+
+      .views {
+          height: 100%;
+          width: 100%;
+          padding: 0;
+          background: var(--el-bg-color-page);
+      }
+      .plane {
+          -webkit-box-orient: vertical;
+          -webkit-box-direction: normal;
+          border: none;
+          display: -webkit-box;
+          display: -ms-flexbox;
+          display: flex;
+          -ms-flex-direction: column;
+          flex-direction: column;
+          height: 100%
+      }
+
+      .plane, .plane .nav {
+          -webkit-box-sizing: border-box;
+          box-sizing: border-box;
+          width: 100%
+      }
+
+      .plane .nav {
+          background-color: #fff;
+          display: block;
+          height: auto;
+          padding: 6px
+      }
+
+      .plane .content {
+          -webkit-box-flex: 1;
+          -ms-flex: 1;
+          flex: 1;
+          overflow: auto
+      }
+  </style>
   <!-- 样式（CDN） -->
   <link rel="stylesheet" href="https://cdn.yearrow.com/fonts/cs-common/1.0.0/iconfont.css" />
   <link rel="stylesheet" href="https://cdn.yearrow.com/files/@cs/element-pro/1.7.6/theme/index.css" />
@@ -18,6 +74,10 @@
   <script src="https://cdn.yearrow.com/files/@element-plus/icons-vue/2.3.1/global.iife.min.js"></script>
   <script src="https://cdn.yearrow.com/files/@cs/element-pro/1.7.6/element-pro.iife.js"></script>
   <script src="https://cdn.yearrow.com/files/@cs/table-pro/1.0.4/table-pro.iife.js"></script>
+  <script type="text/javascript"
+          src="https://cdn.yearrow.com/files/@yearrow/vue3-web-framework-library/3.5.4/vue3-web-framework.iife.js"></script>
+  <script type="text/javascript"
+          src="https://cdn.yearrow.com/files/@yearrow/vue3-com-components-library/1.5.2/vue3-com-components.iife.js"></script>
   <script src="https://cdn.yearrow.com/files/@cs/better-print/1.2.8/better-print.iife.js"></script>
   <script src="https://cdn.yearrow.com/files/@cs/excel-conduct-library/2.1.15/excel-conduct-library.iife.js"></script>
   <script src="https://cdn.yearrow.com/files/@cs/assembox-desktop/3.8.2/assembox-desktop.iife.js"></script>
@@ -32,7 +92,7 @@
     window.ExcelConductLibrary = window.ExcelConductLibrary || {};
     window.PrintCore = window.PrintCore || {};
     // 调试：打印关键全局是否就绪
-    console.log("[canvas-globals]", {
+    console.log('[canvas-globals]', {
       Vue: !!window.Vue,
       ElementPlus: !!window.ElementPlus,
       ElementPro: !!window.ElementPro,
@@ -42,7 +102,7 @@
   </script>
 </head>
 <body>
-  <div id="app"></div>
-  <script type="module" src="/src/simulator/assembox/assembox-canvas-entry.ts"></script>
+<div id="app"></div>
+<script type="module" src="/src/simulator/assembox/assembox-canvas-entry.ts"></script>
 </body>
 </html>
