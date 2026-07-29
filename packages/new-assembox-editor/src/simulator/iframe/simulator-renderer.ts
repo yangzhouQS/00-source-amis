@@ -27,6 +27,9 @@ import {markNode, ATTR_EDITOR_ID} from '../../designer/dom-marking';
 import type {PageSchema, PageNode, NodeId} from '../../schema/types';
 import * as ops from '../../schema/operations';
 import type {NodeInstance} from '../node-tree';
+import {getLogger} from '../../core/logger';
+
+const logger = getLogger('simulator-renderer');
 
 export class IframeSimulatorRenderer implements SimulatorRendererApi {
   readonly isSimulatorRenderer = true as const;

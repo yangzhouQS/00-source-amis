@@ -9,6 +9,8 @@ export {DIContainer, token} from './core/di-container';
 export type {InjectionToken} from './core/di-container';
 export {EventBus, EVENT, camelize} from './core/event-bus';
 export type {EditorEvent, EventListener} from './core/event-bus';
+export {Logger, getLogger, setGlobalLevel} from './core/logger';
+export type {LogLevel, LoggerOptions} from './core/logger';
 export {EditorStore, createEmptySchema} from './core/store';
 export type {EditorState, HistoryEntry} from './core/store';
 export {Selection} from './core/selection';

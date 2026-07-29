@@ -10,6 +10,7 @@
  *  - chooseSensor：按全局坐标命中感应区，交由 sensor 定位
  *  - 事件：dragstart / drag / dragend / drop
  */
+import {getLogger} from '../../core/logger';
 import type {
   DragObject,
   LocateEvent,
@@ -30,6 +31,7 @@ export function isShaken(e1: MouseEvent, e2: MouseEvent): boolean {
   );
 }
 
+const logger = getLogger('dragon');
 export class Dragon {
   /** 已注册的感应区 */
   private sensors: DragSensor[] = [];

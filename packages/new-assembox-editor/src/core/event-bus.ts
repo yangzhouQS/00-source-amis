@@ -1,3 +1,6 @@
+﻿import {getLogger} from './logger';
+
+const logger = getLogger('event-bus');
 /**
  * 统一事件总线
  * 借鉴 amis-editor-core 的 createEvent：支持 preventDefault / stopPropagation / async

@@ -1,3 +1,4 @@
+﻿const logger = getLogger('plugin-manager');
 /**
  * 插件管理器（实例级）
  * - register(plugin, options) 实例级注册（同 id 按 priority 覆盖）
@@ -7,6 +8,7 @@
 import type {EventBus, EditorEvent} from './event-bus';
 import {camelize} from './event-bus';
 import type {EditorPluginObject, PluginContext} from './plugin-types';
+import {getLogger} from './logger';
 
 export class PluginManager {
   private registered = new Map<
