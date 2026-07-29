@@ -5,7 +5,10 @@
 import {defineComponent, PropType, ref, onMounted, onBeforeUnmount} from 'vue';
 import type {Dragon} from './dragon';
 import type {DragObject} from './types';
+import {useAssemNamespace} from '../../hooks/use-assem-namespace';
 import './drag-ghost.less';
+
+const ns = useAssemNamespace('drag-ghost');
 
 export const DragGhost = defineComponent({
   name: 'DragGhost',
@@ -46,15 +49,15 @@ export const DragGhost = defineComponent({
 
     return () => (
       <div
-        class="assem-drag-ghost-group"
+        class={ns.b()}
         style={{
           display: visible.value ? 'flex' : 'none',
           left: `${x.value}px`,
           top: `${y.value}px`
         }}
       >
-        <div class="assem-drag-ghost">
-          <span class="assem-drag-ghost-title">{title.value || '拖拽中'}</span>
+        <div class={ns.e('inner')}>
+          <span class={ns.e('title')}>{title.value || '拖拽中'}</span>
         </div>
       </div>
     );

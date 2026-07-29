@@ -1,25 +1,20 @@
-.assem-designer-host {
+.assem-designer {
   position: relative;
   width: 100%;
   height: 100%;
   overflow: hidden;
 }
 
-.assem-canvas {
+.assem-designer__canvas {
   position: relative;
   width: 100%;
   height: 100%;
   overflow: auto;
   background: #fff;
   border-radius: 4px;
-
-  .assem-schema-renderer {
-    min-height: 100%;
-    padding: 16px;
-  }
 }
 
-.assem-canvas-empty {
+.assem-designer__canvas-empty {
   display: flex;
   align-items: center;
   justify-content: center;
@@ -27,18 +22,21 @@
   min-height: 400px;
 }
 
-/* 节点 wrapper：可被 hover 高亮 */
-.assem-node-wrapper {
-  position: relative;
+/* 渲染器：schema 根（own block） */
+.assem-schema-renderer {
+  min-height: 100%;
+  padding: 16px;
 
-  /* 让嵌套布局更友好 */
-  &.assem-node-wrapper:empty {
-    min-height: 24px;
+  :deep(.el-button + .el-button) {
+    margin-left: 8px;
   }
 }
 
-.assem-schema-renderer {
-  :deep(.el-button + .el-button) {
-    margin-left: 8px;
+/* 节点 wrapper（own block） */
+.assem-node {
+  position: relative;
+
+  &.assem-node:empty {
+    min-height: 24px;
   }
 }

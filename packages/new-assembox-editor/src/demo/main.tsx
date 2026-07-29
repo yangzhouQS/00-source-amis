@@ -29,7 +29,7 @@ async function main() {
             {
               type: 'button',
               $$id: 'demo-btn',
-              props: {type: 'primary', text: '点击我'},
+              props: {type: 'primary', content: '点击我'},
               onEvent: {click: {actions: []}}
             }
           ]

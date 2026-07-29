@@ -1,3 +1,6 @@
+﻿import {useAssemNamespace} from '../../hooks/use-assem-namespace';
+const ns = useAssemNamespace('icon-picker');
+
 /**
  * IconSetter - icon picker (Element Plus icons + iconFont)
  */
@@ -62,7 +65,7 @@ export const IconSetter = defineComponent({
       props.onChange(`${props.iconFontPrefix}${item.font_class}`);
 
     const iconContent = () => (
-      <div class="assem-icon-picker">
+      <div class={ns.b()}>
         <ElInput
           v-model={elSearch.value}
           placeholder="Search Element icon"
@@ -70,11 +73,11 @@ export const IconSetter = defineComponent({
           size="small"
           style="margin:8px 0"
         />
-        <ul class="assem-icon-grid">
+        <ul class={ns.e('grid')}>
           {elIconNames.value.slice(0, 200).map(name => (
             <li
               key={name}
-              class={['assem-icon-cell', {active: props.value === name}]}
+              class={[ns.e('cell'), {active: props.value === name}]}
               title={name}
               onClick={() => pickEl(name)}
             >
@@ -83,7 +86,7 @@ export const IconSetter = defineComponent({
                   ElementPlusIconsVue[name as keyof typeof ElementPlusIconsVue]
                 )}
               </ElIcon>
-              <span class="assem-icon-name">{name}</span>
+              <span class={ns.e('name')}>{name}</span>
             </li>
           ))}
         </ul>
@@ -91,7 +94,7 @@ export const IconSetter = defineComponent({
     );
 
     const fontContent = () => (
-      <div class="assem-icon-picker">
+      <div class={ns.b()}>
         <ElInput
           v-model={fontSearch.value}
           placeholder="Search iconFont"
@@ -100,24 +103,24 @@ export const IconSetter = defineComponent({
           style="margin:8px 0"
         />
         {fontIcons.value.length ? (
-          <ul class="assem-icon-grid">
+          <ul class={ns.e('grid')}>
             {fontIcons.value.map(item => (
               <li
                 key={item.font_class}
                 class={[
-                  'assem-icon-cell',
+                  ns.e('cell'),
                   {active: props.value.includes(item.font_class)}
                 ]}
                 title={item.font_class}
                 onClick={() => pickFont(item)}
               >
                 <i class={[props.iconFontPrefix.trim(), item.font_class]} />
-                <span class="assem-icon-name">{item.font_class}</span>
+                <span class={ns.e('name')}>{item.font_class}</span>
               </li>
             ))}
           </ul>
         ) : (
-          <div class="assem-icon-empty">
+          <div class={ns.e('empty')}>
             No iconFont configured (pass via iconFontList)
           </div>
         )}

@@ -7,7 +7,10 @@ import {defineComponent, PropType} from 'vue';
 import {ElButton, ElButtonGroup, ElEmpty, ElTooltip} from 'element-plus';
 import {RefreshLeft, RefreshRight, Document} from '@element-plus/icons-vue';
 import type {Editor} from '../../core/editor';
+import {useAssemNamespace} from '../../hooks/use-assem-namespace';
 import './../pane.less';
+
+const ns = useAssemNamespace('history-pane');
 
 export const HistoryPane = defineComponent({
   name: 'HistoryPane',
@@ -19,8 +22,8 @@ export const HistoryPane = defineComponent({
       const store = props.editor.store;
       const history = store.history;
       return (
-        <div class="assem-history-pane">
-          <div class="assem-history-toolbar">
+        <div class={ns.b()}>
+          <div class={ns.e('toolbar')}>
             <ElButtonGroup>
               <ElTooltip content="撤销" placement="top">
                 <ElButton
@@ -42,18 +45,16 @@ export const HistoryPane = defineComponent({
               </ElTooltip>
             </ElButtonGroup>
           </div>
-          <div class="assem-history-list">
+          <div class={ns.e('list')}>
             {history.length ? (
               history
                 .slice()
                 .reverse()
                 .map((entry, idx) => (
-                  <div class="assem-history-item" key={entry.timestamp}>
-                    <Document class="assem-history-icon" />
-                    <span class="assem-history-label">{entry.label}</span>
-                    <span class="assem-history-index">
-                      #{history.length - idx}
-                    </span>
+                  <div class={ns.e('item')} key={entry.timestamp}>
+                    <Document class={ns.e('icon')} />
+                    <span class={ns.e('label')}>{entry.label}</span>
+                    <span class={ns.e('index')}>#{history.length - idx}</span>
                   </div>
                 ))
             ) : (

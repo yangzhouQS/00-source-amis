@@ -14,7 +14,10 @@ import {
 } from 'element-plus';
 import type {Editor} from '../../core/editor';
 import {resolveSetter, isFieldHidden, SETTER_CONTEXT_KEY} from '../../setters';
+import {useAssemNamespace} from '../../hooks/use-assem-namespace';
 import './../pane.less';
+
+const ns = useAssemNamespace('setting-pane');
 
 export const SettingsPane = defineComponent({
   name: 'SettingsPane',
@@ -78,7 +81,7 @@ export const SettingsPane = defineComponent({
       const node = activeNode.value;
       if (!node) {
         return (
-          <div class="assem-settings-pane">
+          <div class={ns.b()}>
             <ElEmpty description="请选择组件" imageSize={60} />
           </div>
         );
@@ -88,10 +91,10 @@ export const SettingsPane = defineComponent({
       const events = m?.events ?? [];
 
       return (
-        <div class="assem-settings-pane">
-          <div class="assem-settings-header">
-            <span class="assem-settings-title">{m?.name ?? node.type}</span>
-            <span class="assem-settings-type">{node.type}</span>
+        <div class={ns.b()}>
+          <div class={ns.e('header')}>
+            <span class={ns.e('title')}>{m?.name ?? node.type}</span>
+            <span class={ns.e('type')}>{node.type}</span>
           </div>
           <ElTabs modelValue="attribute">
             <ElTabPane label="属性" name="attribute">
@@ -185,11 +188,11 @@ const EventList = defineComponent({
   },
   setup(props) {
     return () => (
-      <div class="assem-event-list">
+      <div class={ns.e('event-list')}>
         {props.events.length ? (
           props.events.map((ev: any) => (
-            <div class="assem-event-item" key={ev.name}>
-              <span class="assem-event-name">{ev.title ?? ev.name}</span>
+            <div class={ns.e('event-item')} key={ev.name}>
+              <span class={ns.e('event-name')}>{ev.title ?? ev.name}</span>
               <ElButton size="small" text>
                 配置动作
               </ElButton>
@@ -213,7 +216,7 @@ const AdvancedEditor = defineComponent({
     return () => (
       <ElForm labelWidth="80px" size="small">
         <ElFormItem label="节点ID">
-          <code class="assem-node-id">{props.nodeId}</code>
+          <code class={ns.e('node-id')}>{props.nodeId}</code>
         </ElFormItem>
         <ElFormItem label="操作">
           <ElButton

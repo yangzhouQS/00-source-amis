@@ -4,6 +4,12 @@
  */
 import {reactive, ref, h, type UnwrapNestedRefs} from 'vue';
 import type {WidgetConfig, WidgetLike, WidgetType, AreaName} from './types';
+import {useAssemNamespace} from '../hooks/use-assem-namespace';
+
+// BEM 命名空间实例（模块级，骨架层共用）
+const widgetNs = useAssemNamespace('widget');
+const panelNs = useAssemNamespace('panel');
+const dockNs = useAssemNamespace('dock');
 
 interface WidgetState {
   active: boolean;
@@ -56,7 +62,7 @@ export class Widget implements WidgetLike {
       return h(
         'div',
         {
-          class: 'assem-widget-disabled',
+          class: [widgetNs.b(), widgetNs.is('disabled')],
           style: 'opacity:0.4;pointer-events:none'
         },
         [this.renderContent()]
@@ -96,13 +102,13 @@ export class Widget implements WidgetLike {
 const PanelView = (props: {panel: Panel}) => {
   const panel = props.panel;
   const title = panel.config.props?.title;
-  return h('div', {class: 'assem-panel'}, [
+  return h('div', {class: panelNs.b()}, [
     title
-      ? h('div', {class: 'assem-panel-header'}, [
-          h('span', {class: 'assem-panel-title'}, title)
+      ? h('div', {class: panelNs.e('header')}, [
+          h('span', {class: panelNs.e('title')}, title)
         ])
       : null,
-    h('div', {class: 'assem-panel-body'}, [panel.renderBodyContent()])
+    h('div', {class: panelNs.e('body')}, [panel.renderBodyContent()])
   ]);
 };
 
@@ -150,7 +156,7 @@ export class PanelDock extends Widget {
       return h(
         'div',
         {
-          class: 'assem-dock assem-dock-disabled',
+          class: [dockNs.b(), dockNs.is('disabled')],
           title: this.config.props?.description
         },
         [this.renderIcon()]
@@ -159,7 +165,7 @@ export class PanelDock extends Widget {
     return h(
       'div',
       {
-        class: ['assem-dock', {'assem-dock-active': this.panel?.active}],
+        class: [dockNs.b(), this.panel?.active ? dockNs.m('active') : ''],
         title: this.config.props?.description,
         onClick: () => this.togglePanel()
       },
@@ -170,9 +176,9 @@ export class PanelDock extends Widget {
   protected renderIcon(): any {
     const icon = this.config.props?.icon;
     const title = this.config.props?.title;
-    return h('div', {class: 'assem-dock-inner'}, [
+    return h('div', {class: dockNs.e('inner')}, [
       icon ? h(icon) : null,
-      title ? h('span', {class: 'assem-dock-label'}, title) : null
+      title ? h('span', {class: dockNs.e('label')}, title) : null
     ]);
   }
 

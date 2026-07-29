@@ -6,6 +6,10 @@
 import {defineComponent, PropType, computed} from 'vue';
 import {ElInput, ElButton, ElMessage} from 'element-plus';
 import type {Editor} from '../../core/editor';
+import {useAssemNamespace} from '../../hooks/use-assem-namespace';
+import './../pane.less';
+
+const ns = useAssemNamespace('schema-pane');
 
 export const SchemaPane = defineComponent({
   name: 'SchemaPane',
@@ -28,8 +32,8 @@ export const SchemaPane = defineComponent({
     };
 
     return () => (
-      <div class="assem-schema-pane">
-        <div class="assem-schema-toolbar">
+      <div class={ns.b()}>
+        <div class={ns.e('toolbar')}>
           <ElButton
             size="small"
             type="primary"
@@ -49,7 +53,7 @@ export const SchemaPane = defineComponent({
           rows={24}
           modelValue={schemaText.value}
           readonly
-          class="assem-schema-textarea"
+          class={ns.e('textarea')}
         />
       </div>
     );

@@ -19,7 +19,10 @@ import type {IframeBridge} from '../simulator/iframe/iframe-bridge';
 import type {ComponentMapping} from '../simulator/iframe/protocol';
 import {BemTools} from './bem-tools';
 import {CanvasSensor} from './drag/canvas-sensor';
+import {useAssemNamespace} from '../hooks/use-assem-namespace';
 import './iframe-host.less';
+
+const ns = useAssemNamespace('iframe-host');
 
 export const IframeDesignerHost = defineComponent({
   name: 'IframeDesignerHost',
@@ -103,21 +106,21 @@ export const IframeDesignerHost = defineComponent({
     });
 
     return () => (
-      <div class="assem-iframe-designer-host">
+      <div class={ns.b()}>
         <div
-          class="assem-iframe-canvas-wrap"
+          class={ns.e('canvas-wrap')}
           ref={(el: any) =>
             (iframeRef.value = el?.querySelector?.('iframe') ?? iframeRef.value)
           }
         >
           <iframe
             ref={iframeRef}
-            class="assem-iframe-canvas"
+            class={ns.e('canvas')}
             src={props.canvasSrc}
             title="assembox-canvas"
           />
           {!ready.value ? (
-            <div class="assem-iframe-loading">
+            <div class={ns.e('loading')}>
               <ElEmpty description="画布加载中..." imageSize={40} />
             </div>
           ) : null}

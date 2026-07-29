@@ -1,3 +1,6 @@
+﻿import {useAssemNamespace} from '../../hooks/use-assem-namespace';
+const ns = useAssemNamespace('custom-setter');
+
 /**
  * CustomSetter - custom render setter (render fn or component)
  */
@@ -15,7 +18,7 @@ export const CustomSetter = defineComponent({
   setup(props) {
     return () => {
       if (typeof props.render === 'function') {
-        return h('div', {class: 'assem-custom-setter'}, [
+        return h('div', {class: ns.b()}, [
           props.render({
             value: props.value,
             onChange: props.onChange,
@@ -24,7 +27,7 @@ export const CustomSetter = defineComponent({
         ]);
       }
       if (props.component) {
-        return h('div', {class: 'assem-custom-setter'}, [
+        return h('div', {class: ns.b()}, [
           h(props.component as any, {
             value: props.value,
             onChange: props.onChange,
@@ -34,7 +37,7 @@ export const CustomSetter = defineComponent({
       }
       return h(
         'div',
-        {class: 'assem-custom-setter', style: 'color:#909399;font-size:12px'},
+        {class: ns.b(), style: 'color:#909399;font-size:12px'},
         'CustomSetter: no render/component configured'
       );
     };

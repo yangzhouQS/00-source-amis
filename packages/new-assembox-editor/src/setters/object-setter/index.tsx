@@ -1,3 +1,6 @@
+﻿import {useAssemNamespace} from '../../hooks/use-assem-namespace';
+const ns = useAssemNamespace('object-setter');
+
 /**
  * ObjectSetter - object editor
  * Renders child fields from config.items; child setters resolved via SetterRegistry

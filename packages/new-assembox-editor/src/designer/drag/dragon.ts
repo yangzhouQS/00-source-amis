@@ -132,6 +132,8 @@ export class Dragon {
    * @param boostEvent 触发事件（mousedown）
    */
   boost(dragObject: DragObject, boostEvent: MouseEvent): void {
+    // eslint-disable-next-line no-console
+    console.log('[dragon] boost entry, _dragging=', this._dragging);
     if (this._dragging) return;
     this.dragObject = dragObject;
     this._dragging = false;
@@ -213,6 +215,15 @@ export class Dragon {
     const drag = (e: MouseEvent) => {
       const locateEvent = createLocateEvent(e);
       const sensor = chooseSensor(locateEvent);
+      // eslint-disable-next-line no-console
+      console.log(
+        '[dragon] drag sensor=',
+        sensor?.id,
+        'active=',
+        this.activeSensor?.id,
+        'same=',
+        sensor === this.activeSensor
+      );
       if (sensor !== this.activeSensor) {
         this.activeSensor?.deactiveSensor();
         this.activeSensor = sensor;
@@ -252,6 +263,8 @@ export class Dragon {
 
     /** mouseup：结束 */
     const over = () => {
+      // eslint-disable-next-line no-console
+      console.log('[dragon] over() called, _dragging=', this._dragging);
       if (this.dragStateCleanup) {
         this.dragStateCleanup();
         this.dragStateCleanup = null;

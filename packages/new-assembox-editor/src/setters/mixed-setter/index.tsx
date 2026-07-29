@@ -1,3 +1,6 @@
+﻿import {useAssemNamespace} from '../../hooks/use-assem-namespace';
+const ns = useAssemNamespace('mixed-setter');
+
 /**
  * MixedSetter - switch between multiple setters
  */

@@ -68,6 +68,12 @@ function renderNodeInner(
             region: 'body'
           })
         );
+    } else {
+      // 文本型组件（如按钮）：用 props.content/label 作为默认插槽内容
+      const textContent = node.props?.content ?? node.props?.label;
+      if (textContent !== undefined) {
+        slots.default = () => [textContent as any];
+      }
     }
     return h(renderComponent, {...node.props, ...eventHandlers}, slots);
   } else if (Array.isArray(node.body) && node.body.length) {
@@ -143,7 +149,7 @@ export const NodeRenderer = defineComponent({
         'div',
         {
           ref: wrapperRef,
-          class: ['assem-node-wrapper'],
+          class: ['assem-node'],
           style: {...(node.style || {})},
           onClick: (e: MouseEvent) => {
             if (ctx.dragging.value) return;

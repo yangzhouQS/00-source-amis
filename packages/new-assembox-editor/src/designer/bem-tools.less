@@ -6,25 +6,25 @@
   overflow: visible;
 }
 
-.assem-hover-box,
-.assem-select-box {
+.assem-bem-tools__hover-box,
+.assem-bem-tools__select-box {
   position: absolute;
   pointer-events: none;
   box-sizing: border-box;
   transition: all 0.05s linear;
 }
 
-.assem-hover-box {
+.assem-bem-tools__hover-box {
   border: 1px dashed #00b3e8;
   background: rgba(0, 179, 232, 0.06);
 }
 
-.assem-select-box {
+.assem-bem-tools__select-box {
   border: 1px solid var(--color-brand);
   background: rgba(0, 121, 242, 0.06);
 }
 
-.assem-box-label {
+.assem-bem-tools__box-label {
   position: absolute;
   top: -20px;
   left: 0;
@@ -40,11 +40,11 @@
   border-radius: 2px;
 }
 
-.assem-box-label-active {
+.assem-bem-tools__box-label.is-active {
   background: var(--color-brand);
 }
 
-.assem-toolbar {
+.assem-bem-tools__toolbar {
   position: absolute;
   top: -20px;
   right: 0;
@@ -53,7 +53,7 @@
   pointer-events: auto;
 }
 
-.assem-toolbar-btn {
+.assem-bem-tools__toolbar-btn {
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -71,7 +71,7 @@
     background: #0095d6;
   }
 
-  &.assem-toolbar-btn-danger {
+  &.is-danger {
     background: #f4561f;
 
     &:hover {

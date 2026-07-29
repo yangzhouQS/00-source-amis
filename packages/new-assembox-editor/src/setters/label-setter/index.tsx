@@ -1,3 +1,6 @@
+﻿import {useAssemNamespace} from '../../hooks/use-assem-namespace';
+const ns = useAssemNamespace('label-setter');
+
 /**
  * LabelSetter - read-only label display
  */

@@ -14,7 +14,10 @@ import {
 import type {NodeTree} from '../simulator/node-tree';
 import type {EditorStore} from '../core/store';
 import type {NodeId} from '../schema/types';
+import {useAssemNamespace} from '../hooks/use-assem-namespace';
 import './bem-tools.less';
+
+const ns = useAssemNamespace('bem-tools');
 
 interface BoxPos {
   left: number;
@@ -123,8 +126,8 @@ export const BemTools = defineComponent({
         const pos = computePos(hoverId);
         if (pos) {
           boxes.push(
-            <div class="assem-hover-box" style={posStyle(pos)}>
-              <span class="assem-box-label">
+            <div class={ns.e('hover-box')} style={posStyle(pos)}>
+              <span class={ns.e('box-label')}>
                 {props.tree.get(hoverId)?.type}
               </span>
             </div>
@@ -138,13 +141,13 @@ export const BemTools = defineComponent({
         if (pos) {
           const node = props.tree.get(activeId);
           boxes.push(
-            <div class="assem-select-box" style={posStyle(pos)}>
-              <span class="assem-box-label assem-box-label-active">
+            <div class={ns.e('select-box')} style={posStyle(pos)}>
+              <span class={[ns.e('box-label'), ns.is('active')]}>
                 {node?.type} #{activeId.slice(-4)}
               </span>
-              <div class="assem-toolbar">
+              <div class={ns.e('toolbar')}>
                 <button
-                  class="assem-toolbar-btn"
+                  class={ns.e('toolbar-btn')}
                   title="上移"
                   onClick={() => doAction('up', activeId)}
                 >
@@ -153,7 +156,7 @@ export const BemTools = defineComponent({
                   </ElIcon>
                 </button>
                 <button
-                  class="assem-toolbar-btn"
+                  class={ns.e('toolbar-btn')}
                   title="下移"
                   onClick={() => doAction('down', activeId)}
                 >
@@ -162,7 +165,7 @@ export const BemTools = defineComponent({
                   </ElIcon>
                 </button>
                 <button
-                  class="assem-toolbar-btn"
+                  class={ns.e('toolbar-btn')}
                   title="复制"
                   onClick={() => doAction('copy', activeId)}
                 >
@@ -171,7 +174,7 @@ export const BemTools = defineComponent({
                   </ElIcon>
                 </button>
                 <button
-                  class="assem-toolbar-btn assem-toolbar-btn-danger"
+                  class={[ns.e('toolbar-btn'), ns.is('danger')]}
                   title="删除"
                   onClick={() => doAction('delete', activeId)}
                 >
@@ -186,7 +189,7 @@ export const BemTools = defineComponent({
       }
 
       void container;
-      return <div class="assem-bem-tools">{boxes}</div>;
+      return <div class={ns.b()}>{boxes}</div>;
     };
   }
 });

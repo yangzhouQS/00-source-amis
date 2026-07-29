@@ -1,13 +1,16 @@
 /**
  * 组件库面板（拖拽源）
  * 从 ComponentRegistry 读取，按 group/category 分组
- * 支持拖入画布（DnD）与点击插入
+ * 支持拖入画布（DnD）与点击插入；BEM 类名（component-pane block）
  */
 import {defineComponent, PropType} from 'vue';
 import {ElCollapse, ElCollapseItem, ElEmpty, ElIcon} from 'element-plus';
 import type {Editor} from '../../core/editor';
 import type {ComponentMeta} from '../../schema/types';
+import {useAssemNamespace} from '../../hooks/use-assem-namespace';
 import './../pane.less';
+
+const ns = useAssemNamespace('component-pane');
 
 export const ComponentsPane = defineComponent({
   name: 'ComponentsPane',
@@ -15,12 +18,10 @@ export const ComponentsPane = defineComponent({
     editor: {type: Object as PropType<Editor>, required: true}
   },
   setup(props) {
-    /** 拖拽开始（自模拟引擎，mousedown 触发） */
     const onMouseDown = (e: MouseEvent, meta: ComponentMeta) => {
       props.editor.startComponentDrag(e, meta.type);
     };
 
-    /** 点击插入到根 */
     const onClickInsert = (meta: ComponentMeta) => {
       const node = props.editor.componentRegistry.createNode(meta.type);
       if (node) {
@@ -32,14 +33,14 @@ export const ComponentsPane = defineComponent({
       const groups = props.editor.componentRegistry.groupForPalette();
       if (groups.size === 0) {
         return (
-          <div class="assem-components-pane">
+          <div class={ns.b()}>
             <ElEmpty description="暂无组件，请注册组件" imageSize={60} />
           </div>
         );
       }
       const groupList = Array.from(groups.entries());
       return (
-        <div class="assem-components-pane">
+        <div class={ns.b()}>
           {groupList.length > 1 ? (
             <ElCollapse modelValue={groupList.map(g => g[0])}>
               {groupList.map(([groupName, categories]) => (
@@ -71,21 +72,21 @@ function renderCategories(
   onClickInsert: (m: ComponentMeta) => void
 ) {
   return Array.from(categories.entries()).map(([catName, items]) => (
-    <div class="assem-category" key={catName}>
-      <div class="assem-category-title">{catName}</div>
-      <div class="assem-category-grid">
+    <div class={ns.e('category')} key={catName}>
+      <div class={ns.e('category-title')}>{catName}</div>
+      <div class={ns.e('category-grid')}>
         {items.map(meta => (
           <div
             key={meta.type}
-            class="assem-component-item"
+            class={ns.e('item')}
             onMousedown={(e: MouseEvent) => onMouseDown(e, meta)}
             onClick={() => onClickInsert(meta)}
             title={meta.description || meta.name}
           >
-            <ElIcon class="assem-component-icon">
+            <ElIcon class={ns.e('icon')}>
               {meta.icon ? <meta.icon /> : <span>·</span>}
             </ElIcon>
-            <span class="assem-component-name">{meta.name}</span>
+            <span class={ns.e('name')}>{meta.name}</span>
           </div>
         ))}
       </div>

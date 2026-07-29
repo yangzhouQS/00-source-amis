@@ -1,10 +1,13 @@
 /**
  * 区域渲染组件
  * 读取 skeleton.<area>.container.items 响应式渲染
- * 保留旧版验证过的布局结构
+ * 保留旧版验证过的布局结构；类名统一 BEM（workbench block 的 element）
  */
 import {defineComponent, PropType, computed} from 'vue';
 import type {Area} from '../skeleton';
+import {useAssemNamespace} from '../../hooks/use-assem-namespace';
+
+const ns = useAssemNamespace('workbench');
 
 /** 顶部区域 */
 export const TopArea = defineComponent({
@@ -15,7 +18,7 @@ export const TopArea = defineComponent({
     return () => {
       if (isEmpty.value || !props.area.visible.value) return null;
       return (
-        <div class="editor-top-area editor-area-visible">
+        <div class={[ns.e('top-area'), ns.is('visible')]}>
           {props.area.container.items.map(w => w.content)}
         </div>
       );
@@ -42,9 +45,9 @@ export const LeftArea = defineComponent({
       if (isEmpty.value || !props.area.visible.value) return null;
       const {top, bottom} = groups.value;
       return (
-        <div class="editor-left-area">
-          <div class="editor-left-area-top">{top}</div>
-          <div class="editor-left-area-bottom">{bottom}</div>
+        <div class={ns.e('left-area')}>
+          <div class={ns.e('left-area-top')}>{top}</div>
+          <div class={ns.e('left-area-bottom')}>{bottom}</div>
         </div>
       );
     };
@@ -61,7 +64,9 @@ export const LeftFixedPane = defineComponent({
       if (props.area.container.isEmpty() || !props.area.visible.value)
         return null;
       return (
-        <div class={['editor-left-fixed-pane', {'d-none': !hasActive.value}]}>
+        <div
+          class={[ns.e('left-fixed-pane'), ns.is('hidden', !hasActive.value)]}
+        >
           {props.area.container.items.map(w => w.content)}
         </div>
       );
@@ -79,7 +84,9 @@ export const LeftFloatPane = defineComponent({
       if (props.area.container.isEmpty() || !props.area.visible.value)
         return null;
       return (
-        <div class={['editor-left-float-pane', {'d-none': !hasActive.value}]}>
+        <div
+          class={[ns.e('left-float-pane'), ns.is('hidden', !hasActive.value)]}
+        >
           {props.area.container.items.map(w => w.content)}
         </div>
       );
@@ -93,8 +100,8 @@ export const MainArea = defineComponent({
   props: {area: {type: Object as PropType<Area>, required: true}},
   setup(props) {
     return () => (
-      <div class="editor-main-area">
-        <div class="design-container">
+      <div class={ns.e('main-area')}>
+        <div class={ns.e('design-container')}>
           {props.area.container.items.map(w => w.content)}
         </div>
       </div>
@@ -111,7 +118,7 @@ export const RightArea = defineComponent({
   },
   setup(props) {
     return () => (
-      <div class={['editor-right-area', {hidden: !props.visible}]}>
+      <div class={[ns.e('right-area'), ns.is('hidden', !props.visible)]}>
         {props.area.container.items.map(w => w.content)}
       </div>
     );

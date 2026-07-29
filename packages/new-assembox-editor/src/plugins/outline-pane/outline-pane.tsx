@@ -7,7 +7,10 @@ import {defineComponent, PropType, ref} from 'vue';
 import {ElTree} from 'element-plus';
 import type {Editor} from '../../core/editor';
 import type {OutlineNode} from '../../core/store';
+import {useAssemNamespace} from '../../hooks/use-assem-namespace';
 import './../pane.less';
+
+const ns = useAssemNamespace('outline-pane');
 
 export const OutlinePane = defineComponent({
   name: 'OutlinePane',
@@ -30,7 +33,7 @@ export const OutlinePane = defineComponent({
     return () => {
       const data = props.editor.store.outline.value;
       return (
-        <div class="assem-outline-pane">
+        <div class={ns.b()}>
           <ElTree
             data={[data]}
             props={treeProps}

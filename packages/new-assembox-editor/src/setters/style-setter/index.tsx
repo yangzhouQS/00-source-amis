@@ -1,3 +1,6 @@
+﻿import {useAssemNamespace} from '../../hooks/use-assem-namespace';
+const ns = useAssemNamespace('style-setter');
+
 /**
  * StyleSetter - CSS style editor (grouped panels)
  */
@@ -82,7 +85,7 @@ export const StyleSetter = defineComponent({
       ) : null;
 
     return () => (
-      <div class="assem-style-setter">
+      <div class={ns.b()}>
         <ElCollapse modelValue={['layout', 'font', 'border', 'position']}>
           <ElCollapseItem title="Layout" name="layout">
             <ElForm labelWidth="80px" size="small" disabled={props.disabled}>

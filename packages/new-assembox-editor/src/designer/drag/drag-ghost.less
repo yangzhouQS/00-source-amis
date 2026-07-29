@@ -1,4 +1,4 @@
-.assem-drag-ghost-group {
+.assem-drag-ghost {
   position: fixed;
   z-index: 99999;
   box-sizing: border-box;
@@ -15,15 +15,15 @@
   transform: translate(8px, 8px);
 }
 
-.assem-drag-ghost {
+.assem-drag-ghost__inner {
   padding: 4px 8px;
+}
 
-  .assem-drag-ghost-title {
-    overflow: hidden;
-    font-size: 12px;
-    color: #fff;
-    text-align: center;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+.assem-drag-ghost__title {
+  overflow: hidden;
+  font-size: 12px;
+  color: #fff;
+  text-align: center;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }

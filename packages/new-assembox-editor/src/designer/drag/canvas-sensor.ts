@@ -157,6 +157,16 @@ export class CanvasSensor implements DragSensor {
   } {
     const containerEl = this.tree.getEl(containerId);
     const containerRect = containerEl?.getBoundingClientRect();
+    // eslint-disable-next-line no-console
+    console.log('[sensor] computeIndicator', {
+      containerId,
+      hasEl: !!containerEl,
+      elConnected: containerEl ? containerEl.isConnected : 'no-el',
+      treeSize: this.tree.all().length,
+      rect: containerRect
+        ? {l: containerRect.left, t: containerRect.top, w: containerRect.width}
+        : null
+    });
     const children = this.tree
       .getChildren(containerId)
       .filter(inst => inst.parentRegion === 'body')

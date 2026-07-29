@@ -1,3 +1,6 @@
+﻿import {useAssemNamespace} from '../../hooks/use-assem-namespace';
+const ns = useAssemNamespace('array-setter');
+
 /**
  * ArraySetter - array editor (add/remove/sort items, itemSetter for children)
  */

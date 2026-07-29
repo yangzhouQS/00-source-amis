@@ -15,6 +15,7 @@ import {
 } from './layouts/areas';
 import {DragGhost} from '../designer/drag/drag-ghost';
 import type {Editor} from '../core/editor';
+import {useAssemNamespace} from '../hooks/use-assem-namespace';
 import './styles/workbench.less';
 
 export interface WorkbenchProps {
@@ -31,10 +32,11 @@ export const Workbench = defineComponent({
     editor: {type: Object as PropType<Editor>, default: null}
   },
   setup(props) {
+    const ns = useAssemNamespace('workbench');
     return () => (
-      <div class="editor-workbench">
+      <div class={ns.b()}>
         <TopArea area={props.skeleton.topArea} />
-        <div class="editor-workbench-body">
+        <div class={ns.e('body')}>
           {/* 左侧图标轨道 */}
           <LeftArea area={props.skeleton.leftArea} />
           {/* 左侧固定面板 */}

@@ -14,7 +14,10 @@ import {
 import {BemTools} from './bem-tools';
 import {CanvasSensor} from './drag/canvas-sensor';
 import {ref as vueRef} from 'vue';
+import {useAssemNamespace} from '../hooks/use-assem-namespace';
 import './designer-host.less';
+
+const ns = useAssemNamespace('designer');
 
 export const DesignerHost = defineComponent({
   name: 'DesignerHost',
@@ -66,10 +69,10 @@ export const DesignerHost = defineComponent({
       const schema = props.editor.store.schemaRef.value;
       const isEmpty = !schema.body || schema.body.length === 0;
       return (
-        <div class="assem-designer-host">
-          <div class="assem-canvas" ref={canvasRef}>
+        <div class={ns.b()}>
+          <div class={ns.e('canvas')} ref={canvasRef}>
             {isEmpty ? (
-              <div class="assem-canvas-empty">
+              <div class={ns.e('canvas-empty')}>
                 <ElEmpty description="从左侧组件库拖入组件开始搭建" />
               </div>
             ) : (

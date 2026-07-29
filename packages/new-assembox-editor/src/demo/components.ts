@@ -31,11 +31,11 @@ export const demoComponents: ComponentMeta[] = [
     scaffold: {
       type: 'button',
       label: '按钮',
-      props: {type: 'primary', text: '按钮'}
+      props: {type: 'primary', content: '按钮'}
     },
     props: [
       {
-        name: 'text',
+        name: 'content',
         title: '按钮文字',
         propType: 'string',
         defaultValue: '按钮'
@@ -105,9 +105,14 @@ export const demoComponents: ComponentMeta[] = [
     icon: Star,
     category: '基础组件',
     group: '组件库',
-    scaffold: {type: 'tag', props: {text: '标签'}},
+    scaffold: {type: 'tag', props: {content: '标签'}},
     props: [
-      {name: 'text', title: '文本', propType: 'string', defaultValue: '标签'},
+      {
+        name: 'content',
+        title: '文本',
+        propType: 'string',
+        defaultValue: '标签'
+      },
       {
         name: 'type',
         title: '类型',

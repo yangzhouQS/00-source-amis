@@ -1,9 +1,9 @@
-.assem-icon-picker {
+﻿.assem-icon-picker {
   max-height: 360px;
   overflow-y: auto;
 }
 
-.assem-icon-grid {
+.assem-icon-picker__grid {
   display: grid;
   grid-template-columns: repeat(6, 1fr);
   gap: 4px;
@@ -12,7 +12,7 @@
   list-style: none;
 }
 
-.assem-icon-cell {
+.assem-icon-picker__cell {
   display: flex;
   flex-direction: column;
   align-items: center;
@@ -41,7 +41,7 @@
     font-size: 20px;
   }
 
-  .assem-icon-name {
+  .assem-icon-picker__name {
     max-width: 100%;
     overflow: hidden;
     font-size: 10px;
@@ -52,7 +52,7 @@
   }
 }
 
-.assem-icon-empty {
+.assem-icon-picker__empty {
   padding: 24px;
   font-size: 12px;
   color: #909399;

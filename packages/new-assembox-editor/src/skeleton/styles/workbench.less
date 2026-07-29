@@ -37,17 +37,18 @@ body {
   box-sizing: border-box;
 }
 
-.d-none {
+.d-none,
+.is-hidden {
   display: none !important;
 }
 
-.editor-workbench {
+.assem-workbench {
   display: flex;
   flex-direction: column;
   height: 100%;
   background-color: #edeff3;
 
-  .editor-top-area {
+  .assem-workbench__top-area {
     display: flex;
     width: 100%;
     height: var(--top-area-height);
@@ -58,13 +59,13 @@ body {
     align-items: center;
   }
 
-  .editor-workbench-body {
+  .assem-workbench__body {
     position: relative;
     display: flex;
     flex: 1;
     min-height: 0;
 
-    .editor-left-area {
+    .assem-workbench__left-area {
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -74,16 +75,16 @@ body {
       background-color: var(--color-pane-background);
       border-right: 1px solid var(--color-border);
 
-      .editor-left-area-top,
-      .editor-left-area-bottom {
+      .assem-workbench__left-area-top,
+      .assem-workbench__left-area-bottom {
         display: flex;
         flex-direction: column;
         align-items: center;
       }
     }
 
-    .editor-left-fixed-pane,
-    .editor-left-float-pane {
+    .assem-workbench__left-fixed-pane,
+    .assem-workbench__left-float-pane {
       flex-shrink: 0;
       width: var(--dock-fixed-pane-width);
       height: 100%;
@@ -92,21 +93,21 @@ body {
       overflow: hidden;
     }
 
-    .editor-left-float-pane {
+    .assem-workbench__left-float-pane {
       position: absolute;
       z-index: 10;
       left: var(--left-area-width);
       box-shadow: 2px 0 8px rgba(0, 0, 0, 0.08);
     }
 
-    .editor-main-area {
+    .assem-workbench__main-area {
       position: relative;
       flex: 1;
       height: 100%;
       overflow: hidden;
       padding: 10px;
 
-      .design-container {
+      .assem-workbench__design-container {
         position: relative;
         width: 100%;
         height: 100%;
@@ -117,7 +118,7 @@ body {
       }
     }
 
-    .editor-right-area {
+    .assem-workbench__right-area {
       position: relative;
       flex-shrink: 0;
       width: var(--right-area-width);
@@ -127,7 +128,7 @@ body {
       transition: width 0.3s;
       overflow: hidden;
 
-      &.hidden {
+      &.is-hidden {
         width: 0;
         border-left: none;
       }
@@ -141,7 +142,7 @@ body {
   flex-direction: column;
   height: 100%;
 
-  .assem-panel-header {
+  .assem-panel__header {
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -150,13 +151,13 @@ body {
     border-bottom: 1px solid var(--color-border);
     flex-shrink: 0;
 
-    .assem-panel-title {
+    .assem-panel__title {
       font-size: var(--font-size-label);
       font-weight: 600;
     }
   }
 
-  .assem-panel-body {
+  .assem-panel__body {
     flex: 1;
     overflow: auto;
     min-height: 0;
@@ -179,23 +180,23 @@ body {
     background-color: var(--color-hover);
   }
 
-  &.assem-dock-active {
+  &.assem-dock--active {
     color: var(--color-brand);
     background-color: var(--color-brand-light);
   }
 
-  &.assem-dock-disabled {
+  &.is-disabled {
     opacity: 0.4;
     cursor: not-allowed;
   }
 
-  .assem-dock-inner {
+  .assem-dock__inner {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 2px;
 
-    .assem-dock-label {
+    .assem-dock__label {
       font-size: 10px;
       line-height: 1;
     }

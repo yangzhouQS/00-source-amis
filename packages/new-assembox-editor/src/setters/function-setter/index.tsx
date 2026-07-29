@@ -5,7 +5,10 @@
 import {defineComponent, ref, computed} from 'vue';
 import {ElButton, ElMessage, ElDialog} from 'element-plus';
 import {FullScreen, Check} from '@element-plus/icons-vue';
+import {useAssemNamespace} from '../../hooks/use-assem-namespace';
 import './function-setter.less';
+
+const ns = useAssemNamespace('function-setter');
 
 export const FunctionSetter = defineComponent({
   name: 'FunctionSetter',
@@ -43,10 +46,10 @@ export const FunctionSetter = defineComponent({
     };
 
     return () => (
-      <div class="assem-function-setter">
-        <div class="assem-code-editor" style={{height: `${props.height}px`}}>
+      <div class={ns.b()}>
+        <div class={ns.e('code-editor')} style={{height: `${props.height}px`}}>
           <textarea
-            class="assem-code-textarea"
+            class={ns.e('code-textarea')}
             disabled={props.disabled}
             value={displayValue.value}
             onInput={(e: Event) =>
@@ -55,7 +58,7 @@ export const FunctionSetter = defineComponent({
             placeholder={`// ${props.language}`}
           />
         </div>
-        <div class="assem-function-actions">
+        <div class={ns.e('actions')}>
           <ElButton
             size="small"
             type="primary"
@@ -87,9 +90,9 @@ export const FunctionSetter = defineComponent({
             destroyOnClose
             appendToBody
           >
-            <div class="assem-code-editor assem-code-editor-fullscreen">
+            <div class={[ns.e('code-editor'), ns.m('fullscreen')]}>
               <textarea
-                class="assem-code-textarea"
+                class={ns.e('code-textarea')}
                 value={draft.value}
                 onInput={(e: Event) =>
                   onInput((e.target as HTMLTextAreaElement).value)

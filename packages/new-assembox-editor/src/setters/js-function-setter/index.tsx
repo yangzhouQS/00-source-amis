@@ -1,3 +1,6 @@
+﻿import {useAssemNamespace} from '../../hooks/use-assem-namespace';
+const ns = useAssemNamespace('js-function-setter');
+
 /**
  * JSFunctionSetter - JS function editor
  * Distinct from FunctionSetter (generic code string): this edits a *function* with
@@ -205,11 +208,11 @@ export const JSFunctionSetter = defineComponent({
 
     const renderEditor = (fullHeight?: number) => (
       <div
-        class="jsfn-editor"
+        class="assem-js-function-setter__editor"
         style={fullHeight ? {height: `${fullHeight}px`} : undefined}
       >
         <textarea
-          class="jsfn-code-textarea"
+          class="assem-js-function-setter__code-textarea"
           disabled={props.disabled}
           value={body.value}
           onInput={(e: Event) =>
@@ -221,11 +224,11 @@ export const JSFunctionSetter = defineComponent({
     );
 
     const renderParams = () => (
-      <div class="jsfn-params">
-        <div class="jsfn-params-label">Params:</div>
-        <div class="jsfn-params-list">
+      <div class="assem-js-function-setter__params">
+        <div class="assem-js-function-setter__params-label">Params:</div>
+        <div class="assem-js-function-setter__params-list">
           {params.value.map((p, i) => (
-            <div class="jsfn-param-item" key={i}>
+            <div class="assem-js-function-setter__param-item" key={i}>
               <ElInput
                 modelValue={p}
                 size="small"
@@ -253,7 +256,7 @@ export const JSFunctionSetter = defineComponent({
     );
 
     const renderTestRun = () => (
-      <div class="jsfn-test">
+      <div class="assem-js-function-setter__test">
         <ElFormItem label="Mock args">
           <ElInput
             type="textarea"
@@ -262,10 +265,10 @@ export const JSFunctionSetter = defineComponent({
             disabled={props.disabled}
             placeholder='one JSON per line, e.g. {"name":"test"}'
             onUpdate:modelValue={(v: string) => (mockArgsText.value = v)}
-            class="jsfn-mock-input"
+            class={ns.e('mock-input')}
           />
         </ElFormItem>
-        <div class="jsfn-test-actions">
+        <div class="assem-js-function-setter__test-actions">
           <ElButton
             size="small"
             type="primary"
@@ -287,18 +290,18 @@ export const JSFunctionSetter = defineComponent({
             }
             showIcon
             closable={false}
-            class="jsfn-test-result"
+            class="assem-js-function-setter__test-result"
           />
         )}
       </div>
     );
 
     return () => (
-      <div class="jsfn-setter">
-        <div class="jsfn-signature">{signature.value}</div>
+      <div class="assem-js-function-setter">
+        <div class="assem-js-function-setter__signature">{signature.value}</div>
         {renderParams()}
         {renderEditor(props.height)}
-        <div class="jsfn-actions">
+        <div class="assem-js-function-setter__actions">
           <ElButton
             size="small"
             type="primary"
@@ -328,7 +331,7 @@ export const JSFunctionSetter = defineComponent({
             destroyOnClose
             appendToBody
           >
-            <div class="jsfn-fullscreen-body">
+            <div class="assem-js-function-setter__fullscreen-body">
               {renderParams()}
               {renderEditor(360)}
             </div>
