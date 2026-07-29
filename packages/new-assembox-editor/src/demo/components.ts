@@ -124,6 +124,7 @@ export const demoComponents: ComponentMeta[] = [
         defaultValue: 'primary'
       }
     ],
+    liveTextEditing: [{propTarget: 'content', selector: '.el-tag__content'}],
     renderComponent: ElTag
   },
   {
