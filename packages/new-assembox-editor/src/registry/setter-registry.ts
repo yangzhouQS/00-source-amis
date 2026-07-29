@@ -15,6 +15,11 @@ export class SetterRegistry {
     this.map.set(name, component);
   }
 
+  /** 取消注册 */
+  unregister(name: string): boolean {
+    return this.map.delete(name);
+  }
+
   /** 批量注册 */
   registerAll(setters: SetterMeta[]): void {
     setters.forEach(s => this.register(s.name, s.component));
