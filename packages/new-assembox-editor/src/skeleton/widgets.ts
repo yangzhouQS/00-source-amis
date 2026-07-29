@@ -2,7 +2,7 @@
  * Widget / Panel / PanelDock / Dock 实现
  * 响应式驱动渲染；Panel 标题栏支持 fix/float 切换 + close
  */
-import {reactive, ref, h, type UnwrapNestedRefs} from 'vue';
+import {reactive, ref, h, shallowReactive, type UnwrapNestedRefs} from 'vue';
 import type {WidgetConfig, WidgetLike, WidgetType, AreaName} from './types';
 import type {Skeleton} from './skeleton';
 import {useAssemNamespace} from '../hooks/use-assem-namespace';
@@ -279,7 +279,7 @@ export class Dock extends Widget {
 
 /** Widget 容器（管理一个区域内的 widgets） */
 export class WidgetContainer {
-  items: Widget[] = [];
+  items = shallowReactive<Widget[]>([]);
   maps = new Map<string, Widget>();
   /** 当前激活的 widget（互斥区域用） */
   current = ref<Widget | null>(null);
