@@ -3,8 +3,8 @@
  * 读取 skeleton.<area>.container.items 响应式渲染
  * TopArea 支持 left/center/right 三槽；LeftFloatPane 接入 FocusTracker 失焦关闭
  */
-import {defineComponent, PropType, computed, ref} from 'vue';
-import type {Area} from '../skeleton';
+import {defineComponent, PropType, computed, ref, inject} from 'vue';
+import type {Area, Skeleton} from '../skeleton';
 import {useAssemNamespace} from '../../hooks/use-assem-namespace';
 import {useFocusOut} from '../focus-tracker';
 
@@ -76,15 +76,14 @@ export const LeftFixedPane = defineComponent({
   name: 'LeftFixedPane',
   props: {area: {type: Object as PropType<Area>, required: true}},
   setup(props) {
-    const hasActive = computed(() => !!props.area.container.current.value);
+    const skeleton = inject<Skeleton>('assem-skeleton');
     return () => {
-      if (props.area.container.isEmpty() || !props.area.visible.value)
-        return null;
+      const area = skeleton?.getArea(props.area.name) ?? props.area;
+      if (area.container.isEmpty() || !area.visible.value) return null;
+      if (!area.container.items.some(w => w.active)) return null;
       return (
-        <div
-          class={[ns.e('left-fixed-pane'), ns.is('hidden', !hasActive.value)]}
-        >
-          {props.area.container.items.map(w => w.content)}
+        <div class={ns.e('left-fixed-pane')}>
+          {area.container.items.map(w => w.content)}
         </div>
       );
     };
@@ -96,14 +95,15 @@ export const LeftFloatPane = defineComponent({
   name: 'LeftFloatPane',
   props: {area: {type: Object as PropType<Area>, required: true}},
   setup(props) {
+    const skeleton = inject<Skeleton>('assem-skeleton');
     const paneEl = ref<HTMLElement | null>(null);
-    const hasActive = computed(() => !!props.area.container.current.value);
 
     useFocusOut(
       paneEl,
       () => {
-        const cur = props.area.container.current.value;
-        if (cur) props.area.container.unactive(cur as any);
+        const area = skeleton?.getArea(props.area.name);
+        const cur = area?.container.getCurrent();
+        if (cur) area?.container.unactive(cur as any);
       },
       target => {
         // 保护范围：左侧 dock 图标栏（点击切换而非关闭）
@@ -112,14 +112,12 @@ export const LeftFloatPane = defineComponent({
     );
 
     return () => {
-      if (props.area.container.isEmpty() || !props.area.visible.value)
-        return null;
+      const area = skeleton?.getArea(props.area.name) ?? props.area;
+      if (area.container.isEmpty() || !area.visible.value) return null;
+      if (!area.container.items.some(w => w.active)) return null;
       return (
-        <div
-          ref={paneEl}
-          class={[ns.e('left-float-pane'), ns.is('hidden', !hasActive.value)]}
-        >
-          {props.area.container.items.map(w => w.content)}
+        <div ref={paneEl} class={ns.e('left-float-pane')}>
+          {area.container.items.map(w => w.content)}
         </div>
       );
     };

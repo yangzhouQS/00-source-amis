@@ -17,9 +17,9 @@ class AreaImpl implements Area {
   readonly name: AreaName;
   readonly container: WidgetContainer;
   readonly visible;
-  constructor(name: AreaName, exclusive = false) {
+  constructor(skeleton: Skeleton, name: AreaName, exclusive = false) {
     this.name = name;
-    this.container = new WidgetContainer(name, exclusive);
+    this.container = new WidgetContainer(name, exclusive, skeleton);
     this.visible = {value: true};
   }
 }
@@ -37,13 +37,13 @@ export class Skeleton {
   readonly panelMap = new Map<string, Panel>();
 
   constructor() {
-    this.topArea = new AreaImpl('topArea');
-    this.leftArea = new AreaImpl('leftArea');
-    this.leftFixedArea = new AreaImpl('leftFixedArea', true); // 互斥
-    this.leftFloatArea = new AreaImpl('leftFloatArea', true); // 互斥
-    this.centerArea = new AreaImpl('centerArea');
-    this.rightArea = new AreaImpl('rightArea');
-    this.bottomArea = new AreaImpl('bottomArea');
+    this.topArea = new AreaImpl(this, 'topArea');
+    this.leftArea = new AreaImpl(this, 'leftArea');
+    this.leftFixedArea = new AreaImpl(this, 'leftFixedArea', true); // 互斥
+    this.leftFloatArea = new AreaImpl(this, 'leftFloatArea', true); // 互斥
+    this.centerArea = new AreaImpl(this, 'centerArea');
+    this.rightArea = new AreaImpl(this, 'rightArea');
+    this.bottomArea = new AreaImpl(this, 'bottomArea');
   }
 
   /** 区域查找 */

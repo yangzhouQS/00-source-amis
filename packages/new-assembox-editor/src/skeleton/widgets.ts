@@ -2,7 +2,17 @@
  * Widget / Panel / PanelDock / Dock 实现
  * 响应式驱动渲染；Panel 标题栏支持 fix/float 切换 + close
  */
-import {reactive, ref, h, shallowReactive, type UnwrapNestedRefs} from 'vue';
+import {
+  reactive,
+  ref,
+  h,
+  shallowReactive,
+  shallowRef,
+  inject,
+  defineComponent,
+  type PropType,
+  type UnwrapNestedRefs
+} from 'vue';
 import type {WidgetConfig, WidgetLike, WidgetType, AreaName} from './types';
 import type {Skeleton} from './skeleton';
 import {useAssemNamespace} from '../hooks/use-assem-namespace';
@@ -106,7 +116,7 @@ export class Widget implements WidgetLike {
 }
 
 /** 面板操作行（fix/float 切换 + close） */
-const PanelOps = (panel: Panel) => {
+const PanelOps = (panel: Panel, skeleton: Skeleton | null) => {
   const cfg = panel.config;
   const floatable = cfg.panelProps?.floatable ?? true;
   const isInFloat = panel.parent?.areaName === 'leftFloatArea';
@@ -120,7 +130,7 @@ const PanelOps = (panel: Panel) => {
           title: isInFloat ? '固定' : '浮动',
           onClick: (e: Event) => {
             e.stopPropagation();
-            panel.skeleton?.toggleFloatStatus(panel);
+            skeleton?.toggleFloatStatus(panel);
           }
         },
         isInFloat ? '★' : '☆'
@@ -135,7 +145,8 @@ const PanelOps = (panel: Panel) => {
         title: '关闭',
         onClick: (e: Event) => {
           e.stopPropagation();
-          panel.parent?.unactive(panel);
+          const areaName = panel.parent?.areaName ?? 'leftFixedArea';
+          skeleton?.getArea(areaName)?.container.unactive(panel);
         }
       },
       '×'
@@ -145,21 +156,27 @@ const PanelOps = (panel: Panel) => {
 };
 
 /** 面板外壳（标题栏 + 操作行 + 内容）函数式组件 */
-const PanelView = (props: {panel: Panel}) => {
-  const panel = props.panel;
-  const cfg = panel.config;
-  const title = cfg.props?.title;
-  const hideTitleBar = cfg.panelProps?.hideTitleBar;
-  return h('div', {class: panelNs.b()}, [
-    title && !hideTitleBar
-      ? h('div', {class: panelNs.e('header')}, [
-          h('span', {class: panelNs.e('title')}, title),
-          PanelOps(panel)
-        ])
-      : null,
-    h('div', {class: panelNs.e('body')}, [panel.renderBodyContent()])
-  ]);
-};
+const PanelView = defineComponent({
+  props: {panel: {type: Object as PropType<Panel>, required: true}},
+  setup(props) {
+    const skeleton = inject<Skeleton | null>('assem-skeleton', null);
+    return () => {
+      const panel = props.panel;
+      const cfg = panel.config;
+      const title = cfg.props?.title;
+      const hideTitleBar = cfg.panelProps?.hideTitleBar;
+      return h('div', {class: panelNs.b()}, [
+        title && !hideTitleBar
+          ? h('div', {class: panelNs.e('header')}, [
+              h('span', {class: panelNs.e('title')}, title),
+              PanelOps(panel, skeleton)
+            ])
+          : null,
+        h('div', {class: panelNs.e('body')}, [panel.renderBodyContent()])
+      ]);
+    };
+  }
+});
 
 /** 面板（带标题，激活时渲染内容） */
 export class Panel extends Widget {
@@ -237,13 +254,16 @@ export class PanelDock extends Widget {
 
   togglePanel(): void {
     const p = this.panel;
-    if (!p?.parent) {
-      p?.toggle();
+    if (!p) return;
+    const areaName = p.parent?.areaName ?? 'leftFixedArea';
+    const container = p.skeleton?.getArea(areaName)?.container ?? p.parent;
+    if (!container) {
+      p.toggle();
       return;
     }
     // 通过容器 active/unactive 实现互斥 + current 更新
-    if (p.active) p.parent.unactive(p);
-    else p.parent.active(p);
+    if (p.active) container.unactive(p);
+    else container.active(p);
   }
 }
 
@@ -282,14 +302,21 @@ export class WidgetContainer {
   items = shallowReactive<Widget[]>([]);
   maps = new Map<string, Widget>();
   /** 当前激活的 widget（互斥区域用） */
-  current = ref<Widget | null>(null);
+  current = shallowRef<Widget | null>(null);
   exclusive: boolean;
   /** 所属区域名（面板操作行判断 fixed/float 用） */
   areaName: AreaName;
+  /** 所属骨架实例（add 时注入给 widget，保证引用正确） */
+  skeleton: Skeleton | null;
 
-  constructor(areaName: AreaName, exclusive = false) {
+  constructor(
+    areaName: AreaName,
+    exclusive = false,
+    skeleton: Skeleton | null = null
+  ) {
     this.areaName = areaName;
     this.exclusive = exclusive;
+    this.skeleton = skeleton;
   }
 
   /** 取 widget 的排序 index（越小越靠前） */
@@ -316,6 +343,7 @@ export class WidgetContainer {
     }
     this.maps.set(item.name, item);
     item.parent = this;
+    item.skeleton = this.skeleton ?? item.skeleton;
     return item;
   }
 
@@ -349,6 +377,11 @@ export class WidgetContainer {
     if (!target) return;
     target.setActive(false);
     if (this.current.value === target) this.current.value = null;
+  }
+
+  /** 获取当前激活 widget（封装 ref.value 读取，确保 Vue 追踪依赖） */
+  getCurrent(): Widget | null {
+    return this.current.value;
   }
 
   isEmpty(): boolean {

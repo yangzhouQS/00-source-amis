@@ -2,7 +2,7 @@
  * Workbench 根组件
  * 保留旧版验证过的布局结构，通过响应式驱动渲染（无需全量 refresh）
  */
-import {defineComponent, PropType} from 'vue';
+import {defineComponent, PropType, provide} from 'vue';
 import type {Skeleton} from './skeleton';
 import type {EditorStore} from '../core/store';
 import {
@@ -34,6 +34,7 @@ export const Workbench = defineComponent({
   },
   setup(props) {
     const ns = useAssemNamespace('workbench');
+    provide('assem-skeleton', props.skeleton);
     return () => (
       <div class={ns.b()}>
         <TopArea area={props.skeleton.topArea} />
