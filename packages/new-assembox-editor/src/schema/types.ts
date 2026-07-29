@@ -215,6 +215,18 @@ export interface ComponentMeta {
   disabled?: boolean;
   /** 渲染描述 */
   description?: string;
+  /** 双击原地文本编辑配置（contenteditable） */
+  liveTextEditing?: LiveTextEditingConfig[];
+}
+
+/** 原地文本编辑配置（双击 → contenteditable → blur 保存） */
+export interface LiveTextEditingConfig {
+  /** 要编辑的属性名（如 'text', 'title', 'content'） */
+  propTarget: string;
+  /** CSS selector 定位可编辑 DOM 元素（iframe 画布内） */
+  selector?: string;
+  /** 编辑模式 */
+  mode?: 'plaintext' | 'richtext';
 }
 
 /** Setter 元信息 */

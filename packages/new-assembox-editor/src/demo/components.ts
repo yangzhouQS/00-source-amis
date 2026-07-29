@@ -64,6 +64,7 @@ export const demoComponents: ComponentMeta[] = [
       }
     ],
     events: [{name: 'click', title: '点击', description: '按钮点击'}],
+    liveTextEditing: [{propTarget: 'content', selector: '.el-button'}],
     renderComponent: ElButton
   },
   {

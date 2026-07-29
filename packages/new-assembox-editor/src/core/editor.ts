@@ -22,7 +22,9 @@ import {IframeBridge} from '../simulator/iframe/iframe-bridge';
 import type {SimulatorBridge} from '../simulator/bridge';
 import {Dragon} from '../designer/drag/dragon';
 import {KeyboardManager} from './keyboard-manager';
+import {LiveEditing} from '../designer/live-editing';
 import type {DragObject, DropLocation} from '../designer/drag/types';
+import {getLogger, type Logger} from './logger';
 import * as TOKENS from '../registry/tokens';
 import type {PageSchema, PageNode, NodeId} from '../schema/types';
 import type {PluginContext, EditorPluginObject} from './plugin-types';
@@ -59,8 +61,12 @@ export class Editor {
   readonly canvasMode: 'inline' | 'iframe';
   /** 自模拟拖拽引擎（替代 HTML5 drag，跨 iframe 可靠） */
   readonly dragon: Dragon;
+  /** 日志器（集中管理，按 bizName 隔离） */
+  readonly logger: Logger;
   /** 快捷键管理器 */
   readonly keyboard: KeyboardManager;
+  /** 原地文本编辑 */
+  readonly liveEditing: LiveEditing;
   /** 剪贴板（复制/粘贴用） */
   clipboard: PageNode | null = null;
 
@@ -93,7 +99,10 @@ export class Editor {
         onClick: (id, _e) => this.handleClick(id),
         onHover: id => this.handleHover(id),
         onReady: () => this.handleRenderReady(),
-        onScroll: () => this.handleRenderReady()
+        onScroll: () => this.handleRenderReady(),
+        onDblClick: (nodeId, e, doc) => {
+          this.liveEditing.apply(nodeId, e, doc);
+        }
       });
     } else {
       this.bridge = new InProcessBridge(this.store, this.nodeTree, {
@@ -105,10 +114,14 @@ export class Editor {
 
     // 拖拽引擎（自模拟，跨 iframe 可靠）
     this.dragon = new Dragon();
+    this.logger = getLogger('editor');
     this.wireDragon();
 
     // 快捷键
     this.keyboard = new KeyboardManager(this);
+
+    // 原地编辑
+    this.liveEditing = new LiveEditing(this);
 
     // 注入到 DI 容器（token 化，类型安全）
     this.di.register(TOKENS.EDITOR, this);
@@ -237,6 +250,7 @@ export class Editor {
     this.bus.trigger(EVENT.EDITOR_DESTROY, {});
     this.dragon.destroy();
     this.keyboard.detach();
+    this.liveEditing.dispose();
     this.bridge.dispose?.();
     this.pluginManager.destroy();
     this.nodeTree.clear();

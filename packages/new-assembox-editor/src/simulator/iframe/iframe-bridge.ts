@@ -1,3 +1,4 @@
+﻿const logger = getLogger('iframe-bridge');
 /**
  * IframeBridge —— host 侧 iframe 通信桥
  * 实现 SimulatorBridge，管理 iframe 生命周期 + 直引调用 + 事件路由
@@ -16,6 +17,7 @@ import type {
 } from './protocol';
 import {HOST_CMD, envelope} from './protocol';
 import type {EditorStore} from '../../core/store';
+import {getLogger} from '../../core/logger';
 import * as ops from '../../schema/operations';
 
 export interface IframeBridgeOptions {
@@ -27,6 +29,8 @@ export interface IframeBridgeOptions {
   onReady?: () => void;
   onInstancesUpdated?: (instances: NodeInstance[]) => void;
   onScroll?: (scrollX: number, scrollY: number) => void;
+  /** 双击节点回调（live editing） */
+  onDblClick?: (nodeId: NodeId, event: MouseEvent, doc: Document) => void;
 }
 
 export class IframeBridge implements SimulatorBridge, SimulatorHostApi {
@@ -161,9 +165,24 @@ export class IframeBridge implements SimulatorBridge, SimulatorHostApi {
     };
     doc.addEventListener('click', onDocClick, true);
 
+    // 双击 → live editing
+    const onDocDblClick = (e: MouseEvent) => {
+      const dblTarget = e.target as HTMLElement | null;
+      if (!dblTarget) return;
+      const nodeIdEl = dblTarget.closest(
+        '[data-editor-id]'
+      ) as HTMLElement | null;
+      if (nodeIdEl) {
+        const id = nodeIdEl.getAttribute('data-editor-id')!;
+        this.options.onDblClick?.(id, e, doc);
+      }
+    };
+    doc.addEventListener('dblclick', onDocDblClick, true);
+
     this.eventCleanups.push(() => {
       win.removeEventListener('scroll', onScroll);
       doc.removeEventListener('click', onDocClick, true);
+      doc.removeEventListener('dblclick', onDocDblClick, true);
     });
     // 节点点击/悬浮由 iframe 内 IframeNodeWrapper 通过 hostApi.onNodeClick/onNodeHover 回报
   }
