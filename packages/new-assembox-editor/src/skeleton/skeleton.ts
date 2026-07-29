@@ -36,6 +36,13 @@ export class Skeleton {
   /** 全局面板注册表（name -> panel） */
   readonly panelMap = new Map<string, Panel>();
 
+  /** 配置转换中间件（level 升序执行，插件可创建前改写配置） */
+  private configTransducers: Array<{
+    fn: (config: WidgetConfig) => WidgetConfig;
+    level: number;
+    id: string;
+  }> = [];
+
   constructor() {
     this.topArea = new AreaImpl(this, 'topArea');
     this.leftArea = new AreaImpl(this, 'leftArea');
@@ -82,11 +89,43 @@ export class Skeleton {
     }
   }
 
+  /** 注册配置转换中间件（level 升序执行，允许插件在创建前改写配置） */
+  registerConfigTransducer(
+    fn: (config: WidgetConfig) => WidgetConfig,
+    level = 100,
+    id: string
+  ): void {
+    const idx = this.configTransducers.findIndex(t => t.level > level);
+    const transducer = {fn, level, id};
+    if (idx >= 0) this.configTransducers.splice(idx, 0, transducer);
+    else this.configTransducers.push(transducer);
+  }
+
+  /** 执行配置管道（按 level 升序应用所有中间件） */
+  private runTransducers(config: WidgetConfig): WidgetConfig {
+    return this.configTransducers.reduce((c, t) => t.fn(c), config);
+  }
+
+  /** 恢复面板的浮动/固定偏好（从 localStorage） */
+  private restoreFloatPreference(panelName: string): void {
+    try {
+      const isFloat =
+        localStorage.getItem(`assem-skeleton-${panelName}-float`) === 'true';
+      const panel = this.panelMap.get(panelName);
+      if (panel && isFloat && panel.parent?.areaName !== 'leftFloatArea') {
+        this.toggleFloatStatus(panel);
+      }
+    } catch {
+      /* localStorage 不可用时忽略 */
+    }
+  }
+
   /**
    * 添加 widget 到区域（核心 API）
    * 未指定 area 时按 type 推断；Dock/PanelDock/Panel/Widget 四形态
    */
   add(config: WidgetConfig): Widget {
+    config = this.runTransducers(config);
     const areaName = config.area ?? Skeleton.inferArea(config.type);
     const area = this.getArea(areaName);
     if (!area) throw new Error(`[Skeleton] 区域 "${areaName}" 不存在`);
@@ -146,6 +185,12 @@ export class Skeleton {
     ) {
       dockPanelArea.container.active(dockPanelName);
     }
+
+    // PanelDock：恢复上次的浮动/固定偏好
+    if (config.type === 'PanelDock' && dockPanelName) {
+      this.restoreFloatPreference(dockPanelName);
+    }
+
     return widget;
   }
 
@@ -164,6 +209,15 @@ export class Skeleton {
       this.leftFloatArea.container.add(panel);
       this.leftFloatArea.container.active(panel);
       this.leftFixedArea.container.current.value = null;
+    }
+    // 持久化浮动/固定偏好
+    try {
+      localStorage.setItem(
+        `assem-skeleton-${panel.name}-float`,
+        String(!isInFloat)
+      );
+    } catch {
+      /* localStorage 不可用时忽略 */
     }
   }
 

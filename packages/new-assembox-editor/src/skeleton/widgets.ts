@@ -37,8 +37,6 @@ export class Widget implements WidgetLike {
   readonly area: AreaName;
   readonly config: WidgetConfig;
   readonly state: UnwrapNestedRefs<WidgetState>;
-  /** 联动面板（PanelDock 用） */
-  panel: Panel | null = null;
   /** 所属区域容器引用 */
   parent: WidgetContainer | null = null;
   /** 骨架实例引用（面板操作行用，skeleton.add 时注入） */
@@ -223,11 +221,23 @@ function renderDockIcon(config: WidgetConfig): any {
 
 /** PanelDock（左侧图标按钮 + 联动 Panel） */
 export class PanelDock extends Widget {
-  panel: Panel | null = null;
+  private _panel: Panel | null = null;
+  /** 联动面板名（延迟查找用） */
+  readonly panelName: string;
 
   constructor(config: WidgetConfig, onCreatePanel: (dock: PanelDock) => Panel) {
     super(config);
-    this.panel = onCreatePanel(this);
+    this.panelName = config.panelProps?.panelName ?? `panel_${config.name}`;
+    this._panel = onCreatePanel(this);
+  }
+
+  /** 联动面板（延迟查找：_panel 优先，否则按 panelName 从 skeleton 查找） */
+  get panel(): Panel | null {
+    return this._panel ?? this.skeleton?.getPanel(this.panelName) ?? null;
+  }
+
+  set panel(p: Panel | null) {
+    this._panel = p;
   }
 
   get content(): any {
