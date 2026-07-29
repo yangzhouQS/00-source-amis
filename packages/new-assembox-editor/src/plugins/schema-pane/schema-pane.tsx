@@ -52,7 +52,7 @@ export const SchemaPane = defineComponent({
             复制
           </ElButton>
         </div>
-        <div class={ns.e('editor')} style={{height: 'calc(100% - 40px)'}}>
+        <div class={ns.e('editor')} style={{flex: 1, minHeight: 0}}>
           <VueMonacoEditor
             value={text.value}
             onUpdate:value={(v: string) => (text.value = v)}

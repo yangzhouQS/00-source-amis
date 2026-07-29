@@ -9,6 +9,20 @@ import 'element-plus/dist/index.css';
 import {createEditor, Workbench} from '../index';
 import {registerDemoComponents} from './components';
 
+// Monaco 本地加载（避免 CDN 依赖，代理环境 CDN 不可达）
+import {loader} from '@guolao/vue-monaco-editor';
+import * as monaco from 'monaco-editor';
+import EditorWorker from 'monaco-editor/editor/editor.worker.js?worker';
+import JsonWorker from 'monaco-editor/language/json/json.worker.js?worker';
+
+(self as any).MonacoEnvironment = {
+  getWorker(_workerId: string, label: string) {
+    if (label === 'json') return new JsonWorker();
+    return new EditorWorker();
+  }
+};
+loader.config({monaco});
+
 // 暴露 ElMessage 给动作系统（toast 动作用）
 (window as any).ElMessage = ElMessage;
 
@@ -38,11 +52,18 @@ async function main() {
     }
   });
 
+  // 暴露 editor 便于调试
+  (window as any).editor = editor;
+
   // 3. 注册 demo 组件
   registerDemoComponents(editor.componentRegistry);
 
   // 4. 启动编辑器（激活插件）
   await editor.start();
+
+  // 4.5 注册键盘快捷键
+  const {useEditorShortcuts} = await import('../hooks/use-editor-shortcuts');
+  useEditorShortcuts(editor);
 
   // 5. 挂载 Workbench
   const app = createApp({

@@ -8,6 +8,7 @@ import {SettingsPane} from './settings-pane/settings-pane';
 import {OutlinePane} from './outline-pane/outline-pane';
 import {SchemaPane} from './schema-pane/schema-pane';
 import {HistoryPane} from './history-pane/history-pane';
+import {EditorToolbar} from './editor-toolbar/editor-toolbar';
 import {registerBuiltinSetters} from '../setters';
 import {registerBuiltinActions} from '../actions/builtin-actions';
 import {DesignerHost} from '../designer/designer-host';
@@ -153,7 +154,7 @@ export const schemaPanePlugin: EditorPluginObject = {
         type: 'PanelDock',
         name: 'schemaPaneDock',
         content: SchemaPane,
-        panelProps: {panelName: 'schemaPanePanel', area: 'leftFloatArea'},
+        panelProps: {panelName: 'schemaPanePanel', area: 'leftFixedArea'},
         props: {
           title: '源码',
           icon: DocIcon,
@@ -181,7 +182,7 @@ export const historyPanePlugin: EditorPluginObject = {
         type: 'PanelDock',
         name: 'historyPaneDock',
         content: HistoryPane,
-        panelProps: {panelName: 'historyPanePanel', area: 'leftFloatArea'},
+        panelProps: {panelName: 'historyPanePanel', area: 'leftFixedArea'},
         props: {
           title: '历史',
           icon: Clock,
@@ -230,8 +231,27 @@ export const simulatorSizePlugin: EditorPluginObject = {
 };
 
 /** 所有内置插件 */
+/** 顶部工具栏插件（预览/撤销/节点操作） */
+export const toolbarPlugin: EditorPluginObject = {
+  id: 'builtin-toolbar',
+  name: '工具栏',
+  priority: 100,
+  scene: ['global'],
+  contributes: {
+    skeleton: [
+      {
+        area: 'topArea',
+        type: 'Widget',
+        name: 'EditorToolbar',
+        content: EditorToolbar
+      }
+    ]
+  }
+};
+
 export const builtinPlugins: EditorPluginObject[] = [
   coreRegistryPlugin,
+  toolbarPlugin,
   simulatorSizePlugin,
   designerPlugin,
   componentsPanePlugin,
