@@ -10,8 +10,11 @@ import type {PropType} from '../schema/types';
 export class SetterRegistry {
   private map = new Map<string, VueComponent>();
 
-  /** 注册 setter */
+  /** 注册 setter（重名覆盖并告警） */
   register(name: string, component: VueComponent): void {
+    if (this.map.has(name)) {
+      console.warn(`[SetterRegistry] setter "${name}" 已存在，覆盖`);
+    }
     this.map.set(name, component);
   }
 

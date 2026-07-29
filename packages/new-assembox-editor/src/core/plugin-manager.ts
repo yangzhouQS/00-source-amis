@@ -21,6 +21,8 @@ export class PluginManager {
   private contributed: Array<() => void> = [];
   private ctx: PluginContext | null = null;
   private unsubscribers: Array<() => void> = [];
+  /** 是否已激活（幂等保护） */
+  private activated = false;
 
   constructor(private readonly bus: EventBus) {}
 
@@ -55,8 +57,14 @@ export class PluginManager {
     return {plugin: activated as EditorPluginObject<T>, options};
   }
 
-  /** 激活 */
+  /** 激活（幂等：已激活则忽略，如需重新激活用 reload） */
   async activate(ctx: PluginContext, scene = 'desktop'): Promise<void> {
+    if (this.activated) {
+      console.warn(
+        '[PluginManager] 已激活，重复 activate 被忽略（如需重新激活请用 reload）'
+      );
+      return;
+    }
     this.ctx = ctx;
 
     // 1. 收集 + scene 过滤
@@ -90,6 +98,13 @@ export class PluginManager {
 
     // 5. 绑钩子
     this.bindEventHooks();
+    this.activated = true;
+  }
+
+  /** 重新激活（destroy 当前 + 重新 activate），用于动态增删插件后刷新 */
+  async reload(ctx: PluginContext, scene?: string): Promise<void> {
+    this.destroy();
+    await this.activate(ctx, scene ?? 'desktop');
   }
 
   /** 已激活且 setup 成功的插件（钩子/build* 使用） */
@@ -295,6 +310,7 @@ export class PluginManager {
     this.unsubscribers = [];
     this.failed.clear();
     this.instances = [];
+    this.activated = false;
     this.ctx = null;
   }
 }

@@ -1,7 +1,7 @@
 import {describe, it, expect, vi} from 'vitest';
 import {definePlugin} from '../plugin-types';
 import {PluginManager} from '../plugin-manager';
-import type {EventBus} from '../event-bus';
+import {EventBus} from '../event-bus';
 import type {PluginContext} from '../plugin-types';
 
 // EventBus 极简 stub
@@ -218,5 +218,111 @@ describe('PluginManager contributes 自动应用与反注册', () => {
       'Button'
     );
     expect((ctx.skeleton as any).remove).toHaveBeenCalledWith('panel-x');
+  });
+});
+
+describe('PluginManager scene 多场景', () => {
+  it('scene 数组在任一匹配场景激活', async () => {
+    const setup = vi.fn();
+    const pm = new PluginManager(fakeBus);
+    pm.register(definePlugin({id: 'p', scene: ['desktop', 'mobile'], setup}));
+    await pm.activate(fakeCtx, 'mobile');
+    expect(pm.getPlugin('p')).toBeDefined();
+    expect(setup).toHaveBeenCalled();
+  });
+
+  it('scene 不匹配则不激活', async () => {
+    const pm = new PluginManager(fakeBus);
+    pm.register(definePlugin({id: 'p', scene: 'mobile'}));
+    await pm.activate(fakeCtx, 'desktop');
+    expect(pm.getPlugin('p')).toBeUndefined();
+  });
+});
+
+describe('PluginManager 事件钩子（真实 EventBus）', () => {
+  it('beforeInsert return false 阻止事件', async () => {
+    const bus = new EventBus();
+    const pm = new PluginManager(bus);
+    const beforeInsert = vi.fn((): false => false);
+    pm.register(definePlugin({id: 'p', beforeInsert}));
+    await pm.activate(fakeCtx, 'desktop');
+    const event = bus.trigger('before-insert', {x: 1});
+    expect(beforeInsert).toHaveBeenCalled();
+    expect(event.prevented).toBe(true);
+  });
+
+  it('afterInsert 无返回值不阻止', async () => {
+    const bus = new EventBus();
+    const pm = new PluginManager(bus);
+    const afterInsert = vi.fn();
+    pm.register(definePlugin({id: 'p', afterInsert}));
+    await pm.activate(fakeCtx, 'desktop');
+    const event = bus.trigger('after-insert', {x: 1});
+    expect(afterInsert).toHaveBeenCalled();
+    expect(event.prevented).toBe(false);
+  });
+});
+
+describe('PluginManager 广播收集', () => {
+  it('buildPanels 收集多插件贡献 + 单个抛错隔离', async () => {
+    const pm = new PluginManager(fakeBus);
+    pm.register(
+      definePlugin({
+        id: 'a',
+        buildPanels: (_n, panels) => panels.push({key: 'a', title: 'A'} as any)
+      })
+    );
+    pm.register(
+      definePlugin({
+        id: 'b',
+        buildPanels: () => {
+          throw new Error('boom');
+        }
+      })
+    );
+    pm.register(
+      definePlugin({
+        id: 'c',
+        buildPanels: (_n, panels) => panels.push({key: 'c', title: 'C'} as any)
+      })
+    );
+    await pm.activate(fakeCtx, 'desktop');
+    const panels: any[] = [];
+    pm.buildPanels(null, panels);
+    expect(panels).toEqual([{title: 'A'}, {title: 'C'}]);
+  });
+});
+
+describe('PluginManager activate 幂等', () => {
+  it('重复 activate 被忽略（setup 只调一次）', async () => {
+    const setup = vi.fn();
+    const pm = new PluginManager(fakeBus);
+    pm.register(definePlugin({id: 'p', setup}));
+    await pm.activate(fakeCtx, 'desktop');
+    await pm.activate(fakeCtx, 'desktop');
+    expect(setup).toHaveBeenCalledTimes(1);
+  });
+});
+
+describe('PluginManager reload（动态激活）', () => {
+  it('reload 销毁后重新激活（setup 再调一次）', async () => {
+    const setup = vi.fn();
+    const pm = new PluginManager(fakeBus);
+    pm.register(definePlugin({id: 'p', setup}));
+    await pm.activate(fakeCtx, 'desktop');
+    expect(setup).toHaveBeenCalledTimes(1);
+    await pm.reload(fakeCtx, 'desktop');
+    expect(setup).toHaveBeenCalledTimes(2);
+  });
+
+  it('reload 后动态新增的插件生效', async () => {
+    const pm = new PluginManager(fakeBus);
+    pm.register(definePlugin({id: 'a'}));
+    await pm.activate(fakeCtx, 'desktop');
+    expect(pm.getPlugin('a')).toBeDefined();
+    pm.register(definePlugin({id: 'b'}));
+    expect(pm.getPlugin('b')).toBeUndefined();
+    await pm.reload(fakeCtx, 'desktop');
+    expect(pm.getPlugin('b')).toBeDefined();
   });
 });

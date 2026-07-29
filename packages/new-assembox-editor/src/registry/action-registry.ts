@@ -32,8 +32,11 @@ export interface ActionContext {
 export class ActionRegistry {
   private map = new Map<string, ActionMeta>();
 
-  /** 注册动作 */
+  /** 注册动作（重名覆盖并告警） */
   register(meta: ActionMeta): void {
+    if (this.map.has(meta.actionType)) {
+      console.warn(`[ActionRegistry] 动作 "${meta.actionType}" 已存在，覆盖`);
+    }
     this.map.set(meta.actionType, meta);
   }
 

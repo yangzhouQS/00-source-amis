@@ -16,6 +16,7 @@ import type {
   SetterMeta,
   ActionMeta,
   AssetMeta,
+  PageNode,
   PanelItem,
   ToolbarItem,
   ContextMenuItem
@@ -70,6 +71,8 @@ export interface SkeletonContribution {
 export interface EditorPluginObject<TOptions = any> {
   readonly id: string;
   name?: string;
+  /** 描述（调试/文档友好） */
+  description?: string;
   priority?: number;
   scene?: string | string[];
   dep?: string[];
@@ -86,9 +89,9 @@ export interface EditorPluginObject<TOptions = any> {
   afterDelete?(context: any): void;
   beforeMove?(context: any): void | false | Promise<void | false>;
   afterMove?(context: any): void;
-  buildPanels?(node: any, panels: PanelItem[]): void;
-  buildToolbars?(node: any, toolbars: ToolbarItem[]): void;
-  buildContextMenu?(node: any, menus: ContextMenuItem[]): void;
+  buildPanels?(node: PageNode | null, panels: PanelItem[]): void;
+  buildToolbars?(node: PageNode | null, toolbars: ToolbarItem[]): void;
+  buildContextMenu?(node: PageNode | null, menus: ContextMenuItem[]): void;
 }
 
 /** 工厂函数：类型守卫 + 保留扩展点（默认值注入） */
