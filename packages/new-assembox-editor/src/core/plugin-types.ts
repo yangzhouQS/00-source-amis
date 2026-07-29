@@ -1,11 +1,12 @@
 /**
  * 插件契约与上下文类型定义
- * 借鉴 amis-editor-core 的 PluginInterface + BasePlugin：声明式字段 + 可选生命周期钩子
+ * definePlugin 工厂（对象式）+ contributes(静态)/setup(动态)/钩子(事件) 三入口
  */
 import type {Editor} from './editor';
 import type {EditorStore} from './store';
 import type {DIContainer} from './di-container';
 import type {EventBus} from './event-bus';
+import type {Skeleton} from '../skeleton/skeleton';
 import type {ComponentRegistry} from '../registry/component-registry';
 import type {SetterRegistry} from '../registry/setter-registry';
 import type {AssetRegistry} from '../registry/asset-registry';
@@ -26,23 +27,23 @@ export interface PluginContext {
   store: EditorStore;
   di: DIContainer;
   bus: EventBus;
+  skeleton: Skeleton;
   componentRegistry: ComponentRegistry;
   setterRegistry: SetterRegistry;
   assetRegistry: AssetRegistry;
   actionRegistry: ActionRegistry;
+  /** 跨插件协作：按 id 查找其它插件及其 options */
+  getPlugin<T = any>(
+    id: string
+  ): {plugin: EditorPluginObject<T>; options?: T} | undefined;
 }
 
-/** 插件声明式贡献（任选） */
+/** 插件声明式贡献（任选，静态自动注册） */
 export interface PluginContributes {
-  /** 贡献组件库项 */
   components?: ComponentMeta[];
-  /** 贡献 setter */
   setters?: SetterMeta[];
-  /** 贡献动作 */
   actions?: ActionMeta[];
-  /** 贡献第三方依赖 */
   assets?: AssetMeta[];
-  /** 贡献骨架面板（leftArea/rightArea/centerArea 等） */
   skeleton?: SkeletonContribution[];
 }
 
@@ -62,50 +63,39 @@ export interface SkeletonContribution {
   contentProps?: Record<string, any>;
   panelProps?: Record<string, any>;
   props?: Record<string, any>;
-  /** 是否禁用面板缓存（非激活时卸载内容） */
   disabledPanelCache?: boolean;
 }
 
-/** 插件契约 */
-export interface EditorPlugin {
-  /** 唯一标识（用于覆盖/去重） */
+/** 插件对象契约 */
+export interface EditorPluginObject<TOptions = any> {
   readonly id: string;
-  /** 显示名 */
   name?: string;
-  /** 优先级（越大越优先，可覆盖内置） */
   priority?: number;
-  /** 适用场景 */
-  scenes?: string[];
-  /** 声明式贡献 */
+  scene?: string | string[];
+  dep?: string[];
   contributes?: PluginContributes;
-
-  /** 初始化（激活时调用） */
-  init?(ctx: PluginContext): void | Promise<void>;
-  /** 销毁 */
-  destroy?(): void;
-
-  // ---- 生命周期事件钩子（由 EventBus camelize 映射调用） ----
-  beforeInsert?(context: any): void;
+  setup?(
+    ctx: PluginContext,
+    options?: TOptions
+  ): void | Promise<void> | (() => void | Promise<void>);
+  beforeInsert?(context: any): void | false | Promise<void | false>;
   afterInsert?(context: any): void;
-  beforeUpdate?(context: any): void;
+  beforeUpdate?(context: any): void | false | Promise<void | false>;
   afterUpdate?(context: any): void;
-  beforeDelete?(context: any): void;
+  beforeDelete?(context: any): void | false | Promise<void | false>;
   afterDelete?(context: any): void;
-  beforeMove?(context: any): void;
+  beforeMove?(context: any): void | false | Promise<void | false>;
   afterMove?(context: any): void;
-
-  // ---- 构建贡献（插件驱动的 UI 构建） ----
   buildPanels?(node: any, panels: PanelItem[]): void;
   buildToolbars?(node: any, toolbars: ToolbarItem[]): void;
   buildContextMenu?(node: any, menus: ContextMenuItem[]): void;
 }
 
-/** 插件类构造器 */
-export interface PluginClass {
-  new (): EditorPlugin;
-  /** 静态 id（可选，优先于实例 id） */
-  readonly id?: string;
+/** 工厂函数：类型守卫 + 保留扩展点（默认值注入） */
+export function definePlugin<TOptions = any>(
+  def: EditorPluginObject<TOptions>
+): EditorPluginObject<TOptions> {
+  return def;
 }
 
-/** 动作元信息（插件贡献动作用） */
 export type {ActionMeta};
