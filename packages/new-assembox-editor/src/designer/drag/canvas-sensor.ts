@@ -62,6 +62,7 @@ export class CanvasSensor implements DragSensor {
 
   /**
    * 计算投放位置并渲染指示线
+   * 使用 DOM 实时元素（非 tree 缓存），避免 re-render 后 stale ref
    */
   locate(
     target: Element | null,
@@ -71,15 +72,27 @@ export class CanvasSensor implements DragSensor {
     const doc = this.contentDocument;
     if (!doc) return null;
 
-    // 1. 找落点容器（向上找最近容器节点）
-    const containerId = this.findContainerId(target);
+    // 1. 找落点容器（向上找最近容器节点），同时拿到 DOM 元素
+    const {id: containerId, el: containerEl} = this.findContainerEl(target);
     const finalContainerId = containerId ?? this.store.schema.$$id;
+    const finalContainerEl =
+      containerEl ??
+      doc.querySelector(`[${ATTR_EDITOR_ID}="${finalContainerId}"]`);
 
-    // 2. 计算插入索引
-    const index = this.computeInsertIndex(finalContainerId, canvasX, canvasY);
+    // 2. 计算插入索引（用 DOM 实时元素测几何）
+    const index = this.computeInsertIndex(
+      finalContainerId,
+      canvasX,
+      canvasY,
+      doc
+    );
 
     // 3. 计算指示线位置
-    const indicator = this.computeIndicator(finalContainerId, index);
+    const indicator = this.computeIndicator(
+      finalContainerId,
+      index,
+      finalContainerEl
+    );
 
     // 4. 渲染指示线
     this.renderIndicator(doc, indicator);
@@ -92,34 +105,49 @@ export class CanvasSensor implements DragSensor {
     };
   }
 
-  /** 向上找最近的容器节点 id */
-  private findContainerId(el: Element | null): NodeId | null {
+  /** 向上找最近的容器节点 id + DOM 元素（DOM 实时，不依赖 tree 缓存） */
+  private findContainerEl(el: Element | null): {
+    id: NodeId | null;
+    el: Element | null;
+  } {
     let cur: Element | null = el;
     while (cur) {
       const id = cur.getAttribute && cur.getAttribute(ATTR_EDITOR_ID);
       if (id) {
         const inst = this.tree.get(id);
-        if (inst?.isContainer) return id;
+        if (inst?.isContainer) return {id, el: cur};
       }
       cur = cur.parentElement;
     }
-    return null;
+    return {id: null, el: null};
+  }
+
+  /** DOM 实时查询节点元素（避免 tree 缓存 stale） */
+  private freshEl(doc: Document, id: NodeId): HTMLElement | null {
+    return doc.querySelector(
+      `[${ATTR_EDITOR_ID}="${id}"]`
+    ) as HTMLElement | null;
   }
 
   /** 计算插入索引：按光标位置在子节点序列中的相对位置 */
   private computeInsertIndex(
     containerId: NodeId,
     canvasX: number,
-    canvasY: number
+    canvasY: number,
+    doc: Document
   ): number {
     const children = this.tree
       .getChildren(containerId)
       .filter(inst => inst.parentRegion === 'body');
     if (!children.length) return 0;
 
+    // 用 DOM 实时查询元素（避免 tree.el stale）
     const measured = children
-      .map(c => ({id: c.$$id, rect: c.el?.getBoundingClientRect()}))
-      .filter((m): m is {id: NodeId; rect: DOMRect} => !!m.rect);
+      .map(c => {
+        const el = this.freshEl(doc, c.$$id);
+        return el ? {id: c.$$id, rect: el.getBoundingClientRect()} : null;
+      })
+      .filter((m): m is {id: NodeId; rect: DOMRect} => !!m && !!m.rect);
     if (!measured.length) return 0;
 
     measured.sort(
@@ -144,10 +172,13 @@ export class CanvasSensor implements DragSensor {
     return measured.length;
   }
 
-  /** 计算指示线位置（感应区文档坐标，支持横/竖布局） */
+  /** 计算指示线位置（感应区文档坐标，支持横/竖布局）
+   * 使用传入的 containerEl（DOM 实时）+ freshEl 查询子节点，避免 tree.el stale
+   */
   private computeIndicator(
     containerId: NodeId,
-    index: number
+    index: number,
+    containerEl: Element | null
   ): {
     x: number;
     y: number;
@@ -155,66 +186,48 @@ export class CanvasSensor implements DragSensor {
     height: number;
     horizontal: boolean;
   } {
-    const containerEl = this.tree.getEl(containerId);
+    const doc = this.contentDocument!;
     const containerRect = containerEl?.getBoundingClientRect();
-    // eslint-disable-next-line no-console
-    console.log('[sensor] computeIndicator', {
-      containerId,
-      hasEl: !!containerEl,
-      elConnected: containerEl ? containerEl.isConnected : 'no-el',
-      treeSize: this.tree.all().length,
-      rect: containerRect
-        ? {l: containerRect.left, t: containerRect.top, w: containerRect.width}
-        : null
-    });
     const children = this.tree
       .getChildren(containerId)
-      .filter(inst => inst.parentRegion === 'body')
-      .sort((a, b) => {
-        const ra = a.el?.getBoundingClientRect();
-        const rb = b.el?.getBoundingClientRect();
-        if (!ra || !rb) return 0;
-        return ra.top - rb.top || ra.left - rb.left;
-      });
+      .filter(inst => inst.parentRegion === 'body');
 
     const cLeft = containerRect?.left ?? 0;
     const cTop = containerRect?.top ?? 0;
     const cWidth = containerRect?.width ?? 0;
     const cHeight = containerRect?.height ?? 0;
 
-    // 主轴判定：水平跨度 > 垂直跨度 × 1.2 视为横向布局
-    const measured = children
-      .map(c => c.el?.getBoundingClientRect())
-      .filter((r): r is DOMRect => !!r);
+    // 用 DOM 实时查询子节点元素
+    const childEls = children
+      .map(c => this.freshEl(doc, c.$$id))
+      .filter((el): el is HTMLElement => !!el);
+    const childRects = childEls.map(el => el.getBoundingClientRect());
+
+    // 主轴判定
     const horizontal =
-      measured.length > 0 &&
-      Math.max(...measured.map(m => m.right)) -
-        Math.min(...measured.map(m => m.left)) >
-        (Math.max(...measured.map(m => m.bottom)) -
-          Math.min(...measured.map(m => m.top))) *
+      childRects.length > 0 &&
+      Math.max(...childRects.map(m => m.right)) -
+        Math.min(...childRects.map(m => m.left)) >
+        (Math.max(...childRects.map(m => m.bottom)) -
+          Math.min(...childRects.map(m => m.top))) *
           1.2;
 
     if (horizontal) {
-      // 横向布局：竖向指示线（在插入位置 x，贯穿容器高度）
       let x: number;
-      if (index >= children.length) {
-        const last = children[children.length - 1]?.el?.getBoundingClientRect();
-        x = last ? last.right : cLeft;
+      if (index >= childRects.length) {
+        x = childRects.length ? childRects[childRects.length - 1].right : cLeft;
       } else {
-        const ref = children[index]?.el?.getBoundingClientRect();
-        x = ref ? ref.left : cLeft;
+        x = childRects[index]?.left ?? cLeft;
       }
       return {x, y: cTop, width: 2, height: cHeight, horizontal: true};
     }
 
-    // 纵向布局：横向指示线（在插入位置 y，贯穿容器宽度）
+    // 纵向布局：横向指示线
     let y: number;
-    if (index >= children.length) {
-      const last = children[children.length - 1]?.el?.getBoundingClientRect();
-      y = last ? last.bottom : cTop;
+    if (index >= childRects.length) {
+      y = childRects.length ? childRects[childRects.length - 1].bottom : cTop;
     } else {
-      const ref = children[index]?.el?.getBoundingClientRect();
-      y = ref ? ref.top : cTop;
+      y = childRects[index]?.top ?? cTop;
     }
     return {x: cLeft, y, width: cWidth, height: 2, horizontal: false};
   }

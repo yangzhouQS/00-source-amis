@@ -16,7 +16,6 @@ export {JsonSetter} from './json-setter';
 
 // 图标
 export {IconSetter} from './icon-setter';
-export {NutIconSetter} from './nut-icon-setter';
 
 // 复合类型
 export {ObjectSetter} from './object-setter';
@@ -57,7 +56,6 @@ import {RadioGroupSetter} from './radio-group-setter';
 import {ColorSetter} from './color-setter';
 import {JsonSetter} from './json-setter';
 import {IconSetter} from './icon-setter';
-import {NutIconSetter} from './nut-icon-setter';
 import {ObjectSetter} from './object-setter';
 import {ArraySetter} from './array-setter';
 import {ArrayOfMultiSetter} from './array-of-multi-setter';
@@ -85,7 +83,6 @@ export const builtinSetterMap = {
   ColorSetter,
   JsonSetter,
   IconSetter,
-  NutIconSetter,
   ObjectSetter,
   ArraySetter,
   ArrayOfMultiSetter,

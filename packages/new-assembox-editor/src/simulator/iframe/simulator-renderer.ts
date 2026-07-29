@@ -93,7 +93,7 @@ export class IframeSimulatorRenderer implements SimulatorRendererApi {
           return () =>
             h('div', {class: 'assem-iframe-renderer'}, [
               this.schema.body?.map(node =>
-                this.renderNode(node, null, 'body')
+                this.renderNode(node, this.schema.$$id, 'body')
               ) ?? []
             ]);
         }
@@ -187,6 +187,7 @@ export class IframeSimulatorRenderer implements SimulatorRendererApi {
 
   private unregisterInstance(nodeId: NodeId): void {
     this.instances.delete(nodeId);
+    this.hostApi?.onInstancesUpdated(this.getInstanceTree());
   }
 
   private handleClick(nodeId: NodeId, e: MouseEvent): void {
@@ -205,7 +206,8 @@ export class IframeSimulatorRenderer implements SimulatorRendererApi {
     const cloned = ops.cloneSchema(schema);
     ops.ensureIds(cloned);
     this.schema.body = cloned.body ?? [];
-    this.instances.clear();
+    // 注意：不 clear instances —— Vue 按 key patch，同 key 组件不重挂载
+    // 自然生命周期（onMounted/onBeforeUnmount）会增删实例，手动 clear 会丢失存活组件
   }
 
   updateNode(nodeId: NodeId, patch: Partial<PageNode>): void {
