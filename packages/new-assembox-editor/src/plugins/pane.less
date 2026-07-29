@@ -1,5 +1,37 @@
 @import "../skeleton/styles/theme.less";
 
+/* 右键上下文菜单 */
+.assem-context-menu {
+  min-width: 120px;
+  padding: 4px 0;
+  background: #fff;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.12);
+
+  .assem-context-menu__item {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 16px;
+    font-size: 13px;
+    color: #606266;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--color-hover);
+    }
+
+    &.is-danger {
+      color: #f56c6c;
+
+      &:hover {
+        background: rgba(245, 108, 108, 0.1);
+      }
+    }
+  }
+}
+
 /* 组件库面板 */
 .assem-component-pane {
   height: 100%;

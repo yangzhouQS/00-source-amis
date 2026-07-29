@@ -116,6 +116,8 @@ export const BemTools = defineComponent({
 
     return () => {
       void tick.value; // 依赖
+      // 预览模式隐藏覆盖层
+      if (props.store.state.designMode === 'preview') return null;
       const {activeId, hoverId} = props.store.state;
       const container = props.containerRef;
 

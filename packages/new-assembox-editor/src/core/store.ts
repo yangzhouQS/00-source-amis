@@ -50,6 +50,8 @@ export interface EditorState {
   ready: boolean;
   /** 右侧面板可见性 */
   rightPanelVisible: boolean;
+  /** 设计/预览模式 */
+  designMode: 'design' | 'preview';
 }
 
 export class EditorStore {
@@ -76,7 +78,8 @@ export class EditorStore {
       platform: 'desktop',
       device: DEVICE_PRESETS[0],
       ready: false,
-      rightPanelVisible: true
+      rightPanelVisible: true,
+      designMode: 'design'
     });
   }
 
@@ -237,6 +240,15 @@ export class EditorStore {
 
   toggleRightPanel(visible?: boolean): void {
     this.state.rightPanelVisible = visible ?? !this.state.rightPanelVisible;
+  }
+
+  /** 切换设计/预览模式 */
+  toggleDesignMode(): void {
+    this.state.designMode =
+      this.state.designMode === 'design' ? 'preview' : 'design';
+    if (this.state.designMode === 'preview') {
+      this.clearSelection();
+    }
   }
 
   /** schema 节点总数（大纲等用） */

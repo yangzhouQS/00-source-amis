@@ -14,6 +14,7 @@ import {
   RightArea
 } from './layouts/areas';
 import {DragGhost} from '../designer/drag/drag-ghost';
+import {ContextMenu} from '../plugins/context-menu/context-menu';
 import type {Editor} from '../core/editor';
 import {useAssemNamespace} from '../hooks/use-assem-namespace';
 import './styles/workbench.less';
@@ -53,6 +54,8 @@ export const Workbench = defineComponent({
         </div>
         {/* 拖拽跟随提示 */}
         {props.editor ? <DragGhost dragon={props.editor.dragon} /> : null}
+        {/* 右键菜单 */}
+        {props.editor ? <ContextMenu editor={props.editor} /> : null}
       </div>
     );
   }

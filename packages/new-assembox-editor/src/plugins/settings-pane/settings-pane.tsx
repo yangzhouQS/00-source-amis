@@ -180,24 +180,170 @@ const StyleEditor = defineComponent({
   }
 });
 
-/** 事件列表（声明式动作） */
+/** 事件动作编排器（声明式 onEvent.actions 卡片编辑） */
 const EventList = defineComponent({
   props: {
     editor: {type: Object as PropType<Editor>, required: true},
-    events: {type: Array, default: () => []}
+    events: {type: Array as () => any[], default: () => []}
   },
   setup(props) {
+    const node = computed(() => props.editor.store.activeNode);
+
+    const getActions = (evName: string): any[] => {
+      return node.value?.onEvent?.[evName]?.actions ?? [];
+    };
+
+    const addAction = (evName: string) => {
+      const actions = [
+        ...getActions(evName),
+        {actionType: 'toast', args: {message: '新动作'}}
+      ];
+      props.editor.update(node.value!.$$id, {
+        onEvent: {[evName]: {actions}}
+      });
+    };
+
+    const removeAction = (evName: string, idx: number) => {
+      const actions = [...getActions(evName)];
+      actions.splice(idx, 1);
+      props.editor.update(node.value!.$$id, {
+        onEvent: {[evName]: {actions}}
+      });
+    };
+
+    const updateAction = (evName: string, idx: number, patch: any) => {
+      const actions = [...getActions(evName)];
+      actions[idx] = {...actions[idx], ...patch};
+      props.editor.update(node.value!.$$id, {
+        onEvent: {[evName]: {actions}}
+      });
+    };
+
+    const actionTypes = computed(() => props.editor.actionRegistry.all());
+
     return () => (
       <div class={ns.e('event-list')}>
         {props.events.length ? (
-          props.events.map((ev: any) => (
-            <div class={ns.e('event-item')} key={ev.name}>
-              <span class={ns.e('event-name')}>{ev.title ?? ev.name}</span>
-              <ElButton size="small" text>
-                配置动作
-              </ElButton>
-            </div>
-          ))
+          props.events.map((ev: any) => {
+            const actions = getActions(ev.name);
+            return (
+              <div class={ns.e('event-item')} key={ev.name}>
+                <div
+                  style={{
+                    'display': 'flex',
+                    'align-items': 'center',
+                    'justify-content': 'space-between'
+                  }}
+                >
+                  <span class={ns.e('event-name')}>{ev.title ?? ev.name}</span>
+                  <ElButton
+                    size="small"
+                    type="primary"
+                    link
+                    onClick={() => addAction(ev.name)}
+                  >
+                    + 添加动作
+                  </ElButton>
+                </div>
+                {actions.length > 0 && (
+                  <div
+                    style={{
+                      'margin-top': '6px',
+                      'display': 'flex',
+                      'flex-direction': 'column',
+                      'gap': '4px'
+                    }}
+                  >
+                    {actions.map((action: any, idx: number) => (
+                      <div
+                        key={idx}
+                        style={{
+                          'display': 'flex',
+                          'align-items': 'center',
+                          'gap': '4px',
+                          'padding': '4px 6px',
+                          'background': '#f5f7fa',
+                          'border-radius': '3px'
+                        }}
+                      >
+                        <select
+                          value={action.actionType}
+                          onChange={(e: Event) =>
+                            updateAction(ev.name, idx, {
+                              actionType: (e.target as HTMLSelectElement).value
+                            })
+                          }
+                          style={{
+                            'flex': '1',
+                            'border': '1px solid #dcdfe6',
+                            'border-radius': '3px',
+                            'padding': '2px 4px',
+                            'font-size': '12px'
+                          }}
+                        >
+                          {actionTypes.value.map((a: any) => (
+                            <option key={a.actionType} value={a.actionType}>
+                              {a.title ?? a.actionType}
+                            </option>
+                          ))}
+                        </select>
+                        {action.actionType === 'toast' && (
+                          <input
+                            value={action.args?.message ?? ''}
+                            onInput={(e: Event) =>
+                              updateAction(ev.name, idx, {
+                                args: {
+                                  ...action.args,
+                                  message: (e.target as HTMLInputElement).value
+                                }
+                              })
+                            }
+                            placeholder="消息内容"
+                            style={{
+                              'flex': '1',
+                              'border': '1px solid #dcdfe6',
+                              'border-radius': '3px',
+                              'padding': '2px 4px',
+                              'font-size': '12px'
+                            }}
+                          />
+                        )}
+                        {action.actionType === 'navigate' && (
+                          <input
+                            value={action.args?.url ?? ''}
+                            onInput={(e: Event) =>
+                              updateAction(ev.name, idx, {
+                                args: {
+                                  ...action.args,
+                                  url: (e.target as HTMLInputElement).value
+                                }
+                              })
+                            }
+                            placeholder="跳转 URL"
+                            style={{
+                              'flex': '1',
+                              'border': '1px solid #dcdfe6',
+                              'border-radius': '3px',
+                              'padding': '2px 4px',
+                              'font-size': '12px'
+                            }}
+                          />
+                        )}
+                        <ElButton
+                          size="small"
+                          link
+                          type="danger"
+                          onClick={() => removeAction(ev.name, idx)}
+                        >
+                          ×
+                        </ElButton>
+                      </div>
+                    ))}
+                  </div>
+                )}
+              </div>
+            );
+          })
         ) : (
           <ElEmpty description="无可配置事件" imageSize={50} />
         )}
