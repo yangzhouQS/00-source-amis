@@ -136,6 +136,7 @@ export const IframeDesignerHost = defineComponent({
           <BemTools
             store={props.editor.store}
             tree={props.editor.nodeTree}
+            editor={props.editor}
             containerRef={iframeRef.value?.parentElement ?? null}
             iframeEl={iframeRef.value}
           />

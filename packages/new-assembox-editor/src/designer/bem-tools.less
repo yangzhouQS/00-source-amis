@@ -46,8 +46,6 @@
 
 .assem-bem-tools__toolbar {
   position: absolute;
-  top: -20px;
-  right: 0;
   display: flex;
   gap: 2px;
   pointer-events: auto;
@@ -57,8 +55,8 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   padding: 0;
   font-size: 12px;
   color: #fff;
@@ -77,5 +75,11 @@
     &:hover {
       background: #d4441a;
     }
+  }
+
+  &.is-disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+    pointer-events: none;
   }
 }

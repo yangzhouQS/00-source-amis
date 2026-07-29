@@ -81,6 +81,7 @@ export const DesignerHost = defineComponent({
             <BemTools
               store={props.editor.store}
               tree={props.editor.nodeTree}
+              editor={props.editor}
               containerRef={canvasRef.value}
             />
           </div>
