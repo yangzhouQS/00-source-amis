@@ -117,9 +117,10 @@ export const ContextMenu = defineComponent({
     const handleAction = (actionName: string, isDisabled: boolean) => {
       if (isDisabled) return;
       const action = actions.value.find(a => a.name === actionName);
+      const capturedCtx = ctx.value;
       hide();
       if (action?.action) {
-        action.action(ctx.value);
+        action.action(capturedCtx);
       }
     };
 
