@@ -23,6 +23,7 @@ import type {SimulatorBridge} from '../simulator/bridge';
 import {Dragon} from '../designer/drag/dragon';
 import {KeyboardManager} from './keyboard-manager';
 import {LiveEditing} from '../designer/live-editing';
+import {ContextMenuManager} from '../designer/context-menu-manager';
 import type {DragObject, DropLocation} from '../designer/drag/types';
 import {getLogger, type Logger} from './logger';
 import * as TOKENS from '../registry/tokens';
@@ -67,6 +68,8 @@ export class Editor {
   readonly keyboard: KeyboardManager;
   /** 原地文本编辑 */
   readonly liveEditing: LiveEditing;
+  /** 右键菜单管理器（声明式注册 + 插件可扩展） */
+  readonly contextMenu: ContextMenuManager;
   /** 剪贴板（复制/粘贴用） */
   clipboard: PageNode | null = null;
 
@@ -122,6 +125,10 @@ export class Editor {
 
     // 原地编辑
     this.liveEditing = new LiveEditing(this);
+
+    // 右键菜单
+    this.contextMenu = new ContextMenuManager();
+    this.registerBuiltinContextMenu();
 
     // 注入到 DI 容器（token 化，类型安全）
     this.di.register(TOKENS.EDITOR, this);
@@ -241,6 +248,57 @@ export class Editor {
     this.store.setReady(true);
     this.bus.trigger(EVENT.EDITOR_READY, {editor: this});
     this.keyboard.attach();
+  }
+
+  /** 注册内置右键菜单项 */
+  private registerBuiltinContextMenu(): void {
+    const cm = this.contextMenu;
+
+    cm.register({
+      name: 'copy',
+      title: '复制',
+      weight: 10,
+      condition: ({nodeId}) => !!nodeId,
+      action: ({nodeId, editor}) => editor.copy(nodeId!)
+    });
+
+    cm.register({
+      name: 'paste',
+      title: '粘贴',
+      weight: 20,
+      condition: ({nodeId}) => !!nodeId,
+      disabled: ({editor}) => !editor.clipboard,
+      action: ({nodeId, editor}) => editor.paste(nodeId!)
+    });
+
+    cm.register({name: 'sep1', title: '', separator: true, weight: 30});
+
+    cm.register({
+      name: 'moveUp',
+      title: '上移',
+      weight: 40,
+      condition: ({nodeId}) => !!nodeId,
+      action: ({nodeId, editor}) => editor.moveUp(nodeId!)
+    });
+
+    cm.register({
+      name: 'moveDown',
+      title: '下移',
+      weight: 50,
+      condition: ({nodeId}) => !!nodeId,
+      action: ({nodeId, editor}) => editor.moveDown(nodeId!)
+    });
+
+    cm.register({name: 'sep2', title: '', separator: true, weight: 60});
+
+    cm.register({
+      name: 'delete',
+      title: '删除',
+      danger: true,
+      weight: 70,
+      condition: ({nodeId}) => !!nodeId,
+      action: ({nodeId, editor}) => editor.remove(nodeId!)
+    });
   }
 
   /** 销毁 */

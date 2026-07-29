@@ -1,9 +1,16 @@
 /**
- * 右键上下文菜单覆盖层
+ * 右键上下文菜单覆盖层（重构：声明式 ContextMenuManager 驱动）
  * 绑定 iframe doc contextmenu 事件，在 host 文档定位显示菜单
+ * 菜单项由 editor.contextMenu（ContextMenuManager）动态提供，插件可扩展
  */
-import {defineComponent, PropType, ref, onMounted, onBeforeUnmount} from 'vue';
-import {ElButton} from 'element-plus';
+import {
+  defineComponent,
+  PropType,
+  ref,
+  computed,
+  onMounted,
+  onBeforeUnmount
+} from 'vue';
 import {
   CopyDocument,
   Delete,
@@ -12,9 +19,19 @@ import {
   Back as PasteIcon
 } from '@element-plus/icons-vue';
 import type {Editor} from '../../core/editor';
+import type {ContextMenuContext} from '../../designer/context-menu-manager';
 import {useAssemNamespace} from '../../hooks/use-assem-namespace';
 
 const ns = useAssemNamespace('context-menu');
+
+/** 内置菜单项的图标映射 */
+const iconMap: Record<string, any> = {
+  copy: CopyDocument,
+  paste: PasteIcon,
+  moveUp: ArrowUp,
+  moveDown: ArrowDown,
+  delete: Delete
+};
 
 export const ContextMenu = defineComponent({
   name: 'ContextMenu',
@@ -27,6 +44,16 @@ export const ContextMenu = defineComponent({
     const y = ref(0);
     const nodeId = ref<string | null>(null);
     let cleanupFns: Array<() => void> = [];
+
+    const ctx = computed<ContextMenuContext>(() => ({
+      nodeId: nodeId.value,
+      editor: props.editor
+    }));
+
+    const actions = computed(() => {
+      if (!visible.value) return [];
+      return props.editor.contextMenu.getAvailableActions(ctx.value);
+    });
 
     const show = (gx: number, gy: number, id: string | null) => {
       x.value = gx;
@@ -46,7 +73,6 @@ export const ContextMenu = defineComponent({
         const id =
           target?.closest('[data-editor-id]')?.getAttribute('data-editor-id') ??
           null;
-        // iframe 事件：clientX/Y 是 iframe 局部坐标，需加上 iframe 在 host 的偏移
         let gx = e.clientX;
         let gy = e.clientY;
         if (doc !== document) {
@@ -71,7 +97,6 @@ export const ContextMenu = defineComponent({
 
     onMounted(() => {
       bindContext(document);
-      // iframe 模式：轮询绑定 iframe doc（iframe 有独立事件，host 收不到 contextmenu）
       const poll = setInterval(() => {
         const iframe = document.querySelector(
           'iframe[class*="canvas"]'
@@ -89,35 +114,20 @@ export const ContextMenu = defineComponent({
       cleanupFns = [];
     });
 
-    const doAction = (action: string) => {
-      const id = nodeId.value;
+    const handleAction = (actionName: string, isDisabled: boolean) => {
+      if (isDisabled) return;
+      const action = actions.value.find(a => a.name === actionName);
       hide();
-      if (!id) return;
-      const ed = props.editor;
-      switch (action) {
-        case 'copy':
-          ed.duplicate(id);
-          break;
-        case 'delete':
-          ed.remove(id);
-          break;
-        case 'up':
-          ed.moveUp(id);
-          break;
-        case 'down':
-          ed.moveDown(id);
-          break;
+      if (action?.action) {
+        action.action(ctx.value);
       }
     };
 
     return () => {
-      if (!visible.value || !nodeId.value) return null;
-      const items = [
-        {key: 'copy', label: '复制', icon: CopyDocument},
-        {key: 'up', label: '上移', icon: ArrowUp},
-        {key: 'down', label: '下移', icon: ArrowDown},
-        {key: 'delete', label: '删除', icon: Delete, danger: true}
-      ];
+      if (!visible.value) return null;
+      const list = actions.value;
+      if (!list.length) return null;
+
       return (
         <div
           class={ns.b()}
@@ -128,18 +138,34 @@ export const ContextMenu = defineComponent({
             zIndex: 99999
           }}
         >
-          {items.map(item => (
-            <div
-              key={item.key}
-              class={[ns.e('item'), item.danger ? ns.is('danger') : '']}
-              onClick={() => doAction(item.key)}
-            >
-              <el-icon size={14}>
-                <item.icon />
-              </el-icon>
-              <span>{item.label}</span>
-            </div>
-          ))}
+          {list.map(action => {
+            if (action.separator) {
+              return <div class={ns.e('separator')} key={action.name} />;
+            }
+            const disabled = props.editor.contextMenu.isDisabled(
+              action,
+              ctx.value
+            );
+            const IconComp = action.icon || iconMap[action.name];
+            return (
+              <div
+                key={action.name}
+                class={[
+                  ns.e('item'),
+                  action.danger ? ns.is('danger') : '',
+                  disabled ? ns.is('disabled') : ''
+                ]}
+                onClick={() => handleAction(action.name, disabled)}
+              >
+                {IconComp ? (
+                  <el-icon size={14}>
+                    <IconComp />
+                  </el-icon>
+                ) : null}
+                <span>{action.title}</span>
+              </div>
+            );
+          })}
         </div>
       );
     };
