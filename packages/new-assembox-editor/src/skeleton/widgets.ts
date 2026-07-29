@@ -17,6 +17,7 @@ import type {WidgetConfig, WidgetLike, WidgetType, AreaName} from './types';
 import type {Skeleton} from './skeleton';
 import {useAssemNamespace} from '../hooks/use-assem-namespace';
 import {ErrorBoundary} from './error-boundary';
+import {Tip} from './widgets/tip';
 
 // BEM 命名空间实例（模块级，骨架层共用）
 const widgetNs = useAssemNamespace('widget');
@@ -241,25 +242,22 @@ export class PanelDock extends Widget {
   }
 
   get content(): any {
-    if (this.state.disabled) {
-      return h(
-        'div',
-        {
-          class: [dockNs.b(), dockNs.is('disabled')],
-          title: this.config.props?.description
-        },
-        [renderDockIcon(this.config)]
-      );
-    }
-    return h(
-      'div',
-      {
-        class: [dockNs.b(), this.panel?.active ? dockNs.m('active') : ''],
-        title: this.config.props?.description,
-        onClick: () => this.togglePanel()
-      },
-      [renderDockIcon(this.config)]
-    );
+    const tip = this.config.props?.description;
+    const dockEl = this.state.disabled
+      ? h('div', {class: [dockNs.b(), dockNs.is('disabled')]}, [
+          renderDockIcon(this.config)
+        ])
+      : h(
+          'div',
+          {
+            class: [dockNs.b(), this.panel?.active ? dockNs.m('active') : ''],
+            onClick: () => this.togglePanel()
+          },
+          [renderDockIcon(this.config)]
+        );
+    return tip
+      ? h(Tip, {content: tip, placement: 'right'}, {default: () => dockEl})
+      : dockEl;
   }
 
   togglePanel(): void {
@@ -280,30 +278,22 @@ export class PanelDock extends Widget {
 /** Dock（独立图标按钮，onClick/href，无联动面板） */
 export class Dock extends Widget {
   get content(): any {
+    const tip = this.config.props?.description;
     const onActivate = () => {
       const {onClick, href} = this.config.props ?? {};
       if (onClick) onClick();
       else if (href) window.open(href, '_blank');
     };
-    if (this.state.disabled) {
-      return h(
-        'div',
-        {
-          class: [dockNs.b(), dockNs.is('disabled')],
-          title: this.config.props?.description
-        },
-        [renderDockIcon(this.config)]
-      );
-    }
-    return h(
-      'div',
-      {
-        class: dockNs.b(),
-        title: this.config.props?.description,
-        onClick: onActivate
-      },
-      [renderDockIcon(this.config)]
-    );
+    const dockEl = this.state.disabled
+      ? h('div', {class: [dockNs.b(), dockNs.is('disabled')]}, [
+          renderDockIcon(this.config)
+        ])
+      : h('div', {class: dockNs.b(), onClick: onActivate}, [
+          renderDockIcon(this.config)
+        ]);
+    return tip
+      ? h(Tip, {content: tip, placement: 'right'}, {default: () => dockEl})
+      : dockEl;
   }
 }
 
