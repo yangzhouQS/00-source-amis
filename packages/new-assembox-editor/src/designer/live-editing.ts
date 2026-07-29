@@ -19,6 +19,7 @@ export class LiveEditing {
     nodeId: string;
     propTarget: string;
     el: HTMLElement;
+    prevStyle: string;
     onFocusOut: () => void;
     onKeyDown: (e: KeyboardEvent) => void;
   } | null = null;
@@ -84,12 +85,15 @@ export class LiveEditing {
     const cfg = meta.liveTextEditing.find(c => c.propTarget === propTarget);
     const mode = cfg?.mode ?? 'plaintext';
 
-    // 进入编辑
+    // 进入编辑（inline style 确保 iframe 内生效）
+    const prevStyle = editableEl.style.cssText;
     editableEl.setAttribute(
       'contenteditable',
       mode === 'richtext' ? 'true' : 'plaintext-only'
     );
-    editableEl.classList.add('assem-live-editing');
+    editableEl.style.cssText =
+      prevStyle +
+      ';cursor:text;outline:none;box-shadow:0 0 0 2px rgb(102,188,92);user-select:text;border-radius:2px;';
     editableEl.focus();
 
     // 光标定位到双击位置
@@ -114,6 +118,7 @@ export class LiveEditing {
       nodeId,
       propTarget,
       el: editableEl,
+      prevStyle,
       onFocusOut,
       onKeyDown
     };
@@ -124,13 +129,14 @@ export class LiveEditing {
   /** 保存当前编辑内容到 schema */
   saveAndDispose(): void {
     if (!this.editing) return;
-    const {nodeId, propTarget, el, onFocusOut, onKeyDown} = this.editing;
+    const {nodeId, propTarget, el, prevStyle, onFocusOut, onKeyDown} =
+      this.editing;
     const text = el.innerText;
 
-    // 移除编辑态
+    // 移除编辑态（恢复原始 style）
     el.removeEventListener('focusout', onFocusOut);
     el.removeEventListener('keydown', onKeyDown);
-    el.classList.remove('assem-live-editing');
+    el.style.cssText = prevStyle;
     el.removeAttribute('contenteditable');
 
     // 保存到 schema（非空才更新）
@@ -147,10 +153,10 @@ export class LiveEditing {
 
   dispose(): void {
     if (this.editing) {
-      const {el, onFocusOut, onKeyDown} = this.editing;
+      const {el, prevStyle, onFocusOut, onKeyDown} = this.editing;
       el.removeEventListener('focusout', onFocusOut);
       el.removeEventListener('keydown', onKeyDown);
-      el.classList.remove('assem-live-editing');
+      el.style.cssText = prevStyle;
       el.removeAttribute('contenteditable');
       this.editing = null;
     }
