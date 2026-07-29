@@ -1,3 +1,5 @@
+/* BemTools 覆盖层（参考 lowcode borders.less + bem-tools.less） */
+
 .assem-bem-tools {
   position: absolute;
   inset: 0;
@@ -6,52 +8,65 @@
   overflow: visible;
 }
 
+/* ── 通用边框 ── */
 .assem-bem-tools__hover-box,
 .assem-bem-tools__select-box {
   position: absolute;
   pointer-events: none;
   box-sizing: border-box;
-  transition: all 0.05s linear;
+  will-change: transform, width, height;
+  overflow: visible;
 }
 
+/* ── hover 探测框（虚线 + 浅色） ── */
 .assem-bem-tools__hover-box {
-  border: 1px dashed #00b3e8;
-  background: rgba(0, 179, 232, 0.06);
+  z-index: 1;
+  border: 1px dashed var(--color-brand);
+  background: rgba(0, 121, 242, 0.04);
 }
 
+/* ── 选中框（实线 + 高亮） ── */
 .assem-bem-tools__select-box {
-  border: 1px solid var(--color-brand);
-  background: rgba(0, 121, 242, 0.06);
+  z-index: 2;
+  border: 2px solid var(--color-brand);
 }
 
+/* ── 节点类型标签 ── */
 .assem-bem-tools__box-label {
   position: absolute;
-  top: -20px;
-  left: 0;
+  top: -22px;
+  left: -2px;
   max-width: 200px;
   padding: 1px 6px;
   overflow: hidden;
   font-size: 11px;
-  line-height: 16px;
+  font-weight: 400;
+  line-height: 18px;
   white-space: nowrap;
   text-overflow: ellipsis;
-  background: #00b3e8;
+  background: var(--color-brand);
   color: #fff;
   border-radius: 2px;
+
+  &.is-active {
+    background: var(--color-brand);
+  }
 }
 
-.assem-bem-tools__box-label.is-active {
-  background: var(--color-brand);
-}
-
+/* ── 工具栏容器 ── */
 .assem-bem-tools__toolbar {
   position: absolute;
   display: flex;
-  gap: 2px;
+  flex-direction: row-reverse;
+  align-items: stretch;
+  justify-content: flex-end;
+  gap: 0;
   pointer-events: auto;
 }
 
+/* ── 工具栏按钮（参考 lowcode lc-borders-action） ── */
 .assem-bem-tools__toolbar-btn {
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -63,7 +78,16 @@
   cursor: pointer;
   background: var(--color-brand);
   border: none;
-  border-radius: 2px;
+  border-radius: 0;
+  opacity: 1;
+
+  &:first-child {
+    border-radius: 0 2px 2px 0;
+  }
+
+  &:last-child {
+    border-radius: 2px 0 0 2px;
+  }
 
   &:hover {
     background: #0095d6;
@@ -78,8 +102,22 @@
   }
 
   &.is-disabled {
-    opacity: 0.4;
+    opacity: 0.35;
     cursor: not-allowed;
     pointer-events: none;
+  }
+}
+
+/* ── 拖入插入指示线（参考 lowcode lc-insertion） ── */
+.assem-bem-tools__insertion {
+  position: absolute;
+  z-index: 12;
+  pointer-events: none;
+  background-color: var(--color-brand);
+  height: 3px;
+
+  &.vertical {
+    width: 3px;
+    height: auto;
   }
 }
