@@ -12,19 +12,13 @@ export type {EditorEvent, EventListener} from './core/event-bus';
 export {EditorStore, createEmptySchema} from './core/store';
 export type {EditorState, HistoryEntry} from './core/store';
 export {Selection} from './core/selection';
-export {
-  PluginManager,
-  registerPlugin,
-  unregisterPlugin,
-  listRegisteredPlugins
-} from './core/plugin-manager';
-export type {PluginProvider} from './core/plugin-manager';
+export {PluginManager} from './core/plugin-manager';
+export {definePlugin} from './core/plugin-types';
 export type {
-  EditorPlugin,
+  EditorPluginObject,
   PluginContext,
   PluginContributes,
-  SkeletonContribution,
-  PluginClass
+  SkeletonContribution
 } from './core/plugin-types';
 
 // 注册表层
@@ -112,8 +106,6 @@ export {registerBuiltinActions} from './actions/builtin-actions';
 
 // 内置插件（导入即注册）
 export {builtinPlugins} from './plugins/builtin-plugins';
-export {registerBuiltinPlugins} from './plugins/register';
-import './plugins/register';
 
 // assembox-desktop 契约集成（P0）
 export {AssemboxBridge} from './simulator/assembox/assembox-bridge';

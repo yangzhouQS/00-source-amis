@@ -2,7 +2,7 @@
  * 内置插件集
  * 通过 PluginManager 激活，contributes.skeleton 贡献布局面板
  */
-import type {EditorPlugin} from '../core/plugin-types';
+import type {EditorPluginObject} from '../core/plugin-types';
 import {ComponentsPane} from './components-pane/components-pane';
 import {SettingsPane} from './settings-pane/settings-pane';
 import {OutlinePane} from './outline-pane/outline-pane';
@@ -42,11 +42,11 @@ const DesignerCanvasSwitch = defineComponent({
 /**
  * Designer 插件：注册中央画布
  */
-export const designerPlugin: EditorPlugin = {
+export const designerPlugin: EditorPluginObject = {
   id: 'builtin-designer',
   name: '画布',
   priority: 100,
-  scenes: ['global'],
+  scene: ['global'],
   contributes: {
     skeleton: [
       {
@@ -63,11 +63,11 @@ export const designerPlugin: EditorPlugin = {
 /**
  * 组件库插件
  */
-export const componentsPanePlugin: EditorPlugin = {
+export const componentsPanePlugin: EditorPluginObject = {
   id: 'builtin-components-pane',
   name: '组件库',
   priority: 100,
-  scenes: ['global'],
+  scene: ['global'],
   contributes: {
     skeleton: [
       {
@@ -91,11 +91,11 @@ export const componentsPanePlugin: EditorPlugin = {
 /**
  * 设置面板插件
  */
-export const settingsPanePlugin: EditorPlugin = {
+export const settingsPanePlugin: EditorPluginObject = {
   id: 'builtin-settings-pane',
   name: '属性设置',
   priority: 100,
-  scenes: ['global'],
+  scene: ['global'],
   contributes: {
     skeleton: [
       {
@@ -112,11 +112,11 @@ export const settingsPanePlugin: EditorPlugin = {
 /**
  * 大纲树插件
  */
-export const outlinePanePlugin: EditorPlugin = {
+export const outlinePanePlugin: EditorPluginObject = {
   id: 'builtin-outline-pane',
   name: '大纲树',
   priority: 100,
-  scenes: ['global'],
+  scene: ['global'],
   contributes: {
     skeleton: [
       {
@@ -140,11 +140,11 @@ export const outlinePanePlugin: EditorPlugin = {
 /**
  * 源码插件
  */
-export const schemaPanePlugin: EditorPlugin = {
+export const schemaPanePlugin: EditorPluginObject = {
   id: 'builtin-schema-pane',
   name: '源码',
   priority: 100,
-  scenes: ['global'],
+  scene: ['global'],
   contributes: {
     skeleton: [
       {
@@ -168,11 +168,11 @@ export const schemaPanePlugin: EditorPlugin = {
 /**
  * 历史记录插件
  */
-export const historyPanePlugin: EditorPlugin = {
+export const historyPanePlugin: EditorPluginObject = {
   id: 'builtin-history-pane',
   name: '历史记录',
   priority: 100,
-  scenes: ['global'],
+  scene: ['global'],
   contributes: {
     skeleton: [
       {
@@ -197,19 +197,19 @@ export const historyPanePlugin: EditorPlugin = {
  * 核心 setter/action 注册插件
  * 在 init 阶段注册内置 setter 与动作
  */
-export const coreRegistryPlugin: EditorPlugin = {
+export const coreRegistryPlugin: EditorPluginObject = {
   id: 'builtin-core-registry',
   name: '核心注册',
   priority: 200,
-  scenes: ['global'],
-  init(ctx) {
+  scene: ['global'],
+  setup(ctx) {
     registerBuiltinSetters(ctx.setterRegistry);
     registerBuiltinActions(ctx.actionRegistry);
   }
 };
 
 /** 所有内置插件 */
-export const builtinPlugins: EditorPlugin[] = [
+export const builtinPlugins: EditorPluginObject[] = [
   coreRegistryPlugin,
   designerPlugin,
   componentsPanePlugin,

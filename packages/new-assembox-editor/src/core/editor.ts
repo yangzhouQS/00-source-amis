@@ -24,17 +24,19 @@ import {Dragon} from '../designer/drag/dragon';
 import type {DragObject, DropLocation} from '../designer/drag/types';
 import * as TOKENS from '../registry/tokens';
 import type {PageSchema, PageNode, NodeId} from '../schema/types';
-import type {PluginContext} from './plugin-types';
-import type {PluginProvider} from './plugin-manager';
+import type {PluginContext, EditorPluginObject} from './plugin-types';
 import type {InjectionToken} from './di-container';
+import {builtinPlugins} from '../plugins/builtin-plugins';
 import * as ops from '../schema/operations';
 
 export interface EditorOptions {
   platform?: 'desktop' | 'mobile';
   /** 初始 schema */
   schema?: PageSchema;
-  /** 额外插件 */
-  plugins?: PluginProvider[];
+  /** 用户插件（可带 options：[plugin, options]） */
+  plugins?: Array<EditorPluginObject | [EditorPluginObject, any]>;
+  /** 是否禁用内置插件（默认 false） */
+  disableBuiltin?: boolean;
   /** 画布渲染模式：inline=同 DOM，iframe=iframe 隔离渲染 */
   canvasMode?: 'inline' | 'iframe';
 }
@@ -66,7 +68,18 @@ export class Editor {
     (this.store as any).__editor = this;
 
     this.selection = new Selection(this.store);
-    this.pluginManager = new PluginManager(this.bus, options.plugins);
+    this.pluginManager = new PluginManager(this.bus);
+    // 注册插件：内置（除非 disableBuiltin）+ 用户插件（可带 options）
+    if (!options.disableBuiltin) {
+      for (const p of builtinPlugins) this.pluginManager.register(p);
+    }
+    for (const item of options.plugins ?? []) {
+      if (Array.isArray(item)) {
+        this.pluginManager.register(item[0], item[1]);
+      } else {
+        this.pluginManager.register(item);
+      }
+    }
 
     // bridge（按画布模式选择）
     this.canvasMode = options.canvasMode ?? 'inline';
@@ -183,42 +196,25 @@ export class Editor {
 
   // --------------------- 启动 / 销毁 ---------------------
 
-  /** 启动编辑器：激活插件、注册贡献、加载内置 setter/action */
+  /** 启动编辑器：激活插件（contributes 自动应用内聚到 PluginManager.activate） */
   async start(): Promise<void> {
     // flush 装饰器注册的组件
     flushDecorators(this.componentRegistry);
 
-    // 激活插件
     const ctx: PluginContext = {
       editor: this,
       store: this.store,
       di: this.di,
       bus: this.bus,
+      skeleton: this.skeleton,
       componentRegistry: this.componentRegistry,
       setterRegistry: this.setterRegistry,
       assetRegistry: this.assetRegistry,
-      actionRegistry: this.actionRegistry
+      actionRegistry: this.actionRegistry,
+      getPlugin: (id: string) => this.pluginManager.getPlugin(id)
     };
+    // activate 内聚 contributes 自动应用 + setup + 钩子绑定
     await this.pluginManager.activate(ctx, this.store.state.platform);
-
-    // 插件贡献的组件/setter/action/资产注册
-    for (const plugin of this.pluginManager.getPlugins()) {
-      const c = plugin.contributes;
-      if (!c) continue;
-      c.components?.forEach(m => this.componentRegistry.register(m));
-      c.setters?.forEach(s =>
-        this.setterRegistry.register(s.name, s.component)
-      );
-      c.actions?.forEach(a => this.actionRegistry.register(a));
-      c.assets?.forEach(a => this.assetRegistry.register(a));
-      // 骨架面板贡献（注入 editor 到 contentProps，供面板组件访问）
-      c.skeleton?.forEach(s => {
-        this.skeleton.add({
-          ...s,
-          contentProps: {...(s.contentProps ?? {}), editor: this}
-        } as any);
-      });
-    }
 
     this.bus.trigger(EVENT.EDITOR_INIT, {editor: this});
     this.store.setReady(true);

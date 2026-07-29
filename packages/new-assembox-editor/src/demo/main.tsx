@@ -6,17 +6,14 @@ import {createApp} from 'vue';
 import ElementPlus, {ElMessage} from 'element-plus';
 import * as ElementPlusIconsVue from '@element-plus/icons-vue';
 import 'element-plus/dist/index.css';
-import {createEditor, Workbench, registerBuiltinPlugins} from '../index';
+import {createEditor, Workbench} from '../index';
 import {registerDemoComponents} from './components';
 
 // 暴露 ElMessage 给动作系统（toast 动作用）
 (window as any).ElMessage = ElMessage;
 
 async function main() {
-  // 1. 注册内置插件（组件库/设置/画布/大纲/源码/历史）
-  registerBuiltinPlugins();
-
-  // 2. 创建编辑器实例（iframe 隔离渲染画布）
+  // 1. 创建编辑器实例（默认注入内置插件：组件库/设置/画布/大纲/源码/历史，iframe 隔离渲染画布）
   const editor = createEditor({
     platform: 'desktop',
     canvasMode: 'iframe',
