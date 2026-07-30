@@ -668,3 +668,86 @@ scope.close('dialogB');
 7. **递归关闭弹窗**：由内向外深度优先，先关子级弹窗再关自身，避免状态错乱。
 
 8. **公式集成**：GETRENDERERDATA/GETRENDERERPROP 让公式跨组件取数据，底层仍是 scoped 查找。
+
+---
+
+## 十六、Vue3 实现验证结果
+
+> 验证项目：`vue3-examples/`（Vue3 + TSX + Element Plus + Vite）
+> 验证文件：`src/scoped/scoped-context.ts` + `src/scoped/use-scoped.ts` + `src/main.tsx`
+
+### 验证清单（全部通过 ✅）
+
+| # | 功能点 | 验证方式 | 验证结果 |
+|---|---|---|---|
+| 1 | **组件注册**（register 到父级 scope） | 注册检查：crudA/formA/dialogA 在 root scope 注册 | ✅ 通过 |
+| 2 | **组件注销**（unregister onBeforeUnmount） | 组件卸载后查找返回 undefined | ✅ 通过 |
+| 3 | **getByName 单段查找** | `scope.getByName('crudA')` 返回组件 | ✅ 通过 |
+| 4 | **getByName 向上冒泡** | 子 scope 内查找 → 冒泡到 root | ✅ 通过 |
+| 5 | **getById 全局查找** | `scope.getById('crud_crudA')` 自底向上逐层扩大 | ✅ 通过 |
+| 6 | **getByIdUnderCurrentScope** | 当前子树遍历，不向上 | ✅ 通过 |
+| 7 | **getComponents** | 返回 scope 注册表副本 | ✅ 通过 |
+| 8 | **isolateScope 独立作用域** | Form/Dialog 建立独立 scope，子组件注册到自身 | ✅ 通过 |
+| 9 | **reload 基本调用** | `scope.reload('crudA')` 刷新列表 + reloadCount 递增 | ✅ 通过 |
+| 10 | **reload + query 参数** | `scope.reload('crudA?keyword=张')` 筛选数据 | ✅ 通过 |
+| 11 | **reload 多目标** | `scope.reload('crudA,crudB')` 同时刷新两个组件 | ✅ 通过 |
+| 12 | **send 发送数据** | `scope.send('formA', {username:'赵六'})` 表单灌值 | ✅ 通过 |
+| 13 | **close 关闭弹窗** | `scope.close('dialogA')` 调用 onClose | ✅ 通过 |
+| 14 | **close 递归关闭** | closeDialogRecursive 由内向外深度优先关闭嵌套弹窗 | ✅ 通过 |
+| 15 | **splitTarget 多目标拆分** | `"crudA,crudB"` → `["crudA","crudB"]` | ✅ 通过 |
+| 16 | **parseTarget query 解析** | `"crudA?keyword=张"` → `{name:'crudA', query:{keyword:'张'}}` | ✅ 通过 |
+| 17 | **parseTarget subPath 解析** | `"formA.detail"` → `{name:'formA', subPath:'detail'}` | ✅ 通过 |
+| 18 | **parseTarget ${var} 变量替换** | `"crudA?keyword=${name}"` → ctx 变量替换 | ✅ 通过 |
+| 19 | **查找不存在的组件** | `getByName('nonExistent')` 返回 undefined 不报错 | ✅ 通过 |
+| 20 | **provide/inject 传递** | SCOPED_KEY InjectionKey + provide/inject 链路 | ✅ 通过 |
+| 21 | **useScoped composable** | onMounted 注册 / onBeforeUnmount 注销自动化 | ✅ 通过 |
+| 22 | **useComponentRef composable** | inject scope + getByName/getById/reload/send/close | ✅ 通过 |
+| 23 | **doAction 动作执行** | scope.doAction([{actionType:'setValue', args:{...}}]) | ✅ 通过 |
+| 24 | **组件 getData/setData** | component.getData() 返回数据 + component.setData() 写入 | ✅ 通过 |
+
+### 验证架构
+
+```
+vue3-examples/
+├── src/
+│   ├── main.tsx                        ← 验证 Demo（10 个验证按钮 + 日志面板）
+│   └── scoped/
+│       ├── scoped-context.ts           ← ScopedContext 核心（~280 行）
+│       │   ├─ createScopedContext()    ← 闭包私有注册表 + 父子 scope 树
+│       │   ├─ register/unregister      ← 注册到父级（非自身）
+│       │   ├─ getByName               ← 本地→向上冒泡，支持点号路径
+│       │   ├─ getById                 ← 自底向上逐层扩大（ignoreScope 优化）
+│       │   ├─ getByIdUnderCurrentScope ← 当前子树遍历
+│       │   ├─ getComponents           ← 返回注册表副本
+│       │   ├─ reload                  ← splitTarget + parseTarget + component.reload
+│       │   ├─ send                    ← component.receive
+│       │   ├─ close                   ← closeDialogRecursive 递归关闭
+│       │   ├─ doAction               ← scope 层级动作执行
+│       │   ├─ splitTarget             ← 多目标拆分
+│       │   └─ parseTarget             ← query + subPath + ${var} 解析
+│       └── use-scoped.ts              ← Vue3 composable（~100 行）
+│           ├─ useScoped()             ← 注册/注销/isolateScope/provide
+│           └─ useComponentRef()       ← 查找/调用其他组件
+```
+
+### amis 原版 vs Vue3 验证版对比
+
+| amis 设计 | Vue3 实现方式 | 差异说明 |
+|---|---|---|
+| React Context + Provider | `provide(SCOPED_KEY)` / `inject(SCOPED_KEY)` | Vue3 更轻量 |
+| 构造函数注册 | `onMounted` 注册 | Vue3 生命周期 |
+| componentWillUnmount 注销 | `onBeforeUnmount` 注销 | Vue3 生命周期 |
+| 闭包私有 `components[]` | 闭包私有 `components[]` | 完全一致 |
+| AST 解析 splitTarget | 简化版逗号拆分 | 足够验证场景，${var} 内逗号需 AST |
+| MobX reaction 响应式 | `reactive(component)` | Vue3 响应式免费 |
+| BroadcastChannel 跨标签 | 未实现 | 编辑器场景非必需 |
+| GETRENDERERDATA 公式 | 未实现 | 依赖 amis-formula，后续接入 |
+
+### 结论
+
+**Scoped 组件通信系统的所有核心功能已在 Vue3 环境验证通过**，可直接迁移到 new-assembox-editor 的运行时通信层。迁移时需注意：
+
+1. **编辑器集成**：在 editor constructor 创建 rootScopedContext，provide 给画布
+2. **iframe 适配**：iframe 内组件注册到 iframe 的 scope，host 通过 bridge 跨帧通信
+3. **splitTarget 增强**：如需支持复杂表达式内逗号，接入 amis-formula 的 AST 解析
+4. **EventBus 协同**：scoped.reload/send/close 可与 EventBus 事件链配合（事件携带 scoped 上下文）
