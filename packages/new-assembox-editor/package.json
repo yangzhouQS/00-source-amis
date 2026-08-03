@@ -17,9 +17,11 @@
     "test:e2e:ui": "playwright test --ui"
   },
   "dependencies": {
-    "element-plus": "^2.13.7",
+    "@cs/assembox-core-next": "workspace:*",
+    "@cs/assembox-desktop-next": "workspace:*",
     "@element-plus/icons-vue": "^2.3.2",
     "@guolao/vue-monaco-editor": "^1.6.0",
+    "element-plus": "^2.13.7",
     "monaco-editor": "^0.56.0",
     "vue": "^3.5.34"
   },
