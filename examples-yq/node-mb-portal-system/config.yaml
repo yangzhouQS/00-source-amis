@@ -1,0 +1,23 @@
+application:
+  name: 'node-mb-portal-system'
+  port: 8801
+  serverPath: 'portal'
+  profiles.active: 'dev,local'
+profiles.local:
+  logger:
+    level: info
+  mysql:
+#    demo:
+    pf_pm:
+     logging: true
+  rpc:
+    discovery:
+      enable: true   
+  proxy:
+    enable: true
+    sites:
+      - proxyPrefix: '/'
+        targetUrl: 'http://dev.yearrow.com'
+        secure: false
+        skipPath:
+          - 'portal'

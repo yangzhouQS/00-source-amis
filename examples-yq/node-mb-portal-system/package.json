@@ -1,0 +1,45 @@
+{
+  "name": "node-mb-portal-system",
+  "version": "0.0.1",
+  "private": true,
+  "description": "",
+  "author": "平台开发组",
+  "license": "ISC",
+  "directories": {},
+  "scripts": {
+    "bootstrap": "pnpm install",
+    "reset": "rimraf node_modules",
+    "start:debug": "cross-env CS_SERVICEENV=dev webpages-server dev",
+    "dev": "webpages-packer dev",
+    "build": "webpages-packer build && webpages-server build",
+    "start": "node ./dist/controllers/main.js",
+    "lint": "eslint ./src/web-content/module/entrypoint",
+    "lint:fix": "eslint --fix"
+  },
+  "dependencies": {
+    "@cs/js-file-client-library": "^2.2.5",
+    "@cs/nest-cas-client": "^3.1.0",
+    "@cs/nest-cloud": "^3.1.0",
+    "@cs/nest-common": "^4.0.2",
+    "@cs/nest-config": "^4.0.2",
+    "@cs/nest-typeorm": "^2.1.1",
+    "@nestjs/serve-static": "4.0.2",
+    "eventemitter2": "6.4.9",
+    "lodash-es": "^4.18.1",
+    "@cs/vue3-biz-components-library": "^0.1.2",
+    "@cs/element-plus-ui": "^1.0.8"
+  },
+  "devDependencies": {
+    "cross-env": "10.1.0",
+    "@cs/js-web-framework": "^1.1.3",
+    "@cs/js-eslint-config-library": "0.2.7",
+    "@cs/webpages-packer": "^4.1.13-beta.1",
+    "@types/node": "26.1.0",
+    "@types/lodash-es": "^4.17.12",
+    "element-plus": "2.14.2",
+    "eslint": "^10.6.0",
+    "rimraf": "^6.1.3",
+    "vue": "^3.5.39",
+    "vue-router": "^5.1.0"
+  }
+}

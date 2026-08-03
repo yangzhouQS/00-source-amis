@@ -1,0 +1,969 @@
+{
+  "properties": {
+    "orgId": 10001,
+    "orgName": "中铁一局集团有限公司",
+    "flowName": "物资红色预警处置",
+    "organization": "",
+    "formName": "处置红色预警-物资部审批",
+    "remark": "",
+    "systemMessage": false,
+    "mailMessage": false,
+    "noteMessage": false,
+    "startRecall": false,
+    "endRecall": false,
+    "flowInitiator": false,
+    "flowLog": true,
+    "flowFormName": "处置红色预警-物资部审批",
+    "flowFormId": 2252987222055424,
+    "productCode": "mquantity",
+    "moduleName": "",
+    "flowState": "1",
+    "moduleCode": "q-warn-disposal-red-wz"
+  },
+  "steps": [
+    {
+      "id": "454de819-274a-4e41-ac3d-7ec7f6490548",
+      "type": "start",
+      "x": 290,
+      "y": 210,
+      "properties": {}
+    },
+    {
+      "id": "23f02207-936a-4dee-b0fa-5e572f905ba0",
+      "type": "rect",
+      "x": 430,
+      "y": 210,
+      "properties": {
+        "text": "发起人",
+        "name": "",
+        "user": "",
+        "userId": 0,
+        "region": "",
+        "type": "",
+        "flowType": 1,
+        "carbonCopy": 1,
+        "opinion": "",
+        "countersign": true,
+        "step": "1",
+        "sign": "1",
+        "node": "",
+        "buttons": [],
+        "stepType": "normal",
+        "stepName": "发起人",
+        "dynamic": "预留",
+        "dynamicField": "预留",
+        "commentDisplay": true,
+        "attachment": false,
+        "signatureType": "",
+        "handler": "",
+        "handlePolicy": 1,
+        "handlePercentage": "",
+        "CounterSignaturePolicy": "",
+        "CounterSignaturePercentage": 0,
+        "backType": 0,
+        "backPolicy": 1,
+        "backStep": {
+          "stepId": "",
+          "stepName": ""
+        },
+        "isCustomizeComment": false,
+        "customizeComments": [],
+        "stopRemark": "",
+        "handType": 1,
+        "copyHandler": "",
+        "copyUser": "",
+        "skipFirstStep": 1
+      },
+      "text": {
+        "x": 430,
+        "y": 210,
+        "value": "发起人"
+      }
+    },
+    {
+      "id": "f632530c-0c2d-4368-84b6-62569f37456f",
+      "type": "rect",
+      "x": 590,
+      "y": 210,
+      "properties": {
+        "text": "项目物资部长",
+        "name": "",
+        "user": "项目物资部长",
+        "userId": 0,
+        "region": "",
+        "type": "",
+        "flowType": 1,
+        "carbonCopy": 1,
+        "opinion": "",
+        "countersign": true,
+        "step": "1",
+        "sign": "1",
+        "node": "",
+        "buttons": [
+          {
+            "id": 1127642163606529,
+            "showTitle": "同意",
+            "sort": 1
+          },
+          {
+            "id": 1127642163606530,
+            "showTitle": "驳回",
+            "sort": 2
+          }
+        ],
+        "stepType": "normal",
+        "stepName": "项目物资部长",
+        "dynamic": "预留",
+        "dynamicField": "预留",
+        "commentDisplay": true,
+        "attachment": false,
+        "signatureType": "",
+        "handler": "r_1194864256800256",
+        "handlePolicy": 1,
+        "handlePercentage": "",
+        "CounterSignaturePolicy": "",
+        "CounterSignaturePercentage": 0,
+        "backType": 1,
+        "backPolicy": 2,
+        "backStep": {
+          "stepId": "",
+          "stepName": ""
+        },
+        "isCustomizeComment": false,
+        "customizeComments": [],
+        "stopRemark": "",
+        "handType": "",
+        "copyHandler": "",
+        "copyUser": "",
+        "skipFirstStep": 0
+      },
+      "text": {
+        "x": 590,
+        "y": 210,
+        "value": "项目物资部长"
+      }
+    },
+    {
+      "id": "7eb1b69e-aa19-41b3-bb79-1d48c7b249fc",
+      "type": "rect",
+      "x": 750,
+      "y": 210,
+      "properties": {
+        "text": "项目商务经理/项目经理",
+        "name": "",
+        "user": "项目商务部经理,项目经理",
+        "userId": 0,
+        "region": "",
+        "type": "",
+        "flowType": 0,
+        "carbonCopy": 1,
+        "opinion": "",
+        "countersign": true,
+        "step": "1",
+        "sign": "1",
+        "node": "",
+        "buttons": [
+          {
+            "id": 1127642163606530,
+            "showTitle": "驳回",
+            "sort": 2
+          },
+          {
+            "id": 1127642163606529,
+            "showTitle": "同意",
+            "sort": 1
+          }
+        ],
+        "stepType": "normal",
+        "stepName": "项目商务经理/项目经理",
+        "dynamic": "预留",
+        "dynamicField": "预留",
+        "commentDisplay": true,
+        "attachment": false,
+        "signatureType": "",
+        "handler": "r_2023202254894080,r_1194863244391424",
+        "handlePolicy": 1,
+        "handlePercentage": "",
+        "CounterSignaturePolicy": "",
+        "CounterSignaturePercentage": 0,
+        "backType": 1,
+        "backPolicy": 2,
+        "backStep": {
+          "stepId": "",
+          "stepName": ""
+        },
+        "isCustomizeComment": false,
+        "customizeComments": [],
+        "stopRemark": "",
+        "handType": "",
+        "copyHandler": "",
+        "copyUser": "",
+        "skipFirstStep": 0
+      },
+      "text": {
+        "x": 750,
+        "y": 210,
+        "value": "项目商务经理/项目经理"
+      }
+    },
+    {
+      "id": "a0dc2fde-47c8-4f7b-829f-2cb380b946c4",
+      "type": "end",
+      "x": 1820,
+      "y": 270,
+      "properties": {}
+    },
+    {
+      "id": "7172a134-48c3-4a44-8e0b-8a19371436ea",
+      "type": "rect",
+      "x": 940,
+      "y": 60,
+      "properties": {
+        "text": "公司物资部长",
+        "name": "",
+        "user": "公司物资部长",
+        "userId": 0,
+        "region": "",
+        "type": "",
+        "flowType": 1,
+        "carbonCopy": 1,
+        "opinion": "",
+        "countersign": true,
+        "step": "1",
+        "sign": "1",
+        "node": "",
+        "buttons": [
+          {
+            "id": 1127642163606529,
+            "showTitle": "同意",
+            "sort": 1
+          },
+          {
+            "id": 1127642163606530,
+            "showTitle": "驳回",
+            "sort": 2
+          }
+        ],
+        "stepType": "normal",
+        "stepName": "公司物资部长",
+        "dynamic": "预留",
+        "dynamicField": "预留",
+        "commentDisplay": true,
+        "attachment": false,
+        "signatureType": "",
+        "handler": "r_1194858744935936",
+        "handlePolicy": 1,
+        "handlePercentage": "",
+        "CounterSignaturePolicy": "",
+        "CounterSignaturePercentage": 0,
+        "backType": 1,
+        "backPolicy": 2,
+        "backStep": {
+          "stepId": "",
+          "stepName": ""
+        },
+        "isCustomizeComment": false,
+        "customizeComments": [],
+        "stopRemark": "",
+        "handType": "",
+        "copyHandler": "",
+        "copyUser": "",
+        "skipFirstStep": 0
+      },
+      "text": {
+        "x": 940,
+        "y": 60,
+        "value": "公司物资部长"
+      }
+    },
+    {
+      "id": "1a286d34-719d-46bf-b681-795c78819871",
+      "type": "rect",
+      "x": 1210,
+      "y": 60,
+      "properties": {
+        "text": "公司总经济师",
+        "name": "",
+        "user": "公司总经济师",
+        "userId": 0,
+        "region": "",
+        "type": "",
+        "flowType": 1,
+        "carbonCopy": 1,
+        "opinion": "",
+        "countersign": true,
+        "step": "1",
+        "sign": "1",
+        "node": "",
+        "buttons": [
+          {
+            "id": 1127642163606529,
+            "showTitle": "同意",
+            "sort": 1
+          },
+          {
+            "id": 1127642163606530,
+            "showTitle": "驳回",
+            "sort": 2
+          }
+        ],
+        "stepType": "normal",
+        "stepName": "公司总经济师",
+        "dynamic": "预留",
+        "dynamicField": "预留",
+        "commentDisplay": true,
+        "attachment": false,
+        "signatureType": "",
+        "handler": "r_2255118656740864",
+        "handlePolicy": 1,
+        "handlePercentage": "",
+        "CounterSignaturePolicy": "",
+        "CounterSignaturePercentage": 0,
+        "backType": 1,
+        "backPolicy": 2,
+        "backStep": {
+          "stepId": "",
+          "stepName": ""
+        },
+        "isCustomizeComment": false,
+        "customizeComments": [],
+        "stopRemark": "",
+        "handType": "",
+        "copyHandler": "",
+        "copyUser": "",
+        "skipFirstStep": 0
+      },
+      "text": {
+        "x": 1210,
+        "y": 60,
+        "value": "公司总经济师"
+      }
+    },
+    {
+      "id": "327d41b2-9bdc-4332-b2f3-57b0a9310866",
+      "type": "rect",
+      "x": 1440,
+      "y": 270,
+      "properties": {
+        "text": "集团物资管理员",
+        "name": "",
+        "user": "仵建国,李鑫,刘永鹏",
+        "userId": 0,
+        "region": "",
+        "type": "",
+        "flowType": 1,
+        "carbonCopy": 1,
+        "opinion": "",
+        "countersign": true,
+        "step": "1",
+        "sign": "1",
+        "node": "",
+        "buttons": [
+          {
+            "id": 1127642163606530,
+            "showTitle": "驳回",
+            "sort": 2
+          },
+          {
+            "id": 1127642163606534,
+            "showTitle": "完成",
+            "sort": 6
+          }
+        ],
+        "stepType": "normal",
+        "stepName": "集团物资管理员",
+        "dynamic": "预留",
+        "dynamicField": "预留",
+        "commentDisplay": true,
+        "attachment": false,
+        "signatureType": "",
+        "handler": "u_1924590314172416,u_2011604406614528,u_1940807332303360,u_1998225615452672",
+        "handlePolicy": 1,
+        "handlePercentage": "",
+        "CounterSignaturePolicy": "",
+        "CounterSignaturePercentage": 0,
+        "backType": 1,
+        "backPolicy": 2,
+        "backStep": {
+          "stepId": "",
+          "stepName": ""
+        },
+        "isCustomizeComment": false,
+        "customizeComments": [],
+        "stopRemark": "",
+        "handType": "",
+        "copyHandler": "",
+        "copyUser": "",
+        "skipFirstStep": 0
+      },
+      "text": {
+        "x": 1440,
+        "y": 270,
+        "value": "集团物资管理员"
+      }
+    },
+    {
+      "id": "afdcec72-9f77-4f7e-80b1-d0a8b88f6cdc",
+      "type": "rect",
+      "x": 970,
+      "y": 530,
+      "properties": {
+        "text": "公司物资部长",
+        "name": "",
+        "user": "公司物资部长",
+        "userId": 0,
+        "region": "",
+        "type": "",
+        "flowType": 0,
+        "carbonCopy": 1,
+        "opinion": "",
+        "countersign": true,
+        "step": "1",
+        "sign": "1",
+        "node": "",
+        "buttons": [
+          {
+            "id": 1127642163606529,
+            "showTitle": "同意",
+            "sort": 1
+          },
+          {
+            "id": 1127642163606530,
+            "showTitle": "驳回",
+            "sort": 2
+          }
+        ],
+        "stepType": "normal",
+        "stepName": "公司物资部长",
+        "dynamic": "预留",
+        "dynamicField": "预留",
+        "commentDisplay": true,
+        "attachment": false,
+        "signatureType": "",
+        "handler": "r_1194858744935936",
+        "handlePolicy": 1,
+        "handlePercentage": "",
+        "CounterSignaturePolicy": "",
+        "CounterSignaturePercentage": 0,
+        "backType": 1,
+        "backPolicy": 2,
+        "backStep": {
+          "stepId": "",
+          "stepName": ""
+        },
+        "isCustomizeComment": false,
+        "customizeComments": [],
+        "stopRemark": "",
+        "handType": "",
+        "copyHandler": "",
+        "copyUser": "",
+        "skipFirstStep": 0
+      },
+      "text": {
+        "x": 970,
+        "y": 530,
+        "value": "公司物资部长"
+      }
+    },
+    {
+      "id": "26de4beb-e822-440f-833d-9f1161cc641b",
+      "type": "rect",
+      "x": 1700,
+      "y": 530,
+      "properties": {
+        "text": "集团物设部副部长",
+        "name": "",
+        "user": "李忠锋",
+        "userId": 0,
+        "region": "",
+        "type": "",
+        "flowType": 1,
+        "carbonCopy": 1,
+        "opinion": "",
+        "countersign": true,
+        "step": "1",
+        "sign": "1",
+        "node": "",
+        "buttons": [
+          {
+            "id": 1127642163606530,
+            "showTitle": "驳回",
+            "sort": 2
+          },
+          {
+            "id": 1127642163606534,
+            "showTitle": "完成",
+            "sort": 6
+          }
+        ],
+        "stepType": "normal",
+        "stepName": "集团物设部副部长",
+        "dynamic": "预留",
+        "dynamicField": "预留",
+        "commentDisplay": true,
+        "attachment": false,
+        "signatureType": "",
+        "handler": "u_1998225615452672",
+        "handlePolicy": 1,
+        "handlePercentage": "",
+        "CounterSignaturePolicy": "",
+        "CounterSignaturePercentage": 0,
+        "backType": 1,
+        "backPolicy": 2,
+        "backStep": {
+          "stepId": "",
+          "stepName": ""
+        },
+        "isCustomizeComment": false,
+        "customizeComments": [],
+        "stopRemark": "",
+        "handType": "",
+        "copyHandler": "",
+        "copyUser": "",
+        "skipFirstStep": 0
+      },
+      "text": {
+        "x": 1700,
+        "y": 530,
+        "value": "集团物设部副部长"
+      }
+    },
+    {
+      "id": "ab773fa1-f053-43f5-9b81-f6e320326f50",
+      "type": "rect",
+      "x": 1400,
+      "y": 530,
+      "properties": {
+        "text": "集团物资管理员",
+        "name": "",
+        "user": "仵建国,李鑫,刘永鹏",
+        "userId": 0,
+        "region": "",
+        "type": "",
+        "flowType": 1,
+        "carbonCopy": 1,
+        "opinion": "",
+        "countersign": true,
+        "step": "1",
+        "sign": "1",
+        "node": "",
+        "buttons": [
+          {
+            "id": 1127642163606530,
+            "showTitle": "驳回",
+            "sort": 2
+          },
+          {
+            "id": 1127642163606529,
+            "showTitle": "同意",
+            "sort": 1
+          }
+        ],
+        "stepType": "normal",
+        "stepName": "集团物资管理员",
+        "dynamic": "预留",
+        "dynamicField": "预留",
+        "commentDisplay": true,
+        "attachment": false,
+        "signatureType": "",
+        "handler": "u_1924590314172416,u_2011604406614528,u_1940807332303360",
+        "handlePolicy": 1,
+        "handlePercentage": "",
+        "CounterSignaturePolicy": "",
+        "CounterSignaturePercentage": 0,
+        "backType": 1,
+        "backPolicy": 2,
+        "backStep": {
+          "stepId": "",
+          "stepName": ""
+        },
+        "isCustomizeComment": false,
+        "customizeComments": [],
+        "stopRemark": "",
+        "handType": "",
+        "copyHandler": "",
+        "copyUser": "",
+        "skipFirstStep": 0
+      },
+      "text": {
+        "x": 1400,
+        "y": 530,
+        "value": "集团物资管理员"
+      }
+    }
+  ],
+  "lines": [
+    {
+      "id": "fcca4060-5533-4ec7-837b-413a548506e3",
+      "type": "polyline",
+      "sourceNodeId": "23f02207-936a-4dee-b0fa-5e572f905ba0",
+      "targetNodeId": "f632530c-0c2d-4368-84b6-62569f37456f",
+      "startPoint": {
+        "x": 480,
+        "y": 210
+      },
+      "endPoint": {
+        "x": 540,
+        "y": 210
+      },
+      "properties": {},
+      "pointsList": [
+        {
+          "x": 480,
+          "y": 210
+        },
+        {
+          "x": 540,
+          "y": 210
+        }
+      ]
+    },
+    {
+      "id": "573c79a2-cf30-4f0b-92c1-46a4def09756",
+      "type": "polyline",
+      "sourceNodeId": "f632530c-0c2d-4368-84b6-62569f37456f",
+      "targetNodeId": "7eb1b69e-aa19-41b3-bb79-1d48c7b249fc",
+      "startPoint": {
+        "x": 640,
+        "y": 210
+      },
+      "endPoint": {
+        "x": 700,
+        "y": 210
+      },
+      "properties": {},
+      "pointsList": [
+        {
+          "x": 640,
+          "y": 210
+        },
+        {
+          "x": 700,
+          "y": 210
+        }
+      ]
+    },
+    {
+      "id": "6db35aad-f4fa-45a6-97b7-486782028aad",
+      "type": "polyline",
+      "sourceNodeId": "454de819-274a-4e41-ac3d-7ec7f6490548",
+      "targetNodeId": "23f02207-936a-4dee-b0fa-5e572f905ba0",
+      "startPoint": {
+        "x": 310,
+        "y": 210
+      },
+      "endPoint": {
+        "x": 380,
+        "y": 210
+      },
+      "properties": {},
+      "pointsList": [
+        {
+          "x": 310,
+          "y": 210
+        },
+        {
+          "x": 380,
+          "y": 210
+        }
+      ]
+    },
+    {
+      "id": "3e10d983-ee8b-4333-9251-a7a81fa536d6",
+      "type": "polyline",
+      "sourceNodeId": "7eb1b69e-aa19-41b3-bb79-1d48c7b249fc",
+      "targetNodeId": "7172a134-48c3-4a44-8e0b-8a19371436ea",
+      "startPoint": {
+        "x": 750,
+        "y": 170
+      },
+      "endPoint": {
+        "x": 890,
+        "y": 60
+      },
+      "properties": {
+        "lineName": "合同预警",
+        "transferMode": 3,
+        "text": "合同预警\n",
+        "context": "",
+        "value": "",
+        "sqlWhere": "ifnull(resource,'')='conExecutionCrfeb'",
+        "customizeValues": []
+      },
+      "text": {
+        "x": 805,
+        "y": 60,
+        "value": "合同预警"
+      },
+      "pointsList": [
+        {
+          "x": 750,
+          "y": 170
+        },
+        {
+          "x": 750,
+          "y": 60
+        },
+        {
+          "x": 890,
+          "y": 60
+        }
+      ]
+    },
+    {
+      "id": "c2adbd2f-e0b6-4ef7-8897-05936d476bdf",
+      "type": "polyline",
+      "sourceNodeId": "7eb1b69e-aa19-41b3-bb79-1d48c7b249fc",
+      "targetNodeId": "afdcec72-9f77-4f7e-80b1-d0a8b88f6cdc",
+      "startPoint": {
+        "x": 750,
+        "y": 250
+      },
+      "endPoint": {
+        "x": 920,
+        "y": 530
+      },
+      "properties": {
+        "lineName": "非合同预警",
+        "transferMode": 3,
+        "text": "非合同预警",
+        "context": "",
+        "value": "",
+        "sqlWhere": "ifnull(resource,'')<>'conExecutionCrfeb'",
+        "customizeValues": []
+      },
+      "text": {
+        "x": 842,
+        "y": 530,
+        "value": "非合同预警"
+      },
+      "pointsList": [
+        {
+          "x": 750,
+          "y": 250
+        },
+        {
+          "x": 750,
+          "y": 530
+        },
+        {
+          "x": 920,
+          "y": 530
+        }
+      ]
+    },
+    {
+      "id": "fdf4e51a-da96-4224-9fe5-852660f5762c",
+      "type": "polyline",
+      "sourceNodeId": "7172a134-48c3-4a44-8e0b-8a19371436ea",
+      "targetNodeId": "1a286d34-719d-46bf-b681-795c78819871",
+      "startPoint": {
+        "x": 990,
+        "y": 60
+      },
+      "endPoint": {
+        "x": 1160,
+        "y": 60
+      },
+      "properties": {},
+      "pointsList": [
+        {
+          "x": 990,
+          "y": 60
+        },
+        {
+          "x": 1160,
+          "y": 60
+        }
+      ]
+    },
+    {
+      "id": "7b1049fe-d52e-4565-9563-e9d007630b69",
+      "type": "polyline",
+      "sourceNodeId": "1a286d34-719d-46bf-b681-795c78819871",
+      "targetNodeId": "327d41b2-9bdc-4332-b2f3-57b0a9310866",
+      "startPoint": {
+        "x": 1260,
+        "y": 60
+      },
+      "endPoint": {
+        "x": 1440,
+        "y": 230
+      },
+      "properties": {},
+      "pointsList": [
+        {
+          "x": 1260,
+          "y": 60
+        },
+        {
+          "x": 1440,
+          "y": 60
+        },
+        {
+          "x": 1440,
+          "y": 230
+        }
+      ]
+    },
+    {
+      "id": "bc5dd891-712a-4672-aa05-aa8d3028aacf",
+      "type": "polyline",
+      "sourceNodeId": "afdcec72-9f77-4f7e-80b1-d0a8b88f6cdc",
+      "targetNodeId": "327d41b2-9bdc-4332-b2f3-57b0a9310866",
+      "startPoint": {
+        "x": 970,
+        "y": 490
+      },
+      "endPoint": {
+        "x": 1390,
+        "y": 270
+      },
+      "properties": {
+        "lineName": "",
+        "transferMode": 3,
+        "text": "非应列未列",
+        "context": "",
+        "value": "",
+        "sqlWhere": "ifnull(resource,'')<>'notChargeCrfeb'",
+        "customizeValues": []
+      },
+      "text": {
+        "x": 1180,
+        "y": 270,
+        "value": "非应列未列"
+      },
+      "pointsList": [
+        {
+          "x": 970,
+          "y": 490
+        },
+        {
+          "x": 970,
+          "y": 270
+        },
+        {
+          "x": 1390,
+          "y": 270
+        }
+      ]
+    },
+    {
+      "id": "7f2a3ce5-f747-4b0d-a5f4-5815d997c16a",
+      "type": "polyline",
+      "sourceNodeId": "26de4beb-e822-440f-833d-9f1161cc641b",
+      "targetNodeId": "a0dc2fde-47c8-4f7b-829f-2cb380b946c4",
+      "startPoint": {
+        "x": 1750,
+        "y": 530
+      },
+      "endPoint": {
+        "x": 1820,
+        "y": 290
+      },
+      "properties": {},
+      "pointsList": [
+        {
+          "x": 1750,
+          "y": 530
+        },
+        {
+          "x": 1820,
+          "y": 530
+        },
+        {
+          "x": 1820,
+          "y": 290
+        }
+      ]
+    },
+    {
+      "id": "4a8e710b-b4c7-45e4-a648-b7d62e997dd4",
+      "type": "polyline",
+      "sourceNodeId": "327d41b2-9bdc-4332-b2f3-57b0a9310866",
+      "targetNodeId": "a0dc2fde-47c8-4f7b-829f-2cb380b946c4",
+      "startPoint": {
+        "x": 1490,
+        "y": 270
+      },
+      "endPoint": {
+        "x": 1800,
+        "y": 270
+      },
+      "properties": {},
+      "pointsList": [
+        {
+          "x": 1490,
+          "y": 270
+        },
+        {
+          "x": 1800,
+          "y": 270
+        }
+      ]
+    },
+    {
+      "id": "a5049049-9843-440e-ad39-79a11db0703d",
+      "type": "polyline",
+      "sourceNodeId": "afdcec72-9f77-4f7e-80b1-d0a8b88f6cdc",
+      "targetNodeId": "ab773fa1-f053-43f5-9b81-f6e320326f50",
+      "startPoint": {
+        "x": 1020,
+        "y": 530
+      },
+      "endPoint": {
+        "x": 1350,
+        "y": 530
+      },
+      "properties": {
+        "lineName": "",
+        "transferMode": 3,
+        "text": "",
+        "context": "",
+        "value": "",
+        "sqlWhere": "ifnull(resource,'')='notChargeCrfeb'",
+        "customizeValues": []
+      },
+      "text": {
+        "x": 1185,
+        "y": 530,
+        "value": "应列未列"
+      },
+      "pointsList": [
+        {
+          "x": 1020,
+          "y": 530
+        },
+        {
+          "x": 1350,
+          "y": 530
+        }
+      ]
+    },
+    {
+      "id": "bcc1003e-5101-4174-8a07-2feffc17ca44",
+      "type": "polyline",
+      "sourceNodeId": "ab773fa1-f053-43f5-9b81-f6e320326f50",
+      "targetNodeId": "26de4beb-e822-440f-833d-9f1161cc641b",
+      "startPoint": {
+        "x": 1450,
+        "y": 530
+      },
+      "endPoint": {
+        "x": 1650,
+        "y": 530
+      },
+      "properties": {},
+      "pointsList": [
+        {
+          "x": 1450,
+          "y": 530
+        },
+        {
+          "x": 1650,
+          "y": 530
+        }
+      ]
+    }
+  ]
+}

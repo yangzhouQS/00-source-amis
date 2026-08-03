@@ -43,6 +43,8 @@ revision.json
 publish.sh
 /01-lc
 /assembox
+/assembox-packages-project/**/*
+
 
 # Playwright test artifacts
 **/test-results/
