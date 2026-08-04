@@ -1,4 +1,4 @@
-﻿/**
+/**
  * SelectSetter - 下拉选择
  * 支持 options（{label,value} / string）、分组、搜索、多选
  */

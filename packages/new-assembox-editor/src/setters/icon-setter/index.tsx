@@ -1,4 +1,4 @@
-﻿import {useAssemNamespace} from '../../hooks/use-assem-namespace';
+import {useAssemNamespace} from '../../hooks/use-assem-namespace';
 const ns = useAssemNamespace('icon-picker');
 
 /**

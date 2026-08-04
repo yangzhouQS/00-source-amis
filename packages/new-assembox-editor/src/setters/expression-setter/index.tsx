@@ -1,4 +1,4 @@
-﻿/**
+/**
  * ExpressionSetter - JS expression editor ({{expr}} + context hints)
  */
 import {defineComponent, ref, computed} from 'vue';

@@ -1,4 +1,4 @@
-﻿const logger = getLogger('plugin-manager');
+const logger = getLogger('plugin-manager');
 /**
  * 插件管理器（实例级）
  * - register(plugin, options) 实例级注册（同 id 按 priority 覆盖）

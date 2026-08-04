@@ -1,4 +1,4 @@
-﻿/**
+/**
  * BoolSetter - 布尔开关
  */
 import {defineSetter, renderPreview} from '../base';

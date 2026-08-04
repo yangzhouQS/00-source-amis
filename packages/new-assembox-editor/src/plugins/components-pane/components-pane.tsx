@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 组件库面板（拖拽源）
  * 从场景 catalog（IComponentCatalog）读取，按 group/category 分组
  * 支持搜索过滤 + 拖入画布（DnD）与点击插入；BEM 类名（component-pane block）

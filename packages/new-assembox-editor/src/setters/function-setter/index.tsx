@@ -1,4 +1,4 @@
-﻿/**
+/**
  * FunctionSetter - code editor (textarea + fullscreen + syntax validation)
  * Props contract kept compatible so Monaco can be swapped in later
  */

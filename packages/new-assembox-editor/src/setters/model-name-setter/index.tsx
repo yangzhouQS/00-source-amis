@@ -1,4 +1,4 @@
-﻿/**
+/**
  * ModelNameSetter - model/field binding picker (tree-select)
  */
 import {defineComponent, ref, watch} from 'vue';

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * RadioGroupSetter - 单选按钮组
  */
 import {defineSetter, normalizeOptions, renderPreview} from '../base';

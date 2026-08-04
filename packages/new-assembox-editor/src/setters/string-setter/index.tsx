@@ -1,4 +1,4 @@
-﻿/**
+/**
  * StringSetter - 字符串输入
  */
 import {defineSetter, renderPreview} from '../base';

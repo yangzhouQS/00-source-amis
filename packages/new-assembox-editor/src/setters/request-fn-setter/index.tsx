@@ -1,4 +1,4 @@
-﻿/**
+/**
  * RequestFnSetter - request/data-source service picker (tree-select)
  */
 import {defineComponent} from 'vue';

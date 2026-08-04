@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 设置面板（属性/样式/事件/高级 Tab）
  * 选区驱动：读取 store.activeNode，用 catalog 组件 props 配置渲染 setter
  * 变更通过 editor.updateProps 同步到画布（属性写入 __nodeOptions）

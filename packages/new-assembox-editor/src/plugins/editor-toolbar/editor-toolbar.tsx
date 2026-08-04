@@ -1,4 +1,4 @@
-﻿/**
+/**
  * 顶部工具栏（预览/设计切换 + 撤销/重做 + 设备预设）
  */
 import {defineComponent, PropType} from 'vue';

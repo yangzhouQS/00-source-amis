@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Schema 源码面板（Monaco JSON 编辑器）
  * 查看/编辑当前 schema，编辑后应用回画布
  * 使用 @guolao/vue-monaco-editor（CDN loader，免本地 worker 配置）

@@ -1,4 +1,4 @@
-﻿/**
+/**
  * DesignerHost 画布宿主组件
  * 聚合：IRenderer + BemTools + DnD 容器
  * inline 模式：renderer 挂载到 div 容器（同 DOM）

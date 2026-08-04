@@ -1,4 +1,4 @@
-﻿/**
+/**
  * ColorSetter - 颜色选择
  */
 import {defineSetter, renderPreview} from '../base';

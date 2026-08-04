@@ -1,4 +1,4 @@
-﻿/**
+/**
  * NumberSetter - 数字输入
  */
 import {defineSetter, renderPreview} from '../base';

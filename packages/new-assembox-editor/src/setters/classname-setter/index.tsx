@@ -1,4 +1,4 @@
-﻿/**
+/**
  * ClassNameSetter - CSS class name multi-select (tag mode)
  */
 import {defineComponent} from 'vue';

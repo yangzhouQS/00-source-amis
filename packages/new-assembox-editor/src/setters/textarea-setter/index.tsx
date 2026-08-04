@@ -1,4 +1,4 @@
-﻿/**
+/**
  * TextareaSetter - 多行文本
  */
 import {defineSetter, renderPreview} from '../base';

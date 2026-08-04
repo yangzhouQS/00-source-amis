@@ -1,4 +1,4 @@
-﻿/**
+/**
  * ArrayOfMultiSetter - multi-select checkbox group
  */
 import {defineComponent} from 'vue';

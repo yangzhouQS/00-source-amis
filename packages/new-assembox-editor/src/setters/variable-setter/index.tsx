@@ -1,4 +1,4 @@
-﻿/**
+/**
  * VariableSetter - variable binding ({{expression}})
  */
 import {defineComponent} from 'vue';
