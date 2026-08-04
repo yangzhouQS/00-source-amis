@@ -1,5 +1,7 @@
 packages:
-  - 'packages/*'
+  - 'packages/new-assembox-editor'
   - 'vue3-examples'
   - 'packages-vue'
   - 'examples-yq/node-mb-portal-system'
+  - 'assembox-packages-project/libs/assembox-core-next'
+  - 'assembox-packages-project/libs/assembox-desktop-next'
