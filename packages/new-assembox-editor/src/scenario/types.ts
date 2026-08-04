@@ -28,6 +28,12 @@ export interface ISchemaOps {
 
   createNode(renderType: string, nodeName: string, overrides?: any): any;
   emptySchema(): any;
+
+  // ── 辅助（供 Editor 的 paste/duplicate/moveUp/moveDown）──
+  isContainer?(node: any): boolean;
+  findSlotOf?(schema: any, nodeId: string): { parentId: string; slotKey: string; index: number } | undefined;
+  moveNodeUp?(schema: any, nodeId: string): boolean;
+  moveNodeDown?(schema: any, nodeId: string): boolean;
 }
 
 // ═══════════════════════════════════════════════

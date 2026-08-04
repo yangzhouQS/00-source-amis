@@ -1,5 +1,6 @@
 import type { ISchemaOps } from '../../scenario/types';
 import { createPcEmptySchema } from './empty-schema';
+import { lookupSlotGate, type SlotField, type SlotHost } from '@cs/assembox-desktop-next';
 
 let counter = 0;
 function shortId(): string {
@@ -218,5 +219,78 @@ export class PcSchemaOps implements ISchemaOps {
 
   emptySchema(): any {
     return createPcEmptySchema();
+  }
+
+  /** 判断节点是否为容器（有槽位可投放子节点） */
+  isContainer(node: any): boolean {
+    const renderType = node?.__nodeOptions?.renderType;
+    if (!renderType) return false;
+    const gate = lookupSlotGate(renderType as SlotHost, 'defaultSlot' as SlotField);
+    return gate !== undefined;
+  }
+
+  /** 找到 nodeId 所在的父节点 + 槽位键 + 索引（供 paste/duplicate/moveUp/moveDown） */
+  findSlotOf(schema: any, nodeId: string): { parentId: string; slotKey: string; index: number } | undefined {
+    let result: { parentId: string; slotKey: string; index: number } | undefined;
+    this.walk(schema, (node) => {
+      if (result) return;
+      const opts = node?.__nodeOptions;
+      if (!opts) return;
+      for (const field of SLOT_FIELDS) {
+        const val = opts[field];
+        if (Array.isArray(val)) {
+          const idx = val.findIndex((c: any) => this.getNodeId(c) === nodeId);
+          if (idx >= 0) { result = { parentId: this.getNodeId(node), slotKey: field, index: idx }; return; }
+        } else if (val && this.getNodeId(val) === nodeId) {
+          result = { parentId: this.getNodeId(node), slotKey: field, index: 0 }; return;
+        }
+      }
+      if (Array.isArray(opts.itemConfig)) {
+        for (let i = 0; i < opts.itemConfig.length; i++) {
+          const item = opts.itemConfig[i];
+          if (item?.defaultSlot) {
+            if (Array.isArray(item.defaultSlot)) {
+              const idx = item.defaultSlot.findIndex((c: any) => this.getNodeId(c) === nodeId);
+              if (idx >= 0) { result = { parentId: this.getNodeId(node), slotKey: 'defaultSlot', index: idx }; return; }
+            } else if (this.getNodeId(item.defaultSlot) === nodeId) {
+              result = { parentId: this.getNodeId(node), slotKey: 'defaultSlot', index: i }; return;
+            }
+          }
+        }
+      }
+    });
+    return result;
+  }
+
+  /** 上移节点（在所在槽位中前移一位） */
+  moveNodeUp(schema: any, nodeId: string): boolean {
+    const loc = this.findSlotOf(schema, nodeId);
+    if (!loc || loc.index <= 0) return false;
+    const parent = this.getNodeById(schema, loc.parentId);
+    if (!parent) return false;
+    const opts = parent.__nodeOptions;
+    if (!opts) return false;
+    const arr = opts[loc.slotKey];
+    if (Array.isArray(arr) && loc.index > 0) {
+      [arr[loc.index - 1], arr[loc.index]] = [arr[loc.index], arr[loc.index - 1]];
+      return true;
+    }
+    return false;
+  }
+
+  /** 下移节点（在所在槽位中后移一位） */
+  moveNodeDown(schema: any, nodeId: string): boolean {
+    const loc = this.findSlotOf(schema, nodeId);
+    if (!loc) return false;
+    const parent = this.getNodeById(schema, loc.parentId);
+    if (!parent) return false;
+    const opts = parent.__nodeOptions;
+    if (!opts) return false;
+    const arr = opts[loc.slotKey];
+    if (Array.isArray(arr) && loc.index < arr.length - 1) {
+      [arr[loc.index + 1], arr[loc.index]] = [arr[loc.index], arr[loc.index + 1]];
+      return true;
+    }
+    return false;
   }
 }
