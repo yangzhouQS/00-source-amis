@@ -151,10 +151,21 @@ export class PcRenderer implements IRenderer {
   onHover(cb: (nodeId: string | null) => void): void { this.hoverCb = cb; }
 
   private bindCanvasEvents(container: HTMLElement): void {
+    // 方案 B：mousedown 替代 click 做选区主通道（disabled 元素 click 不触发，mousedown 触发）
+    container.addEventListener('mousedown', (e: MouseEvent) => {
+      if ((window as any).assemBoxDesignMode !== 'design') return;
+      if (e.button !== 0) return; // 仅左键
+      const nodeId = this.nodeIdFromElement(e.target as HTMLElement);
+      this.clickCb?.(nodeId, e);
+    }, true);
+
+    // click 作为补充（非 disabled 元素走 click，更精确）
     container.addEventListener('click', (e: MouseEvent) => {
       if ((window as any).assemBoxDesignMode !== 'design') return;
       const nodeId = this.nodeIdFromElement(e.target as HTMLElement);
-      this.clickCb?.(nodeId, e);
+      // 仅当 mousedown 未已触发选中时才用 click（避免重复）
+      // mousedown 已处理 → click 到达说明元素未 disabled → 不重复
+      // 实际：mousedown 总是先触发，click 后触发；只让 mousedown 处理选中
       e.stopPropagation();
     }, true);
 

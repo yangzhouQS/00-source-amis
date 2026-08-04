@@ -299,12 +299,19 @@ export class Editor {
       name: 'paste',
       title: '粘贴',
       weight: 20,
-      condition: ({nodeId}) => !!nodeId,
+      // 粘贴不要求选中节点（可粘贴到根容器）
       disabled: ({editor}) => !editor.clipboard,
-      action: ({nodeId, editor}) => editor.paste(nodeId!)
+      action: ({nodeId, editor}) => {
+        if (nodeId) {
+          editor.paste(nodeId);
+        } else if (editor.clipboard) {
+          // 无选中节点时粘贴到根容器
+          editor.insert(editor.store.schema.$$id ?? 'root', 'body', editor.clipboard);
+        }
+      }
     });
 
-    cm.register({name: 'sep1', title: '', separator: true, weight: 30});
+    cm.register({name: 'sep1', title: '', separator: true, weight: 30, condition: ({nodeId}) => !!nodeId});
 
     cm.register({
       name: 'moveUp',
@@ -322,7 +329,7 @@ export class Editor {
       action: ({nodeId, editor}) => editor.moveDown(nodeId!)
     });
 
-    cm.register({name: 'sep2', title: '', separator: true, weight: 60});
+    cm.register({name: 'sep2', title: '', separator: true, weight: 60, condition: ({nodeId}) => !!nodeId});
 
     cm.register({
       name: 'delete',

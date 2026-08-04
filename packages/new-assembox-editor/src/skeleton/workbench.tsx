@@ -55,7 +55,7 @@ export const Workbench = defineComponent({
         </div>
         {/* 拖拽跟随提示 */}
         {props.editor ? <DragGhost dragon={props.editor.dragon} /> : null}
-        {/* 右键菜单 */}
+        {/* 右键菜单（自包含轮询查找画布容器 + iframe doc） */}
         {props.editor ? <ContextMenu editor={props.editor} /> : null}
       </div>
     );

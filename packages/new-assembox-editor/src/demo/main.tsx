@@ -66,7 +66,7 @@ async function main() {
 
   // 注册 Element Plus 图标
   for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
-    if (['Box'].includes(key)){
+    if (['Box', 'box'].includes(key)){
       continue;
     }
     app.component(key, component as any);
