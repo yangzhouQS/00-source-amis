@@ -1,3 +1,5 @@
+import type { Editor } from "../../core/editor";
+import type { ContextMenuContext } from "../../designer/context-menu-manager";
 /**
  * 右键上下文菜单覆盖层（v3）
  * - 自包含轮询：自行查找画布容器 + iframe doc，不依赖外部 ref 传入
@@ -6,28 +8,26 @@
  * - iframe load 后自动重绑
  */
 import {
+  computed,
   defineComponent,
+  onBeforeUnmount,
+  onMounted,
   PropType,
   ref,
-  computed,
-  onMounted,
-  onBeforeUnmount,
-} from 'vue';
-import type {Editor} from '../../core/editor';
-import type {ContextMenuContext} from '../../designer/context-menu-manager';
-import {useAssemNamespace} from '../../hooks/use-assem-namespace';
+} from "vue";
+import { useAssemNamespace } from "../../hooks/use-assem-namespace";
 
-const ns = useAssemNamespace('context-menu');
+const ns = useAssemNamespace("context-menu");
 
 /** 查找画布容器（lc-assem-designer__canvas） */
 function findCanvasEl(): HTMLElement | null {
-  return document.querySelector('.lc-assem-designer__canvas') as HTMLElement | null;
+  return document.querySelector(".lc-assem-designer__canvas") as HTMLElement | null;
 }
 
 export const ContextMenu = defineComponent({
-  name: 'ContextMenu',
+  name: "ContextMenu",
   props: {
-    editor: {type: Object as PropType<Editor>, required: true},
+    editor: { type: Object as PropType<Editor>, required: true },
   },
   setup(props) {
     const visible = ref(false);
@@ -46,7 +46,9 @@ export const ContextMenu = defineComponent({
     }));
 
     const actions = computed(() => {
-      if (!visible.value) return [];
+      if (!visible.value) {
+        return [];
+      }
       return props.editor.contextMenu.getAvailableActions(ctx.value);
     });
 
@@ -63,11 +65,17 @@ export const ContextMenu = defineComponent({
     };
 
     const resolveNodeId = (el: HTMLElement | null): string | null => {
-      if (!el) return null;
-      const marked = el.closest('[data-editor-id]');
-      if (marked) return marked.getAttribute('data-editor-id');
-      const nodeEl = el.closest('[__nodeid]');
-      if (nodeEl) return nodeEl.getAttribute('__nodeid');
+      if (!el) {
+        return null;
+      }
+      const marked = el.closest("[data-editor-id]");
+      if (marked) {
+        return marked.getAttribute("data-editor-id");
+      }
+      const nodeEl = el.closest("[__nodeid]");
+      if (nodeEl) {
+        return nodeEl.getAttribute("__nodeid");
+      }
       return null;
     };
 
@@ -103,28 +111,35 @@ export const ContextMenu = defineComponent({
     // ── 绑定/解绑 ──
 
     const bindHost = (el: HTMLElement) => {
-      el.addEventListener('contextmenu', hostCtxHandler, true);
+      el.addEventListener("contextmenu", hostCtxHandler, true);
       boundHostEl = el;
     };
 
     const unbindHost = () => {
       if (boundHostEl) {
-        boundHostEl.removeEventListener('contextmenu', hostCtxHandler, true);
+        boundHostEl.removeEventListener("contextmenu", hostCtxHandler, true);
         boundHostEl = null;
       }
     };
 
     const bindIframe = (doc: Document) => {
-      doc.addEventListener('contextmenu', iframeCtxHandler, true);
-      doc.addEventListener('click', clickHideHandler, true);
+      doc.addEventListener("contextmenu", iframeCtxHandler, true);
+      doc.addEventListener("click", clickHideHandler, true);
       boundIframeDoc = doc;
     };
 
     const unbindIframe = () => {
       if (boundIframeDoc) {
-        boundIframeDoc.removeEventListener('contextmenu', iframeCtxHandler, true);
-        boundIframeDoc.removeEventListener('click', clickHideHandler, true);
+        boundIframeDoc.removeEventListener("contextmenu", iframeCtxHandler, true);
+        boundIframeDoc.removeEventListener("click", clickHideHandler, true);
         boundIframeDoc = null;
+      }
+    };
+
+    const stopPolling = () => {
+      if (pollTimer) {
+        clearInterval(pollTimer);
+        pollTimer = null;
       }
     };
 
@@ -137,13 +152,15 @@ export const ContextMenu = defineComponent({
         // 1. 绑定 host 画布容器（只绑一次）
         if (!boundHostEl) {
           const canvas = findCanvasEl();
-          if (canvas) bindHost(canvas);
+          if (canvas) {
+            bindHost(canvas);
+          }
         }
 
         // 2. 绑定 iframe doc（如果画布内有 iframe 且已 load）
         if (!boundIframeDoc && boundHostEl) {
-          const iframe = boundHostEl.querySelector('iframe') as HTMLIFrameElement | null;
-          if (iframe?.contentDocument && iframe.contentDocument.readyState === 'complete') {
+          const iframe = boundHostEl.querySelector("iframe") as HTMLIFrameElement | null;
+          if (iframe?.contentDocument && iframe.contentDocument.readyState === "complete") {
             bindIframe(iframe.contentDocument);
           }
         }
@@ -151,7 +168,7 @@ export const ContextMenu = defineComponent({
         // 两个都绑上了就停止轮询
         if (boundHostEl && (boundIframeDoc || attempts > 60)) {
           // 如果没有 iframe（同 DOM 模式），轮询 60 次（30s）后也停止
-          if (!boundHostEl.querySelector('iframe') && attempts > 20) {
+          if (!boundHostEl.querySelector("iframe") && attempts > 20) {
             stopPolling();
           }
           // 有 iframe 且已绑定 → 停止
@@ -162,29 +179,24 @@ export const ContextMenu = defineComponent({
       }, 500);
     };
 
-    const stopPolling = () => {
-      if (pollTimer) {
-        clearInterval(pollTimer);
-        pollTimer = null;
-      }
-    };
-
     onMounted(() => {
       startPolling();
       // host doc 全局 click 关闭（点画布外也关闭菜单）
-      document.addEventListener('click', clickHideHandler, true);
+      document.addEventListener("click", clickHideHandler, true);
     });
 
     onBeforeUnmount(() => {
       stopPolling();
       unbindHost();
       unbindIframe();
-      document.removeEventListener('click', clickHideHandler, true);
+      document.removeEventListener("click", clickHideHandler, true);
     });
 
     const handleAction = (actionName: string, isDisabled: boolean) => {
-      if (isDisabled) return;
-      const action = actions.value.find((a) => a.name === actionName);
+      if (isDisabled) {
+        return;
+      }
+      const action = actions.value.find(a => a.name === actionName);
       const capturedCtx = ctx.value;
       hide();
       if (action?.action) {
@@ -193,41 +205,45 @@ export const ContextMenu = defineComponent({
     };
 
     return () => {
-      if (!visible.value) return null;
+      if (!visible.value) {
+        return null;
+      }
       const list = actions.value;
       return (
         <div
           class={ns.b()}
           style={{
-            position: 'fixed',
+            position: "fixed",
             left: `${x.value}px`,
             top: `${y.value}px`,
             zIndex: 99999,
           }}
         >
-          {list.length === 0 ? (
-            <div class={ns.e('empty')}>无可用操作</div>
-          ) : (
-            list.map((action) => {
-              if (action.separator) {
-                return <div class={ns.e('separator')} key={action.name} />;
-              }
-              const disabled = props.editor.contextMenu.isDisabled(action, ctx.value);
-              return (
-                <div
-                  key={action.name}
-                  class={[
-                    ns.e('item'),
-                    action.danger ? ns.is('danger') : '',
-                    disabled ? ns.is('disabled') : '',
-                  ]}
-                  onClick={() => handleAction(action.name, disabled)}
-                >
-                  <span>{action.title}</span>
-                </div>
-              );
-            })
-          )}
+          {list.length === 0
+            ? (
+                <div class={ns.e("empty")}>无可用操作</div>
+              )
+            : (
+                list.map((action) => {
+                  if (action.separator) {
+                    return <div class={ns.e("separator")} key={action.name} />;
+                  }
+                  const disabled = props.editor.contextMenu.isDisabled(action, ctx.value);
+                  return (
+                    <div
+                      key={action.name}
+                      class={[
+                        ns.e("item"),
+                        action.danger ? ns.is("danger") : "",
+                        disabled ? ns.is("disabled") : "",
+                      ]}
+                      onClick={() => handleAction(action.name, disabled)}
+                    >
+                      <span>{action.title}</span>
+                    </div>
+                  );
+                })
+              )}
         </div>
       );
     };

@@ -1,29 +1,27 @@
+import type { Editor } from "../../core/editor";
+import type { OutlineNode } from "../../core/store";
 /**
  * 大纲树面板
  * 基于 schemaOps.walk 构建大纲树（格式无关），响应式渲染
  * 点击节点选中，支持展开/折叠
  */
-import {defineComponent, PropType, ref, computed} from 'vue';
-import type {Editor} from '../../core/editor';
-import type {OutlineNode} from '../../core/store';
-import {buildOutlineFromSchemaOps} from '../../core/store';
-import {useAssemNamespace} from '../../hooks/use-assem-namespace';
-import './../pane.less';
+import { computed, defineComponent, PropType } from "vue";
+import { buildOutlineFromSchemaOps } from "../../core/store";
+import { useAssemNamespace } from "../../hooks/use-assem-namespace";
+import "./../pane.less";
 
-const ns = useAssemNamespace('outline-pane');
+const ns = useAssemNamespace("outline-pane");
 
 export const OutlinePane = defineComponent({
-  name: 'OutlinePane',
+  name: "OutlinePane",
   props: {
-    editor: {type: Object as PropType<Editor>, required: true}
+    editor: { type: Object as PropType<Editor>, required: true },
   },
   setup(props) {
-    const expandedKeys = ref<string[]>([]);
-
     /** 树节点 props 配置 */
     const treeProps = {
-      label: 'label',
-      children: 'children'
+      label: "label",
+      children: "children",
     };
 
     /** 响应式大纲：依赖 store.schemaRef */
@@ -60,5 +58,5 @@ export const OutlinePane = defineComponent({
         </div>
       );
     };
-  }
+  },
 });

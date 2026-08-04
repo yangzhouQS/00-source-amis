@@ -1,32 +1,30 @@
-import {useAssemNamespace} from '../../hooks/use-assem-namespace';
-const ns = useAssemNamespace('object-setter');
+import type { PropConfig } from "../../schema/types";
 
 /**
  * ObjectSetter - object editor
  * Renders child fields from config.items; child setters resolved via SetterRegistry
  */
-import {defineComponent, h} from 'vue';
-import {useSetterCtx} from '../base';
-import {resolveSetter, isFieldHidden} from '../resolve';
-import type {PropConfig} from '../../schema/types';
-import './../composite.less';
+import { defineComponent, h } from "vue";
+import { useSetterCtx } from "../base";
+import { isFieldHidden, resolveSetter } from "../resolve";
+import "./../composite.less";
 
 export const ObjectSetter = defineComponent({
-  name: 'ObjectSetter',
+  name: "ObjectSetter",
   props: {
-    value: {type: Object, default: () => ({})},
-    onChange: {type: Function, required: true},
+    value: { type: Object, default: () => ({}) },
+    onChange: { type: Function, required: true },
     config: {
-      type: Object as () => {items: PropConfig[]},
-      default: () => ({items: []})
+      type: Object as () => { items: PropConfig[] },
+      default: () => ({ items: [] }),
     },
-    disabled: {type: Boolean, default: false}
+    disabled: { type: Boolean, default: false },
   },
   setup(props) {
     const ctx = useSetterCtx();
     return () => {
-      const value =
-        props.value && typeof props.value === 'object' ? props.value : {};
+      const value
+        = props.value && typeof props.value === "object" ? props.value : {};
       const items = props.config?.items ?? [];
       if (!items.length) {
         return <el-empty description="No field config" imageSize={50} />;
@@ -34,8 +32,10 @@ export const ObjectSetter = defineComponent({
       return (
         <div class="assem-object-setter">
           <el-form labelWidth="90px" size="small" disabled={props.disabled}>
-            {items.map(prop => {
-              if (isFieldHidden(prop, value)) return null;
+            {items.map((prop) => {
+              if (isFieldHidden(prop, value)) {
+                return null;
+              }
               const resolved = ctx?.setterRegistry
                 ? resolveSetter(ctx.setterRegistry, prop)
                 : null;
@@ -43,22 +43,26 @@ export const ObjectSetter = defineComponent({
               const SetterComp = resolved?.component;
               return (
                 <el-form-item key={prop.name} label={prop.title ?? prop.name}>
-                  {SetterComp ? (
-                    h(SetterComp, {
-                      value: childValue,
-                      defaultValue: prop.defaultValue,
-                      disabled: props.disabled,
-                      onChange: (v: any) => {
-                        const next = {...value, [prop.name]: v};
-                        props.onChange(next);
-                      },
-                      ...resolved.setterProps
-                    })
-                  ) : (
-                    <span class="assem-setter-missing">
-                      no setter: {resolved?.setterName ?? '?'}
-                    </span>
-                  )}
+                  {SetterComp
+                    ? (
+                        h(SetterComp, {
+                          value: childValue,
+                          defaultValue: prop.defaultValue,
+                          disabled: props.disabled,
+                          onChange: (v: any) => {
+                            const next = { ...value, [prop.name]: v };
+                            props.onChange(next);
+                          },
+                          ...resolved.setterProps,
+                        })
+                      )
+                    : (
+                        <span class="assem-setter-missing">
+                          no setter:
+                          {" "}
+                          {resolved?.setterName ?? "?"}
+                        </span>
+                      )}
                 </el-form-item>
               );
             })}
@@ -66,5 +70,5 @@ export const ObjectSetter = defineComponent({
         </div>
       );
     };
-  }
+  },
 });

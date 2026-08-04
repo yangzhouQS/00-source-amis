@@ -1,20 +1,19 @@
-const logger = getLogger('plugin-manager');
 /**
  * 插件管理器（实例级）
  * - register(plugin, options) 实例级注册（同 id 按 priority 覆盖）
  * - activate: scene 过滤 → dep 拓扑排序 → setup(收集 dispose，失败标记跳过) → contributes 自动应用 → 绑钩子
  * - setup 返回的 dispose + contributes 反注册在 destroy 统一回收（根治资源泄漏）
  */
-import type {EventBus, EditorEvent} from './event-bus';
-import {camelize} from './event-bus';
-import type {EditorPluginObject, PluginContext} from './plugin-types';
-import {getLogger} from './logger';
+import type { EditorEvent, EventBus } from "./event-bus";
+import type { EditorPluginObject, PluginContext } from "./plugin-types";
+import { camelize } from "./event-bus";
 
 export class PluginManager {
   private registered = new Map<
     string,
-    {plugin: EditorPluginObject; options?: any}
+    { plugin: EditorPluginObject; options?: any }
   >();
+
   private instances: EditorPluginObject[] = [];
   private disposes: Array<() => void | Promise<void>> = [];
   /** setup 失败的插件 id（钩子/build* 跳过） */
@@ -36,12 +35,12 @@ export class PluginManager {
       const newPri = plugin.priority ?? 0;
       if (newPri < existPri) {
         console.warn(
-          `[PluginManager] 插件 "${plugin.id}" priority(${newPri}) < 已注册(${existPri})，保留高优先级版本`
+          `[PluginManager] 插件 "${plugin.id}" priority(${newPri}) < 已注册(${existPri})，保留高优先级版本`,
         );
         return;
       }
     }
-    this.registered.set(plugin.id, {plugin, options});
+    this.registered.set(plugin.id, { plugin, options });
   }
 
   /** 取消注册（仅 activate 前有效） */
@@ -51,30 +50,34 @@ export class PluginManager {
 
   /** 按 id 查找已激活插件（仅返回 instances 中的；未激活/scene 过滤掉的不返回） */
   getPlugin<T = any>(
-    id: string
-  ): {plugin: EditorPluginObject<T>; options?: T} | undefined {
+    id: string,
+  ): { plugin: EditorPluginObject<T>; options?: T } | undefined {
     const activated = this.instances.find(p => p.id === id);
-    if (!activated) return undefined;
+    if (!activated) {
+      return undefined;
+    }
     const options = this.registered.get(id)?.options;
-    return {plugin: activated as EditorPluginObject<T>, options};
+    return { plugin: activated as EditorPluginObject<T>, options };
   }
 
   /** 激活（幂等：已激活则忽略，如需重新激活用 reload） */
-  async activate(ctx: PluginContext, scene = 'desktop'): Promise<void> {
+  async activate(ctx: PluginContext, scene = "desktop"): Promise<void> {
     if (this.activated) {
       console.warn(
-        '[PluginManager] 已激活，重复 activate 被忽略（如需重新激活请用 reload）'
+        "[PluginManager] 已激活，重复 activate 被忽略（如需重新激活请用 reload）",
       );
       return;
     }
     this.ctx = ctx;
 
     // 1. 收集 + scene 过滤
-    const filtered = Array.from(this.registered.values()).filter(({plugin}) => {
+    const filtered = Array.from(this.registered.values()).filter(({ plugin }) => {
       const sc = plugin.scene;
-      if (!sc) return true;
+      if (!sc) {
+        return true;
+      }
       const arr = Array.isArray(sc) ? sc : [sc];
-      return arr.includes('global') || arr.includes(scene);
+      return arr.includes("global") || arr.includes(scene);
     });
 
     // 2. dep 拓扑排序
@@ -86,7 +89,7 @@ export class PluginManager {
       try {
         const ret = plugin.setup?.(ctx, options);
         const resolved = await Promise.resolve(ret);
-        if (typeof resolved === 'function') {
+        if (typeof resolved === "function") {
           this.disposes.push(resolved);
         }
       } catch (err) {
@@ -106,7 +109,7 @@ export class PluginManager {
   /** 重新激活（destroy 当前 + 重新 activate），用于动态增删插件后刷新 */
   async reload(ctx: PluginContext, scene?: string): Promise<void> {
     this.destroy();
-    await this.activate(ctx, scene ?? 'desktop');
+    await this.activate(ctx, scene ?? "desktop");
   }
 
   /** 已激活且 setup 成功的插件（钩子/build* 使用） */
@@ -152,7 +155,7 @@ export class PluginManager {
       }
     }
     if (result.length < plugins.length) {
-      console.warn('[PluginManager] 检测到循环依赖，降级 priority 排序');
+      console.warn("[PluginManager] 检测到循环依赖，降级 priority 排序");
       const rest = plugins.filter(p => !visited.has(p.id)).sort(byPriority);
       return [...result, ...rest];
     }
@@ -163,35 +166,37 @@ export class PluginManager {
   private applyContributes(ctx: PluginContext): void {
     for (const plugin of this.instances) {
       const c = plugin.contributes;
-      if (!c) continue;
+      if (!c) {
+        continue;
+      }
       try {
-        c.setters?.forEach(s => {
+        c.setters?.forEach((s) => {
           ctx.setterRegistry.register(s.name, s.component);
           this.contributed.push(() => ctx.setterRegistry.unregister(s.name));
         });
-        c.actions?.forEach(a => {
+        c.actions?.forEach((a) => {
           ctx.actionRegistry.register(a);
           this.contributed.push(() =>
-            ctx.actionRegistry.unregister(a.actionType)
+            ctx.actionRegistry.unregister(a.actionType),
           );
         });
-        c.assets?.forEach(a => {
+        c.assets?.forEach((a) => {
           ctx.assetRegistry.register(a);
           this.contributed.push(() =>
-            ctx.assetRegistry.unregister(a.id, a.version)
+            ctx.assetRegistry.unregister(a.id, a.version),
           );
         });
-        c.skeleton?.forEach(s => {
+        c.skeleton?.forEach((s) => {
           ctx.skeleton.add({
             ...s,
-            contentProps: {...(s.contentProps ?? {}), editor: ctx.editor}
+            contentProps: { ...(s.contentProps ?? {}), editor: ctx.editor },
           } as any);
           this.contributed.push(() => ctx.skeleton.remove(s.name));
         });
       } catch (err) {
         console.error(
           `[PluginManager] 插件 "${plugin.id}" contributes 注册出错:`,
-          err
+          err,
         );
       }
     }
@@ -199,43 +204,53 @@ export class PluginManager {
 
   /** EventBus 事件名 → 插件方法 camelize 映射（跳过 failed 插件） */
   private bindEventHooks(): void {
-    if (!this.ctx) return;
+    if (!this.ctx) {
+      return;
+    }
     const hookTypes = [
-      'before-insert',
-      'after-insert',
-      'before-update',
-      'after-update',
-      'before-delete',
-      'after-delete',
-      'before-move',
-      'after-move'
+      "before-insert",
+      "after-insert",
+      "before-update",
+      "after-update",
+      "before-delete",
+      "after-delete",
+      "before-move",
+      "after-move",
     ];
     for (const type of hookTypes) {
       const methodName = camelize(type);
       const hasAny = this.activeInstances().some(
-        p => typeof (p as any)[methodName] === 'function'
+        p => typeof (p as any)[methodName] === "function",
       );
-      if (!hasAny) continue;
+      if (!hasAny) {
+        continue;
+      }
       const off = this.bus.on(type, (event: EditorEvent) => {
         for (const plugin of this.activeInstances()) {
           const fn = (plugin as any)[methodName];
-          if (typeof fn !== 'function') continue;
+          if (typeof fn !== "function") {
+            continue;
+          }
           try {
             const ret = fn.call(plugin, event.context);
             if (ret === false) {
               event.preventDefault();
               event.stopPropagation();
-            } else if (ret && typeof ret.then === 'function') {
-              if (!event.pending) event.pending = [];
+            } else if (ret && typeof ret.then === "function") {
+              if (!event.pending) {
+                event.pending = [];
+              }
               event.pending.push(ret);
             }
           } catch (err) {
             console.error(
               `[PluginManager] 插件 "${plugin.id}.${methodName}" 出错:`,
-              err
+              err,
             );
           }
-          if (event.stopped) break;
+          if (event.stopped) {
+            break;
+          }
         }
       });
       this.unsubscribers.push(off);
@@ -244,7 +259,7 @@ export class PluginManager {
 
   /** 广播收集（跳过 failed 插件） */
   buildPanels(node: any, panels: any[]): void {
-    this.activeInstances().forEach(p => {
+    this.activeInstances().forEach((p) => {
       try {
         p.buildPanels?.(node, panels);
       } catch (err) {
@@ -254,26 +269,26 @@ export class PluginManager {
   }
 
   buildToolbars(node: any, toolbars: any[]): void {
-    this.activeInstances().forEach(p => {
+    this.activeInstances().forEach((p) => {
       try {
         p.buildToolbars?.(node, toolbars);
       } catch (err) {
         console.error(
           `[PluginManager] 插件 "${p.id}" buildToolbars 出错:`,
-          err
+          err,
         );
       }
     });
   }
 
   buildContextMenu(node: any, menus: any[]): void {
-    this.activeInstances().forEach(p => {
+    this.activeInstances().forEach((p) => {
       try {
         p.buildContextMenu?.(node, menus);
       } catch (err) {
         console.error(
           `[PluginManager] 插件 "${p.id}" buildContextMenu 出错:`,
-          err
+          err,
         );
       }
     });
@@ -290,7 +305,7 @@ export class PluginManager {
       try {
         this.contributed[i]();
       } catch (err) {
-        console.error('[PluginManager] contributes 反注册出错:', err);
+        console.error("[PluginManager] contributes 反注册出错:", err);
       }
     }
     // 2. 逆序 setup dispose
@@ -298,7 +313,7 @@ export class PluginManager {
       try {
         this.disposes[i]();
       } catch (err) {
-        console.error('[PluginManager] dispose 出错:', err);
+        console.error("[PluginManager] dispose 出错:", err);
       }
     }
     // 3. 解绑事件

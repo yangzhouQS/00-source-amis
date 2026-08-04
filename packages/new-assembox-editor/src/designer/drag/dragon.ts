@@ -1,3 +1,10 @@
+import type {
+  DragObject,
+  DragonCallbacks,
+  DragSensor,
+  DropLocation,
+  LocateEvent,
+} from "./types";
 /**
  * Dragon —— 自模拟拖拽引擎
  * 参考 lowcode-engine Dragon，用 mousedown→mousemove→mouseup 替代 HTML5 drag
@@ -10,14 +17,6 @@
  *  - chooseSensor：按全局坐标命中感应区，交由 sensor 定位
  *  - 事件：dragstart / drag / dragend / drop
  */
-import {getLogger} from '../../core/logger';
-import type {
-  DragObject,
-  LocateEvent,
-  DropLocation,
-  DragSensor,
-  DragonCallbacks
-} from './types';
 
 /** 抖动阈值（px），小于此距离视为点击 */
 const SHAKE_DISTANCE = 4;
@@ -25,13 +24,12 @@ const SHAKE_DISTANCE = 4;
 /** 判断是否抖动（开始真正拖拽） */
 export function isShaken(e1: MouseEvent, e2: MouseEvent): boolean {
   return (
-    Math.pow(e1.clientX - e2.clientX, 2) +
-      Math.pow(e1.clientY - e2.clientY, 2) >
-    SHAKE_DISTANCE * SHAKE_DISTANCE
+    (e1.clientX - e2.clientX) ** 2
+    + (e1.clientY - e2.clientY) ** 2
+    > SHAKE_DISTANCE * SHAKE_DISTANCE
   );
 }
 
-const logger = getLogger('dragon');
 export class Dragon {
   /** 已注册的感应区 */
   private sensors: DragSensor[] = [];
@@ -46,13 +44,14 @@ export class Dragon {
   /** 事件回调（多订阅：每个事件类型独立数组，支持多个监听器） */
   private readonly listenerSets: Record<
     keyof DragonCallbacks,
-    Array<Function>
+    Array<(...args: any[]) => any>
   > = {
     onDragstart: [],
     onDrag: [],
     onDragend: [],
-    onDrop: []
+    onDrop: [],
   };
+
   /** 清理函数（每次 boost 注册的监听器移除） */
   private cleanupMove: Array<() => void> = [];
   /** 拖拽态外部副作用清理 */
@@ -64,10 +63,10 @@ export class Dragon {
 
   /** 注册回调（支持多订阅，返回取消订阅函数） */
   on(callbacks: DragonCallbacks): () => void {
-    const added: Array<[keyof DragonCallbacks, Function]> = [];
-    (Object.keys(callbacks) as Array<keyof DragonCallbacks>).forEach(key => {
-      const fn = callbacks[key] as unknown as Function;
-      if (typeof fn === 'function') {
+    const added: Array<[keyof DragonCallbacks, (...args: any[]) => any]> = [];
+    (Object.keys(callbacks) as Array<keyof DragonCallbacks>).forEach((key) => {
+      const fn = callbacks[key] as unknown as (...args: any[]) => any;
+      if (typeof fn === "function") {
         this.listenerSets[key].push(fn);
         added.push([key, fn]);
       }
@@ -76,7 +75,9 @@ export class Dragon {
       added.forEach(([key, fn]) => {
         const set = this.listenerSets[key];
         const idx = set.indexOf(fn);
-        if (idx >= 0) set.splice(idx, 1);
+        if (idx >= 0) {
+          set.splice(idx, 1);
+        }
       });
     };
   }
@@ -86,9 +87,9 @@ export class Dragon {
     key: K,
     ...args: Parameters<NonNullable<DragonCallbacks[K]>>
   ): void {
-    this.listenerSets[key].slice().forEach(fn => {
+    this.listenerSets[key].slice().forEach((fn) => {
       try {
-        (fn as Function)(...args);
+        (fn as ((...args: any[]) => any))(...args);
       } catch (err) {
         console.error(`[Dragon] "${String(key)}" 回调出错:`, err);
       }
@@ -97,7 +98,7 @@ export class Dragon {
 
   /** 添加感应区 */
   addSensor(sensor: DragSensor): void {
-    if (!this.sensors.find(s => s.id === sensor.id)) {
+    if (!this.sensors.some(s => s.id === sensor.id)) {
       this.sensors.push(sensor);
     }
   }
@@ -105,7 +106,9 @@ export class Dragon {
   /** 移除感应区 */
   removeSensor(sensorId: string): void {
     const idx = this.sensors.findIndex(s => s.id === sensorId);
-    if (idx >= 0) this.sensors.splice(idx, 1);
+    if (idx >= 0) {
+      this.sensors.splice(idx, 1);
+    }
   }
 
   /**
@@ -115,17 +118,21 @@ export class Dragon {
    */
   from(
     shell: Element,
-    boost: (e: MouseEvent) => DragObject | null
+    boost: (e: MouseEvent) => DragObject | null,
   ): () => void {
     const onMousedown = (e: MouseEvent) => {
-      if (e.button !== 0) return; // 仅左键
+      if (e.button !== 0) {
+        return;
+      } // 仅左键
       const obj = boost(e);
-      if (!obj) return;
+      if (!obj) {
+        return;
+      }
       this.boost(obj, e);
     };
-    shell.addEventListener('mousedown', onMousedown as EventListener);
+    shell.addEventListener("mousedown", onMousedown as EventListener);
     return () =>
-      shell.removeEventListener('mousedown', onMousedown as EventListener);
+      shell.removeEventListener("mousedown", onMousedown as EventListener);
   }
 
   /**
@@ -134,45 +141,48 @@ export class Dragon {
    * @param boostEvent 触发事件（mousedown）
    */
   boost(dragObject: DragObject, boostEvent: MouseEvent): void {
-    if (this._dragging) return;
+    if (this._dragging) {
+      return;
+    }
     this.dragObject = dragObject;
     this._dragging = false;
     this.lastLocation = null;
     this.activeSensor = null;
 
-    let copy = false;
+    let _copy = false;
 
     const checkEsc = (e: KeyboardEvent) => {
-      if (e.key === 'Escape' || e.keyCode === 27) {
+      if (e.key === "Escape" || e.keyCode === 27) {
         // ESC 取消
         this.lastLocation = null;
         this.activeSensor?.deactiveSensor();
+        // eslint-disable-next-line ts/no-use-before-define
         over();
       }
     };
 
     const checkCopy = (e: KeyboardEvent) => {
-      copy = e.altKey || e.ctrlKey;
+      _copy = e.altKey || e.ctrlKey;
     };
 
     /** 创建定位事件（解析坐标 + 源感应区） */
     const createLocateEvent = (e: MouseEvent): LocateEvent => {
       // 通过事件 target 的 ownerDocument 判定来源文档（兼容合成事件/跨帧）
-      const sourceDoc: Document =
-        ((e.target as any)?.ownerDocument as Document) ||
-        (e.view as any)?.document ||
-        document;
+      const sourceDoc: Document
+        = ((e.target as any)?.ownerDocument as Document)
+          || (e.view as any)?.document
+          || document;
       // 找到事件来源对应的感应区
       const srcSensor = this.sensors.find(s => s.contentDocument === sourceDoc);
       const evt: LocateEvent = {
-        type: 'LocateEvent',
+        type: "LocateEvent",
         originalEvent: e,
         globalX: 0,
         globalY: 0,
         canvasX: 0,
         canvasY: 0,
         target: null,
-        dragObject
+        dragObject,
       };
       if (srcSensor) {
         // 来自画布文档（含 iframe）：局部坐标 = clientX/Y，全局坐标经 sensor 转换
@@ -198,15 +208,15 @@ export class Dragon {
     const chooseSensor = (e: LocateEvent): DragSensor | null => {
       // 优先事件来源感应区（鼠标在画布内时）
       if (
-        e.sensor &&
-        e.sensor.sensorAvailable &&
-        e.sensor.isEnter(e.globalX, e.globalY)
+        e.sensor
+        && e.sensor.sensorAvailable
+        && e.sensor.isEnter(e.globalX, e.globalY)
       ) {
         return e.sensor;
       }
       // 按全局坐标命中
       const found = this.sensors.find(
-        s => s.sensorAvailable && s.isEnter(e.globalX, e.globalY)
+        s => s.sensorAvailable && s.isEnter(e.globalX, e.globalY),
       );
       return found ?? null;
     };
@@ -225,11 +235,11 @@ export class Dragon {
         location = sensor.locate(
           locateEvent.target,
           locateEvent.canvasX,
-          locateEvent.canvasY
+          locateEvent.canvasY,
         );
       }
       this.lastLocation = location;
-      this.emit('onDrag', locateEvent, location);
+      this.emit("onDrag", locateEvent, location);
     };
 
     /** 真正进入拖拽态 */
@@ -237,7 +247,7 @@ export class Dragon {
       this._dragging = true;
       this.dragStateCleanup = this.setDraggingState(true) ?? null;
       const locateEvent = createLocateEvent(boostEvent);
-      this.emit('onDragstart', locateEvent);
+      this.emit("onDragstart", locateEvent);
     };
 
     /** mousemove：首次抖动 → dragstart，之后 → drag */
@@ -267,10 +277,10 @@ export class Dragon {
         this._dragging = false;
         // 执行投放
         if (dragObj && loc) {
-          this.emit('onDrop', dragObj, loc);
+          this.emit("onDrop", dragObj, loc);
         }
         if (dragObj) {
-          this.emit('onDragend', dragObj, loc);
+          this.emit("onDragend", dragObj, loc);
         }
       }
       this.activeSensor?.deactiveSensor();
@@ -284,25 +294,27 @@ export class Dragon {
     const bind = () => {
       const docs = new Set<Document>();
       docs.add(document);
-      this.sensors.forEach(s => {
-        if (s.contentDocument) docs.add(s.contentDocument);
+      this.sensors.forEach((s) => {
+        if (s.contentDocument) {
+          docs.add(s.contentDocument);
+        }
       });
-      docs.forEach(doc => {
+      docs.forEach((doc) => {
         const onMove = (e: MouseEvent) => move(e);
         const onUp = () => over();
         const onEsc = (e: KeyboardEvent) => checkEsc(e);
         const onKey = (e: KeyboardEvent) => checkCopy(e);
-        doc.addEventListener('mousemove', onMove, true);
-        doc.addEventListener('mouseup', onUp, true);
-        doc.addEventListener('keydown', onEsc, false);
-        doc.addEventListener('keydown', onKey, false);
-        doc.addEventListener('keyup', onKey, false);
+        doc.addEventListener("mousemove", onMove, true);
+        doc.addEventListener("mouseup", onUp, true);
+        doc.addEventListener("keydown", onEsc, false);
+        doc.addEventListener("keydown", onKey, false);
+        doc.addEventListener("keyup", onKey, false);
         this.cleanupMove.push(() => {
-          doc.removeEventListener('mousemove', onMove, true);
-          doc.removeEventListener('mouseup', onUp, true);
-          doc.removeEventListener('keydown', onEsc, false);
-          doc.removeEventListener('keydown', onKey, false);
-          doc.removeEventListener('keyup', onKey, false);
+          doc.removeEventListener("mousemove", onMove, true);
+          doc.removeEventListener("mouseup", onUp, true);
+          doc.removeEventListener("keydown", onEsc, false);
+          doc.removeEventListener("keydown", onKey, false);
+          doc.removeEventListener("keyup", onKey, false);
         });
       });
     };
@@ -332,7 +344,7 @@ export class Dragon {
 
   private setNativeSelection(enable: boolean): void {
     try {
-      document.body.style.userSelect = enable ? '' : 'none';
+      document.body.style.userSelect = enable ? "" : "none";
     } catch {
       /* ignore */
     }
@@ -347,9 +359,9 @@ export class Dragon {
     this.sensors.forEach(s => s.destroy?.());
     this.sensors = [];
     (Object.keys(this.listenerSets) as Array<keyof DragonCallbacks>).forEach(
-      k => {
+      (k) => {
         this.listenerSets[k] = [];
-      }
+      },
     );
     this.dragObject = null;
     this.activeSensor = null;

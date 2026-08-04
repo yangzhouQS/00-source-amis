@@ -1,26 +1,28 @@
+import type { AssemConfig } from "@cs/assembox-core-next";
+import type { App, Component } from "vue";
+import type {
+  IframeAssetsManifest,
+  IframeHostCallbacks,
+  IframeRendererApi,
+} from "./protocol";
+import { adaptNodeTree } from "@cs/assembox-core-next";
+import {
+  AssemPlugin,
+  AssemViews,
+  registerDefaults,
+  registerExternal,
+} from "@cs/assembox-desktop-next";
+import zhCn from "element-plus/es/locale/lang/zh-cn";
 /**
  * iframe 内侧渲染器（运行于 canvas.html 内部）
  * 包装 assembox-desktop-next 的 AssemViews，渲染 PC schema 并标记 DOM。
  * 与 PcRenderer 同构，但 schema 来自 host 下发，事件通过 hostApi 回报。
  */
-import { createApp, reactive, nextTick, h, type App, type Component } from 'vue';
-import zhCn from 'element-plus/es/locale/lang/zh-cn';
-import {
-  AssemPlugin,
-  registerDefaults,
-  registerExternal,
-  AssemViews,
-} from '@cs/assembox-desktop-next';
-import { adaptNodeTree, type AssemConfig } from '@cs/assembox-core-next';
-import type {
-  IframeRendererApi,
-  IframeHostCallbacks,
-  IframeAssetsManifest,
-} from './protocol';
+import { createApp, h, nextTick, reactive } from "vue";
 
 /** 按点分路径从 window 取全局值（如 'ElementPlusUi.ToggleChip'） */
 function resolveGlobalPath(root: any, path: string): unknown {
-  return path.split('.').reduce<any>((acc, key) => (acc == null ? acc : acc[key]), root);
+  return path.split(".").reduce<any>((acc, key) => (acc == null ? acc : acc[key]), root);
 }
 
 export class IframeCanvasRenderer implements IframeRendererApi {
@@ -28,7 +30,7 @@ export class IframeCanvasRenderer implements IframeRendererApi {
   private hostCallbacks: IframeHostCallbacks | null = null;
   /** 响应式 schema（驱动 AssemViews 渲染，host 下发克隆副本，in-place 同步触发重渲染） */
   private schema = reactive<Record<string, any>>({});
-  private designMode: 'design' | 'preview' = 'design';
+  private designMode: "design" | "preview" = "design";
   /** 动态依赖清单（host 下发：插件 / 外部组件） */
   private assets: IframeAssetsManifest;
   ready = false;
@@ -42,7 +44,7 @@ export class IframeCanvasRenderer implements IframeRendererApi {
     this.hostCallbacks = cb;
   }
 
-  init(schema: any, designMode: 'design' | 'preview' = 'design'): void {
+  init(schema: any, designMode: "design" | "preview" = "design"): void {
     this.syncSchema(schema);
     this.designMode = designMode;
     (window as any).assemBoxIsEdit = true;
@@ -59,13 +61,13 @@ export class IframeCanvasRenderer implements IframeRendererApi {
     this.syncSchema(schema);
   }
 
-  setDesignMode(mode: 'design' | 'preview'): void {
+  setDesignMode(mode: "design" | "preview"): void {
     this.designMode = mode;
     (window as any).assemBoxDesignMode = mode;
   }
 
   setDraggingState(active: boolean): void {
-    document.body.style.cursor = active ? 'copy' : '';
+    document.body.style.cursor = active ? "copy" : "";
   }
 
   rerender(): void {
@@ -76,15 +78,19 @@ export class IframeCanvasRenderer implements IframeRendererApi {
   private syncSchema(schema: any): void {
     const adapted = adaptNodeTree(schema ?? {}) as Record<string, any>;
     const src = adapted ?? {};
-    for (const key of Object.keys(this.schema)) delete this.schema[key];
-    for (const key of Object.keys(src)) this.schema[key] = src[key];
+    for (const key of Object.keys(this.schema)) {
+      delete this.schema[key];
+    }
+    for (const key of Object.keys(src)) {
+      this.schema[key] = src[key];
+    }
   }
 
   /** 挂载 Vue app（与 PcRenderer.mount 同构） */
   private mount(): void {
-    const el = document.getElementById('app');
+    const el = document.getElementById("app");
     if (!el) {
-      this.hostCallbacks?.onError('canvas.html 缺少 #app 容器');
+      this.hostCallbacks?.onError("canvas.html 缺少 #app 容器");
       return;
     }
     if (this.app) {
@@ -116,7 +122,9 @@ export class IframeCanvasRenderer implements IframeRendererApi {
       render: () => {
         const scenes = Object.values(this.schema);
         const scene = scenes[0] as any;
-        if (!scene?.viewsProps) return h('div', '空场景');
+        if (!scene?.viewsProps) {
+          return h("div", "空场景");
+        }
         return h(AssemViews, { viewsProps: scene.viewsProps });
       },
     });
@@ -124,15 +132,20 @@ export class IframeCanvasRenderer implements IframeRendererApi {
     // 这些 CDN 全局包均基于 window.Vue（= 本 ESM Vue 实例），与 assembox-desktop-next 共用同一 Vue
     const w = window as any;
     for (const a of this.assets.js ?? []) {
-      if (!a.global) continue;
+      if (!a.global) {
+        continue;
+      }
       const target = w[a.global];
-      if (target == null) continue;
+      if (target == null) {
+        continue;
+      }
 
       // 框架引导初始化（如 new window.Vue3WebFramework.WebFramework({})）
       if (a.bootstrap) {
         const ctor = a.bootstrap.ctorPath ? resolveGlobalPath(target, a.bootstrap.ctorPath) : target;
-        if (typeof ctor === 'function') {
+        if (typeof ctor === "function") {
           try {
+            // eslint-disable-next-line no-new, new-cap
             new ctor(...(a.bootstrap.args ?? []));
           } catch (e) {
             this.hostCallbacks?.onError(`bootstrap 失败: ${a.global}`, e);
@@ -144,7 +157,7 @@ export class IframeCanvasRenderer implements IframeRendererApi {
       if (a.asPlugin) {
         let options = a.pluginOptions;
         // ElementPlus 默认注入中文 locale（除非 pluginOptions 已指定）
-        if (a.global === 'ElementPlus' && !(options && options.locale)) {
+        if (a.global === "ElementPlus" && !(options && options.locale)) {
           options = { ...(options || {}), locale: zhCn };
         }
         try {
@@ -155,21 +168,27 @@ export class IframeCanvasRenderer implements IframeRendererApi {
       }
 
       // 图标库：遍历注册为全局组件（对应旧版 Object.entries(ElementPlusIconsVue)）
-      if (a.asIcons && typeof target === 'object') {
+      if (a.asIcons && typeof target === "object") {
         for (const [key, comp] of Object.entries(target)) {
-          if (comp) this.app.component(key, comp as Component);
+          if (comp) {
+            this.app.component(key, comp as Component);
+          }
         }
       }
 
       // 全局组件别名注册（对应旧版 box/Box = ElementPro.Box）
       for (const c of a.components ?? []) {
         const comp = c.path ? resolveGlobalPath(target, c.path) : target;
-        if (comp) this.app.component(c.name, comp as Component);
+        if (comp) {
+          this.app.component(c.name, comp as Component);
+        }
       }
     }
     // 额外登记的插件全局名（已由 js 加载，这里只 app.use）
     for (const name of this.assets.plugins ?? []) {
-      if (w[name]) this.app.use(w[name]);
+      if (w[name]) {
+        this.app.use(w[name]);
+      }
     }
 
     this.app.use(AssemPlugin, config);
@@ -210,48 +229,58 @@ export class IframeCanvasRenderer implements IframeRendererApi {
   private markInstance(instance: unknown): void {
     const inst = instance as any;
     const nodeId = inst?.props?.__nodeId;
-    if (!nodeId) return;
-    if ((window as any).assemBoxDesignMode === 'preview') return;
+    if (!nodeId) {
+      return;
+    }
+    if ((window as any).assemBoxDesignMode === "preview") {
+      return;
+    }
     const el = inst?.proxy?.$el ?? inst?.$el;
     if (el && el.nodeType === 1) {
-      el.setAttribute('data-editor-id', nodeId);
+      el.setAttribute("data-editor-id", nodeId);
     }
   }
 
   /** 绑定画布事件（click/hover → 回报 host） */
   private bindCanvasEvents(container: HTMLElement): void {
     const nodeIdFromEl = (el: HTMLElement | null): string | null => {
-      if (!el) return null;
-      const found = el.closest('[data-editor-id]') as HTMLElement | null;
-      return found ? found.getAttribute('data-editor-id') : null;
+      if (!el) {
+        return null;
+      }
+      const found = el.closest("[data-editor-id]") as HTMLElement | null;
+      return found ? found.getAttribute("data-editor-id") : null;
     };
 
     container.addEventListener(
-      'click',
+      "click",
       (e: MouseEvent) => {
-        if ((window as any).assemBoxDesignMode !== 'design') return;
+        if ((window as any).assemBoxDesignMode !== "design") {
+          return;
+        }
         const nodeId = nodeIdFromEl(e.target as HTMLElement);
         this.hostCallbacks?.onClick(nodeId, e);
         e.stopPropagation();
       },
-      true
+      true,
     );
 
     container.addEventListener(
-      'mouseover',
+      "mouseover",
       (e: MouseEvent) => {
-        if ((window as any).assemBoxDesignMode !== 'design') return;
+        if ((window as any).assemBoxDesignMode !== "design") {
+          return;
+        }
         const nodeId = nodeIdFromEl(e.target as HTMLElement);
         this.hostCallbacks?.onHover(nodeId);
         e.stopPropagation();
       },
-      true
+      true,
     );
 
     container.addEventListener(
-      'mouseleave',
+      "mouseleave",
       () => this.hostCallbacks?.onHover(null),
-      true
+      true,
     );
   }
 

@@ -3,9 +3,8 @@
  * - 动态注册 setter 组件
  * - propType → setter 名推断（委托 component-registry 的 inferSetterName）
  */
-import type {VueComponent, SetterMeta} from '../schema/types';
-import {inferSetterName} from './setter-inference';
-import type {PropType} from '../schema/types';
+import type { PropType, SetterMeta, VueComponent } from "../schema/types";
+import { inferSetterName } from "./setter-inference";
 
 export class SetterRegistry {
   private map = new Map<string, VueComponent>();
@@ -41,7 +40,7 @@ export class SetterRegistry {
   /** 按 propType 推断并获取 setter 组件 */
   resolve(
     propType: PropType,
-    explicitSetter?: string
+    explicitSetter?: string,
   ): VueComponent | undefined {
     const name = explicitSetter ?? inferSetterName(propType);
     return this.get(name);

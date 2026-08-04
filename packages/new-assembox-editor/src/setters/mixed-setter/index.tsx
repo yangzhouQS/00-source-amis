@@ -1,12 +1,10 @@
-import {useAssemNamespace} from '../../hooks/use-assem-namespace';
-const ns = useAssemNamespace('mixed-setter');
-
 /**
  * MixedSetter - switch between multiple setters
  */
-import {defineComponent, ref, watch, h} from 'vue';
-import {useSetterCtx} from '../base';
-import './../composite.less';
+import { defineComponent, h, ref, watch } from "vue";
+
+import { useSetterCtx } from "../base";
+import "./../composite.less";
 
 interface SetterOption {
   name: string;
@@ -16,33 +14,35 @@ interface SetterOption {
 }
 
 export const MixedSetter = defineComponent({
-  name: 'MixedSetter',
+  name: "MixedSetter",
   props: {
-    value: {type: null as any, default: undefined},
-    onChange: {type: Function, required: true},
+    value: { type: null as any, default: undefined },
+    onChange: { type: Function, required: true },
     setters: {
       type: Array as () => Array<string | SetterOption>,
-      default: () => []
+      default: () => [],
     },
-    usedSetter: {type: String, default: ''},
-    disabled: {type: Boolean, default: false}
+    usedSetter: { type: String, default: "" },
+    disabled: { type: Boolean, default: false },
   },
-  emits: ['update:usedSetter'],
-  setup(props, {emit}) {
+  emits: ["update:usedSetter"],
+  setup(props, { emit }) {
     const ctx = useSetterCtx();
-    const innerUsed = ref<string>('');
+    const innerUsed = ref<string>("");
 
     const normalizeSetters = (): SetterOption[] => {
-      if (!Array.isArray(props.setters)) return [];
+      if (!Array.isArray(props.setters)) {
+        return [];
+      }
       return props.setters.map((s, i) => {
-        if (typeof s === 'string') {
-          return {name: s, title: s};
+        if (typeof s === "string") {
+          return { name: s, title: s };
         }
         return {
           name: s.name ?? `setter_${i}`,
           title: s.title ?? s.name,
           props: s.props,
-          initialValue: s.initialValue
+          initialValue: s.initialValue,
         };
       });
     };
@@ -61,12 +61,12 @@ export const MixedSetter = defineComponent({
 
     watch(() => [props.setters, props.usedSetter], computeCurrent, {
       immediate: true,
-      deep: true
+      deep: true,
     });
 
     const switchSetter = (opt: SetterOption) => {
       innerUsed.value = opt.name;
-      emit('update:usedSetter', opt.name);
+      emit("update:usedSetter", opt.name);
       computeCurrent();
       if (opt.initialValue !== undefined) {
         props.onChange(JSON.parse(JSON.stringify(opt.initialValue)));
@@ -81,16 +81,18 @@ export const MixedSetter = defineComponent({
       return (
         <div class="assem-mixed-setter">
           <div class="assem-mixed-setter-body">
-            {SetterComp && cur ? (
-              h(SetterComp, {
-                value: props.value,
-                disabled: props.disabled,
-                onChange: (v: any) => props.onChange(v),
-                ...(cur.props ?? {})
-              })
-            ) : (
-              <span class="assem-setter-missing">no setter available</span>
-            )}
+            {SetterComp && cur
+              ? (
+                  h(SetterComp, {
+                    value: props.value,
+                    disabled: props.disabled,
+                    onChange: (v: any) => props.onChange(v),
+                    ...(cur.props ?? {}),
+                  })
+                )
+              : (
+                  <span class="assem-setter-missing">no setter available</span>
+                )}
           </div>
           {list.length > 1 && (
             <el-dropdown
@@ -98,7 +100,9 @@ export const MixedSetter = defineComponent({
               disabled={props.disabled}
               onCommand={(cmd: string) => {
                 const opt = list.find(s => s.name === cmd);
-                if (opt) switchSetter(opt);
+                if (opt) {
+                  switchSetter(opt);
+                }
               }}
             >
               {{
@@ -115,12 +119,12 @@ export const MixedSetter = defineComponent({
                       </el-dropdown-item>
                     ))}
                   </el-dropdown-menu>
-                )
+                ),
               }}
             </el-dropdown>
           )}
         </div>
       );
     };
-  }
+  },
 });

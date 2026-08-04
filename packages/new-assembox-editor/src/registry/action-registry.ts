@@ -4,8 +4,7 @@
  * 支持串行 / 条件(expression) / 防止默认 / 停止传播
  * 取代旧版 Monaco 手写事件代码
  */
-import type {ActionSchema} from '../schema/types';
-import type {ActionMeta} from '../schema/types';
+import type { ActionMeta, ActionSchema } from "../schema/types";
 
 /** 动作执行上下文 */
 export interface ActionContext {
@@ -66,15 +65,17 @@ export class ActionRegistry {
    */
   async runActions(
     actions: ActionSchema[] | undefined,
-    baseCtx: ActionContext
+    baseCtx: ActionContext,
   ): Promise<void> {
-    if (!actions || !actions.length) return;
+    if (!actions || !actions.length) {
+      return;
+    }
     const list = Array.isArray(actions) ? actions : [actions];
     for (const action of list) {
       // 条件判断
       if (
-        action.expression &&
-        !this.evalExpression(action.expression, baseCtx)
+        action.expression
+        && !this.evalExpression(action.expression, baseCtx)
       ) {
         continue;
       }
@@ -83,19 +84,21 @@ export class ActionRegistry {
         console.warn(`[ActionRegistry] 未知动作类型: ${action.actionType}`);
         continue;
       }
-      const ctx: ActionContext = {...baseCtx, action};
+      const ctx: ActionContext = { ...baseCtx, action };
       try {
         await impl.run(ctx);
       } catch (err) {
         if (!action.ignoreError) {
           console.error(
             `[ActionRegistry] 动作 "${action.actionType}" 执行失败:`,
-            err
+            err,
           );
           throw err;
         }
       }
-      if (action.stopPropagation) break;
+      if (action.stopPropagation) {
+        break;
+      }
     }
   }
 
@@ -104,7 +107,7 @@ export class ActionRegistry {
     try {
       // 使用 Function 求值，绑定 data 作用域
       // eslint-disable-next-line no-new-func
-      const fn = new Function('data', 'event', `return (${expr});`);
+      const fn = new Function("data", "event", `return (${expr});`);
       return !!fn(ctx.data, ctx.event);
     } catch {
       return false;

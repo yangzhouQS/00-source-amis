@@ -1,10 +1,7 @@
-import {useAssemNamespace} from '../../hooks/use-assem-namespace';
-const ns = useAssemNamespace('doc-setter');
-
 /**
  * DocSetter - documentation link display
  */
-import {defineComponent} from 'vue';
+import { defineComponent } from "vue";
 
 interface DocItem {
   docTitle: string;
@@ -12,9 +9,9 @@ interface DocItem {
 }
 
 export const DocSetter = defineComponent({
-  name: 'DocSetter',
+  name: "DocSetter",
   props: {
-    value: {type: [Array, Object], default: () => []}
+    value: { type: [Array, Object], default: () => [] },
   },
   setup(props) {
     const renderDocItem = (item: DocItem) => (
@@ -30,9 +27,11 @@ export const DocSetter = defineComponent({
       </div>
     );
     return () => {
-      if (!props.value) return null;
+      if (!props.value) {
+        return null;
+      }
       const list = Array.isArray(props.value) ? props.value : [props.value];
       return <div class="assem-doc-setter">{list.map(renderDocItem)}</div>;
     };
-  }
+  },
 });

@@ -10,15 +10,15 @@
  *
  * 场景适配：组件元信息来自 catalog，节点查找走 schemaOps。
  */
-import type {Editor} from '../core/editor';
+import type { Editor } from "../core/editor";
 
-const ATTR_LIVE_EDIT = 'data-live-edit';
+const ATTR_LIVE_EDIT = "data-live-edit";
 
 /** 可编辑目标描述（从 catalog 项扩展，运行时无强类型约束） */
 interface LiveEditTarget {
   propTarget: string;
   selector?: string;
-  mode?: 'plaintext' | 'richtext';
+  mode?: "plaintext" | "richtext";
 }
 
 export class LiveEditing {
@@ -44,26 +44,30 @@ export class LiveEditing {
     }
 
     const targets = this.getLiveEditTargets(nodeId);
-    if (!targets.length) return false;
+    if (!targets.length) {
+      return false;
+    }
 
     const target = event.target as HTMLElement;
-    if (!target) return false;
+    if (!target) {
+      return false;
+    }
 
     // 1. 查找 data-live-edit 属性（DOM 埋点优先）
     let editableEl = target.closest(
-      `[${ATTR_LIVE_EDIT}]`
+      `[${ATTR_LIVE_EDIT}]`,
     ) as HTMLElement | null;
     let propTarget: string | undefined;
-    let mode: 'plaintext' | 'richtext' = 'plaintext';
+    let mode: "plaintext" | "richtext" = "plaintext";
 
     if (editableEl) {
       propTarget = editableEl.getAttribute(ATTR_LIVE_EDIT)!;
       const matched = targets.find(t => t.propTarget === propTarget);
-      mode = matched?.mode ?? 'plaintext';
+      mode = matched?.mode ?? "plaintext";
     } else {
       // 2. 用 selector 匹配（scope 在节点根元素内）
       const nodeRoot = doc.querySelector(
-        `[data-editor-id="${nodeId}"]`
+        `[data-editor-id="${nodeId}"]`,
       ) as HTMLElement | null;
       if (nodeRoot) {
         for (const cfg of targets) {
@@ -71,34 +75,36 @@ export class LiveEditing {
             // 无 selector → 默认整个节点根元素可编辑
             editableEl = nodeRoot;
             propTarget = cfg.propTarget;
-            mode = cfg.mode ?? 'plaintext';
+            mode = cfg.mode ?? "plaintext";
             break;
           }
-          const el =
-            cfg.selector === ':root'
+          const el
+            = cfg.selector === ":root"
               ? nodeRoot
               : (nodeRoot.querySelector(cfg.selector) as HTMLElement | null);
           if (el && el.contains(target)) {
             editableEl = el;
             propTarget = cfg.propTarget;
-            mode = cfg.mode ?? 'plaintext';
+            mode = cfg.mode ?? "plaintext";
             break;
           }
         }
       }
     }
 
-    if (!editableEl || !propTarget) return false;
+    if (!editableEl || !propTarget) {
+      return false;
+    }
 
     // 进入编辑（inline style 确保生效）
     const prevStyle = editableEl.style.cssText;
     editableEl.setAttribute(
-      'contenteditable',
-      mode === 'richtext' ? 'true' : 'plaintext-only'
+      "contenteditable",
+      mode === "richtext" ? "true" : "plaintext-only",
     );
-    editableEl.style.cssText =
-      prevStyle +
-      ';cursor:text;outline:none;box-shadow:0 0 0 2px rgb(102,188,92);user-select:text;border-radius:2px;';
+    editableEl.style.cssText
+      = `${prevStyle
+      };cursor:text;outline:none;box-shadow:0 0 0 2px rgb(102,188,92);user-select:text;border-radius:2px;`;
     editableEl.focus();
 
     // 光标定位到双击位置
@@ -107,17 +113,17 @@ export class LiveEditing {
     // blur 保存
     const onFocusOut = () => this.saveAndDispose();
     const onKeyDown = (e: KeyboardEvent) => {
-      if (e.key === 'Escape') {
+      if (e.key === "Escape") {
         e.preventDefault();
         editableEl!.blur();
-      } else if (e.key === 'Enter' && mode === 'plaintext') {
+      } else if (e.key === "Enter" && mode === "plaintext") {
         e.preventDefault();
         editableEl!.blur();
       }
     };
 
-    editableEl.addEventListener('focusout', onFocusOut);
-    editableEl.addEventListener('keydown', onKeyDown);
+    editableEl.addEventListener("focusout", onFocusOut);
+    editableEl.addEventListener("keydown", onKeyDown);
 
     this.editing = {
       nodeId,
@@ -125,7 +131,7 @@ export class LiveEditing {
       el: editableEl,
       prevStyle,
       onFocusOut,
-      onKeyDown
+      onKeyDown,
     };
 
     return true;
@@ -133,20 +139,22 @@ export class LiveEditing {
 
   /** 保存当前编辑内容到 schema */
   saveAndDispose(): void {
-    if (!this.editing) return;
-    const {nodeId, propTarget, el, prevStyle, onFocusOut, onKeyDown} =
-      this.editing;
-    const text = el.innerText;
+    if (!this.editing) {
+      return;
+    }
+    const { nodeId, propTarget, el, prevStyle, onFocusOut, onKeyDown }
+      = this.editing;
+    const text = el.textContent;
 
     // 移除编辑态（恢复原始 style）
-    el.removeEventListener('focusout', onFocusOut);
-    el.removeEventListener('keydown', onKeyDown);
+    el.removeEventListener("focusout", onFocusOut);
+    el.removeEventListener("keydown", onKeyDown);
     el.style.cssText = prevStyle;
-    el.removeAttribute('contenteditable');
+    el.removeAttribute("contenteditable");
 
     // 保存到 schema（非空才更新，属性写入 __nodeOptions）
-    if (text !== '') {
-      this.editor.updateProps(nodeId, {[propTarget]: text});
+    if (text !== "") {
+      this.editor.updateProps(nodeId, { [propTarget]: text });
     }
 
     this.editing = null;
@@ -158,11 +166,11 @@ export class LiveEditing {
 
   dispose(): void {
     if (this.editing) {
-      const {el, prevStyle, onFocusOut, onKeyDown} = this.editing;
-      el.removeEventListener('focusout', onFocusOut);
-      el.removeEventListener('keydown', onKeyDown);
+      const { el, prevStyle, onFocusOut, onKeyDown } = this.editing;
+      el.removeEventListener("focusout", onFocusOut);
+      el.removeEventListener("keydown", onKeyDown);
       el.style.cssText = prevStyle;
-      el.removeAttribute('contenteditable');
+      el.removeAttribute("contenteditable");
       this.editing = null;
     }
   }
@@ -172,7 +180,7 @@ export class LiveEditing {
     try {
       const range = (doc as any).caretRangeFromPoint?.(
         event.clientX,
-        event.clientY
+        event.clientY,
       );
       if (range) {
         const sel = doc.getSelection();
@@ -193,9 +201,11 @@ export class LiveEditing {
   private getLiveEditTargets(nodeId: string): LiveEditTarget[] {
     const node = this.editor.schemaOps.getNodeById(
       this.editor.store.schema,
-      nodeId
+      nodeId,
     );
-    if (!node) return [];
+    if (!node) {
+      return [];
+    }
     const renderType = node.__nodeOptions?.renderType;
     const item = this.editor.catalog
       .getComponents()

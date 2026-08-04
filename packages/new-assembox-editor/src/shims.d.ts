@@ -1,30 +1,31 @@
-declare module '*.vue' {
-  import type {DefineComponent} from 'vue';
-  const component: DefineComponent<{}, {}, any>;
+declare module "*.vue" {
+  import type { DefineComponent } from "vue";
+
+  const component: DefineComponent<Record<string, never>, Record<string, never>, any>;
   export default component;
 }
 
-declare module '*.less';
-declare module '*.css';
+declare module "*.less";
+declare module "*.css";
 
-declare module '*?worker' {
+declare module "*?worker" {
   const workerConstructor: {
     new (): Worker;
   };
   export default workerConstructor;
 }
 
-declare module 'monaco-editor/editor/editor.worker.js?worker' {
-  const editorWorker: {new (): Worker};
+declare module "monaco-editor/editor/editor.worker.js?worker" {
+  const editorWorker: { new (): Worker };
   export default editorWorker;
 }
-declare module 'monaco-editor/language/json/json.worker.js?worker' {
-  const jsonWorker: {new (): Worker};
+declare module "monaco-editor/language/json/json.worker.js?worker" {
+  const jsonWorker: { new (): Worker };
   export default jsonWorker;
 }
 
-declare module 'monaco-editor';
-declare module '@guolao/vue-monaco-editor';
+declare module "monaco-editor";
+declare module "@guolao/vue-monaco-editor";
 
 declare global {
   interface Window {

@@ -1,6 +1,3 @@
-import {getLogger} from './logger';
-
-const logger = getLogger('event-bus');
 /**
  * 统一事件总线
  * 借鉴 amis-editor-core 的 createEvent：支持 preventDefault / stopPropagation / async
@@ -22,18 +19,18 @@ export interface EditorEvent<C = any> {
   /** 异步 pending promises（等待异步监听完成） */
   pending?: Promise<any>[];
   /** 阻止默认行为 */
-  preventDefault(): void;
+  preventDefault: () => void;
   /** 停止冒泡（停止后续监听） */
-  stopPropagation(): void;
+  stopPropagation: () => void;
   /** 设置数据 */
-  setData(data: any): void;
+  setData: (data: any) => void;
   /** 等待所有异步监听完成 */
-  allDone(): Promise<void>;
+  allDone: () => Promise<void>;
 }
 
 /** 监听器：可同步返回 false=阻止默认，或返回 Promise */
 export type EventListener<C = any> = (
-  event: EditorEvent<C>
+  event: EditorEvent<C>,
 ) => void | boolean | Promise<any>;
 
 /** 创建事件对象 */
@@ -57,7 +54,7 @@ function createEvent<C>(type: string, context: C): EditorEvent<C> {
       return event.pending
         ? Promise.all(event.pending).then(() => {})
         : Promise.resolve();
-    }
+    },
   };
   return event;
 }
@@ -73,7 +70,9 @@ export class EventBus {
 
   /** 订阅事件，返回取消订阅函数 */
   on<C = any>(type: string, fn: EventListener<C>): () => void {
-    if (this.destroyed) return () => {};
+    if (this.destroyed) {
+      return () => {};
+    }
     const arr = this.listeners.get(type) ?? [];
     arr.push(fn);
     this.listeners.set(type, arr);
@@ -82,7 +81,7 @@ export class EventBus {
 
   /** 一次性订阅 */
   once<C = any>(type: string, fn: EventListener<C>): () => void {
-    const wrapper: EventListener<C> = event => {
+    const wrapper: EventListener<C> = (event) => {
       this.off(type, wrapper as EventListener<any>);
       return fn(event);
     };
@@ -92,22 +91,34 @@ export class EventBus {
   /** 退订 */
   off(type: string, fn: EventListener<any>): void {
     const arr = this.listeners.get(type);
-    if (!arr) return;
+    if (!arr) {
+      return;
+    }
     const idx = arr.indexOf(fn);
-    if (idx >= 0) arr.splice(idx, 1);
-    if (arr.length === 0) this.listeners.delete(type);
+    if (idx >= 0) {
+      arr.splice(idx, 1);
+    }
+    if (arr.length === 0) {
+      this.listeners.delete(type);
+    }
   }
 
   /** 触发事件 */
   trigger<C = any>(type: string, context: C): EditorEvent<C> {
     const event = createEvent<C>(type, context);
-    if (this.destroyed) return event;
+    if (this.destroyed) {
+      return event;
+    }
     const arr = this.listeners.get(type);
-    if (!arr) return event;
+    if (!arr) {
+      return event;
+    }
     // 复制一份，避免遍历中增删
     const snapshot = arr.slice();
     for (const fn of snapshot) {
-      if (event.stopped) break;
+      if (event.stopped) {
+        break;
+      }
       let ret: any;
       try {
         ret = fn(event);
@@ -117,8 +128,10 @@ export class EventBus {
       if (ret === false) {
         event.preventDefault();
         event.stopPropagation();
-      } else if (ret && typeof (ret as Promise<any>).then === 'function') {
-        if (!event.pending) event.pending = [];
+      } else if (ret && typeof (ret as Promise<any>).then === "function") {
+        if (!event.pending) {
+          event.pending = [];
+        }
         event.pending.push(ret as Promise<any>);
       }
     }
@@ -141,34 +154,34 @@ export class EventBus {
 /** 编辑器内置事件类型常量（声明式，避免魔法字符串） */
 export const EVENT = {
   // 生命周期
-  EDITOR_INIT: 'editor.init',
-  EDITOR_READY: 'editor.ready',
-  EDITOR_DESTROY: 'editor.destroy',
+  EDITOR_INIT: "editor.init",
+  EDITOR_READY: "editor.ready",
+  EDITOR_DESTROY: "editor.destroy",
   // Schema 变更（before/after，可 preventDefault）
-  BEFORE_INSERT: 'before-insert',
-  AFTER_INSERT: 'after-insert',
-  BEFORE_UPDATE: 'before-update',
-  AFTER_UPDATE: 'after-update',
-  BEFORE_DELETE: 'before-delete',
-  AFTER_DELETE: 'after-delete',
-  BEFORE_MOVE: 'before-move',
-  AFTER_MOVE: 'after-move',
+  BEFORE_INSERT: "before-insert",
+  AFTER_INSERT: "after-insert",
+  BEFORE_UPDATE: "before-update",
+  AFTER_UPDATE: "after-update",
+  BEFORE_DELETE: "before-delete",
+  AFTER_DELETE: "after-delete",
+  BEFORE_MOVE: "before-move",
+  AFTER_MOVE: "after-move",
   // 选区
-  SELECTION_CHANGE: 'selection-change',
-  ACTIVE_CHANGE: 'active-change',
-  HOVER_CHANGE: 'hover-change',
+  SELECTION_CHANGE: "selection-change",
+  ACTIVE_CHANGE: "active-change",
+  HOVER_CHANGE: "hover-change",
   // 构建（插件贡献）
-  BUILD_PANELS: 'build-panels',
-  BUILD_TOOLBARS: 'build-toolbars',
-  BUILD_CONTEXT_MENU: 'build-context-menu',
+  BUILD_PANELS: "build-panels",
+  BUILD_TOOLBARS: "build-toolbars",
+  BUILD_CONTEXT_MENU: "build-context-menu",
   // DnD
-  DND_ACCEPT: 'dnd-accept',
+  DND_ACCEPT: "dnd-accept",
   // 画布
-  SIMULATOR_READY: 'simulator-ready',
-  SCHEMA_CHANGE: 'schema-change',
-  HISTORY_CHANGE: 'history-change',
+  SIMULATOR_READY: "simulator-ready",
+  SCHEMA_CHANGE: "schema-change",
+  HISTORY_CHANGE: "history-change",
   // 编辑器
-  SAVE: 'save'
+  SAVE: "save",
 } as const;
 
 export type EventType = (typeof EVENT)[keyof typeof EVENT];

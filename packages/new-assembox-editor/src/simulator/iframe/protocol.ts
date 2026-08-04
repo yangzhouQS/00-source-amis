@@ -8,42 +8,40 @@
  *  DOM 查询：Host 直接用 iframe.contentDocument（同步）
  */
 
-/* eslint-disable @typescript-eslint/no-explicit-any */
-
 /** Host 注入到 iframe window 的全局键 */
-export const HOST_GLOBAL_KEY = '__ASSEM_HOST__';
+export const HOST_GLOBAL_KEY = "__ASSEM_HOST__";
 /** iframe entry 暴露渲染器的全局键 */
-export const RENDERER_GLOBAL_KEY = '__ASSEM_RENDERER__';
+export const RENDERER_GLOBAL_KEY = "__ASSEM_RENDERER__";
 
 /** Host → Renderer 命令（Host 调用，Renderer 实现） */
 export interface IframeRendererApi {
   readonly ready: boolean;
   /** 初始化：注入 schema 并首次挂载 */
-  init(schema: any, designMode: 'design' | 'preview'): void;
+  init: (schema: any, designMode: "design" | "preview") => void;
   /** 全量同步 schema（结构变更后） */
-  setSchema(schema: any): void;
+  setSchema: (schema: any) => void;
   /** 定向更新节点属性（增量，可选实现） */
-  updateNode?(nodeId: string, patch: any): void;
+  updateNode?: (nodeId: string, patch: any) => void;
   /** 设计/预览模式切换 */
-  setDesignMode(mode: 'design' | 'preview'): void;
+  setDesignMode: (mode: "design" | "preview") => void;
   /** 拖拽态（禁用画布交互光标） */
-  setDraggingState(active: boolean): void;
+  setDraggingState: (active: boolean) => void;
   /** 强制重渲染 */
-  rerender(): void;
+  rerender: () => void;
   /** 销毁 */
-  dispose(): void;
+  dispose: () => void;
 }
 
 /** Renderer → Host 回调（Host 注入，Renderer 调用） */
 export interface IframeHostCallbacks {
   /** iframe 渲染器就绪 */
-  onReady(): void;
+  onReady: () => void;
   /** 画布内点击节点 */
-  onClick(nodeId: string | null, originalEvent: MouseEvent): void;
+  onClick: (nodeId: string | null, originalEvent: MouseEvent) => void;
   /** 画布内悬浮节点 */
-  onHover(nodeId: string | null): void;
+  onHover: (nodeId: string | null) => void;
   /** 渲染器错误 */
-  onError(message: string, detail?: any): void;
+  onError: (message: string, detail?: any) => void;
 }
 
 // ═══════════════════════════════════════════════
