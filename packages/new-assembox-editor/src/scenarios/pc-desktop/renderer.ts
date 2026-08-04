@@ -43,7 +43,7 @@ export class PcRenderer implements IRenderer {
     (window as any).assemBoxIsEdit = true;
     (window as any).assemBoxDesignMode = 'design';
 
-    (window as any).AssemVueRenderer = {
+    (window as any).assemVueRenderer = {
       onMountedInstance: (_instance: unknown) => {
         if (!this.readyFired) {
           this.readyFired = true;
@@ -206,6 +206,6 @@ export class PcRenderer implements IRenderer {
     this.container = null;
     this.schema = null;
     this.core = null;
-    (window as any).AssemVueRenderer = undefined;
+    (window as any).assemVueRenderer = undefined;
   }
 }

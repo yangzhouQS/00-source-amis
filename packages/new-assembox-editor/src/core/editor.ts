@@ -1,25 +1,20 @@
 /**
  * Editor 门面
  * 聚合所有核心子系统，对外提供高层 API
- * 取代旧版 getEditor() 全局单例 + window.AssemGlobalBus：改为 createEditor() 工厂，支持多实例
+ * 取代旧版 getEditor() 全局单例 + window.lc-assemGlobalBus：改为 createEditor() 工厂，支持多实例
+ *
+ * 场景驱动：通过 ScenarioProfile 提供 schemaOps / renderer / catalog / nestingRules，
+ * 不再依赖 amis 风格的 PageSchema/operations/bridge。
  */
 import {DIContainer} from './di-container';
 import {EventBus, EVENT} from './event-bus';
 import {EditorStore} from './store';
 import {Selection} from './selection';
 import {PluginManager} from './plugin-manager';
-import {
-  ComponentRegistry,
-  flushDecorators
-} from '../registry/component-registry';
 import {SetterRegistry} from '../registry/setter-registry';
 import {AssetRegistry} from '../registry/asset-registry';
 import {ActionRegistry} from '../registry/action-registry';
 import {Skeleton} from '../skeleton/skeleton';
-import {NodeTree} from '../simulator/node-tree';
-import {InProcessBridge} from '../simulator/in-process-bridge';
-import {IframeBridge} from '../simulator/iframe/iframe-bridge';
-import type {SimulatorBridge} from '../simulator/bridge';
 import {Dragon} from '../designer/drag/dragon';
 import {KeyboardManager} from './keyboard-manager';
 import {LiveEditing} from '../designer/live-editing';
@@ -28,21 +23,29 @@ import {ComponentActionManager} from '../designer/component-action-manager';
 import type {DragObject, DropLocation} from '../designer/drag/types';
 import {getLogger, type Logger} from './logger';
 import * as TOKENS from '../registry/tokens';
-import type {PageSchema, PageNode, NodeId} from '../schema/types';
+import type {
+  ISchemaOps,
+  IRenderer,
+  INestingRules,
+  IComponentCatalog,
+  ScenarioProfile
+} from '../scenario/types';
+import {scenarioRegistry} from '../scenario/registry';
 import type {PluginContext, EditorPluginObject} from './plugin-types';
 import type {InjectionToken} from './di-container';
 import {builtinPlugins} from '../plugins/builtin-plugins';
-import * as ops from '../schema/operations';
 
 export interface EditorOptions {
   platform?: 'desktop' | 'mobile';
-  /** 初始 schema */
-  schema?: PageSchema;
+  /** 场景 id（决定 schemaOps/renderer/catalog/nestingRules） */
+  scenario: string;
+  /** 初始 schema（PC 格式，省略则用场景空模板） */
+  schema?: any;
   /** 用户插件（可带 options：[plugin, options]） */
   plugins?: Array<EditorPluginObject | [EditorPluginObject, any]>;
   /** 是否禁用内置插件（默认 false） */
   disableBuiltin?: boolean;
-  /** 画布渲染模式：inline=同 DOM，iframe=iframe 隔离渲染 */
+  /** 画布模式：inline（同 DOM 进程内） | iframe（资源隔离） */
   canvasMode?: 'inline' | 'iframe';
 }
 
@@ -51,16 +54,15 @@ export class Editor {
   readonly bus = new EventBus();
   readonly store: EditorStore;
   readonly selection: Selection;
-  readonly componentRegistry = new ComponentRegistry();
   readonly setterRegistry = new SetterRegistry();
   readonly assetRegistry = new AssetRegistry();
   readonly actionRegistry = new ActionRegistry();
   readonly pluginManager: PluginManager;
   readonly skeleton = new Skeleton();
-  readonly nodeTree = new NodeTree();
-  readonly bridge: SimulatorBridge;
-  /** 画布模式 */
-  readonly canvasMode: 'inline' | 'iframe';
+  /** 场景档案 */
+  readonly profile: ScenarioProfile;
+  /** 设计态渲染器（由场景创建，DesignerHost 负责挂载） */
+  renderer: IRenderer | null = null;
   /** 自模拟拖拽引擎（替代 HTML5 drag，跨 iframe 可靠） */
   readonly dragon: Dragon;
   /** 日志器（集中管理，按 bizName 隔离） */
@@ -74,13 +76,28 @@ export class Editor {
   /** 组件工具栏动作管理器（选中节点工具栏按钮） */
   readonly componentActions: ComponentActionManager;
   /** 剪贴板（复制/粘贴用） */
-  clipboard: PageNode | null = null;
+  clipboard: any | null = null;
 
   private destroyed = false;
 
-  constructor(options: EditorOptions = {}) {
-    this.store = new EditorStore(options.schema);
+  /** 便捷别名：schema 操作 */
+  get schemaOps(): ISchemaOps { return this.profile.schemaOps; }
+  /** 便捷别名：嵌套校验 */
+  get nestingRules(): INestingRules { return this.profile.nestingRules; }
+  /** 便捷别名：组件目录 */
+  get catalog(): IComponentCatalog { return this.profile.componentCatalog; }
+
+  constructor(options: EditorOptions) {
+    // 1. 激活场景档案
+    this.profile = scenarioRegistry.activate(options.scenario);
+
+    // 2. 初始化 store（场景驱动 schemaOps）
+    this.store = new EditorStore(
+      options.schema ?? this.profile.emptySchema(),
+      this.profile.schemaOps
+    );
     this.store.state.platform = options.platform ?? 'desktop';
+    (this.store.state as any).canvasMode = options.canvasMode ?? 'inline';
     // store 持有 editor 反向引用（bem-tools 用）
     (this.store as any).__editor = this;
 
@@ -98,27 +115,17 @@ export class Editor {
       }
     }
 
-    // bridge（按画布模式选择）
-    this.canvasMode = options.canvasMode ?? 'inline';
-    if (this.canvasMode === 'iframe') {
-      this.bridge = new IframeBridge(this.store, this.nodeTree, {
-        onClick: (id, _e) => this.handleClick(id),
-        onHover: id => this.handleHover(id),
-        onReady: () => this.handleRenderReady(),
-        onScroll: () => this.handleRenderReady(),
-        onDblClick: (nodeId, e, doc) => {
-          this.liveEditing.apply(nodeId, e, doc);
-        }
-      });
-    } else {
-      this.bridge = new InProcessBridge(this.store, this.nodeTree, {
-        onClick: (id, _e) => this.handleClick(id),
-        onHover: id => this.handleHover(id),
-        onRenderReady: () => this.handleRenderReady()
-      });
-    }
+    // 3. 创建渲染器并绑定回调（DesignerHost 负责 mount）
+    // iframe 模式优先用场景的 iframe 渲染器（资源/样式隔离），否则降级 inline
+    this.renderer =
+      options.canvasMode === 'iframe' && this.profile.createIframeRenderer
+        ? this.profile.createIframeRenderer()
+        : this.profile.createRenderer();
+    this.renderer.onClick?.((nodeId, _e) => this.handleClick(nodeId));
+    this.renderer.onHover?.(id => this.handleHover(id));
+    this.renderer.onReady?.(() => this.handleRenderReady());
 
-    // 拖拽引擎（自模拟，跨 iframe 可靠）
+    // 4. 拖拽引擎（自模拟，跨 iframe 可靠）
     this.dragon = new Dragon();
     this.logger = getLogger('editor');
     this.wireDragon();
@@ -143,7 +150,6 @@ export class Editor {
     this.di.register(TOKENS.BUS, this.bus);
     this.di.register(TOKENS.DI, this.di);
     this.di.register(TOKENS.PLUGIN_MANAGER, this.pluginManager);
-    this.di.register(TOKENS.COMPONENT_REGISTRY, this.componentRegistry);
     this.di.register(TOKENS.SETTER_REGISTRY, this.setterRegistry);
     this.di.register(TOKENS.ASSET_REGISTRY, this.assetRegistry);
     this.di.register(TOKENS.ACTION_REGISTRY, this.actionRegistry);
@@ -157,9 +163,17 @@ export class Editor {
     this.dragon.on({
       onDrop: (dragObject: DragObject, location: DropLocation) => {
         if (dragObject.type === 'nodeData' && dragObject.data) {
-          // 新增组件
-          const node = this.componentRegistry.createNode(dragObject.data.type);
-          if (node) {
+          // 新增组件：从目录取 scaffold 创建节点
+          const renderType = dragObject.data.renderType ?? dragObject.data.type;
+          const item = this.catalog
+            .getComponents()
+            .find(c => c.renderType === renderType);
+          if (item) {
+            const node = this.schemaOps.createNode(
+              renderType,
+              item.name,
+              this.schemaOps.cloneSchema(item.scaffold)
+            );
             this.insert(
               location.containerId,
               location.region,
@@ -182,11 +196,11 @@ export class Editor {
     });
     // 拖拽态副作用（光标 + renderer 拖拽态）
     this.dragon.setDragStateSetter((active: boolean) => {
-      this.bridge.setDraggingState(active);
+      this.renderer?.setDraggingState(active);
       document.body.style.cursor = active ? 'copy' : '';
       document.body.style.userSelect = active ? 'none' : '';
       return () => {
-        this.bridge.setDraggingState(false);
+        this.renderer?.setDraggingState(false);
         document.body.style.cursor = '';
         document.body.style.userSelect = '';
       };
@@ -195,54 +209,66 @@ export class Editor {
 
   /** 判断 descendant 是否为 ancestor 的后代 */
   private isDescendantNode(
-    descendantId: import('../schema/types').NodeId,
-    ancestorId: import('../schema/types').NodeId
+    descendantId: string,
+    ancestorId: string
   ): boolean {
     if (descendantId === ancestorId) return true;
-    let cur = this.nodeTree.getParent(ancestorId);
+    let cur = this.schemaOps.getParentById(this.store.schema, ancestorId);
     while (cur) {
-      if (cur === descendantId) return true;
-      cur = this.nodeTree.getParent(cur);
+      const curId = this.schemaOps.getNodeId(cur);
+      if (curId === descendantId) return true;
+      cur = this.schemaOps.getParentById(this.store.schema, curId);
     }
     return false;
   }
 
   /** 从组件面板发起拖拽（便捷 API） */
-  startComponentDrag(e: MouseEvent, componentType: string): void {
-    const meta = this.componentRegistry.get(componentType);
+  startComponentDrag(e: MouseEvent, renderType: string): void {
+    const item = this.catalog
+      .getComponents()
+      .find(c => c.renderType === renderType);
     this.dragon.boost(
-      {type: 'nodeData', data: meta, title: meta?.name ?? componentType},
+      {
+        type: 'nodeData',
+        data: item ?? {renderType},
+        title: item?.name ?? renderType
+      },
       e
     );
   }
 
   /** 画布内节点拖拽（便捷 API） */
-  startNodeDrag(e: MouseEvent, nodeId: import('../schema/types').NodeId): void {
-    const node = ops.getNodeById(this.store.schema, nodeId);
+  startNodeDrag(e: MouseEvent, nodeId: string): void {
+    const node = this.schemaOps.getNodeById(this.store.schema, nodeId);
     this.dragon.boost(
       {
         type: 'node',
         nodeId,
-        title: ops.getNodeLabel(node ?? ({} as any)) || '节点'
+        title: this.schemaOps.getNodeLabel(node ?? {}) || '节点'
       },
       e
     );
+  }
+
+  /** 根节点 id（场景树的顶层节点，供面板插入用） */
+  get rootNodeId(): string | null {
+    let rootId: string | null = null;
+    this.schemaOps.walk(this.store.schema, (node, parent) => {
+      if (parent === null && !rootId) rootId = this.schemaOps.getNodeId(node);
+    });
+    return rootId;
   }
 
   // --------------------- 启动 / 销毁 ---------------------
 
   /** 启动编辑器：激活插件（contributes 自动应用内聚到 PluginManager.activate） */
   async start(): Promise<void> {
-    // flush 装饰器注册的组件
-    flushDecorators(this.componentRegistry);
-
     const ctx: PluginContext = {
       editor: this,
       store: this.store,
       di: this.di,
       bus: this.bus,
       skeleton: this.skeleton,
-      componentRegistry: this.componentRegistry,
       setterRegistry: this.setterRegistry,
       assetRegistry: this.assetRegistry,
       actionRegistry: this.actionRegistry,
@@ -354,43 +380,49 @@ export class Editor {
     this.dragon.destroy();
     this.keyboard.detach();
     this.liveEditing.dispose();
-    this.bridge.dispose?.();
+    this.renderer?.dispose();
     this.pluginManager.destroy();
-    this.nodeTree.clear();
     this.bus.destroy();
     this.di.clear();
   }
 
   // --------------------- Schema 操作（高层 API） ---------------------
 
+  /** 同步渲染器（结构/属性变更后调用） */
+  private syncRenderer(): void {
+    if (this.renderer) {
+      this.renderer.setSchema(this.store.schema);
+      this.renderer.onStructureChange?.();
+    }
+  }
+
   /** 加载 schema */
-  loadSchema(schema: PageSchema): void {
+  loadSchema(schema: any): void {
     this.store.loadSchema(schema);
     this.bus.trigger(EVENT.SCHEMA_CHANGE, {schema});
-    this.bridge.rerender();
+    if (this.renderer) this.renderer.setSchema(this.store.schema);
   }
 
   /** 获取 schema（深拷贝） */
-  getSchema(): PageSchema {
-    return ops.cloneSchema(this.store.schema);
+  getSchema(): any {
+    return this.schemaOps.cloneSchema(this.store.schema);
   }
 
   /** 复制节点到剪贴板 */
-  copy(nodeId: NodeId): void {
-    const node = ops.getNodeById(this.store.schema, nodeId);
-    if (node) this.clipboard = ops.cloneNode(node);
+  copy(nodeId: string): void {
+    const node = this.schemaOps.getNodeById(this.store.schema, nodeId);
+    if (node) this.clipboard = this.schemaOps.cloneNode(node);
   }
 
   /** 粘贴剪贴板节点（插入到目标节点之后） */
-  paste(nodeId: NodeId): void {
+  paste(nodeId: string): void {
     if (!this.clipboard) return;
-    const parent = ops.getParentById(this.store.schema, nodeId);
-    if (!parent) return;
-    const loc = ops.locateChild(parent, nodeId);
+    const loc = this.schemaOps.findSlotOf?.(this.store.schema, nodeId);
     if (!loc) return;
-    const cloned = ops.cloneNode(this.clipboard);
-    this.insert(parent.$$id, loc.region, cloned, loc.index + 1);
-    this.select(cloned.$$id);
+    const cloned = this.schemaOps.cloneNode(this.clipboard);
+    this.regenerateNodeIds(cloned);
+    this.insert(loc.parentId, loc.slotKey, cloned, loc.index + 1);
+    this.select(this.schemaOps.getNodeId(cloned));
   }
 
   /** 保存（触发 SAVE 事件，由宿主消费做持久化） */
@@ -400,127 +432,129 @@ export class Editor {
 
   /** 插入节点 */
   insert(
-    parentId: NodeId,
-    region: string,
-    node: PageNode,
+    parentId: string,
+    slotKey: string,
+    node: any,
     index?: number
-  ): PageNode | undefined {
+  ): any | undefined {
     const event = this.bus.trigger(EVENT.BEFORE_INSERT, {
       parentId,
-      region,
+      slotKey,
       node,
       index
     });
     if (event.prevented) return undefined;
-    const created = ops.cloneSchema(node);
-    ops.ensureIds(created);
+    const created = this.schemaOps.cloneNode(node);
+    this.ensureNodeId(created);
     this.store.commit('insert', schema => {
-      ops.insertNode(schema, parentId, region, created, index);
+      this.schemaOps.insertNode(schema, parentId, slotKey, created, index);
     });
-    this.bus.trigger(EVENT.AFTER_INSERT, {parentId, region, node: created});
-    this.bridge.rerender();
+    this.bus.trigger(EVENT.AFTER_INSERT, {parentId, slotKey, node: created});
+    this.syncRenderer();
     return created;
   }
 
   /** 更新节点 */
-  update(nodeId: NodeId, patch: Partial<PageNode>): void {
+  update(nodeId: string, patch: any): void {
     const event = this.bus.trigger(EVENT.BEFORE_UPDATE, {nodeId, patch});
     if (event.prevented) return;
     this.store.commit('update', schema => {
-      ops.updateNode(schema, nodeId, patch);
+      this.schemaOps.updateNode(schema, nodeId, patch);
     });
     this.bus.trigger(EVENT.AFTER_UPDATE, {nodeId, patch});
-    this.bridge.rerender();
+    if (this.renderer) {
+      this.renderer.setSchema(this.store.schema);
+      this.renderer.updateNode?.(nodeId, patch);
+    }
   }
 
-  /** 更新节点属性（便捷） */
-  updateProps(nodeId: NodeId, props: Record<string, any>): void {
-    this.update(nodeId, {props});
+  /** 更新节点属性（便捷：属性写入 __nodeOptions） */
+  updateProps(nodeId: string, props: Record<string, any>): void {
+    this.update(nodeId, {__nodeOptions: props});
   }
 
   /** 移动节点 */
   move(
-    nodeId: NodeId,
-    toParentId: NodeId,
-    region: string,
+    nodeId: string,
+    toParentId: string,
+    slotKey: string,
     index?: number
   ): void {
     const event = this.bus.trigger(EVENT.BEFORE_MOVE, {
       nodeId,
       toParentId,
-      region,
+      slotKey,
       index
     });
     if (event.prevented) return;
     this.store.commit('move', schema => {
-      ops.moveNode(schema, nodeId, toParentId, region, index);
+      this.schemaOps.moveNode(schema, nodeId, toParentId, slotKey, index);
     });
-    this.bus.trigger(EVENT.AFTER_MOVE, {nodeId, toParentId, region, index});
-    this.bridge.rerender();
+    this.bus.trigger(EVENT.AFTER_MOVE, {nodeId, toParentId, slotKey, index});
+    this.syncRenderer();
   }
 
   /** 移除节点 */
-  remove(nodeId: NodeId): void {
+  remove(nodeId: string): void {
     const event = this.bus.trigger(EVENT.BEFORE_DELETE, {nodeId});
     if (event.prevented) return;
     this.store.commit('delete', schema => {
-      ops.removeNode(schema, nodeId);
+      this.schemaOps.removeNode(schema, nodeId);
     });
     this.bus.trigger(EVENT.AFTER_DELETE, {nodeId});
     if (this.store.state.activeId === nodeId) {
       this.store.select(null);
     }
-    this.bridge.rerender();
+    this.syncRenderer();
   }
 
   /** 复制节点 */
-  duplicate(nodeId: NodeId): PageNode | undefined {
-    const node = ops.getNodeById(this.store.schema, nodeId);
+  duplicate(nodeId: string): any | undefined {
+    const node = this.schemaOps.getNodeById(this.store.schema, nodeId);
     if (!node) return undefined;
-    const parent = ops.getParentById(this.store.schema, nodeId);
-    if (!parent) return undefined;
-    const loc = ops.locateChild(parent, nodeId);
+    const loc = this.schemaOps.findSlotOf?.(this.store.schema, nodeId);
     if (!loc) return undefined;
-    const cloned = ops.cloneNode(node);
+    const cloned = this.schemaOps.cloneNode(node);
+    this.regenerateNodeIds(cloned);
     this.store.commit('duplicate', schema => {
-      ops.insertNode(schema, parent.$$id, loc.region, cloned, loc.index + 1);
+      this.schemaOps.insertNode(schema, loc.parentId, loc.slotKey, cloned, loc.index + 1);
     });
-    this.store.select(cloned.$$id);
-    this.bridge.rerender();
+    this.store.select(this.schemaOps.getNodeId(cloned));
+    this.syncRenderer();
     return cloned;
   }
 
   /** 上移 */
-  moveUp(nodeId: NodeId): void {
+  moveUp(nodeId: string): void {
     const event = this.bus.trigger(EVENT.BEFORE_MOVE, {
       nodeId,
       direction: 'up'
     });
     if (event.prevented) return;
     this.store.commit('move-up', schema => {
-      ops.moveUp(schema, nodeId);
+      this.schemaOps.moveNodeUp?.(schema, nodeId);
     });
-    this.bridge.rerender();
+    this.syncRenderer();
   }
 
   /** 下移 */
-  moveDown(nodeId: NodeId): void {
+  moveDown(nodeId: string): void {
     const event = this.bus.trigger(EVENT.BEFORE_MOVE, {
       nodeId,
       direction: 'down'
     });
     if (event.prevented) return;
     this.store.commit('move-down', schema => {
-      ops.moveDown(schema, nodeId);
+      this.schemaOps.moveNodeDown?.(schema, nodeId);
     });
-    this.bridge.rerender();
+    this.syncRenderer();
   }
 
   /** 撤销 */
   undo(): void {
     if (this.store.undo()) {
       this.bus.trigger(EVENT.HISTORY_CHANGE, {});
-      this.bridge.rerender();
+      if (this.renderer) this.renderer.setSchema(this.store.schema);
     }
   }
 
@@ -528,13 +562,21 @@ export class Editor {
   redo(): void {
     if (this.store.redo()) {
       this.bus.trigger(EVENT.HISTORY_CHANGE, {});
-      this.bridge.rerender();
+      if (this.renderer) this.renderer.setSchema(this.store.schema);
     }
+  }
+
+  /** 切换设计/预览模式（同步渲染器） */
+  setDesignMode(mode: 'design' | 'preview'): void {
+    if (this.store.state.designMode !== mode) {
+      this.store.toggleDesignMode();
+    }
+    this.renderer?.setDesignMode(mode);
   }
 
   // --------------------- 选区 ---------------------
 
-  select(id: NodeId | null): void {
+  select(id: string | null): void {
     this.store.select(id);
     this.bus.trigger(EVENT.ACTIVE_CHANGE, {activeId: id});
     this.rebuildPanels();
@@ -557,11 +599,11 @@ export class Editor {
 
   // --------------------- 内部事件处理 ---------------------
 
-  private handleClick(id: NodeId | null): void {
+  private handleClick(id: string | null): void {
     this.select(id);
   }
 
-  private handleHover(id: NodeId | null): void {
+  private handleHover(id: string | null): void {
     if (this.store.state.hoverId !== id) {
       this.store.setHover(id);
       this.bus.trigger(EVENT.HOVER_CHANGE, {hoverId: id});
@@ -571,9 +613,33 @@ export class Editor {
   private handleRenderReady(): void {
     this.bus.trigger(EVENT.SIMULATOR_READY, {});
   }
+
+  // --------------------- 节点 id 辅助 ---------------------
+
+  /** 确保节点（及其子树）拥有唯一 id，无则生成 */
+  private ensureNodeId(node: any): void {
+    if (!node || typeof node !== 'object') return;
+    if (!node.__nodeId) {
+      const renderType = node.__nodeOptions?.renderType ?? 'node';
+      node.__nodeId = this.schemaOps.genNodeId(renderType);
+    }
+  }
+
+  /** 为克隆的节点子树重新生成全部 id（粘贴/复制用） */
+  private regenerateNodeIds(node: any): void {
+    if (!node || typeof node !== 'object') return;
+    if (node.__nodeId) {
+      const renderType = node.__nodeOptions?.renderType ?? 'node';
+      node.__nodeId = this.schemaOps.genNodeId(renderType);
+    }
+    for (const v of Object.values(node)) {
+      if (Array.isArray(v)) v.forEach(child => this.regenerateNodeIds(child));
+      else if (v && typeof v === 'object') this.regenerateNodeIds(v);
+    }
+  }
 }
 
 /** 工厂：创建编辑器实例（支持多实例） */
-export function createEditor(options?: EditorOptions): Editor {
-  return new Editor(options ?? {});
+export function createEditor(options: EditorOptions): Editor {
+  return new Editor(options);
 }

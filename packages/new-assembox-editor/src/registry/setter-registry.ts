@@ -4,7 +4,7 @@
  * - propType → setter 名推断（委托 component-registry 的 inferSetterName）
  */
 import type {VueComponent, SetterMeta} from '../schema/types';
-import {inferSetterName} from './component-registry';
+import {inferSetterName} from './setter-inference';
 import type {PropType} from '../schema/types';
 
 export class SetterRegistry {

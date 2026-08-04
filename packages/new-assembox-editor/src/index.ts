@@ -11,8 +11,9 @@ export {EventBus, EVENT, camelize} from './core/event-bus';
 export type {EditorEvent, EventListener} from './core/event-bus';
 export {Logger, getLogger, setGlobalLevel} from './core/logger';
 export type {LogLevel, LoggerOptions} from './core/logger';
-export {EditorStore, createEmptySchema} from './core/store';
-export type {EditorState, HistoryEntry} from './core/store';
+export {EditorStore} from './core/store';
+export type {EditorState, HistoryEntry, OutlineNode} from './core/store';
+export {buildOutlineFromSchemaOps} from './core/store';
 export {Selection} from './core/selection';
 export {PluginManager} from './core/plugin-manager';
 export {definePlugin} from './core/plugin-types';
@@ -24,28 +25,36 @@ export type {
 } from './core/plugin-types';
 
 // 注册表层
-export {
-  ComponentRegistry,
-  EditorComponent,
-  inferSetterName
-} from './registry/component-registry';
 export {SetterRegistry} from './registry/setter-registry';
 export {AssetRegistry} from './registry/asset-registry';
 export {ActionRegistry} from './registry/action-registry';
 export type {ActionContext} from './registry/action-registry';
+export {inferSetterName} from './registry/setter-inference';
 export * as TOKENS from './registry/tokens';
 
-// Schema
+// 场景层（多场景可插拔）
+export {
+  scenarioRegistry,
+  registerScenario
+} from './scenario';
 export type {
-  PageSchema,
-  PageNode,
+  ISchemaOps,
+  IRenderer,
+  IComponentCatalog,
+  INestingRules,
+  ScenarioProfile,
+  ScenarioContext,
+  ComponentCatalogItem,
+  ComponentPropConfig,
+  SlotMarker,
+  RendererMountOptions
+} from './scenario/types';
+
+// Schema 类型（通用类型定义，供 setter / 插件使用）
+export type {
   NodeId,
   PropConfig,
   PropType,
-  EventConfig,
-  RegionConfig,
-  ActionSchema,
-  OnEventConfig,
   PanelItem,
   ToolbarItem,
   ContextMenuItem,
@@ -55,7 +64,6 @@ export type {
   AssetMeta,
   VueComponent
 } from './schema/types';
-export * as schemaOps from './schema/operations';
 
 // 骨架层
 export {Skeleton} from './skeleton/skeleton';
@@ -64,29 +72,8 @@ export type {Area} from './skeleton/skeleton';
 export {Workbench} from './skeleton/workbench';
 export type {WorkbenchProps} from './skeleton/workbench';
 
-// 模拟器层
-export {NodeTree} from './simulator/node-tree';
-export type {NodeInstance} from './simulator/node-tree';
-export type {SimulatorBridge} from './simulator/bridge';
-export {InProcessBridge} from './simulator/in-process-bridge';
-export {SchemaRenderer, NodeRenderer} from './simulator/renderer';
-// iframe 模拟器
-export {IframeBridge} from './simulator/iframe/iframe-bridge';
-export type {IframeBridgeOptions} from './simulator/iframe/iframe-bridge';
-export {IframeSimulatorRenderer} from './simulator/iframe/simulator-renderer';
-export type {
-  SimulatorRendererApi,
-  SimulatorHostApi,
-  ComponentMapping,
-  InitPayload,
-  HostMessage,
-  RendererMessage
-} from './simulator/iframe/protocol';
-export {HOST_CMD, RENDERER_EVT, PROTOCOL_NS} from './simulator/iframe/protocol';
-
 // 设计器层
 export {DesignerHost} from './designer/designer-host';
-export {IframeDesignerHost} from './designer/iframe-designer-host';
 export {BemTools} from './designer/bem-tools';
 // 自模拟拖拽引擎
 export {Dragon, isShaken} from './designer/drag/dragon';
@@ -108,9 +95,3 @@ export {registerBuiltinActions} from './actions/builtin-actions';
 
 // 内置插件（导入即注册）
 export {builtinPlugins} from './plugins/builtin-plugins';
-
-// assembox-desktop 契约集成（P0）
-export {AssemboxBridge} from './simulator/assembox/assembox-bridge';
-export type {AssemboxBridgeCallbacks} from './simulator/assembox/assembox-bridge';
-export {EidRegistry} from './simulator/assembox/eid-registry';
-export type {EidNodeInfo} from './simulator/assembox/eid-registry';

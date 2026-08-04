@@ -1,6 +1,6 @@
 /* BemTools 覆盖层（参考 lowcode borders.less + bem-tools.less） */
 
-.assem-bem-tools {
+.lc-assem-bem-tools {
   position: absolute;
   inset: 0;
   z-index: 99;
@@ -9,8 +9,8 @@
 }
 
 /* ── 通用边框 ── */
-.assem-bem-tools__hover-box,
-.assem-bem-tools__select-box {
+.lc-assem-bem-tools__hover-box,
+.lc-assem-bem-tools__select-box {
   position: absolute;
   pointer-events: none;
   box-sizing: border-box;
@@ -19,20 +19,20 @@
 }
 
 /* ── hover 探测框（虚线 + 浅色） ── */
-.assem-bem-tools__hover-box {
+.lc-assem-bem-tools__hover-box {
   z-index: 1;
   border: 1px dashed var(--color-brand);
   background: rgba(0, 121, 242, 0.04);
 }
 
 /* ── 选中框（实线 + 高亮） ── */
-.assem-bem-tools__select-box {
+.lc-assem-bem-tools__select-box {
   z-index: 2;
   border: 2px solid var(--color-brand);
 }
 
 /* ── 节点类型标签 ── */
-.assem-bem-tools__box-label {
+.lc-assem-bem-tools__box-label {
   position: absolute;
   top: -22px;
   left: -2px;
@@ -54,7 +54,7 @@
 }
 
 /* ── 工具栏容器 ── */
-.assem-bem-tools__toolbar {
+.lc-assem-bem-tools__toolbar {
   position: absolute;
   display: flex;
   flex-direction: row-reverse;
@@ -65,7 +65,7 @@
 }
 
 /* ── 工具栏按钮（参考 lowcode lc-borders-action） ── */
-.assem-bem-tools__toolbar-btn {
+.lc-assem-bem-tools__toolbar-btn {
   box-sizing: border-box;
   display: inline-flex;
   align-items: center;
@@ -102,7 +102,7 @@
 }
 
 /* ── 拖入插入指示线（参考 lowcode lc-insertion） ── */
-.assem-bem-tools__insertion {
+.lc-assem-bem-tools__insertion {
   position: absolute;
   z-index: 12;
   pointer-events: none;

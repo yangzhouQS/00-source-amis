@@ -1,13 +1,16 @@
 /**
- * Demo 入口
- * 创建编辑器实例 → 注册 demo 组件 → 挂载 Workbench
+ * Demo 入口（PC 桌面场景）
+ * 注册场景 → 创建编辑器实例 → 挂载 Workbench
  */
 import {createApp} from 'vue';
 import ElementPlus, {ElMessage} from 'element-plus';
 import * as ElementPlusIconsVue from '@element-plus/icons-vue';
 import 'element-plus/dist/index.css';
 import {createEditor, Workbench} from '../index';
-import {registerDemoComponents} from './components';
+import {registerScenario} from '../scenario';
+import {pcDesktopProfile} from '../scenarios/pc-desktop';
+// 默认测试 schema（供应商单表场景，取 uiSkeleton 作为编辑器 schema）
+import schemaJson from './single-table-scene.json';
 
 // Monaco 本地加载（避免 CDN 依赖，代理环境 CDN 不可达）
 import {loader} from '@guolao/vue-monaco-editor';
@@ -29,41 +32,24 @@ loader.config({monaco} as any);
 (window as any).ElMessage = ElMessage;
 
 async function main() {
-  // 1. 创建编辑器实例（默认注入内置插件：组件库/设置/画布/大纲/源码/历史，iframe 隔离渲染画布）
+  // 1. 注册并激活 PC 桌面场景
+  registerScenario(pcDesktopProfile);
+
+  // 2. 创建编辑器实例（场景驱动，渲染器由 DesignerHost 挂载）
   const editor = createEditor({
     platform: 'desktop',
+    scenario: 'pc-desktop',
     canvasMode: 'iframe',
-    schema: {
-      type: 'page',
-      $$id: 'root',
-      body: [
-        {
-          type: 'card',
-          $$id: 'demo-card',
-          props: {header: '欢迎使用新版 assembox 编辑器'},
-          body: [
-            {
-              type: 'button',
-              $$id: 'demo-btn',
-              props: {type: 'primary', content: '点击我'},
-              onEvent: {click: {actions: []}}
-            }
-          ]
-        }
-      ]
-    }
+    schema: (schemaJson as any).uiSkeleton
   });
 
   // 暴露 editor 便于调试
   (window as any).editor = editor;
 
-  // 3. 注册 demo 组件
-  registerDemoComponents(editor.componentRegistry);
-
-  // 4. 启动编辑器（激活插件）
+  // 3. 启动编辑器（激活插件）
   await editor.start();
 
-  // 4.5 注册键盘快捷键
+  // 4. 注册键盘快捷键
   const {useEditorShortcuts} = await import('../hooks/use-editor-shortcuts');
   useEditorShortcuts(editor);
 
@@ -80,9 +66,16 @@ async function main() {
 
   // 注册 Element Plus 图标
   for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
+    if (['Box'].includes(key)){
+      continue;
+    }
     app.component(key, component as any);
   }
   app.use(ElementPlus);
+  console.log(window);
+  app.use(ElementPlusUi);
+  app.use(ElementPro);
+  app.use(TablePro);
   app.mount('#app');
 }
 

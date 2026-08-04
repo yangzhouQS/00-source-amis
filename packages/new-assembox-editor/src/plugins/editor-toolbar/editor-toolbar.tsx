@@ -55,7 +55,7 @@ export const EditorToolbar = defineComponent({
               icon={Edit}
               onClick={() => {
                 if (store.state.designMode !== 'design')
-                  store.toggleDesignMode();
+                  props.editor.setDesignMode('design');
               }}
             >
               设计
@@ -68,7 +68,7 @@ export const EditorToolbar = defineComponent({
               icon={View}
               onClick={() => {
                 if (store.state.designMode !== 'preview')
-                  store.toggleDesignMode();
+                  props.editor.setDesignMode('preview');
               }}
             >
               预览

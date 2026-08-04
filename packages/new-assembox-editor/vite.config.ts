@@ -17,7 +17,7 @@ export default defineConfig({
       }
     }
   },
-  // 多页面：主应用 index.html + iframe 画布 canvas.html
+  // 多页应用：main（编辑器主窗口）+ canvas（iframe 隔离画布）
   build: {
     rollupOptions: {
       input: {
@@ -28,6 +28,6 @@ export default defineConfig({
   },
   server: {
     port: 5174,
-    open: "/index.html"
+    // open: "/index.html"
   }
 });

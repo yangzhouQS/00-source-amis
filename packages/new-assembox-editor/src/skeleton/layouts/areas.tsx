@@ -107,7 +107,7 @@ export const LeftFloatPane = defineComponent({
       },
       target => {
         // 保护范围：左侧 dock 图标栏（点击切换而非关闭）
-        return !!target.closest('.assem-workbench__left-area');
+        return !!target.closest('.lc-assem-workbench__left-area');
       }
     );
 

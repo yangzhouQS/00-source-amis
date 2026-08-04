@@ -1,16 +1,15 @@
 /**
- * CanvasSensor —— 画布感应区（同 DOM / iframe 共用）
+ * CanvasSensor —— 画布感应区
  * 负责：命中测试、坐标换算、投放位置计算、插入指示线渲染
  *
- * 通过注入的 getters 适配两种画布：
- *  - inline：contentDocument=document，bounds=容器 rect，toGlobal=恒等
- *  - iframe：contentDocument=iframe.contentDocument，bounds=iframe rect，toGlobal=偏移
+ * 通过注入的 editor 适配场景渲染器与 schemaOps：
+ *  - 容器判定：schemaOps.isContainer / nestingRules
+ *  - 子节点列表：schemaOps.getSlotChildren
+ *  - DOM 元素：renderer.getNodeElement / resolveFromElement
  */
 import type {DragSensor, DropLocation} from './types';
-import type {NodeTree} from '../../simulator/node-tree';
-import type {EditorStore} from '../../core/store';
+import type {Editor} from '../../core/editor';
 import {ATTR_EDITOR_ID} from '../dom-marking';
-import type {NodeId} from '../../schema/types';
 
 export interface CanvasSensorOptions {
   id: string;
@@ -31,8 +30,7 @@ export class CanvasSensor implements DragSensor {
 
   constructor(
     private readonly opts: CanvasSensorOptions,
-    private readonly tree: NodeTree,
-    private readonly store: EditorStore
+    private readonly editor: Editor
   ) {
     this.id = opts.id;
   }
@@ -62,7 +60,7 @@ export class CanvasSensor implements DragSensor {
 
   /**
    * 计算投放位置并渲染指示线
-   * 使用 DOM 实时元素（非 tree 缓存），避免 re-render 后 stale ref
+   * 使用 DOM 实时元素（非缓存），避免 re-render 后 stale ref
    */
   locate(
     target: Element | null,
@@ -73,15 +71,18 @@ export class CanvasSensor implements DragSensor {
     if (!doc) return null;
 
     // 1. 找落点容器（向上找最近容器节点），同时拿到 DOM 元素
-    const {id: containerId, el: containerEl} = this.findContainerEl(target);
-    const finalContainerId = containerId ?? this.store.schema.$$id;
+    const {id: containerId, el: containerEl, slotKey} = this.findContainerEl(target);
+    const finalSlotKey = slotKey ?? 'defaultSlot';
+    const finalContainerId =
+      containerId ?? this.editor.rootNodeId ?? '';
     const finalContainerEl =
       containerEl ??
-      doc.querySelector(`[${ATTR_EDITOR_ID}="${finalContainerId}"]`);
+      (this.editor.renderer?.getNodeElement(finalContainerId) ?? null);
 
     // 2. 计算插入索引（用 DOM 实时元素测几何）
     const index = this.computeInsertIndex(
       finalContainerId,
+      finalSlotKey,
       canvasX,
       canvasY,
       doc
@@ -90,6 +91,7 @@ export class CanvasSensor implements DragSensor {
     // 3. 计算指示线位置
     const indicator = this.computeIndicator(
       finalContainerId,
+      finalSlotKey,
       index,
       finalContainerEl
     );
@@ -99,55 +101,91 @@ export class CanvasSensor implements DragSensor {
 
     return {
       containerId: finalContainerId,
-      region: 'body',
+      region: finalSlotKey,
       index,
       indicator
     };
   }
 
-  /** 向上找最近的容器节点 id + DOM 元素（DOM 实时，不依赖 tree 缓存） */
+  /** 向上找最近的容器节点 id + DOM 元素 + 槽位键（DOM 实时） */
   private findContainerEl(el: Element | null): {
-    id: NodeId | null;
+    id: string | null;
     el: Element | null;
+    slotKey: string | null;
   } {
+    const renderer = this.editor.renderer;
     let cur: Element | null = el;
     while (cur) {
       const id = cur.getAttribute && cur.getAttribute(ATTR_EDITOR_ID);
       if (id) {
-        const inst = this.tree.get(id);
-        if (inst?.isContainer) return {id, el: cur};
+        const node = this.editor.schemaOps.getNodeById(
+          this.editor.store.schema,
+          id
+        );
+        if (node && this.editor.schemaOps.isContainer?.(node)) {
+          return {id, el: cur, slotKey: 'defaultSlot'};
+        }
+      }
+      // 检测槽位宿主标记（data-slot-host / data-slot-key）
+      const slotHost = cur.getAttribute && cur.getAttribute('data-slot-host');
+      const slotKey = cur.getAttribute && cur.getAttribute('data-slot-key');
+      if (slotHost && slotKey) {
+        const slotNode = this.editor.schemaOps.getNodeById(
+          this.editor.store.schema,
+          slotHost
+        );
+        if (slotNode) return {id: slotHost, el: cur, slotKey};
+      }
+      // 渲染器解析兜底
+      if (renderer) {
+        const resolved = renderer.resolveFromElement(cur as HTMLElement);
+        if (resolved) {
+          const node = this.editor.schemaOps.getNodeById(
+            this.editor.store.schema,
+            resolved.nodeId
+          );
+          if (node && this.editor.schemaOps.isContainer?.(node)) {
+            return {id: resolved.nodeId, el: cur, slotKey: resolved.slotKey};
+          }
+        }
       }
       cur = cur.parentElement;
     }
-    return {id: null, el: null};
+    return {id: null, el: null, slotKey: null};
   }
 
-  /** DOM 实时查询节点元素（避免 tree 缓存 stale） */
-  private freshEl(doc: Document, id: NodeId): HTMLElement | null {
-    return doc.querySelector(
-      `[${ATTR_EDITOR_ID}="${id}"]`
-    ) as HTMLElement | null;
+  /** DOM 实时查询节点元素（避免缓存 stale） */
+  private freshEl(doc: Document, id: string): HTMLElement | null {
+    return (
+      this.editor.renderer?.getNodeElement(id) ??
+      (doc.querySelector(`[${ATTR_EDITOR_ID}="${id}"]`) as HTMLElement | null)
+    );
   }
 
   /** 计算插入索引：按光标位置在子节点序列中的相对位置 */
   private computeInsertIndex(
-    containerId: NodeId,
+    containerId: string,
+    slotKey: string,
     canvasX: number,
     canvasY: number,
     doc: Document
   ): number {
-    const children = this.tree
-      .getChildren(containerId)
-      .filter(inst => inst.parentRegion === 'body');
+    const parentNode = this.editor.schemaOps.getNodeById(
+      this.editor.store.schema,
+      containerId
+    );
+    if (!parentNode) return 0;
+    const children = this.editor.schemaOps.getSlotChildren(parentNode, slotKey);
     if (!children.length) return 0;
 
-    // 用 DOM 实时查询元素（避免 tree.el stale）
+    // 用 DOM 实时查询元素（避免 el stale）
     const measured = children
       .map(c => {
-        const el = this.freshEl(doc, c.$$id);
-        return el ? {id: c.$$id, rect: el.getBoundingClientRect()} : null;
+        const id = this.editor.schemaOps.getNodeId(c);
+        const el = this.freshEl(doc, id);
+        return el ? {id, rect: el.getBoundingClientRect()} : null;
       })
-      .filter((m): m is {id: NodeId; rect: DOMRect} => !!m && !!m.rect);
+      .filter((m): m is {id: string; rect: DOMRect} => !!m && !!m.rect);
     if (!measured.length) return 0;
 
     measured.sort(
@@ -172,11 +210,10 @@ export class CanvasSensor implements DragSensor {
     return measured.length;
   }
 
-  /** 计算指示线位置（感应区文档坐标，支持横/竖布局）
-   * 使用传入的 containerEl（DOM 实时）+ freshEl 查询子节点，避免 tree.el stale
-   */
+  /** 计算指示线位置（感应区文档坐标，支持横/竖布局） */
   private computeIndicator(
-    containerId: NodeId,
+    containerId: string,
+    slotKey: string,
     index: number,
     containerEl: Element | null
   ): {
@@ -188,9 +225,13 @@ export class CanvasSensor implements DragSensor {
   } {
     const doc = this.contentDocument!;
     const containerRect = containerEl?.getBoundingClientRect();
-    const children = this.tree
-      .getChildren(containerId)
-      .filter(inst => inst.parentRegion === 'body');
+    const parentNode = this.editor.schemaOps.getNodeById(
+      this.editor.store.schema,
+      containerId
+    );
+    const children = parentNode
+      ? this.editor.schemaOps.getSlotChildren(parentNode, slotKey)
+      : [];
 
     const cLeft = containerRect?.left ?? 0;
     const cTop = containerRect?.top ?? 0;
@@ -199,7 +240,7 @@ export class CanvasSensor implements DragSensor {
 
     // 用 DOM 实时查询子节点元素
     const childEls = children
-      .map(c => this.freshEl(doc, c.$$id))
+      .map(c => this.freshEl(doc, this.editor.schemaOps.getNodeId(c)))
       .filter((el): el is HTMLElement => !!el);
     const childRects = childEls.map(el => el.getBoundingClientRect());
 

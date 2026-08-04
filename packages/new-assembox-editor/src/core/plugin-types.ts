@@ -7,16 +7,13 @@ import type {EditorStore} from './store';
 import type {DIContainer} from './di-container';
 import type {EventBus} from './event-bus';
 import type {Skeleton} from '../skeleton/skeleton';
-import type {ComponentRegistry} from '../registry/component-registry';
 import type {SetterRegistry} from '../registry/setter-registry';
 import type {AssetRegistry} from '../registry/asset-registry';
 import type {ActionRegistry} from '../registry/action-registry';
 import type {
-  ComponentMeta,
   SetterMeta,
   ActionMeta,
   AssetMeta,
-  PageNode,
   PanelItem,
   ToolbarItem,
   ContextMenuItem
@@ -29,7 +26,6 @@ export interface PluginContext {
   di: DIContainer;
   bus: EventBus;
   skeleton: Skeleton;
-  componentRegistry: ComponentRegistry;
   setterRegistry: SetterRegistry;
   assetRegistry: AssetRegistry;
   actionRegistry: ActionRegistry;
@@ -41,7 +37,6 @@ export interface PluginContext {
 
 /** 插件声明式贡献（任选，静态自动注册） */
 export interface PluginContributes {
-  components?: ComponentMeta[];
   setters?: SetterMeta[];
   actions?: ActionMeta[];
   assets?: AssetMeta[];
@@ -89,9 +84,9 @@ export interface EditorPluginObject<TOptions = any> {
   afterDelete?(context: any): void;
   beforeMove?(context: any): void | false | Promise<void | false>;
   afterMove?(context: any): void;
-  buildPanels?(node: PageNode | null, panels: PanelItem[]): void;
-  buildToolbars?(node: PageNode | null, toolbars: ToolbarItem[]): void;
-  buildContextMenu?(node: PageNode | null, menus: ContextMenuItem[]): void;
+  buildPanels?(node: any | null, panels: PanelItem[]): void;
+  buildToolbars?(node: any | null, toolbars: ToolbarItem[]): void;
+  buildContextMenu?(node: any | null, menus: ContextMenuItem[]): void;
 }
 
 /** 工厂函数：类型守卫 + 保留扩展点（默认值注入） */

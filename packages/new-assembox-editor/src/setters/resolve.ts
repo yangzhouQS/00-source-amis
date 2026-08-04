@@ -3,7 +3,7 @@
  */
 import type {Component} from 'vue';
 import type {SetterRegistry} from '../registry/setter-registry';
-import {inferSetterName} from '../registry/component-registry';
+import {inferSetterName} from '../registry/setter-inference';
 import type {PropConfig} from '../schema/types';
 
 export interface ResolvedSetter {

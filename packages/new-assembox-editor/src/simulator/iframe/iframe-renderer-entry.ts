@@ -1,122 +1,91 @@
 /**
  * iframe 渲染器入口（运行于 canvas.html 内部）
  *
- * 职责：
- *  1. 读取 host 暴露的 hostApi（win.__ASSEM_HOST__）
- *  2. 注册 Element Plus 与全局组件解析器
- *  3. 构造 IframeSimulatorRenderer 并挂到 win.__ASSEM_RENDERER__
- *  4. 兼容 postMessage 协议（跨源场景）
- *
- * 通信握手：
- *  - host 在创建 iframe 后设置 win.__ASSEM_HOST__ = hostApi
- *  - 本入口读取后注册 renderer，host 通过 load 事件/轮询拿到 win.__ASSEM_RENDERER__
+ * 动态依赖装配流程：
+ *  1. 等 host 注入 win.__ASSEM_HOST__（含回调 + assets 清单）
+ *  2. 把 ESM Vue 挂到 window.Vue（供后续 CDN IIFE 包读取——保证单一 Vue 实例）
+ *  3. 按 assets.js 顺序加载 JS、按 assets.css 加载样式
+ *  4. 创建 IframeCanvasRenderer（传入 host 回调 + assets），由其在 app.mount 前
+ *     动态 app.use 插件、registerExternal 外部组件
+ *  5. 暴露 win.__ASSEM_RENDERER__ 供 host 直引
  */
-import {createApp} from 'vue';
-import ElementPlus from 'element-plus';
-import * as ElementPlusComponents from 'element-plus';
+import * as Vue from 'vue';
 import 'element-plus/dist/index.css';
-import {IframeSimulatorRenderer} from './simulator-renderer';
-import type {SimulatorHostApi, HostMessage, ProtocolEnvelope} from './protocol';
-import {PROTOCOL_NS, isProtocolEnvelope, HOST_CMD} from './protocol';
-import './iframe-renderer.less';
+import { IframeCanvasRenderer } from './iframe-canvas-renderer';
+import type { IframeHostPayload, IframeAssetsManifest } from './protocol';
+import { HOST_GLOBAL_KEY, RENDERER_GLOBAL_KEY } from './protocol';
 
 const win = window as any;
 
-/** 组件解析器：globalName → 组件实例（优先 Element Plus 全局） */
-function createComponentResolver() {
-  return (globalName: string): any => {
-    // Element Plus 组件（ElButton / ElInput / ElCard ...）
-    if (globalName in ElementPlusComponents) {
-      return (ElementPlusComponents as any)[globalName];
-    }
-    // 自定义全局组件（业务库通过 AssetRegistry 注入后挂在 window）
-    if (globalName in win) {
-      return win[globalName];
-    }
-    return null;
-  };
+/** 动态加载一个 JS 脚本 */
+function loadScript(src: string): Promise<void> {
+  return new Promise((resolve, reject) => {
+    const s = document.createElement('script');
+    s.src = src;
+    s.onload = () => resolve();
+    s.onerror = () => reject(new Error(`CDN 加载失败: ${src}`));
+    document.head.appendChild(s);
+  });
 }
 
-function bootstrap(): void {
-  // 等待 hostApi 注入
-  const getHostApi = (): SimulatorHostApi | null => win.__ASSEM_HOST__ ?? null;
-  let hostApi = getHostApi();
+/** 动态加载一条 CSS（link rel=stylesheet） */
+function loadStyle(href: string): void {
+  const link = document.createElement('link');
+  link.rel = 'stylesheet';
+  link.href = href;
+  document.head.appendChild(link);
+}
 
-  const renderer = new IframeSimulatorRenderer(hostApi ?? undefined);
-  renderer.setComponentResolver(createComponentResolver());
-
-  // 暴露 renderer 供 host 直引
-  win.__ASSEM_RENDERER__ = renderer;
-
-  // 兼容 postMessage 协议（跨源）
-  win.addEventListener('message', (event: MessageEvent) => {
-    const data = event.data;
-    if (!isProtocolEnvelope(data) || data.from !== 'host') return;
-    handleHostMessage(renderer, data.message as HostMessage, () =>
-      getHostApi()
-    );
-  });
-
-  // hostApi 延迟注入兜底：轮询
-  if (!hostApi) {
+/** 轮询等待 host 注入 __ASSEM_HOST__（回调 + assets 清单） */
+function waitForHost(timeout = 10000): Promise<IframeHostPayload> {
+  return new Promise((resolve, reject) => {
+    const start = Date.now();
     const timer = win.setInterval(() => {
-      hostApi = getHostApi();
-      if (hostApi) {
-        renderer.setHostApi(hostApi);
+      const host = win[HOST_GLOBAL_KEY] as IframeHostPayload | undefined;
+      if (host && typeof host.onReady === 'function') {
         win.clearInterval(timer);
+        resolve(host);
+      } else if (Date.now() - start > timeout) {
+        win.clearInterval(timer);
+        reject(new Error('等待 host 注入 __ASSEM_HOST__ 超时'));
       }
     }, 16);
-  }
-
-  // 销毁清理
-  win.addEventListener('beforeunload', () => {
-    win.__ASSEM_RENDERER__ = null;
-    renderer.dispose();
   });
 }
 
-/** 处理 host 命令（postMessage 模式） */
-function handleHostMessage(
-  renderer: IframeSimulatorRenderer,
-  msg: HostMessage,
-  getHostApi: () => SimulatorHostApi | null
-): void {
-  const p = msg.payload ?? {};
-  switch (msg.type) {
-    case HOST_CMD.INIT:
-      renderer.init(p);
-      break;
-    case HOST_CMD.RENDER_SCHEMA:
-      renderer.renderSchema(p.schema);
-      break;
-    case HOST_CMD.UPDATE_NODE:
-      renderer.updateNode(p.nodeId, p.patch);
-      break;
-    case HOST_CMD.INSERT_NODE:
-      renderer.insertNode(p.parentId, p.region, p.node, p.index);
-      break;
-    case HOST_CMD.MOVE_NODE:
-      renderer.moveNode(p.nodeId, p.toParentId, p.region, p.index);
-      break;
-    case HOST_CMD.REMOVE_NODE:
-      renderer.removeNode(p.nodeId);
-      break;
-    case HOST_CMD.SET_DRAGGING:
-      renderer.setDraggingState(p.active);
-      break;
-    case HOST_CMD.SET_COMPONENTS:
-      renderer.setComponents(p.components);
-      break;
-    case HOST_CMD.SET_DESIGN_MODE:
-      renderer.setDesignMode(p.mode);
-      break;
-    case HOST_CMD.RERENDER:
-      renderer.rerender();
-      break;
-    default:
-      break;
+async function bootstrap(): Promise<void> {
+  // 1. 等 host 下发回调与依赖清单
+  let host: IframeHostPayload;
+  try {
+    host = await waitForHost();
+  } catch (e) {
+    console.error('[iframe-entry]', e);
+    return;
   }
-  void getHostApi;
+
+  // 2. ESM Vue 先挂全局——CDN IIFE 包（element-pro 等）读取 window.Vue，
+  //    使其与 assembox-desktop-next / 渲染器共用同一 Vue 实例（避免双 Vue 实例）
+  win.Vue = Vue;
+
+  // 3. 按清单顺序加载 JS（保证依赖顺序，如 element-pro 依赖 element-plus）+ CSS
+  const assets: IframeAssetsManifest = host.assets ?? {};
+  for (const a of assets.js ?? []) {
+    try {
+      await loadScript(a.src);
+    } catch (e) {
+      console.error('[iframe-entry]', e);
+    }
+  }
+  for (const href of assets.css ?? []) loadStyle(href);
+
+  // 4. 创建渲染器（host 回调 + assets），暴露给 host 直引
+  const renderer = new IframeCanvasRenderer(host, assets);
+  win[RENDERER_GLOBAL_KEY] = renderer;
+
+  win.addEventListener('beforeunload', () => {
+    win[RENDERER_GLOBAL_KEY] = null;
+    renderer.dispose();
+  });
 }
 
 bootstrap();

@@ -131,6 +131,8 @@ export interface ScenarioProfile {
   readonly componentCatalog: IComponentCatalog;
   readonly nestingRules: INestingRules;
   readonly emptySchema: () => any;
+  /** iframe 隔离渲染器工厂（可选，未提供时 iframe 模式降级为同 DOM） */
+  readonly createIframeRenderer?: () => IRenderer;
 
   init?(ctx: ScenarioContext): void;
   destroy?(): void;

@@ -1,182 +1,107 @@
 /**
- * iframe 模拟器标准接口协议
+ * iframe 画布通信协议
  *
- * 设计参考 lowcode-engine 的 host/renderer 双进程模型，但：
- * - 通信层抽象为 SimulatorHostApi / SimulatorRendererApi 双向接口（可同源直引，也可 postMessage）
- * - DOM 标记用 data-editor-id（可 querySelector），取代 lowcode 的 React fiber + SYMBOL_VNID
- *
- * ┌─ HOST (top window) ─────────────┐         ┌─ IFRAME (canvas.html) ────────────┐
- * │ IframeBridge                     │ 直引/   │ IframeSimulatorRenderer            │
- * │   实现 SimulatorBridge           │ postMsg │   实现 SimulatorRendererApi        │
- * │   持有 hostApi (SimulatorHostApi)│◄───────►│   持有 renderer 引用               │
- * │ BemTools 覆盖层（兄弟层）         │         │ SchemaRenderer + data-editor-id    │
- * └──────────────────────────────────┘         └────────────────────────────────────┘
+ * 同源直引模型（dev/prod 同源，无需 postMessage）：
+ *  Host 创建 iframe → iframe 加载 canvas.html → entry 暴露 win.__ASSEM_RENDERER__
+ *  Host 通过 win.__ASSEM_RENDERER__.xxx() 调用渲染器
+ *  Host 注入 win.__ASSEM_HOST__ = callbacks，渲染器通过它回报事件
+ *  DOM 查询：Host 直接用 iframe.contentDocument（同步）
  */
-
-import type {PageSchema, PageNode, NodeId} from '../../schema/types';
-import type {NodeInstance} from '../node-tree';
 
 /* eslint-disable @typescript-eslint/no-explicit-any */
 
-// ════════════════════════════════════════════════════════════════
-// 一、消息协议（postMessage 序列化用，同源直引时也可直接调方法）
-// ════════════════════════════════════════════════════════════════
+/** Host 注入到 iframe window 的全局键 */
+export const HOST_GLOBAL_KEY = '__ASSEM_HOST__';
+/** iframe entry 暴露渲染器的全局键 */
+export const RENDERER_GLOBAL_KEY = '__ASSEM_RENDERER__';
 
-/** 协议命名空间前缀，避免与其它 postMessage 冲突 */
-export const PROTOCOL_NS = 'assem:sim';
-
-/** Host → Renderer 命令类型 */
-export const HOST_CMD = {
-  INIT: 'init', // 初始化：schema + 组件映射 + 依赖
-  RENDER_SCHEMA: 'render-schema', // 全量重渲染
-  UPDATE_NODE: 'update-node', // 更新节点（props/style/onEvent 合并）
-  INSERT_NODE: 'insert-node', // 插入子节点
-  MOVE_NODE: 'move-node', // 移动节点
-  REMOVE_NODE: 'remove-node', // 移除节点
-  SET_DRAGGING: 'set-dragging', // 设置拖拽态（禁用画布交互/选区）
-  SET_COMPONENTS: 'set-components', // 动态更新组件映射
-  SET_DESIGN_MODE: 'set-design-mode', // 设计/预览模式切换
-  RERENDER: 'rerender', // 强制重渲染
-  GET_RECT: 'get-rect', // 查询节点几何（请求）
-  GET_INSTANCE_TREE: 'get-instance-tree' // 查询实例树（请求）
-} as const;
-
-/** Renderer → Host 事件类型 */
-export const RENDERER_EVT = {
-  READY: 'ready', // 渲染器就绪
-  NODE_CLICK: 'node-click', // 节点点击
-  NODE_HOVER: 'node-hover', // 节点悬浮
-  INSTANCES_UPDATED: 'instances-updated', // 实例树变更
-  RECT: 'rect', // 几何查询响应
-  INSTANCE_TREE: 'instance-tree', // 实例树查询响应
-  SCROLL: 'scroll', // 画布滚动
-  RESIZE: 'resize', // 画布尺寸变化
-  ERROR: 'error' // 渲染器错误
-} as const;
-
-/** Host → Renderer 命令消息 */
-export interface HostMessage {
-  type: (typeof HOST_CMD)[keyof typeof HOST_CMD];
-  id?: string; // 请求 id（用于请求-响应配对）
-  payload?: any;
-}
-
-/** Renderer → Host 事件消息 */
-export interface RendererMessage {
-  type: (typeof RENDERER_EVT)[keyof typeof RENDERER_EVT];
-  id?: string;
-  payload?: any;
-}
-
-/** 协议信封（postMessage data） */
-export interface ProtocolEnvelope {
-  ns: typeof PROTOCOL_NS;
-  from: 'host' | 'renderer';
-  message: HostMessage | RendererMessage;
-}
-
-/** 组件映射项：node.type → iframe 内全局组件名 + 容器标记 */
-export interface ComponentMapping {
-  /** 节点 type */
-  type: string;
-  /** iframe 内全局注册的组件名（如 ElButton）；为空表示纯文本/自定义渲染 */
-  globalName?: string;
-  /** 是否容器（可投放子节点） */
-  isContainer?: boolean;
-}
-
-/** 初始化载荷 */
-export interface InitPayload {
-  schema: PageSchema;
-  /** 组件映射（type → globalName） */
-  components: ComponentMapping[];
-  designMode?: 'design' | 'preview';
-  /** 平台 */
-  platform?: 'desktop' | 'mobile';
-}
-
-// ════════════════════════════════════════════════════════════════
-// 二、双向 API 接口（同源直引时直接实现，跨源时由 postMessage 桥接）
-// ════════════════════════════════════════════════════════════════
-
-/**
- * Renderer 端实现的能力（Host 调用）
- * 对标 lowcode IPublicTypeSimulatorRenderer，适配 Vue + data-editor-id
- */
-export interface SimulatorRendererApi {
-  readonly isSimulatorRenderer: true;
-
-  /** 初始化（schema + 组件映射 + 模式），并挂载渲染 */
-  init(payload: InitPayload): void;
-  /** 渲染整棵 schema */
-  renderSchema(schema: PageSchema): void;
-  /** 更新单个节点（深度合并 props/style/onEvent） */
-  updateNode(nodeId: NodeId, patch: Partial<PageNode>): void;
-  /** 插入节点 */
-  insertNode(
-    parentId: NodeId,
-    region: string,
-    node: PageNode,
-    index?: number
-  ): void;
-  /** 移动节点 */
-  moveNode(
-    nodeId: NodeId,
-    toParentId: NodeId,
-    region: string,
-    index?: number
-  ): void;
-  /** 移除节点 */
-  removeNode(nodeId: NodeId): void;
-  /** 设置拖拽态（拖拽时禁用 iframe 交互与选区高亮） */
-  setDraggingState(active: boolean): void;
-  /** 设置原生选区（属性面板聚焦输入时禁用画布选区） */
-  setNativeSelection(enable: boolean): void;
-  /** 设置设计/预览模式 */
+/** Host → Renderer 命令（Host 调用，Renderer 实现） */
+export interface IframeRendererApi {
+  readonly ready: boolean;
+  /** 初始化：注入 schema 并首次挂载 */
+  init(schema: any, designMode: 'design' | 'preview'): void;
+  /** 全量同步 schema（结构变更后） */
+  setSchema(schema: any): void;
+  /** 定向更新节点属性（增量，可选实现） */
+  updateNode?(nodeId: string, patch: any): void;
+  /** 设计/预览模式切换 */
   setDesignMode(mode: 'design' | 'preview'): void;
-  /** 动态更新组件映射 */
-  setComponents(components: ComponentMapping[]): void;
+  /** 拖拽态（禁用画布交互光标） */
+  setDraggingState(active: boolean): void;
   /** 强制重渲染 */
   rerender(): void;
-  /** 获取节点 DOM 几何（用于覆盖层定位） */
-  getRect(nodeId: NodeId): DOMRect | null;
-  /** 获取当前实例树 */
-  getInstanceTree(): NodeInstance[];
   /** 销毁 */
   dispose(): void;
 }
 
-/**
- * Host 端暴露给 Renderer 的能力（Renderer 调用）
- * Renderer 通过 host 回报事件/状态
- */
-export interface SimulatorHostApi {
-  readonly isSimulatorHost: true;
-  /** 渲染器就绪通知 */
-  onRendererReady(): void;
-  /** 节点点击 */
-  onNodeClick(nodeId: NodeId | null, originalEvent?: any): void;
-  /** 节点悬浮 */
-  onNodeHover(nodeId: NodeId | null): void;
-  /** 实例树变更 */
-  onInstancesUpdated(instances: NodeInstance[]): void;
-  /** 画布滚动 */
-  onScroll(scrollX: number, scrollY: number): void;
-  /** 画布尺寸变化 */
-  onResize(): void;
+/** Renderer → Host 回调（Host 注入，Renderer 调用） */
+export interface IframeHostCallbacks {
+  /** iframe 渲染器就绪 */
+  onReady(): void;
+  /** 画布内点击节点 */
+  onClick(nodeId: string | null, originalEvent: MouseEvent): void;
+  /** 画布内悬浮节点 */
+  onHover(nodeId: string | null): void;
   /** 渲染器错误 */
-  onError(error: string, detail?: any): void;
+  onError(message: string, detail?: any): void;
 }
 
-/** 信封构造助手 */
-export function envelope(
-  from: 'host' | 'renderer',
-  message: HostMessage | RendererMessage
-): ProtocolEnvelope {
-  return {ns: PROTOCOL_NS, from, message};
+// ═══════════════════════════════════════════════
+// 动态依赖清单（assets）—— Host 下发，iframe 按清单加载/注册
+// ═══════════════════════════════════════════════
+
+/** 一条 JS 依赖（CDN IIFE / UMD，加载后挂全局变量） */
+export interface JsAsset {
+  /** 脚本地址 */
+  src: string;
+  /** 加载后挂载的全局变量名（如 'ElementPro'）。命名后可被 asPlugin/asIcons/components/bootstrap 引用 */
+  global?: string;
+  /** 作为 Vue 插件 app.use(window[global], pluginOptions) */
+  asPlugin?: boolean;
+  /** app.use 的选项（如 ElementPlus 的 { locale }） */
+  pluginOptions?: any;
+  /** 该全局是图标库：遍历其所有属性注册为全局组件 app.component(key, val)（对应旧版 ElementPlusIconsVue 注册） */
+  asIcons?: boolean;
+  /** 从该全局取组件注册为全局组件（别名），path 缺省取 global 自身（对应旧版 box/Box 别名） */
+  components?: Array<{ name: string; path?: string }>;
+  /** 加载后执行构造初始化 new window[global][ctorPath](args)（对应旧版 new Vue3WebFramework.WebFramework()） */
+  bootstrap?: { ctorPath?: string; args?: any[] };
 }
 
-/** 判断是否为协议信封 */
-export function isProtocolEnvelope(data: any): data is ProtocolEnvelope {
-  return data && typeof data === 'object' && data.ns === PROTOCOL_NS;
+/**
+ * 外部组件定义（registerExternal）。
+ * 把一个已加载的全局 Vue 组件按 renderType 注册进 assembox 渲染清单。
+ */
+export interface ExternalComponentDef {
+  /** schema 里的 renderType，如 'ToggleChip' */
+  renderType: string;
+  /** 全局取值路径，如 'ElementPlusUi.ToggleChip'（从 window 起算的点分路径） */
+  globalPath: string;
+  /** 归类（决定能放进哪些容器槽位），如 'lineElement' / 'element' / 'container' */
+  category: string;
+}
+
+/**
+ * iframe 动态依赖清单。
+ * Host 通过 __ASSEM_HOST__.assets 下发；iframe entry 读取后按序加载 JS/CSS，
+ * 再由渲染器在 app.mount 前注册插件与外部组件。
+ */
+export interface IframeAssetsManifest {
+  /** JS 依赖，按数组顺序加载（保证依赖顺序，如 element-pro 依赖 element-plus） */
+  js?: JsAsset[];
+  /** CSS 依赖（link rel=stylesheet） */
+  css?: string[];
+  /** 额外的 Vue 插件全局变量名（这些全局已由 js 加载，这里只登记 app.use） */
+  plugins?: string[];
+  /** 外部组件注册（registerExternal），补全内置 manifest 未含的组件 */
+  externals?: ExternalComponentDef[];
+}
+
+/**
+ * Host 注入到 iframe window 的载荷：回调 + 依赖清单。
+ * win.__ASSEM_HOST__ 的类型。
+ */
+export interface IframeHostPayload extends IframeHostCallbacks {
+  /** 动态依赖清单（可选；缺省时 iframe 仅加载内置默认） */
+  assets?: IframeAssetsManifest;
 }

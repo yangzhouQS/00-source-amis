@@ -1,6 +1,6 @@
 /**
  * 组件库面板（拖拽源）
- * 从 ComponentRegistry 读取，按 group/category 分组
+ * 从场景 catalog（IComponentCatalog）读取，按 group/category 分组
  * 支持搜索过滤 + 拖入画布（DnD）与点击插入；BEM 类名（component-pane block）
  */
 import {defineComponent, PropType, ref, computed} from 'vue';
@@ -12,7 +12,7 @@ import {
   ElInput
 } from 'element-plus';
 import type {Editor} from '../../core/editor';
-import type {ComponentMeta} from '../../schema/types';
+import type {ComponentCatalogItem} from '../../scenario/types';
 import {useAssemNamespace} from '../../hooks/use-assem-namespace';
 import './../pane.less';
 
@@ -26,32 +26,54 @@ export const ComponentsPane = defineComponent({
   setup(props) {
     const keyword = ref('');
 
-    const onMouseDown = (e: MouseEvent, meta: ComponentMeta) => {
-      props.editor.startComponentDrag(e, meta.type);
+    const onMouseDown = (e: MouseEvent, item: ComponentCatalogItem) => {
+      props.editor.startComponentDrag(e, item.renderType);
     };
 
-    const onClickInsert = (meta: ComponentMeta) => {
-      const node = props.editor.componentRegistry.createNode(meta.type);
-      if (node) {
-        props.editor.insert(props.editor.store.schema.$$id, 'body', node);
+    const onClickInsert = (item: ComponentCatalogItem) => {
+      const parentId = props.editor.rootNodeId;
+      if (!parentId) return;
+      const node = props.editor.schemaOps.createNode(
+        item.renderType,
+        item.name,
+        props.editor.schemaOps.cloneSchema(item.scaffold)
+      );
+      props.editor.insert(parentId, 'defaultSlot', node);
+    };
+
+    /** 按 group/category 分组（结构：group → category → items） */
+    const grouped = computed(() => {
+      const groups = props.editor.catalog.getGroups();
+      const components = props.editor.catalog.getComponents();
+      const map = new Map<string, Map<string, ComponentCatalogItem[]>>();
+      for (const g of groups) {
+        map.set(g.title, new Map());
       }
-    };
+      for (const c of components) {
+        const g = groups.find(x => x.name === c.group);
+        const gTitle = g?.title ?? c.group ?? '其他';
+        if (!map.has(gTitle)) map.set(gTitle, new Map());
+        const cats = map.get(gTitle)!;
+        const cTitle = c.category ?? '其他';
+        if (!cats.has(cTitle)) cats.set(cTitle, []);
+        cats.get(cTitle)!.push(c);
+      }
+      return map;
+    });
 
-    /** 按关键字过滤分组（匹配 name/type/description/tags） */
+    /** 按关键字过滤分组（匹配 name/renderType） */
     const filteredGroups = computed(() => {
-      const groups = props.editor.componentRegistry.groupForPalette();
+      const groups = grouped.value;
       const kw = keyword.value.trim().toLowerCase();
       if (!kw) return groups;
-      const result = new Map<string, Map<string, ComponentMeta[]>>();
+      const result = new Map<string, Map<string, ComponentCatalogItem[]>>();
       for (const [groupName, categories] of groups) {
-        const newCats = new Map<string, ComponentMeta[]>();
+        const newCats = new Map<string, ComponentCatalogItem[]>();
         for (const [catName, items] of categories) {
           const matched = items.filter(
             m =>
               (m.name ?? '').toLowerCase().includes(kw) ||
-              m.type.toLowerCase().includes(kw) ||
-              (m.description ?? '').toLowerCase().includes(kw) ||
-              (m.tags ?? []).some(t => t.toLowerCase().includes(kw))
+              m.renderType.toLowerCase().includes(kw)
           );
           if (matched.length) newCats.set(catName, matched);
         }
@@ -107,34 +129,26 @@ export const ComponentsPane = defineComponent({
 });
 
 function renderCategories(
-  categories: Map<string, ComponentMeta[]>,
-  onMouseDown: (e: MouseEvent, m: ComponentMeta) => void,
-  onClickInsert: (m: ComponentMeta) => void
+  categories: Map<string, ComponentCatalogItem[]>,
+  onMouseDown: (e: MouseEvent, m: ComponentCatalogItem) => void,
+  onClickInsert: (m: ComponentCatalogItem) => void
 ) {
   return Array.from(categories.entries()).map(([catName, items]) => (
     <div class={ns.e('category')} key={catName}>
       <div class={ns.e('category-title')}>{catName}</div>
       <div class={ns.e('category-grid')}>
-        {items.map(meta => (
+        {items.map(item => (
           <div
-            key={meta.type}
+            key={item.renderType}
             class={ns.e('item')}
-            onMousedown={(e: MouseEvent) => onMouseDown(e, meta)}
-            onClick={() => onClickInsert(meta)}
-            title={meta.description || meta.name}
+            onMousedown={(e: MouseEvent) => onMouseDown(e, item)}
+            onClick={() => onClickInsert(item)}
+            title={item.name}
           >
             <ElIcon class={ns.e('icon')}>
-              {meta.icon ? <meta.icon /> : <span>·</span>}
+              <span>·</span>
             </ElIcon>
-            <span class={ns.e('name')}>{meta.name}</span>
-            {meta.snippets && meta.snippets.length > 1 ? (
-              <span
-                class={ns.e('snippet-count')}
-                style={{fontSize: '10px', color: '#909399', marginLeft: '4px'}}
-              >
-                {meta.snippets.length}
-              </span>
-            ) : null}
+            <span class={ns.e('name')}>{item.name}</span>
           </div>
         ))}
       </div>

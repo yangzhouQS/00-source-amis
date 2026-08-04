@@ -1,0 +1,1786 @@
+{
+  "uiSkeleton": {
+    "singleTable": {
+      "viewsProps": {
+        "planeOptions": {
+          "__nodeName": "root",
+          "__nodeId": "FlexBox::root",
+          "__nodeType": "renderNode",
+          "__nodeEvent": {},
+          "__nodeOptions": {
+            "renderType": "FlexBox",
+            "isRow": false,
+            "itemNum": 2,
+            "width": "100%",
+            "height": "100%",
+            "itemConfig": [
+              {
+                "isFixed": true,
+                "size": "",
+                "paddingSize": "large",
+                "clearPadding": [
+                  "bottom"
+                ],
+                "isHidden": false,
+                "contentType": "container",
+                "defaultSlot": {
+                  "__nodeName": "supplierToolbar",
+                  "__nodeId": "Toolbar::supplierToolbar",
+                  "__nodeType": "renderNode",
+                  "__nodeEvent": {},
+                  "__nodeOptions": {
+                    "renderType": "Toolbar",
+                    "divider": false,
+                    "border": false,
+                    "paddingSize": "base",
+                    "clearPadding": [],
+                    "filterGutter": 8,
+                    "toolSlot": [
+                      {
+                        "__nodeName": "btn-search",
+                        "__nodeId": "Button::btn-search",
+                        "__nodeType": "renderNode",
+                        "__nodeEvent": {
+                          "onClick": {
+                            "enabled": true,
+                            "fn": "function(ctx) {  const elemet = ctx.getNode('Input::filter-name');elemet.updateProps({ disabled: true, size:'large' });  ctx.$sharedFns.searchTable(ctx); ctx.emitCustom('afterSearch', '1111111'); ctx.$dataModels.filter.singleTable.name='111111111' }"
+                          }
+                        },
+                        "__nodeOptions": {
+                          "renderType": "Button",
+                          "content": "查询",
+                          "plain": true,
+                          "icon": "Search"
+                        },
+                        "__nodeStyle": {},
+                        "__nodeProps": null
+                      }
+                    ],
+                    "filterSlot": [
+                      {
+                        "__nodeName": "filter-name-item",
+                        "__nodeId": "FilterItem::filter-name-item",
+                        "__nodeType": "renderNode",
+                        "__nodeEvent": {},
+                        "__nodeOptions": {
+                          "layout": {
+                            "xs": 24,
+                            "sm": 12,
+                            "md": 8,
+                            "lg": 6,
+                            "xl": 4
+                          },
+                          "renderType": "FilterItem",
+                          "label": "客商名称",
+                          "labelWidth": "80px",
+                          "labelPosition": "left",
+                          "size": "default",
+                          "defaultSlot": {
+                            "__nodeName": "filter-name",
+                            "__nodeId": "Input::filter-name",
+                            "__nodeType": "renderNode",
+                            "__nodeEvent": {
+                              "afterSearch": {
+                                "enabled": true,
+                                "custom": true,
+                                "fn": "function(ctx, name) { console.log('搜索完成:', name); }"
+                              }
+                            },
+                            "__nodeOptions": {
+                              "renderType": "Input",
+                              "modelName": "filter.singleTable.name",
+                              "placeholder": "请输入客商名称",
+                              "clearable": true,
+                              "type": "text"
+                            },
+                            "__nodeStyle": {},
+                            "__nodeProps": null
+                          }
+                        },
+                        "__nodeStyle": {},
+                        "__nodeProps": null
+                      },
+                      {
+                        "__nodeName": "filter-creditCode-item",
+                        "__nodeId": "FilterItem::filter-creditCode-item",
+                        "__nodeType": "renderNode",
+                        "__nodeEvent": {},
+                        "__nodeOptions": {
+                          "renderType": "FilterItem",
+                          "label": "信用代码",
+                          "labelWidth": "80px",
+                          "labelPosition": "left",
+                          "size": "default",
+                          "layout": {
+                            "xs": 24,
+                            "sm": 12,
+                            "md": 8,
+                            "lg": 6,
+                            "xl": 4
+                          },
+                          "defaultSlot": {
+                            "__nodeName": "filter-creditCode",
+                            "__nodeId": "Input::filter-creditCode",
+                            "__nodeType": "renderNode",
+                            "__nodeEvent": {},
+                            "__nodeOptions": {
+                              "renderType": "Input",
+                              "modelName": "filter.singleTable.creditCode",
+                              "placeholder": "请输入统一社会信用代码",
+                              "clearable": true,
+                              "type": "text"
+                            },
+                            "__nodeStyle": {},
+                            "__nodeProps": null
+                          }
+                        },
+                        "__nodeStyle": {},
+                        "__nodeProps": null
+                      },
+                      {
+                        "__nodeName": "filter-cooperationTypeJson-item",
+                        "__nodeId": "FilterItem::filter-cooperationTypeJson-item",
+                        "__nodeType": "renderNode",
+                        "__nodeEvent": {},
+                        "__nodeOptions": {
+                          "renderType": "FilterItem",
+                          "label": "合作关系",
+                          "labelWidth": "80px",
+                          "labelPosition": "left",
+                          "size": "default",
+                          "layout": {
+                            "xs": 24,
+                            "sm": 12,
+                            "md": 8,
+                            "lg": 6,
+                            "xl": 4
+                          },
+                          "defaultSlot": {
+                            "__nodeName": "filter-cooperationTypeJson",
+                            "__nodeId": "Select::filter-cooperationTypeJson",
+                            "__nodeType": "renderNode",
+                            "__nodeEvent": {},
+                            "__nodeOptions": {
+                              "renderType": "Select",
+                              "modelName": "filter.singleTable.cooperationTypeJson",
+                              "multiple": true,
+                              "disabled": false,
+                              "size": "default",
+                              "clearable": false,
+                              "collapseTags": true,
+                              "collapseTagsTooltip": false,
+                              "multipleLimit": 0,
+                              "clearIcon": "CircleClose",
+                              "fitInputWidth": false,
+                              "filterable": false,
+                              "valueKey": "value",
+                              "placeholder": "请选择合作类型",
+                              "itemData": [
+                                {
+                                  "label": "物资供应商",
+                                  "value": "物资供应商"
+                                },
+                                {
+                                  "label": "设备供应商",
+                                  "value": "设备供应商"
+                                },
+                                {
+                                  "label": "劳务分包商",
+                                  "value": "劳务分包商"
+                                },
+                                {
+                                  "label": "专业分包商",
+                                  "value": "专业分包商"
+                                },
+                                {
+                                  "label": "周转材料租赁商",
+                                  "value": "周转材料租赁商"
+                                },
+                                {
+                                  "label": "设备租赁商",
+                                  "value": "设备租赁商"
+                                }
+                              ],
+                              "defaultProps": {
+                                "label": "label",
+                                "value": "label"
+                              }
+                            },
+                            "__nodeStyle": {},
+                            "__nodeProps": null
+                          }
+                        },
+                        "__nodeStyle": {},
+                        "__nodeProps": null
+                      },
+                      {
+                        "__nodeName": "filter-isBlackList-item",
+                        "__nodeId": "FilterItem::filter-isBlackList-item",
+                        "__nodeType": "renderNode",
+                        "__nodeEvent": {},
+                        "__nodeOptions": {
+                          "renderType": "FilterItem",
+                          "label": "状态",
+                          "labelWidth": "80px",
+                          "labelPosition": "left",
+                          "size": "default",
+                          "layout": {
+                            "xs": 24,
+                            "sm": 12,
+                            "md": 8,
+                            "lg": 6,
+                            "xl": 4
+                          },
+                          "defaultSlot": {
+                            "__nodeName": "filter-isBlackList",
+                            "__nodeId": "Select::filter-isBlackList",
+                            "__nodeType": "renderNode",
+                            "__nodeEvent": {},
+                            "__nodeOptions": {
+                              "renderType": "Select",
+                              "modelName": "filter.singleTable.isBlackList",
+                              "placeholder": "请选择状态",
+                              "multiple": false,
+                              "clearable": true,
+                              "itemData": [
+                                {
+                                  "value": null,
+                                  "label": "全部"
+                                },
+                                {
+                                  "value": false,
+                                  "label": "启用"
+                                },
+                                {
+                                  "value": true,
+                                  "label": "停用"
+                                }
+                              ],
+                              "defaultProps": {
+                                "label": "label",
+                                "value": "value"
+                              }
+                            },
+                            "__nodeStyle": {},
+                            "__nodeProps": null
+                          }
+                        },
+                        "__nodeStyle": {},
+                        "__nodeProps": null
+                      },
+                      {
+                        "__nodeName": "filter-isCurrent-item",
+                        "__nodeId": "FilterItem::filter-isCurrent-item",
+                        "__nodeType": "renderNode",
+                        "__nodeEvent": {},
+                        "__nodeOptions": {
+                          "layout": {
+                            "xs": 24,
+                            "sm": 12,
+                            "md": 8,
+                            "lg": 6,
+                            "xl": 4
+                          },
+                          "renderType": "FilterItem",
+                          "label": "范围",
+                          "labelWidth": "80px",
+                          "labelPosition": "left",
+                          "size": "default",
+                          "defaultSlot": {
+                            "__nodeName": "filter-isCurrent",
+                            "__nodeId": "ToggleChip::filter-isCurrent",
+                            "__nodeType": "renderNode",
+                            "__nodeEvent": {
+                              "onChange": {
+                                "enabled": true,
+                                "fn": "function(ctx, payload) { console.log('[ToggleChip] onChange 载荷 =', payload); ctx.call('TableAsync::supplierTable', 'reloadData', { isReset: true }); }"
+                              }
+                            },
+                            "__nodeOptions": {
+                              "renderType": "ToggleChip",
+                              "modelName": "filter.singleTable.isCurrent",
+                              "label": "全部机构",
+                              "activeLabel": "只看本机构"
+                            },
+                            "__nodeStyle": {},
+                            "__nodeProps": null
+                          }
+                        },
+                        "__nodeStyle": {},
+                        "__nodeProps": null
+                      }
+                    ],
+                    "defaultSlot": {
+                      "__nodeName": "supplierflexline",
+                      "__nodeId": "FlexLine::supplierflexline",
+                      "__nodeType": "renderNode",
+                      "__nodeEvent": {},
+                      "__nodeOptions": {
+                        "renderType": "FlexLine",
+                        "defaultSlot": [
+                          {
+                            "__nodeName": "btn-add",
+                            "__nodeId": "Button::btn-add",
+                            "__nodeType": "renderNode",
+                            "__nodeEvent": {
+                              "onClick": {
+                                "enabled": true,
+                                "fn": "function(ctx) { ctx.$dataModels.state.singleTable.isEdit = false; var f = ctx.$dataModels.editForm.singleTable; f.companyType = '企业'; f.name = ''; f.shortName = ''; f.creditCode = ''; f.cooperationType = '';f.cooperationTypelist=[]; f.registeredCapital = null; f.legalPersonName = ''; f.contactPersonName = ''; f.phoneNumber = ''; f.address = ''; f.remark = '';  var d = ctx.getNode('Dialog::supplierDialog'); if (d) {  d.exposed.open(); setTimeout(() => { var form = ctx.getNode('Form::supplier-form'); if (form && form.exposed.clearValidate) { form.exposed.clearValidate(); } }, 100); } else { console.log('未找到对话框组件 Dialog::supplierDialog'); } }"
+                              }
+                            },
+                            "__nodeOptions": {
+                              "renderType": "Button",
+                              "content": "添加",
+                              "type": "primary",
+                              "plain": false,
+                              "disabled": false,
+                              "icon": "Plus"
+                            },
+                            "__nodeStyle": {},
+                            "__nodeProps": null
+                          },
+                          {
+                            "__nodeName": "btn-edit",
+                            "__nodeId": "Button::btn-edit",
+                            "__nodeType": "renderNode",
+                            "__nodeEvent": {
+                              "onClick": {
+                                "enabled": true,
+                                "fn": "function(ctx) { var s = ctx.$dataModels.state.singleTable.selectedRow; if (!s) { alert('请先点击表格中的一行数据'); return; } ctx.$dataModels.state.singleTable.isEdit = true; Object.assign(ctx.$dataModels.editForm.singleTable, s); var d = ctx.getNode('Dialog::supplierDialog'); if (d) d.exposed.open(); }"
+                              }
+                            },
+                            "__nodeOptions": {
+                              "renderType": "Button",
+                              "content": "修改",
+                              "plain": true,
+                              "disabled": true,
+                              "icon": "Edit"
+                            },
+                            "__nodeStyle": {},
+                            "__nodeProps": null
+                          },
+                          {
+                            "__nodeName": "btn-enable",
+                            "__nodeId": "Button::btn-enable",
+                            "__nodeType": "renderNode",
+                            "__nodeEvent": {
+                              "onClick": {
+                                "enabled": true,
+                                "fn": "async function(ctx) {    var s = ctx.$dataModels.state.singleTable.selectedRow; if (!s || !s.name || !s.id) { ctx.$vueGlobal.$message.warning('请先点击表格中的一行有效数据'); return; } ctx.$vueGlobal.$msgbox.confirm('确认启用供应商\"' + s.name + '\"吗？', '确认启用', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' }).then(async () => { await ctx.$requestFns.toggleStatus({ id: s.id, isBlackList: 0 });  ctx.$sharedFns.searchTable(ctx); ctx.$vueGlobal.$message.success('启用成功'); }).catch(() => { ctx.$vueGlobal.$message.info('取消启用'); }); }"
+                              }
+                            },
+                            "__nodeOptions": {
+                              "renderType": "Button",
+                              "content": "启用",
+                              "plain": true,
+                              "type": "success",
+                              "disabled": true,
+                              "icon": "CircleCheck"
+                            },
+                            "__nodeStyle": {},
+                            "__nodeProps": null
+                          },
+                          {
+                            "__nodeName": "btn-disable",
+                            "__nodeId": "Button::btn-disable",
+                            "__nodeType": "renderNode",
+                            "__nodeEvent": {
+                              "onClick": {
+                                "enabled": true,
+                                "fn": "async function(ctx) { var s = ctx.$dataModels.state.singleTable.selectedRow; if (!s || !s.name || !s.id) { ctx.$vueGlobal.$message.warning('请先点击表格中的一行有效数据'); return; } ctx.$vueGlobal.$msgbox.confirm('确认停用供应商\"' + s.name + '\"吗？', '确认停用', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' }).then(async () => { await ctx.$requestFns.toggleStatus({ id: s.id, isBlackList: 1 }); ctx.$sharedFns.searchTable(ctx); ctx.$vueGlobal.$message.success('停用成功'); }).catch(() => { ctx.$vueGlobal.$message.info('取消停用'); }); }"
+                              }
+                            },
+                            "__nodeOptions": {
+                              "renderType": "Button",
+                              "content": "停用",
+                              "type": "warning",
+                              "plain": true,
+                              "disabled": true,
+                              "icon": "Remove"
+                            },
+                            "__nodeStyle": {},
+                            "__nodeProps": null
+                          },
+                          {
+                            "__nodeName": "btn-delete",
+                            "__nodeId": "Button::btn-delete",
+                            "__nodeType": "renderNode",
+                            "__nodeEvent": {
+                              "onClick": {
+                                "enabled": true,
+                                "fn": "async function(ctx) { var s = ctx.$dataModels.state.singleTable.selectedRow; if (!s || !s.name || !s.id) { ctx.$vueGlobal.$message.warning('请先点击表格中的一行有效数据'); return; } ctx.$vueGlobal.$msgbox.confirm('确认删除供应商\"' + s.name + '\"吗？删除后无法恢复，请谨慎操作。', '确认删除', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' }).then(async () => { await ctx.$requestFns.deleteSupplier({ id: s.id }); ctx.$dataModels.state.singleTable.selectedRow = null;  ctx.$sharedFns.searchTable(ctx); ctx.$vueGlobal.$message.success('删除成功'); }).catch(() => { ctx.$vueGlobal.$message.info('取消删除'); }); }"
+                              }
+                            },
+                            "__nodeOptions": {
+                              "renderType": "Button",
+                              "content": "删除",
+                              "type": "danger",
+                              "plain": true,
+                              "disabled": true,
+                              "icon": "Delete"
+                            },
+                            "__nodeStyle": {},
+                            "__nodeProps": null
+                          },
+                          {
+                            "__nodeName": "btn-import-export",
+                            "__nodeId": "Dropdown::btn-import-export",
+                            "__nodeType": "renderNode",
+                            "__nodeEvent": {
+                              "onCommand": {
+                                "enabled": true,
+                                "fn": "function(ctx,payload ) { var command = payload.command; if (!command) { return; } ctx.$vueGlobal.$message.info(command + '功能开发中...'); }"
+                              }
+                            },
+                            "__nodeOptions": {
+                              "renderType": "Dropdown",
+                              "content": "导入/导出",
+                              "plain": true,
+                              "disabled": false,
+                              "dropdownItem": [
+                                {
+                                  "content": "导入",
+                                  "command": "import",
+                                  "icon": "Upload"
+                                },
+                                {
+                                  "content": "下载模板",
+                                  "command": "downloadTemplate",
+                                  "icon": "Download"
+                                },
+                                {
+                                  "content": "导出",
+                                  "command": "export",
+                                  "icon": "Download"
+                                }
+                              ]
+                            },
+                            "__nodeStyle": {},
+                            "__nodeProps": null
+                          },
+                          {
+                            "__nodeName": "btn-test",
+                            "__nodeId": "Button::btn-test",
+                            "__nodeType": "renderNode",
+                            "__nodeEvent": {
+                              "onClick": {
+                                "enabled": true,
+                                "fn": "function(ctx) {  var flexBox = ctx.getNode('FlexBox::root'); flexBox.patchProps('itemConfig.1.isHidden', true);  console.log('flexBox', flexBox.itemConfig); }"
+                              },
+                              "onMounted": {
+                                "enabled": true,
+                                "fn": "function(ctx) {    }"
+                              }
+                            },
+                            "__nodeOptions": {
+                              "renderType": "Button",
+                              "content": "测试",
+                              "plain": true,
+                              "disabled": false,
+                              "icon": "Edit"
+                            },
+                            "__nodeStyle": {},
+                            "__nodeProps": null
+                          },
+                          {
+                            "__nodeName": "btn-test212121",
+                            "__nodeId": "Button::btn-test211",
+                            "__nodeType": "renderNode",
+                            "__nodeEvent": {
+                              "onClick": {
+                                "enabled": true,
+                                "fn": "function(ctx){console.log(111111);const elemet = ctx.getNode('Input::filter-name');elemet.updateProps({ disabled: false, size:'small' });}"
+                              }
+                            },
+                            "__nodeOptions": {
+                              "renderType": "Button",
+                              "content": "测试1121",
+                              "disabled": false,
+                              "icon": "Edit",
+                              "type": "primary"
+                            },
+                            "__nodeStyle": {},
+                            "__nodeProps": null
+                          },
+                          {
+                            "__nodeName": "btn-test3",
+                            "__nodeId": "Button::btn-test3",
+                            "__nodeType": "renderNode",
+                            "__nodeEvent": {
+                              "onClick": {
+                                "enabled": true,
+                                "fn": "function(ctx){var supplierTable=ctx.getNode('TableAsync::supplierTable');const newItems=[{'attr':{'prop':'creditCode','headerAlign':'left','label':'社会信用代码','width':180}},{'attr':{'prop':'legalPersonName','headerAlign':'left','label':'法人姓名','width':100}}];const configs=[...supplierTable.props.columnConfigs];configs.splice(4,0,...newItems);supplierTable.patchProps('columnConfigs',configs);}"
+                              }
+                            },
+                            "__nodeOptions": {
+                              "renderType": "Button",
+                              "content": "添加表格列",
+                              "plain": true,
+                              "disabled": true,
+                              "icon": "Edit"
+                            },
+                            "__nodeStyle": {},
+                            "__nodeProps": null
+                          }
+                        ]
+                      },
+                      "__nodeStyle": {},
+                      "__nodeProps": null
+                    }
+                  },
+                  "__nodeStyle": {},
+                  "__nodeProps": null
+                }
+              },
+              {
+                "isFixed": false,
+                "size": "",
+                "paddingSize": "large",
+                "clearPadding": [],
+                "contentType": "container",
+                "isHidden": false,
+                "defaultSlot": {
+                  "__nodeName": "tableBox",
+                  "__nodeId": "Box::tableBox",
+                  "__nodeType": "renderNode",
+                  "__nodeEvent": {},
+                  "__nodeOptions": {
+                    "renderType": "Box",
+                    "contentType": "element",
+                    "shadow": false,
+                    "border": false,
+                    "background": true,
+                    "paddingSize": "small",
+                    "clearPadding": [],
+                    "clearBorder": [],
+                    "height": "100%",
+                    "display": true,
+                    "permissionSetting": "",
+                    "defaultSlot": {
+                      "__nodeName": "supplierTable",
+                      "__nodeId": "TableAsync::supplierTable",
+                      "__nodeType": "renderNode",
+                      "__nodeEvent": {
+                        "onCurrentChange": {
+                          "enabled": true,
+                          "fn": "function(ctx, payload) {const selectedRow = payload.currentRow; console.log('ctx.$dataModels', ctx); ctx.$dataModels.state.singleTable.selectedRow = selectedRow; const btnEdit = ctx.getNode('Button::btn-edit'); const btnEnable = ctx.getNode('Button::btn-enable'); const btnDisable = ctx.getNode('Button::btn-disable'); const btnDelete = ctx.getNode('Button::btn-delete'); if (selectedRow) { if (btnEdit?.updateProps) btnEdit.updateProps({ disabled: selectedRow.isBlackList === 0 }); if (btnEnable?.updateProps) btnEnable.updateProps({ disabled: selectedRow.isBlackList === 0 }); if (btnDisable?.updateProps) btnDisable.updateProps({ disabled: selectedRow.isBlackList === 1 }); if (btnDelete?.updateProps) btnDelete.updateProps({ disabled: selectedRow.isBlackList === 0 }); } else { if (btnEdit?.updateProps) btnEdit.updateProps({ disabled: true }); if (btnEnable?.updateProps) btnEnable.updateProps({ disabled: true }); if (btnDisable?.updateProps) btnDisable.updateProps({ disabled: true }); if (btnDelete?.updateProps) btnDelete.updateProps({ disabled: true }); }  }"
+                        },
+                        "onSortChange": {
+                          "enabled": true,
+                          "fn": "function(ctx, payload) { ctx.$vueGlobal.$message.info('排序字段：' + payload.prop + '，排序方向：' + payload.order);ctx.$sharedFns.searchTable(ctx,payload); }"
+                        }
+                      },
+                      "__nodeOptions": {
+                        "renderType": "TableAsync",
+                        "requestFn": "querySuppliers",
+                        "columnConfigs": [
+                          {
+                            "attr": {
+                              "prop": "index",
+                              "label": "序号",
+                              "type": "index",
+                              "width": 60,
+                              "headerAlign": "left",
+                              "align": "center"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "name",
+                              "sortable": true,
+                              "label": "公司名称",
+                              "headerAlign": "left",
+                              "minWidth": 150
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "shortName",
+                              "label": "短名称",
+                              "headerAlign": "left",
+                              "width": 100
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "companyType",
+                              "headerAlign": "left",
+                              "label": "供应商类型",
+                              "width": 100
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "registeredCapital",
+                              "headerAlign": "left",
+                              "label": "注册资本(万)",
+                              "width": 120
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "contactPersonName",
+                              "headerAlign": "left",
+                              "label": "联系人",
+                              "width": 90
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "phoneNumber",
+                              "headerAlign": "left",
+                              "label": "联系电话",
+                              "width": 180
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "cooperationTypes",
+                              "headerAlign": "left",
+                              "label": "合作类型",
+                              "width": 250
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "isBlackList",
+                              "fixed": "right",
+                              "headerAlign": "left",
+                              "label": "状态",
+                              "width": 80,
+                              "scopedSlot": "isBlackList"
+                            }
+                          }
+                        ],
+                        "columnSlots": [
+                          {
+                            "code": "isBlackList",
+                            "propName": "状态",
+                            "columRender": {
+                              "__nodeName": "tag-status",
+                              "__nodeId": "Tag::tag-status",
+                              "__nodeType": "renderNode",
+                              "__nodeEvent": {
+                                "onValueRender": {
+                                  "enabled": true,
+                                  "fn": "function(ctx, payload) { var row = payload.value; if (row && row.isBlackList) return { type: 'danger', content: '停用', effect: 'light' }; return { type: 'success', content: '启用', effect: 'light' }; }"
+                                }
+                              },
+                              "__nodeOptions": {
+                                "renderType": "Tag",
+                                "content": "启用",
+                                "effect": "light"
+                              },
+                              "__nodeStyle": {},
+                              "__nodeProps": null
+                            }
+                          },
+                          {
+                            "code": "phoneNumber",
+                            "propName": "联系电话",
+                            "columRender": {
+                              "__nodeName": "cell-phone",
+                              "__nodeId": "CopyText::cell-phone",
+                              "__nodeType": "renderNode",
+                              "__nodeEvent": {
+                                "onCopy": {
+                                  "enabled": true,
+                                  "fn": "function(ctx, payload) { console.log('[CopyText] 已复制:', payload.value, '整行 =', payload.row); }"
+                                }
+                              },
+                              "__nodeOptions": {
+                                "renderType": "CopyText",
+                                "modelName": "phoneNumber",
+                                "emptyText": "未填写"
+                              },
+                              "__nodeStyle": {},
+                              "__nodeProps": null
+                            }
+                          }
+                        ],
+                        "pagination": {
+                          "currentSize": 10,
+                          "pageSizes": [
+                            10,
+                            20,
+                            50
+                          ],
+                          "layout": "sizes,prev,pager,next,total"
+                        }
+                      },
+                      "__nodeStyle": {},
+                      "__nodeProps": null
+                    }
+                  },
+                  "__nodeStyle": {},
+                  "__nodeProps": null
+                }
+              }
+            ]
+          },
+          "__nodeStyle": {},
+          "__nodeProps": null
+        },
+        "dialogOptions": [
+          {
+            "__nodeName": "supplierDialog",
+            "__nodeId": "Dialog::supplierDialog",
+            "__nodeType": "renderNode",
+            "__nodeEvent": {},
+            "__nodeOptions": {
+              "renderType": "Dialog",
+              "title": "供应商信息",
+              "width": "600px",
+              "showClose": true,
+              "modal": true,
+              "closeOnClickModal": false,
+              "destroyOnClose": false,
+              "appendToBody": true,
+              "draggable": true,
+              "open": false,
+              "defaultSlot": {
+                "__nodeName": "dialog-layout",
+                "__nodeId": "FlexBox::dialog-layout",
+                "__nodeType": "renderNode",
+                "__nodeEvent": {},
+                "__nodeOptions": {
+                  "renderType": "FlexBox",
+                  "isRow": false,
+                  "itemNum": 2,
+                  "width": "100%",
+                  "height": "auto",
+                  "gap": "16px",
+                  "itemConfig": [
+                    {
+                      "isFixed": false,
+                      "size": "",
+                      "paddingSize": "large",
+                      "contentType": "container",
+                      "defaultSlot": {
+                        "__nodeName": "form-container",
+                        "__nodeId": "Box::form-container",
+                        "__nodeType": "renderNode",
+                        "__nodeEvent": {},
+                        "__nodeOptions": {
+                          "renderType": "Box",
+                          "border": false,
+                          "shadow": false,
+                          "background": true,
+                          "paddingSize": "base",
+                          "height": "auto",
+                          "defaultSlot": {
+                            "__nodeName": "supplier-form",
+                            "__nodeId": "Form::supplier-form",
+                            "__nodeType": "renderNode",
+                            "__nodeEvent": {},
+                            "__nodeOptions": {
+                              "renderType": "Form",
+                              "modelName": "editForm.singleTable",
+                              "labelWidth": "120px",
+                              "size": "default",
+                              "disabled": false,
+                              "statusIcon": false,
+                              "inlineMessage": false,
+                              "showMessage": true,
+                              "inline": false,
+                              "labelSuffix": "",
+                              "hideRequiredAsterisk": false,
+                              "requireAsteriskPosition": "",
+                              "validateOnRuleChange": false,
+                              "scrollToError": false,
+                              "scrollIntoViewOptions": false,
+                              "defaultSlot": [
+                                {
+                                  "__nodeName": "form-grid-container",
+                                  "__nodeId": "GridBox::form-grid-container",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {},
+                                  "__nodeOptions": {
+                                    "renderType": "GridBox",
+                                    "gutter": 10,
+                                    "defaultSlot": [
+                                      {
+                                        "__nodeName": "grid-item-companyType",
+                                        "__nodeId": "GridItem::grid-item-companyType",
+                                        "__nodeType": "renderNode",
+                                        "__nodeEvent": {},
+                                        "__nodeOptions": {
+                                          "renderType": "GridItem",
+                                          "span": 24,
+                                          "defaultSlot": {
+                                            "__nodeName": "form-item-companyType",
+                                            "__nodeId": "FormItem::form-item-companyType",
+                                            "__nodeType": "renderNode",
+                                            "__nodeEvent": {},
+                                            "__nodeOptions": {
+                                              "renderType": "FormItem",
+                                              "prop": "companyType",
+                                              "label": "供应商类型",
+                                              "required": false,
+                                              "defaultSlot": {
+                                                "__nodeName": "radio-companyType",
+                                                "__nodeId": "RadioGroup::radio-companyType",
+                                                "__nodeType": "renderNode",
+                                                "__nodeEvent": {},
+                                                "__nodeOptions": {
+                                                  "renderType": "RadioGroup",
+                                                  "modelName": "editForm.singleTable.companyType",
+                                                  "type": "button",
+                                                  "itemData": [
+                                                    {
+                                                      "label": "企业",
+                                                      "value": "企业"
+                                                    },
+                                                    {
+                                                      "label": "个人",
+                                                      "value": "个人"
+                                                    },
+                                                    {
+                                                      "label": "组织",
+                                                      "value": "组织"
+                                                    }
+                                                  ],
+                                                  "defaultProps": {
+                                                    "label": "label",
+                                                    "value": "value"
+                                                  }
+                                                },
+                                                "__nodeStyle": {},
+                                                "__nodeProps": null
+                                              }
+                                            },
+                                            "__nodeStyle": {},
+                                            "__nodeProps": null
+                                          }
+                                        },
+                                        "__nodeStyle": {},
+                                        "__nodeProps": null
+                                      },
+                                      {
+                                        "__nodeName": "grid-item-name",
+                                        "__nodeId": "GridItem::grid-item-name",
+                                        "__nodeType": "renderNode",
+                                        "__nodeEvent": {},
+                                        "__nodeOptions": {
+                                          "renderType": "GridItem",
+                                          "span": 24,
+                                          "defaultSlot": {
+                                            "__nodeName": "form-item-name",
+                                            "__nodeId": "FormItem::form-item-name",
+                                            "__nodeType": "renderNode",
+                                            "__nodeEvent": {},
+                                            "__nodeOptions": {
+                                              "renderType": "FormItem",
+                                              "prop": "name",
+                                              "label": "客商名称",
+                                              "required": true,
+                                              "rules": [
+                                                {
+                                                  "required": true,
+                                                  "message": "请输入客商名称",
+                                                  "trigger": "blur"
+                                                },
+                                                {
+                                                  "required": true,
+                                                  "message": "请输入客商名称",
+                                                  "trigger": "change"
+                                                },
+                                                {
+                                                  "min": 2,
+                                                  "max": 1000,
+                                                  "message": "长度在 2 到 1000 个字符",
+                                                  "trigger": "blur"
+                                                },
+                                                {
+                                                  "validator": "function(rule, value, callback) { if (!value || value.trim() === '') { callback(new Error('名称不能输入纯空格')); } else { callback(); } }",
+                                                  "message": "名称不能输入纯空格",
+                                                  "trigger": "blur"
+                                                }
+                                              ],
+                                              "defaultSlot": {
+                                                "__nodeName": "input-name",
+                                                "__nodeId": "Input::input-name",
+                                                "__nodeType": "renderNode",
+                                                "__nodeEvent": {},
+                                                "__nodeOptions": {
+                                                  "renderType": "Input",
+                                                  "modelName": "editForm.singleTable.name",
+                                                  "placeholder": "请输入客商名称"
+                                                },
+                                                "__nodeStyle": {},
+                                                "__nodeProps": null
+                                              }
+                                            },
+                                            "__nodeStyle": {},
+                                            "__nodeProps": null
+                                          }
+                                        },
+                                        "__nodeStyle": {},
+                                        "__nodeProps": null
+                                      },
+                                      {
+                                        "__nodeName": "grid-item-shortName",
+                                        "__nodeId": "GridItem::grid-item-shortName",
+                                        "__nodeType": "renderNode",
+                                        "__nodeEvent": {},
+                                        "__nodeOptions": {
+                                          "renderType": "GridItem",
+                                          "span": 24,
+                                          "defaultSlot": {
+                                            "__nodeName": "form-item-shortName",
+                                            "__nodeId": "FormItem::form-item-shortName",
+                                            "__nodeType": "renderNode",
+                                            "__nodeEvent": {},
+                                            "__nodeOptions": {
+                                              "renderType": "FormItem",
+                                              "prop": "shortName",
+                                              "label": "客商简称",
+                                              "required": false,
+                                              "defaultSlot": {
+                                                "__nodeName": "input-shortName",
+                                                "__nodeId": "Input::input-shortName",
+                                                "__nodeType": "renderNode",
+                                                "__nodeEvent": {},
+                                                "__nodeOptions": {
+                                                  "renderType": "Input",
+                                                  "modelName": "editForm.singleTable.shortName",
+                                                  "placeholder": "请输入客商简称"
+                                                },
+                                                "__nodeStyle": {},
+                                                "__nodeProps": null
+                                              }
+                                            },
+                                            "__nodeStyle": {},
+                                            "__nodeProps": null
+                                          }
+                                        },
+                                        "__nodeStyle": {},
+                                        "__nodeProps": null
+                                      },
+                                      {
+                                        "__nodeName": "grid-item-creditCode",
+                                        "__nodeId": "GridItem::grid-item-creditCode",
+                                        "__nodeType": "renderNode",
+                                        "__nodeEvent": {},
+                                        "__nodeOptions": {
+                                          "renderType": "GridItem",
+                                          "span": 24,
+                                          "defaultSlot": {
+                                            "__nodeName": "form-item-creditCode",
+                                            "__nodeId": "FormItem::form-item-creditCode",
+                                            "__nodeType": "renderNode",
+                                            "__nodeEvent": {},
+                                            "__nodeOptions": {
+                                              "renderType": "FormItem",
+                                              "prop": "creditCode",
+                                              "label": "社会信用代码",
+                                              "required": true,
+                                              "rules": [
+                                                {
+                                                  "required": true,
+                                                  "message": "请输入社会信用代码",
+                                                  "trigger": "blur"
+                                                }
+                                              ],
+                                              "defaultSlot": {
+                                                "__nodeName": "input-creditCode",
+                                                "__nodeId": "Input::input-creditCode",
+                                                "__nodeType": "renderNode",
+                                                "__nodeEvent": {},
+                                                "__nodeOptions": {
+                                                  "renderType": "Input",
+                                                  "modelName": "editForm.singleTable.creditCode",
+                                                  "placeholder": "请输入统一社会信用代码"
+                                                },
+                                                "__nodeStyle": {},
+                                                "__nodeProps": null
+                                              }
+                                            },
+                                            "__nodeStyle": {},
+                                            "__nodeProps": null
+                                          }
+                                        },
+                                        "__nodeStyle": {},
+                                        "__nodeProps": null
+                                      },
+                                      {
+                                        "__nodeName": "grid-item-cooperationType",
+                                        "__nodeId": "GridItem::grid-item-cooperationType",
+                                        "__nodeType": "renderNode",
+                                        "__nodeEvent": {},
+                                        "__nodeOptions": {
+                                          "renderType": "GridItem",
+                                          "span": 24,
+                                          "defaultSlot": {
+                                            "__nodeName": "form-item-cooperationType",
+                                            "__nodeId": "FormItem::form-item-cooperationType",
+                                            "__nodeType": "renderNode",
+                                            "__nodeEvent": {},
+                                            "__nodeOptions": {
+                                              "renderType": "FormItem",
+                                              "prop": "",
+                                              "label": "合作类型",
+                                              "required": false,
+                                              "defaultSlot": {
+                                                "__nodeName": "select-cooperationType",
+                                                "__nodeId": "Select::select-cooperationType",
+                                                "__nodeType": "renderNode",
+                                                "__nodeEvent": {},
+                                                "__nodeOptions": {
+                                                  "renderType": "Select",
+                                                  "modelName": "editForm.singleTable.cooperationTypelist",
+                                                  "multiple": true,
+                                                  "disabled": false,
+                                                  "size": "default",
+                                                  "clearable": false,
+                                                  "collapseTags": true,
+                                                  "collapseTagsTooltip": false,
+                                                  "multipleLimit": 0,
+                                                  "clearIcon": "CircleClose",
+                                                  "fitInputWidth": false,
+                                                  "filterable": false,
+                                                  "valueKey": "value",
+                                                  "placeholder": "请选择合作类型",
+                                                  "itemData": [
+                                                    {
+                                                      "label": "物资供应商",
+                                                      "value": "物资供应商"
+                                                    },
+                                                    {
+                                                      "label": "设备供应商",
+                                                      "value": "设备供应商"
+                                                    },
+                                                    {
+                                                      "label": "劳务分包商",
+                                                      "value": "劳务分包商"
+                                                    },
+                                                    {
+                                                      "label": "专业分包商",
+                                                      "value": "专业分包商"
+                                                    },
+                                                    {
+                                                      "label": "周转材料租赁商",
+                                                      "value": "周转材料租赁商"
+                                                    },
+                                                    {
+                                                      "label": "设备租赁商",
+                                                      "value": "设备租赁商"
+                                                    }
+                                                  ],
+                                                  "defaultProps": {
+                                                    "label": "label",
+                                                    "value": "label"
+                                                  }
+                                                },
+                                                "__nodeStyle": {},
+                                                "__nodeProps": null
+                                              }
+                                            },
+                                            "__nodeStyle": {},
+                                            "__nodeProps": null
+                                          }
+                                        },
+                                        "__nodeStyle": {},
+                                        "__nodeProps": null
+                                      },
+                                      {
+                                        "__nodeName": "grid-item-registeredCapital",
+                                        "__nodeId": "GridItem::grid-item-registeredCapital",
+                                        "__nodeType": "renderNode",
+                                        "__nodeEvent": {},
+                                        "__nodeOptions": {
+                                          "renderType": "GridItem",
+                                          "span": 24,
+                                          "defaultSlot": {
+                                            "__nodeName": "form-item-registeredCapital",
+                                            "__nodeId": "FormItem::form-item-registeredCapital",
+                                            "__nodeType": "renderNode",
+                                            "__nodeEvent": {},
+                                            "__nodeOptions": {
+                                              "renderType": "FormItem",
+                                              "prop": "",
+                                              "label": "注册资本(万)",
+                                              "defaultSlot": {
+                                                "__nodeName": "input-number-registeredCapital",
+                                                "__nodeId": "InputNumber::input-number-registeredCapital",
+                                                "__nodeType": "renderNode",
+                                                "__nodeEvent": {},
+                                                "__nodeOptions": {
+                                                  "renderType": "InputNumber",
+                                                  "modelName": "editForm.singleTable.registeredCapital",
+                                                  "placeholder": "请输入注册资本"
+                                                },
+                                                "__nodeStyle": {},
+                                                "__nodeProps": null
+                                              }
+                                            },
+                                            "__nodeStyle": {},
+                                            "__nodeProps": null
+                                          }
+                                        },
+                                        "__nodeStyle": {},
+                                        "__nodeProps": null
+                                      },
+                                      {
+                                        "__nodeName": "grid-item-legalPersonName",
+                                        "__nodeId": "GridItem::grid-item-legalPersonName",
+                                        "__nodeType": "renderNode",
+                                        "__nodeEvent": {},
+                                        "__nodeOptions": {
+                                          "renderType": "GridItem",
+                                          "span": 24,
+                                          "defaultSlot": {
+                                            "__nodeName": "form-item-legalPersonName",
+                                            "__nodeId": "FormItem::form-item-legalPersonName",
+                                            "__nodeType": "renderNode",
+                                            "__nodeEvent": {},
+                                            "__nodeOptions": {
+                                              "renderType": "FormItem",
+                                              "prop": "legalPersonName",
+                                              "label": "法人姓名",
+                                              "required": false,
+                                              "defaultSlot": {
+                                                "__nodeName": "input-legalPersonName",
+                                                "__nodeId": "Input::input-legalPersonName",
+                                                "__nodeType": "renderNode",
+                                                "__nodeEvent": {},
+                                                "__nodeOptions": {
+                                                  "renderType": "Input",
+                                                  "modelName": "editForm.singleTable.legalPersonName",
+                                                  "placeholder": "请输入法人名称"
+                                                },
+                                                "__nodeStyle": {},
+                                                "__nodeProps": null
+                                              }
+                                            },
+                                            "__nodeStyle": {},
+                                            "__nodeProps": null
+                                          }
+                                        },
+                                        "__nodeStyle": {},
+                                        "__nodeProps": null
+                                      },
+                                      {
+                                        "__nodeName": "grid-item-contactPersonName",
+                                        "__nodeId": "GridItem::grid-item-contactPersonName",
+                                        "__nodeType": "renderNode",
+                                        "__nodeEvent": {},
+                                        "__nodeOptions": {
+                                          "renderType": "GridItem",
+                                          "span": 24,
+                                          "defaultSlot": {
+                                            "__nodeName": "form-item-contactPersonName",
+                                            "__nodeId": "FormItem::form-item-contactPersonName",
+                                            "__nodeType": "renderNode",
+                                            "__nodeEvent": {},
+                                            "__nodeOptions": {
+                                              "renderType": "FormItem",
+                                              "prop": "contactPersonName",
+                                              "label": "联系人姓名",
+                                              "required": false,
+                                              "defaultSlot": {
+                                                "__nodeName": "input-contactPersonName",
+                                                "__nodeId": "Input::input-contactPersonName",
+                                                "__nodeType": "renderNode",
+                                                "__nodeEvent": {},
+                                                "__nodeOptions": {
+                                                  "renderType": "Input",
+                                                  "modelName": "editForm.singleTable.contactPersonName",
+                                                  "placeholder": "请输入联系人姓名"
+                                                },
+                                                "__nodeStyle": {},
+                                                "__nodeProps": null
+                                              }
+                                            },
+                                            "__nodeStyle": {},
+                                            "__nodeProps": null
+                                          }
+                                        },
+                                        "__nodeStyle": {},
+                                        "__nodeProps": null
+                                      },
+                                      {
+                                        "__nodeName": "grid-item-phoneNumber",
+                                        "__nodeId": "GridItem::grid-item-phoneNumber",
+                                        "__nodeType": "renderNode",
+                                        "__nodeEvent": {},
+                                        "__nodeOptions": {
+                                          "renderType": "GridItem",
+                                          "span": 24,
+                                          "defaultSlot": {
+                                            "__nodeName": "form-item-phoneNumber",
+                                            "__nodeId": "FormItem::form-item-phoneNumber",
+                                            "__nodeType": "renderNode",
+                                            "__nodeEvent": {},
+                                            "__nodeOptions": {
+                                              "renderType": "FormItem",
+                                              "prop": "phoneNumber",
+                                              "label": "联系电话",
+                                              "required": false,
+                                              "defaultSlot": {
+                                                "__nodeName": "input-phoneNumber",
+                                                "__nodeId": "Input::input-phoneNumber",
+                                                "__nodeType": "renderNode",
+                                                "__nodeEvent": {},
+                                                "__nodeOptions": {
+                                                  "renderType": "Input",
+                                                  "modelName": "editForm.singleTable.phoneNumber",
+                                                  "placeholder": "请输入联系电话"
+                                                },
+                                                "__nodeStyle": {},
+                                                "__nodeProps": null
+                                              }
+                                            },
+                                            "__nodeStyle": {},
+                                            "__nodeProps": null
+                                          }
+                                        },
+                                        "__nodeStyle": {},
+                                        "__nodeProps": null
+                                      }
+                                    ]
+                                  },
+                                  "__nodeStyle": {},
+                                  "__nodeProps": null
+                                },
+                                {
+                                  "__nodeName": "grid-box-additional",
+                                  "__nodeId": "GridBox::grid-box-additional",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {},
+                                  "__nodeOptions": {
+                                    "renderType": "GridBox",
+                                    "gutter": 16,
+                                    "justify": "start",
+                                    "align": "top",
+                                    "divider": true,
+                                    "title": "其他信息",
+                                    "disableFold": false,
+                                    "contentPosition": "center",
+                                    "defaultExpand": true,
+                                    "defaultSlot": [
+                                      {
+                                        "__nodeName": "grid-item-address",
+                                        "__nodeId": "GridItem::grid-item-address",
+                                        "__nodeType": "renderNode",
+                                        "__nodeEvent": {},
+                                        "__nodeOptions": {
+                                          "renderType": "GridItem",
+                                          "span": 24,
+                                          "defaultSlot": {
+                                            "__nodeName": "form-item-address",
+                                            "__nodeId": "FormItem::form-item-address",
+                                            "__nodeType": "renderNode",
+                                            "__nodeEvent": {},
+                                            "__nodeOptions": {
+                                              "renderType": "FormItem",
+                                              "prop": "address",
+                                              "label": "联系地址",
+                                              "required": false,
+                                              "defaultSlot": {
+                                                "__nodeName": "input-address",
+                                                "__nodeId": "Input::input-address",
+                                                "__nodeType": "renderNode",
+                                                "__nodeEvent": {},
+                                                "__nodeOptions": {
+                                                  "renderType": "Input",
+                                                  "modelName": "editForm.singleTable.address",
+                                                  "placeholder": "请输入地址",
+                                                  "type": "textarea"
+                                                },
+                                                "__nodeStyle": {},
+                                                "__nodeProps": null
+                                              }
+                                            },
+                                            "__nodeStyle": {},
+                                            "__nodeProps": null
+                                          }
+                                        },
+                                        "__nodeStyle": {},
+                                        "__nodeProps": null
+                                      },
+                                      {
+                                        "__nodeName": "grid-item-remark",
+                                        "__nodeId": "GridItem::grid-item-remark",
+                                        "__nodeType": "renderNode",
+                                        "__nodeEvent": {},
+                                        "__nodeOptions": {
+                                          "renderType": "GridItem",
+                                          "span": 24,
+                                          "defaultSlot": {
+                                            "__nodeName": "form-item-remark",
+                                            "__nodeId": "FormItem::form-item-remark",
+                                            "__nodeType": "renderNode",
+                                            "__nodeEvent": {},
+                                            "__nodeOptions": {
+                                              "renderType": "FormItem",
+                                              "prop": "",
+                                              "label": "备注",
+                                              "defaultSlot": {
+                                                "__nodeName": "input-remark",
+                                                "__nodeId": "Input::input-remark",
+                                                "__nodeType": "renderNode",
+                                                "__nodeEvent": {},
+                                                "__nodeOptions": {
+                                                  "renderType": "Input",
+                                                  "modelName": "editForm.singleTable.remark",
+                                                  "placeholder": "请输入备注",
+                                                  "type": "textarea"
+                                                },
+                                                "__nodeStyle": {},
+                                                "__nodeProps": null
+                                              }
+                                            },
+                                            "__nodeStyle": {},
+                                            "__nodeProps": null
+                                          }
+                                        },
+                                        "__nodeStyle": {},
+                                        "__nodeProps": null
+                                      }
+                                    ]
+                                  },
+                                  "__nodeStyle": {},
+                                  "__nodeProps": null
+                                }
+                              ]
+                            },
+                            "__nodeStyle": {},
+                            "__nodeProps": null
+                          }
+                        },
+                        "__nodeStyle": {},
+                        "__nodeProps": null
+                      }
+                    },
+                    {
+                      "isFixed": true,
+                      "size": "",
+                      "paddingSize": "large",
+                      "contentType": "layout",
+                      "defaultSlot": {
+                        "__nodeName": "button-line",
+                        "__nodeId": "FlexLine::button-line",
+                        "__nodeType": "renderNode",
+                        "__nodeEvent": {},
+                        "__nodeOptions": {
+                          "renderType": "FlexLine",
+                          "leftPadding": true,
+                          "leftClearPadding": [
+                            "left",
+                            "right",
+                            "top",
+                            "bottom"
+                          ],
+                          "rightPadding": true,
+                          "rightClearPadding": [
+                            "left",
+                            "right",
+                            "top",
+                            "bottom"
+                          ],
+                          "leftWidth": "50%",
+                          "defaultSlot": null,
+                          "rightSlot": [
+                            {
+                              "__nodeName": "cancel-button",
+                              "__nodeId": "Button::cancel-button",
+                              "__nodeType": "renderNode",
+                              "__nodeEvent": {
+                                "onClick": {
+                                  "enabled": true,
+                                  "fn": "function(ctx) { var d = ctx.getNode('Dialog::supplierDialog'); if (d) d.exposed.close(); ctx.$dataModels.state.singleTable.selectedRow = null; }"
+                                }
+                              },
+                              "__nodeOptions": {
+                                "renderType": "Button",
+                                "type": "default",
+                                "size": "default",
+                                "icon": "",
+                                "nativeType": "button",
+                                "loading": false,
+                                "disabled": false,
+                                "plain": false,
+                                "round": false,
+                                "circle": false,
+                                "content": "取消"
+                              },
+                              "__nodeStyle": {},
+                              "__nodeProps": null
+                            },
+                            {
+                              "__nodeName": "submit-button",
+                              "__nodeId": "Button::submit-button",
+                              "__nodeType": "renderNode",
+                              "__nodeEvent": {
+                                "onClick": {
+                                  "enabled": true,
+                                  "fn": "async function(ctx) {const form=ctx.getNode('Form::supplier-form');const f=ctx.$dataModels.editForm.singleTable;   const typeJson=f.cooperationTypelist;f.cooperationType=Array.isArray(typeJson)&&typeJson.length>0?typeJson.join(','):'';if(form){const isValid=await form.exposed.validateForm();if(isValid){if(ctx.$dataModels.state.singleTable.isEdit){await ctx.$requestFns.updateSupplier(Object.assign({id:ctx.$dataModels.state.singleTable.selectedRow.id},f));}else{await ctx.$requestFns.addSupplier(f);}const d=ctx.getNode('Dialog::supplierDialog');if(d)d.exposed.close();ctx.$dataModels.state.singleTable.selectedRow=null; ctx.$sharedFns.searchTable(ctx,{isReset:!ctx.$dataModels.state.singleTable.isEdit});}else{console.error('form is not valid');}}else{console.error('form is null');}}"
+                                }
+                              },
+                              "__nodeOptions": {
+                                "renderType": "Button",
+                                "type": "primary",
+                                "size": "default",
+                                "icon": "",
+                                "nativeType": "button",
+                                "loading": false,
+                                "disabled": false,
+                                "plain": false,
+                                "round": false,
+                                "circle": false,
+                                "content": "提交"
+                              },
+                              "__nodeStyle": {},
+                              "__nodeProps": null
+                            }
+                          ]
+                        },
+                        "__nodeStyle": {},
+                        "__nodeProps": null
+                      }
+                    }
+                  ]
+                },
+                "__nodeStyle": {},
+                "__nodeProps": null
+              }
+            },
+            "__nodeStyle": {},
+            "__nodeProps": null
+          }
+        ]
+      }
+    }
+  },
+  "routerConfig": {
+    "singleTable": {
+      "name": "singleTable",
+      "path": "/single-table",
+      "meta": {
+        "title": "供应商管理"
+      }
+    }
+  },
+  "dataSource": {
+    "api": {
+      "config": {
+        "baseURL": "http://192.168.5.41:3201",
+        "timeout": 10000,
+        "headers": {
+          "Content-Type": "application/json"
+        }
+      }
+    },
+    "requestConfig": {
+      "querySuppliers": {
+        "url": "/demo-system/supplier/getMany",
+        "method": "POST",
+        "description": "查询供应商列表",
+        "paramsConfig": {
+          "paramsType": "paginationParams",
+          "dataModelName": "filter",
+          "paginationConfig": {
+            "paginationMode": "typeorm",
+            "tableName": "supplier",
+            "baseCondition": "is_removed=0",
+            "selectFields": [],
+            "orderBy": {
+              "created_at": "DESC"
+            }
+          },
+          "paramsModel": {
+            "singleTable": {
+              "name": {
+                "op": "like",
+                "valueType": "string",
+                "resolveType": "bodyParams",
+                "isCache": false,
+                "isSkipVal": false
+              },
+              "creditCode": {
+                "op": "like",
+                "valueType": "string",
+                "resolveType": "bodyParams",
+                "isCache": false,
+                "isSkipVal": false
+              },
+              "cooperationTypeJson": {
+                "op": "like",
+                "valueType": "string",
+                "resolveType": "bodyParams",
+                "isCache": false,
+                "isSkipVal": false
+              },
+              "isBlackList": {
+                "op": "eq",
+                "valueType": "boolean",
+                "resolveType": "bodyParams",
+                "isCache": false,
+                "isSkipVal": false
+              }
+            }
+          }
+        },
+        "beforeReq": {
+          "enabled": true,
+          "fn": "async function beforeReq(requestConfig){\n  if(requestConfig.data.conditionValue.isBlackList===null) { // delete requestConfig.data.conditionValue.isBlackList;\n } \n return requestConfig; \n}"
+        },
+        "afterReq": {
+          "enabled": false,
+          "fn": "async function afterReq(responseConfig){ \n const data = responseConfig.data.result;  \n responseConfig.data = { rows: data?.result ?? [], count: data?.count ?? 0 }; \n return responseConfig; \n}"
+        }
+      },
+      "addSupplier": {
+        "url": "/demo-system/supplier",
+        "method": "POST",
+        "description": "新增供应商",
+        "paramsConfig": {
+          "paramsType": "formSaveParams",
+          "dataModelName": "editForm",
+          "paramsModel": {
+            "singleTable": {
+              "companyType": {
+                "valueType": "string"
+              },
+              "name": {
+                "valueType": "string"
+              },
+              "shortName": {
+                "valueType": "string"
+              },
+              "creditCode": {
+                "valueType": "string"
+              },
+              "cooperationType": {
+                "valueType": "string"
+              },
+              "cooperationTypelist": {
+                "valueType": "list"
+              },
+              "registeredCapital": {
+                "valueType": "number"
+              },
+              "legalPersonName": {
+                "valueType": "string"
+              },
+              "contactPersonName": {
+                "valueType": "string"
+              },
+              "phoneNumber": {
+                "valueType": "string"
+              },
+              "address": {
+                "valueType": "string"
+              },
+              "remark": {
+                "valueType": "string"
+              },
+              "isBlackList": {
+                "valueType": "boolean",
+                "defaultValue": null,
+                "isSkipVal": false
+              }
+            }
+          }
+        }
+      },
+      "updateSupplier": {
+        "url": "/demo-system/supplier/:id",
+        "method": "PUT",
+        "description": "更新供应商",
+        "paramsConfig": {
+          "paramsType": "formSaveParams",
+          "dataModelName": "editForm",
+          "paramsModel": {
+            "singleTable": {
+              "id": {
+                "valueType": "string",
+                "resolveType": "routeParams"
+              },
+              "companyType": {
+                "valueType": "string"
+              },
+              "name": {
+                "valueType": "string"
+              },
+              "shortName": {
+                "valueType": "string"
+              },
+              "creditCode": {
+                "valueType": "string"
+              },
+              "cooperationType": {
+                "valueType": "string"
+              },
+              "cooperationTypelist": {
+                "valueType": "list"
+              },
+              "registeredCapital": {
+                "valueType": "number"
+              },
+              "legalPersonName": {
+                "valueType": "string"
+              },
+              "contactPersonName": {
+                "valueType": "string"
+              },
+              "phoneNumber": {
+                "valueType": "string"
+              },
+              "address": {
+                "valueType": "string"
+              },
+              "remark": {
+                "valueType": "string"
+              },
+              "isBlackList": {
+                "valueType": "boolean"
+              }
+            }
+          }
+        }
+      },
+      "deleteSupplier": {
+        "url": "/demo-system/supplier/:id",
+        "method": "DELETE",
+        "description": "删除供应商",
+        "paramsConfig": {
+          "paramsType": "routeParams",
+          "paramsModel": {
+            "singleTable": {
+              "id": {
+                "valueType": "number"
+              }
+            }
+          }
+        }
+      },
+      "toggleStatus": {
+        "url": "/demo-system/supplier/:id",
+        "method": "PUT",
+        "description": "更新供应商",
+        "paramsConfig": {
+          "paramsType": "formSaveParams",
+          "dataModelType": "single",
+          "paramsModel": {
+            "singleTable": {
+              "id": {
+                "valueType": "number",
+                "resolveType": "routeParams"
+              },
+              "isBlackList": {
+                "valueType": "boolean",
+                "resolveType": "bodyParams"
+              }
+            }
+          }
+        }
+      }
+    },
+    "dataModelConfig": {
+      "filter": {
+        "description": "查询过滤器",
+        "singleTable": {
+          "name": {
+            "valueType": "string",
+            "defaultValue": "",
+            "isSkipVal": false
+          },
+          "creditCode": {
+            "valueType": "string",
+            "defaultValue": "",
+            "isSkipVal": false
+          },
+          "cooperationTypeJson": {
+            "valueType": "string",
+            "defaultValue": "",
+            "isSkipVal": false
+          },
+          "isBlackList": {
+            "valueType": "boolean",
+            "defaultValue": null,
+            "isSkipVal": false
+          },
+          "isCurrent": {
+            "valueType": "boolean",
+            "defaultValue": false,
+            "isSkipVal": true
+          }
+        }
+      },
+      "editForm": {
+        "description": "编辑表单",
+        "singleTable": {
+          "companyType": {
+            "valueType": "string",
+            "defaultValue": "企业"
+          },
+          "name": {
+            "valueType": "string",
+            "defaultValue": ""
+          },
+          "shortName": {
+            "valueType": "string",
+            "defaultValue": ""
+          },
+          "creditCode": {
+            "valueType": "string",
+            "defaultValue": ""
+          },
+          "cooperationType": {
+            "valueType": "string",
+            "defaultValue": ""
+          },
+          "cooperationTypelist": {
+            "valueType": "list",
+            "defaultValue": []
+          },
+          "registeredCapital": {
+            "valueType": "number",
+            "defaultValue": null
+          },
+          "legalPersonName": {
+            "valueType": "string",
+            "defaultValue": ""
+          },
+          "contactPersonName": {
+            "valueType": "string",
+            "defaultValue": ""
+          },
+          "phoneNumber": {
+            "valueType": "string",
+            "defaultValue": ""
+          },
+          "address": {
+            "valueType": "string",
+            "defaultValue": ""
+          },
+          "remark": {
+            "valueType": "string",
+            "defaultValue": ""
+          }
+        }
+      },
+      "state": {
+        "description": "应用状态",
+        "singleTable": {
+          "selectedRow": {
+            "valueType": "object",
+            "defaultValue": null
+          },
+          "isEdit": {
+            "valueType": "boolean",
+            "defaultValue": false
+          }
+        }
+      }
+    },
+    "sharedFns": {
+      "searchTable": {
+        "enabled": true,
+        "fn": "function(ctx, payload) {var f = ctx.$dataModels.filter?.singleTable || {}; const data = Object.assign({}, f, {cooperationTypeJson: f.cooperationTypeJson? f.cooperationTypeJson.join(',') || '' : ''}); if (data.isBlackList === null) delete data.isBlackList; var t = ctx.getNode('TableAsync::supplierTable'); if (t) t.exposed.reloadData({ isReset: payload?.isReset || false, params: data, sort: payload?.sort || {} });  }"
+      }
+    }
+  }
+}

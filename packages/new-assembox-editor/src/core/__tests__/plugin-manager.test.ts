@@ -15,7 +15,6 @@ const fakeCtx = {} as PluginContext;
 /** 构造含 register/unregister 的 registry mock ctx */
 function mockCtx() {
   return {
-    componentRegistry: {register: vi.fn(), unregister: vi.fn()},
     setterRegistry: {register: vi.fn(), unregister: vi.fn()},
     actionRegistry: {register: vi.fn(), unregister: vi.fn()},
     assetRegistry: {register: vi.fn(), unregister: vi.fn()},
@@ -168,16 +167,6 @@ describe('PluginManager setup 失败隔离', () => {
 });
 
 describe('PluginManager contributes 自动应用与反注册', () => {
-  it('contributes.components 注册到 componentRegistry', async () => {
-    const ctx = mockCtx();
-    const meta = {type: 'Button'} as any;
-    const p = definePlugin({id: 'p', contributes: {components: [meta]}});
-    const pm = new PluginManager(fakeBus);
-    pm.register(p);
-    await pm.activate(ctx, 'desktop');
-    expect((ctx.componentRegistry as any).register).toHaveBeenCalledWith(meta);
-  });
-
   it('contributes.skeleton 注入 editor 后 skeleton.add', async () => {
     const ctx = mockCtx();
     const editor = {id: 'editor-x'} as any;
@@ -201,12 +190,11 @@ describe('PluginManager contributes 自动应用与反注册', () => {
     );
   });
 
-  it('destroy 后 contributes 反注册（componentRegistry.unregister + skeleton.remove）', async () => {
+  it('destroy 后 contributes 反注册（skeleton.remove）', async () => {
     const ctx = mockCtx();
     const p = definePlugin({
       id: 'p',
       contributes: {
-        components: [{type: 'Button'} as any],
         skeleton: [{area: 'leftArea', type: 'Panel', name: 'panel-x'}]
       }
     });
@@ -214,9 +202,6 @@ describe('PluginManager contributes 自动应用与反注册', () => {
     pm.register(p);
     await pm.activate(ctx, 'desktop');
     pm.destroy();
-    expect((ctx.componentRegistry as any).unregister).toHaveBeenCalledWith(
-      'Button'
-    );
     expect((ctx.skeleton as any).remove).toHaveBeenCalledWith('panel-x');
   });
 });

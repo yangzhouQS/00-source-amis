@@ -165,10 +165,6 @@ export class PluginManager {
       const c = plugin.contributes;
       if (!c) continue;
       try {
-        c.components?.forEach(m => {
-          ctx.componentRegistry.register(m);
-          this.contributed.push(() => ctx.componentRegistry.unregister(m.type));
-        });
         c.setters?.forEach(s => {
           ctx.setterRegistry.register(s.name, s.component);
           this.contributed.push(() => ctx.setterRegistry.unregister(s.name));

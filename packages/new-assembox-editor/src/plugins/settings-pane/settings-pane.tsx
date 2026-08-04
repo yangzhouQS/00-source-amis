@@ -1,7 +1,7 @@
 /**
  * 设置面板（属性/样式/事件/高级 Tab）
- * 选区驱动：读取 store.activeNode，用 ComponentMeta.props 渲染 setter
- * 变更通过 editor.updateProps 同步到画布
+ * 选区驱动：读取 store.activeNode，用 catalog 组件 props 配置渲染 setter
+ * 变更通过 editor.updateProps 同步到画布（属性写入 __nodeOptions）
  */
 import {defineComponent, PropType, computed, h, provide} from 'vue';
 import {
@@ -26,11 +26,14 @@ export const SettingsPane = defineComponent({
   },
   setup(props) {
     const activeNode = computed(() => props.editor.store.activeNode);
-    const meta = computed(() =>
-      activeNode.value
-        ? props.editor.componentRegistry.get(activeNode.value.type)
-        : undefined
-    );
+    const catalogItem = computed(() => {
+      const node = activeNode.value;
+      if (!node) return undefined;
+      const renderType = node.__nodeOptions?.renderType;
+      return props.editor.catalog
+        .getComponents()
+        .find(c => c.renderType === renderType);
+    });
 
     /** 提供 SetterContext 给复合 setter（Object/Array/Style 等解析子 setter） */
     provide(SETTER_CONTEXT_KEY, {
@@ -41,7 +44,7 @@ export const SettingsPane = defineComponent({
         return props.editor.setterRegistry;
       },
       get nodeId() {
-        return activeNode.value?.$$id;
+        return activeNode.value?.__nodeId;
       }
     });
 
@@ -49,10 +52,11 @@ export const SettingsPane = defineComponent({
     const renderField = (propConfig: any) => {
       const node = activeNode.value;
       if (!node) return null;
-      if (isFieldHidden(propConfig, node.props)) return null;
+      const nodeOptions = node.__nodeOptions ?? {};
+      if (isFieldHidden(propConfig, nodeOptions)) return null;
       const resolved = resolveSetter(props.editor.setterRegistry, propConfig);
       const SetterComp = resolved.component;
-      const currentValue = (node.props ?? {})[propConfig.name];
+      const currentValue = nodeOptions[propConfig.name];
 
       return (
         <ElFormItem
@@ -64,7 +68,7 @@ export const SettingsPane = defineComponent({
               value: currentValue,
               defaultValue: propConfig.defaultValue,
               onChange: (v: any) => {
-                props.editor.updateProps(node.$$id, {[propConfig.name]: v});
+                props.editor.updateProps(node.__nodeId, {[propConfig.name]: v});
               },
               ...resolved.setterProps
             })
@@ -86,15 +90,15 @@ export const SettingsPane = defineComponent({
           </div>
         );
       }
-      const m = meta.value;
+      const m = catalogItem.value;
       const propsList = m?.props ?? [];
       const events = m?.events ?? [];
 
       return (
         <div class={ns.b()}>
           <div class={ns.e('header')}>
-            <span class={ns.e('title')}>{m?.name ?? node.type}</span>
-            <span class={ns.e('type')}>{node.type}</span>
+            <span class={ns.e('title')}>{m?.name ?? node.__nodeName}</span>
+            <span class={ns.e('type')}>{node.__nodeOptions?.renderType}</span>
           </div>
           <ElTabs modelValue="attribute">
             <ElTabPane label="属性" name="attribute">
@@ -109,15 +113,15 @@ export const SettingsPane = defineComponent({
             <ElTabPane label="样式" name="style">
               <StyleEditor
                 editor={props.editor}
-                nodeId={node.$$id}
-                style={node.style ?? {}}
+                nodeId={node.__nodeId}
+                style={node.__nodeStyle ?? {}}
               />
             </ElTabPane>
             <ElTabPane label="事件" name="event">
               <EventList editor={props.editor} events={events} />
             </ElTabPane>
             <ElTabPane label="高级" name="advanced">
-              <AdvancedEditor editor={props.editor} nodeId={node.$$id} />
+              <AdvancedEditor editor={props.editor} nodeId={node.__nodeId} />
             </ElTabPane>
           </ElTabs>
         </div>
@@ -126,7 +130,7 @@ export const SettingsPane = defineComponent({
   }
 });
 
-/** 样式编辑器（常用样式） */
+/** 样式编辑器（常用样式，写入 __nodeStyle） */
 const StyleEditor = defineComponent({
   props: {
     editor: {type: Object as PropType<Editor>, required: true},
@@ -135,7 +139,7 @@ const StyleEditor = defineComponent({
   },
   setup(props) {
     const update = (key: string, value: any) => {
-      props.editor.update(props.nodeId, {style: {[key]: value}});
+      props.editor.update(props.nodeId, {__nodeStyle: {[key]: value}});
     };
     const ColorSetter = props.editor.setterRegistry.get('ColorSetter');
     const NumberSetter = props.editor.setterRegistry.get('NumberSetter');
@@ -180,7 +184,7 @@ const StyleEditor = defineComponent({
   }
 });
 
-/** 事件动作编排器（声明式 onEvent.actions 卡片编辑） */
+/** 事件动作编排器（声明式 __nodeEvent.actions 卡片编辑） */
 const EventList = defineComponent({
   props: {
     editor: {type: Object as PropType<Editor>, required: true},
@@ -190,7 +194,7 @@ const EventList = defineComponent({
     const node = computed(() => props.editor.store.activeNode);
 
     const getActions = (evName: string): any[] => {
-      return node.value?.onEvent?.[evName]?.actions ?? [];
+      return node.value?.__nodeEvent?.[evName]?.actions ?? [];
     };
 
     const addAction = (evName: string) => {
@@ -198,24 +202,24 @@ const EventList = defineComponent({
         ...getActions(evName),
         {actionType: 'toast', args: {message: '新动作'}}
       ];
-      props.editor.update(node.value!.$$id, {
-        onEvent: {[evName]: {actions}}
+      props.editor.update(node.value!.__nodeId, {
+        __nodeEvent: {[evName]: {actions}}
       });
     };
 
     const removeAction = (evName: string, idx: number) => {
       const actions = [...getActions(evName)];
       actions.splice(idx, 1);
-      props.editor.update(node.value!.$$id, {
-        onEvent: {[evName]: {actions}}
+      props.editor.update(node.value!.__nodeId, {
+        __nodeEvent: {[evName]: {actions}}
       });
     };
 
     const updateAction = (evName: string, idx: number, patch: any) => {
       const actions = [...getActions(evName)];
       actions[idx] = {...actions[idx], ...patch};
-      props.editor.update(node.value!.$$id, {
-        onEvent: {[evName]: {actions}}
+      props.editor.update(node.value!.__nodeId, {
+        __nodeEvent: {[evName]: {actions}}
       });
     };
 

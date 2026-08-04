@@ -1,12 +1,13 @@
 /**
  * 大纲树面板
- * 基于 store.outline（响应式）渲染节点树
+ * 基于 schemaOps.walk 构建大纲树（格式无关），响应式渲染
  * 点击节点选中，支持展开/折叠
  */
-import {defineComponent, PropType, ref} from 'vue';
-import {ElTree} from 'element-plus';
+import {defineComponent, PropType, ref, computed} from 'vue';
+import {ElTree, ElEmpty} from 'element-plus';
 import type {Editor} from '../../core/editor';
 import type {OutlineNode} from '../../core/store';
+import {buildOutlineFromSchemaOps} from '../../core/store';
 import {useAssemNamespace} from '../../hooks/use-assem-namespace';
 import './../pane.less';
 
@@ -26,16 +27,30 @@ export const OutlinePane = defineComponent({
       children: 'children'
     };
 
+    /** 响应式大纲：依赖 store.schemaRef */
+    const outlineData = computed<OutlineNode[]>(() => {
+      void props.editor.store.schemaRef.value;
+      const schema = props.editor.store.schema;
+      return buildOutlineFromSchemaOps(schema, props.editor.schemaOps);
+    });
+
     const handleNodeClick = (data: OutlineNode) => {
       props.editor.select(data.id);
     };
 
     return () => {
-      const data = props.editor.store.outline.value;
+      const data = outlineData.value;
+      if (!data.length) {
+        return (
+          <div class={ns.b()}>
+            <ElEmpty description="暂无节点" imageSize={50} />
+          </div>
+        );
+      }
       return (
         <div class={ns.b()}>
           <ElTree
-            data={[data]}
+            data={data}
             props={treeProps}
             nodeKey="id"
             defaultExpandAll

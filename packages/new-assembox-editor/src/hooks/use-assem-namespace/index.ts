@@ -1,6 +1,6 @@
 import {ref} from 'vue';
 
-export const defaultNamespace = 'assem';
+export const defaultNamespace = 'lc-assem';
 const statePrefix = 'is-';
 
 function _bem(

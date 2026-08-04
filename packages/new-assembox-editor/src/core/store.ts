@@ -132,6 +132,17 @@ export class EditorStore {
     this.state.selectedIds = id ? [id] : [];
   }
 
+  toggleSelect(id: string): void {
+    const idx = this.state.selectedIds.indexOf(id);
+    if (idx >= 0) {
+      this.state.selectedIds.splice(idx, 1);
+      this.state.activeId = this.state.selectedIds[0] ?? null;
+    } else {
+      this.state.selectedIds.push(id);
+      this.state.activeId = id;
+    }
+  }
+
   clearSelection(): void { this.state.activeId = null; this.state.selectedIds = []; }
   setHover(id: string | null): void { this.state.hoverId = id; }
   isSelected(id: string): boolean { return this.state.selectedIds.includes(id); }
@@ -141,6 +152,11 @@ export class EditorStore {
   }
 
   // ── 面板/模式 ──
+
+  /** 右侧面板配置（插件 buildPanels 生成） */
+  panels: any[] = [];
+
+  setPanels(panels: any[]): void { this.panels = panels; }
 
   setReady(ready: boolean): void { this.state.ready = ready; }
   toggleRightPanel(visible?: boolean): void { this.state.rightPanelVisible = visible ?? !this.state.rightPanelVisible; }

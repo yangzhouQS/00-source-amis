@@ -1,6 +1,8 @@
 /**
  * BemTools 覆盖层（重构：ComponentActionManager 驱动工具栏）
  * 选中高亮框 + hover 高亮框 + 动态工具栏（Tip 提示 + 智能定位）
+ *
+ * DOM 元素通过场景渲染器（renderer.getNodeElement）获取，不再依赖 NodeTree。
  */
 import {
   defineComponent,
@@ -16,10 +18,8 @@ import {
   CopyDocument,
   Delete
 } from '@element-plus/icons-vue';
-import type {NodeTree} from '../simulator/node-tree';
 import type {EditorStore} from '../core/store';
 import type {Editor} from '../core/editor';
-import type {NodeId} from '../schema/types';
 import type {ComponentActionContext} from './component-action-manager';
 import {useAssemNamespace} from '../hooks/use-assem-namespace';
 import {Tip} from '../skeleton/widgets/tip';
@@ -46,7 +46,6 @@ export const BemTools = defineComponent({
   name: 'BemTools',
   props: {
     store: {type: Object as PropType<EditorStore>, required: true},
-    tree: {type: Object as PropType<NodeTree>, required: true},
     editor: {type: Object as PropType<Editor>, default: null},
     containerRef: {type: Object as PropType<HTMLElement | null>, default: null},
     iframeEl: {
@@ -82,8 +81,9 @@ export const BemTools = defineComponent({
       cancelAnimationFrame(rafId);
     });
 
-    const computePos = (id: NodeId): BoxPos | null => {
-      const el = props.tree.getEl(id);
+    /** 通过渲染器查询节点 DOM 元素 */
+    const computePos = (id: string): BoxPos | null => {
+      const el = props.editor?.renderer?.getNodeElement(id) ?? null;
       const container = props.containerRef;
       if (!el || !container) return null;
       const rect = el.getBoundingClientRect();
@@ -102,6 +102,16 @@ export const BemTools = defineComponent({
         width: rect.width,
         height: rect.height
       };
+    };
+
+    /** 取节点 renderType（从 schema 读取） */
+    const nodeRenderType = (id: string | null): string => {
+      if (!id || !props.editor) return '';
+      const node = props.editor.schemaOps.getNodeById(
+        props.editor.store.schema,
+        id
+      );
+      return node?.__nodeOptions?.renderType ?? node?.__nodeName ?? '';
     };
 
     /** 选中节点的可用工具栏动作 */
@@ -139,7 +149,7 @@ export const BemTools = defineComponent({
           boxes.push(
             <div class={ns.e('hover-box')} style={posStyle(pos)}>
               <span class={ns.e('box-label')}>
-                {props.tree.get(hoverId)?.type}
+                {nodeRenderType(hoverId)}
               </span>
             </div>
           );
@@ -150,7 +160,6 @@ export const BemTools = defineComponent({
       if (activeId) {
         const pos = computePos(activeId);
         if (pos) {
-          const node = props.tree.get(activeId);
           const actions = toolbarActions.value;
           const ctx: ComponentActionContext = {
             nodeId: activeId,
@@ -166,7 +175,7 @@ export const BemTools = defineComponent({
           boxes.push(
             <div class={ns.e('select-box')} style={posStyle(pos)}>
               <span class={[ns.e('box-label'), ns.is('active')]}>
-                {node?.type} #{activeId.slice(-4)}
+                {nodeRenderType(activeId)} #{activeId.slice(-4)}
               </span>
               <div class={ns.e('toolbar')} style={toolbarStyle}>
                 {actions.map(action => {

@@ -12,10 +12,7 @@ import {EditorToolbar} from './editor-toolbar/editor-toolbar';
 import {registerBuiltinSetters} from '../setters';
 import {registerBuiltinActions} from '../actions/builtin-actions';
 import {DesignerHost} from '../designer/designer-host';
-import {IframeDesignerHost} from '../designer/iframe-designer-host';
 import {SimulatorSize} from './simulator-size/simulator-size';
-import {defineComponent, PropType} from 'vue';
-import type {Editor} from '../core/editor';
 import {
   Box,
   Setting,
@@ -24,22 +21,6 @@ import {
   Clock,
   Histogram
 } from '@element-plus/icons-vue';
-
-/** 画布宿主切换：按 editor.canvasMode 选择同 DOM 或 iframe 渲染 */
-const DesignerCanvasSwitch = defineComponent({
-  name: 'DesignerCanvasSwitch',
-  props: {
-    editor: {type: Object as PropType<Editor>, required: true}
-  },
-  setup(props) {
-    return () =>
-      props.editor.canvasMode === 'iframe' ? (
-        <IframeDesignerHost editor={props.editor} />
-      ) : (
-        <DesignerHost editor={props.editor} />
-      );
-  }
-});
 
 /**
  * Designer 插件：注册中央画布
@@ -55,7 +36,7 @@ export const designerPlugin: EditorPluginObject = {
         area: 'centerArea',
         type: 'Panel',
         name: 'DesignerPanel',
-        content: DesignerCanvasSwitch,
+        content: DesignerHost,
         props: {}
       }
     ]

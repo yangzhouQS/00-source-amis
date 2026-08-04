@@ -1,27 +1,32 @@
 <!DOCTYPE html>
 <html lang="zh-CN" class="engine-design-mode">
-  <head>
-    <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>assembox canvas</title>
-    <style>
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>assembox canvas</title>
+  <style>
       html,
       body,
       #app {
-        margin: 0;
-        padding: 0;
-        width: 100%;
-        min-height: 100vh;
-        font-family: "PingFang SC", "Microsoft YaHei", Helvetica, Arial, sans-serif;
-        background: #fff;
+          margin: 0;
+          padding: 0;
+          width: 100%;
+          height: 100%;
+          background: #fff;
       }
-      #app {
-        min-height: 100vh;
+
+      .assem-views {
+          width: 100%;
+          height: 100%;
       }
-    </style>
-  </head>
-  <body>
-    <div id="app"></div>
-    <script type="module" src="/src/simulator/iframe/iframe-renderer-entry.ts"></script>
-  </body>
+  </style>
+</head>
+<body>
+<div id="app"></div>
+<!--
+  JS/CSS 依赖不再在此硬编码：由 iframe-renderer-entry.ts 按 host 下发的
+  assets 清单动态加载（win.Vue 先挂 ESM Vue → 加载 js → 加载 css → 注册插件）。
+-->
+<script type="module" src="/src/simulator/iframe/iframe-renderer-entry.ts"></script>
+</body>
 </html>

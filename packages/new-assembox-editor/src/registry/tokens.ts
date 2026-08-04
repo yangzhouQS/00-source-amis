@@ -8,7 +8,6 @@ import type {Editor} from '../core/editor';
 import type {EditorStore} from '../core/store';
 import type {EventBus} from '../core/event-bus';
 import type {PluginManager} from '../core/plugin-manager';
-import type {ComponentRegistry} from '../registry/component-registry';
 import type {SetterRegistry} from '../registry/setter-registry';
 import type {AssetRegistry} from '../registry/asset-registry';
 import type {ActionRegistry} from '../registry/action-registry';
@@ -20,8 +19,6 @@ export const STORE = token<EditorStore>('store');
 export const BUS = token<EventBus>('bus');
 export const DI = token('di-container');
 export const PLUGIN_MANAGER = token<PluginManager>('plugin-manager');
-export const COMPONENT_REGISTRY =
-  token<ComponentRegistry>('component-registry');
 export const SETTER_REGISTRY = token<SetterRegistry>('setter-registry');
 export const ASSET_REGISTRY = token<AssetRegistry>('asset-registry');
 export const ACTION_REGISTRY = token<ActionRegistry>('action-registry');
