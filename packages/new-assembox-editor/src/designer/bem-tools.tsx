@@ -166,23 +166,47 @@ export const BemTools = defineComponent({
             editor: props.editor
           };
 
-          // 工具栏三段智能定位（参考 lowcode border-selecting Toolbar）：
-          //   上方空间够 → 放上方；下方空间够 → 放下方；都不够 → 回退到框内顶部
-          //   避免满页/顶部组件时 toolbar 被容器裁剪
-          const BAR = 22;
+          // ── 工具栏智能定位（参考 lowcode border-selecting.tsx 的 Toolbar）──
+          // 目标：让工具栏尽量贴近选中框、又不被画布(overflow:auto)裁剪。
+          // 思路：分别算「水平对齐」和「垂直对齐」，各自三选一，最后合并成 style。
+
+          // 尺寸常量
+          const BAR = 22; // 工具栏高度（与 CSS .toolbar-btn height:20 + 间隙对齐）
+          const BTN_W = 22; // 单个动作按钮占地宽度（20px 按钮 + 左右各 1px margin）
+
+          // 画布尺寸（工具栏的定位参照系，pos.left/top 都是相对画布的）
           const canvasH = props.containerRef?.clientHeight ?? 0;
-          const toolbarStyle =
+
+          // 工具栏总宽 = 动作数 × 单按钮宽度
+          const toolbarW = actions.length * BTN_W;
+
+          // 选中框右边在画布内的 x 坐标（相对画布左边）
+          const boxRightInCanvas = pos.left + pos.width;
+
+          // ① 水平对齐：判断「向左延伸」会不会顶出画布左边
+          //    - boxRightInCanvas >= toolbarW：选中框右边到画布左边的距离够放整条工具栏
+          //      → right:0，工具栏右端贴选中框右边、向左铺开（视觉最自然）
+          //    - 否则：选中框太靠左，向左铺会溢出画布左边被裁剪
+          //      → left:0，工具栏左端贴选中框左边、向右铺开
+          const hAlign =
+            boxRightInCanvas >= toolbarW ? {right: '0px'} : {left: '0px'};
+
+          // ② 垂直对齐：优先放选中框正上方，上方不够再放下方，都不够就塞进框内顶部
+          //    a) pos.top >= BAR：选中框顶部到画布顶部还有 ≥22px，工具栏放上方(top:-22)不会被裁
+          //    b) 选中框底部 + 22 <= 画布高：下方还有空间，工具栏放下方(top: 选中框高+2)
+          //    c) 上下都不够（如选中框几乎占满画布）：塞进选中框内部顶端，至少留 2px 内边距
+          const vAlign =
             pos.top >= BAR
-              ? {top: `-${BAR}px`, right: '0px'}
+              ? {top: `-${BAR}px`}
               : pos.top + pos.height + BAR <= canvasH
-                ? {top: `${pos.height + 2}px`, right: '0px'}
-                : {top: `${Math.max(2, 2 - pos.top)}px`, right: '0px'};
+                ? {top: `${pos.height + 2}px`}
+                : {top: `${Math.max(2, 2 - pos.top)}px`};
+
+          // 合并水平+垂直对齐，作为工具栏的 inline style
+          const toolbarStyle = {...hAlign, ...vAlign};
 
           boxes.push(
             <div class={ns.e('select-box')} style={posStyle(pos)}>
-              <span class={[ns.e('box-label'), ns.is('active')]}>
-                {nodeRenderType(activeId)} #{activeId.slice(-4)}
-              </span>
               <div class={ns.e('toolbar')} style={toolbarStyle}>
                 {actions.map(action => {
                   const disabled = props.editor

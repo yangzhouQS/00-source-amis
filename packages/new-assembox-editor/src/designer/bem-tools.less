@@ -58,12 +58,19 @@
 /* ── 工具栏容器 ── */
 .lc-assem-bem-tools__toolbar {
   position: absolute;
+  /* width: max-content 让工具栏按内容撑开，不受选中框（窄节点如按钮 65px）的宽度约束，
+     避免 4 个动作按钮被挤压（参考 lowcode lc-borders-actions） */
+  width: max-content;
   display: flex;
   flex-direction: row-reverse;
   align-items: stretch;
   justify-content: flex-end;
   gap: 0;
   pointer-events: auto;
+
+  > * {
+    flex-shrink: 0;
+  }
 }
 
 /* ── 工具栏按钮（参考 lowcode lc-borders-action） ── */
