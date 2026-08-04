@@ -11,16 +11,7 @@ const ns = useAssemNamespace('js-function-setter');
  * Also accepts a plain string (treated as raw function source) for backward compat.
  */
 import {defineComponent, ref, computed, watch} from 'vue';
-import {
-  ElInput,
-  ElButton,
-  ElMessage,
-  ElDialog,
-  ElFormItem,
-  ElTabs,
-  ElTabPane,
-  ElAlert
-} from 'element-plus';
+import { ElMessage } from 'element-plus';
 import {
   FullScreen,
   Check,
@@ -229,7 +220,7 @@ export const JSFunctionSetter = defineComponent({
         <div class="assem-js-function-setter__params-list">
           {params.value.map((p, i) => (
             <div class="assem-js-function-setter__param-item" key={i}>
-              <ElInput
+              <el-input
                 modelValue={p}
                 size="small"
                 disabled={props.disabled}
@@ -237,7 +228,7 @@ export const JSFunctionSetter = defineComponent({
                 style="width:120px"
               />
               {!props.disabled && (
-                <ElButton
+                <el-button
                   size="small"
                   link
                   icon={Close}
@@ -247,9 +238,9 @@ export const JSFunctionSetter = defineComponent({
             </div>
           ))}
           {!props.disabled && (
-            <ElButton size="small" link icon={Plus} onClick={addParam}>
+            <el-button size="small" link icon={Plus} onClick={addParam}>
               param
-            </ElButton>
+            </el-button>
           )}
         </div>
       </div>
@@ -257,8 +248,8 @@ export const JSFunctionSetter = defineComponent({
 
     const renderTestRun = () => (
       <div class="assem-js-function-setter__test">
-        <ElFormItem label="Mock args">
-          <ElInput
+        <el-form-item label="Mock args">
+          <el-input
             type="textarea"
             rows={Math.max(2, params.value.length)}
             modelValue={mockArgsText.value}
@@ -267,9 +258,9 @@ export const JSFunctionSetter = defineComponent({
             onUpdate:modelValue={(v: string) => (mockArgsText.value = v)}
             class={ns.e('mock-input')}
           />
-        </ElFormItem>
+        </el-form-item>
         <div class="assem-js-function-setter__test-actions">
-          <ElButton
+          <el-button
             size="small"
             type="primary"
             icon={VideoPlay}
@@ -277,10 +268,10 @@ export const JSFunctionSetter = defineComponent({
             onClick={runTest}
           >
             Run
-          </ElButton>
+          </el-button>
         </div>
         {testResult.value && (
-          <ElAlert
+          <el-alert
             type={testResult.value.ok ? 'success' : 'error'}
             title={testResult.value.ok ? 'Result' : 'Error'}
             description={
@@ -302,7 +293,7 @@ export const JSFunctionSetter = defineComponent({
         {renderParams()}
         {renderEditor(props.height)}
         <div class="assem-js-function-setter__actions">
-          <ElButton
+          <el-button
             size="small"
             type="primary"
             icon={Check}
@@ -310,21 +301,21 @@ export const JSFunctionSetter = defineComponent({
             onClick={commit}
           >
             Save
-          </ElButton>
+          </el-button>
           {props.supportFullScreen && (
-            <ElButton
+            <el-button
               size="small"
               icon={FullScreen}
               disabled={props.disabled}
               onClick={() => (fullscreen.value = true)}
             >
               Fullscreen
-            </ElButton>
+            </el-button>
           )}
         </div>
         {props.showTestRun && renderTestRun()}
         {props.supportFullScreen && (
-          <ElDialog
+          <el-dialog
             v-model={fullscreen.value}
             title="Function Editor"
             width="70%"
@@ -338,16 +329,16 @@ export const JSFunctionSetter = defineComponent({
             {{
               footer: () => (
                 <span>
-                  <ElButton onClick={() => (fullscreen.value = false)}>
+                  <el-button onClick={() => (fullscreen.value = false)}>
                     Cancel
-                  </ElButton>
-                  <ElButton type="primary" onClick={commit}>
+                  </el-button>
+                  <el-button type="primary" onClick={commit}>
                     Save
-                  </ElButton>
+                  </el-button>
                 </span>
               )
             }}
-          </ElDialog>
+          </el-dialog>
         )}
       </div>
     );

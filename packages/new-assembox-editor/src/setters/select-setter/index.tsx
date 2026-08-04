@@ -1,8 +1,7 @@
-/**
+﻿/**
  * SelectSetter - 下拉选择
  * 支持 options（{label,value} / string）、分组、搜索、多选
  */
-import {ElSelect, ElOption, ElOptionGroup} from 'element-plus';
 import {defineSetter, normalizeOptions, renderPreview} from '../base';
 
 export const SelectSetter = defineSetter<any>('SelectSetter', props => {
@@ -16,7 +15,7 @@ export const SelectSetter = defineSetter<any>('SelectSetter', props => {
   const mode = props.mode;
 
   const renderOption = (o: any) => (
-    <ElOption
+    <el-option
       key={String(o.value)}
       label={o.label}
       value={o.value}
@@ -25,7 +24,7 @@ export const SelectSetter = defineSetter<any>('SelectSetter', props => {
   );
 
   return (
-    <ElSelect
+    <el-select
       modelValue={props.value}
       disabled={props.disabled}
       multiple={mode === 'multiple' || mode === 'tags'}
@@ -39,13 +38,13 @@ export const SelectSetter = defineSetter<any>('SelectSetter', props => {
         // 分组：children
         if (o.children && Array.isArray(o.children)) {
           return (
-            <ElOptionGroup key={o.label} label={o.label}>
+            <el-option-group key={o.label} label={o.label}>
               {normalizeOptions(o.children).map(renderOption)}
-            </ElOptionGroup>
+            </el-option-group>
           );
         }
         return renderOption(o);
       })}
-    </ElSelect>
+    </el-select>
   );
 });

@@ -1,17 +1,9 @@
-/**
+﻿/**
  * 组件库面板（拖拽源）
  * 从场景 catalog（IComponentCatalog）读取，按 group/category 分组
  * 支持搜索过滤 + 拖入画布（DnD）与点击插入；BEM 类名（component-pane block）
  */
 import {defineComponent, PropType, ref, computed} from 'vue';
-import {
-  ElCollapse,
-  ElCollapseItem,
-  ElEmpty,
-  ElIcon,
-  ElInput,
-  ElScrollbar
-} from 'element-plus';
 import type {Editor} from '../../core/editor';
 import type {ComponentCatalogItem} from '../../scenario/types';
 import {useAssemNamespace} from '../../hooks/use-assem-namespace';
@@ -89,7 +81,7 @@ export const ComponentsPane = defineComponent({
       return (
         <div class={ns.b()}>
           <div class={ns.e('search')}>
-            <ElInput
+            <el-input
               modelValue={keyword.value}
               onUpdate:modelValue={(v: string) => (keyword.value = v)}
               placeholder="搜索组件"
@@ -98,26 +90,26 @@ export const ComponentsPane = defineComponent({
               prefix-icon="Search"
             />
           </div>
-          <ElScrollbar class={ns.e('scroll')}>
+          <el-scrollbar class={ns.e('scroll')}>
             {groups.size === 0 ? (
-              <ElEmpty
+              <el-empty
                 description={
                   keyword.value ? '未找到匹配组件' : '暂无组件，请注册组件'
                 }
                 imageSize={60}
               />
             ) : groupList.length > 1 ? (
-              <ElCollapse modelValue={groupList.map(g => g[0])}>
+              <el-collapse modelValue={groupList.map(g => g[0])}>
                 {groupList.map(([groupName, categories]) => (
-                  <ElCollapseItem
+                  <el-collapse-item
                     key={groupName}
                     title={groupName}
                     name={groupName}
                   >
                     {renderCategories(categories, onMouseDown, onClickInsert)}
-                  </ElCollapseItem>
+                  </el-collapse-item>
                 ))}
-              </ElCollapse>
+              </el-collapse>
             ) : (
               renderCategories(
                 groups.values().next().value ?? new Map(),
@@ -125,7 +117,7 @@ export const ComponentsPane = defineComponent({
                 onClickInsert
               )
             )}
-          </ElScrollbar>
+          </el-scrollbar>
         </div>
       );
     };
@@ -149,9 +141,9 @@ function renderCategories(
             onClick={() => onClickInsert(item)}
             title={item.name}
           >
-            <ElIcon class={ns.e('icon')}>
+            <el-icon class={ns.e('icon')}>
               <span>·</span>
-            </ElIcon>
+            </el-icon>
             <span class={ns.e('name')}>{item.name}</span>
           </div>
         ))}

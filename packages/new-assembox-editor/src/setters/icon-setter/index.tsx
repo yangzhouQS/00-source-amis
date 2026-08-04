@@ -6,14 +6,6 @@ const ns = useAssemNamespace('icon-picker');
  */
 import {defineComponent, ref, computed, h} from 'vue';
 import * as ElementPlusIconsVue from '@element-plus/icons-vue';
-import {
-  ElInput,
-  ElPopover,
-  ElButton,
-  ElTabs,
-  ElTabPane,
-  ElIcon
-} from 'element-plus';
 import './style.less';
 
 export const IconSetter = defineComponent({
@@ -66,7 +58,7 @@ export const IconSetter = defineComponent({
 
     const iconContent = () => (
       <div class={ns.b()}>
-        <ElInput
+        <el-input
           v-model={elSearch.value}
           placeholder="Search Element icon"
           clearable
@@ -81,11 +73,11 @@ export const IconSetter = defineComponent({
               title={name}
               onClick={() => pickEl(name)}
             >
-              <ElIcon size={20}>
+              <el-icon size={20}>
                 {h(
                   ElementPlusIconsVue[name as keyof typeof ElementPlusIconsVue]
                 )}
-              </ElIcon>
+              </el-icon>
               <span class={ns.e('name')}>{name}</span>
             </li>
           ))}
@@ -95,7 +87,7 @@ export const IconSetter = defineComponent({
 
     const fontContent = () => (
       <div class={ns.b()}>
-        <ElInput
+        <el-input
           v-model={fontSearch.value}
           placeholder="Search iconFont"
           clearable
@@ -128,7 +120,7 @@ export const IconSetter = defineComponent({
     );
 
     return () => (
-      <ElInput
+      <el-input
         modelValue={props.value ?? ''}
         disabled={props.disabled}
         placeholder="Select icon"
@@ -138,34 +130,34 @@ export const IconSetter = defineComponent({
       >
         {{
           prepend: () => (
-            <ElPopover placement="left" width={420} trigger="click">
+            <el-popover placement="left" width={420} trigger="click">
               {{
                 reference: () => (
-                  <ElButton style="width:40px;padding:0">
-                    <ElIcon size={16}>
+                  <el-button style="width:40px;padding:0">
+                    <el-icon size={16}>
                       {previewIcon.value ?? <span>...</span>}
-                    </ElIcon>
-                  </ElButton>
+                    </el-icon>
+                  </el-button>
                 ),
                 default: () => (
-                  <ElTabs v-model={activeName.value} type="card">
+                  <el-tabs v-model={activeName.value} type="card">
                     {props.iconType !== 'iconFont' && (
-                      <ElTabPane label="Element Icon" name="icon" lazy>
+                      <el-tab-pane label="Element Icon" name="icon" lazy>
                         {iconContent()}
-                      </ElTabPane>
+                      </el-tab-pane>
                     )}
                     {props.iconType !== 'elementIcon' && (
-                      <ElTabPane label="iconFont" name="iconFont" lazy>
+                      <el-tab-pane label="iconFont" name="iconFont" lazy>
                         {fontContent()}
-                      </ElTabPane>
+                      </el-tab-pane>
                     )}
-                  </ElTabs>
+                  </el-tabs>
                 )
               }}
-            </ElPopover>
+            </el-popover>
           )
         }}
-      </ElInput>
+      </el-input>
     );
   }
 });

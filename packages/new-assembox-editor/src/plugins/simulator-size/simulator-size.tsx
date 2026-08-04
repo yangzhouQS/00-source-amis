@@ -1,9 +1,8 @@
-/**
+﻿/**
  * 画布尺寸切换（设备预设）
  * 顶栏 Widget：默认/平板/手机 切换，驱动 iframe 宽度
  */
 import {defineComponent, PropType} from 'vue';
-import {ElRadioButton, ElRadioGroup} from 'element-plus';
 import {Monitor, Cellphone, Iphone} from '@element-plus/icons-vue';
 import type {Editor} from '../../core/editor';
 import {DEVICE_PRESETS} from '../../core/store';
@@ -23,7 +22,7 @@ export const SimulatorSize = defineComponent({
     return () => {
       const current = props.editor.store.state.device.key;
       return (
-        <ElRadioGroup
+        <el-radio-group
           modelValue={current}
           size="small"
           onUpdate:modelValue={(val: any) => {
@@ -34,17 +33,17 @@ export const SimulatorSize = defineComponent({
           {DEVICE_PRESETS.map(d => {
             const Icon = ICON_MAP[d.key];
             return (
-              <ElRadioButton key={d.key} value={d.key}>
+              <el-radio-button key={d.key} value={d.key}>
                 {Icon ? (
                   <el-icon style="margin-right:2px">
                     <Icon />
                   </el-icon>
                 ) : null}
                 {d.label}
-              </ElRadioButton>
+              </el-radio-button>
             );
           })}
-        </ElRadioGroup>
+        </el-radio-group>
       );
     };
   }

@@ -1,10 +1,9 @@
-/**
+﻿/**
  * 大纲树面板
  * 基于 schemaOps.walk 构建大纲树（格式无关），响应式渲染
  * 点击节点选中，支持展开/折叠
  */
 import {defineComponent, PropType, ref, computed} from 'vue';
-import {ElTree, ElEmpty} from 'element-plus';
 import type {Editor} from '../../core/editor';
 import type {OutlineNode} from '../../core/store';
 import {buildOutlineFromSchemaOps} from '../../core/store';
@@ -43,13 +42,13 @@ export const OutlinePane = defineComponent({
       if (!data.length) {
         return (
           <div class={ns.b()}>
-            <ElEmpty description="暂无节点" imageSize={50} />
+            <el-empty description="暂无节点" imageSize={50} />
           </div>
         );
       }
       return (
         <div class={ns.b()}>
-          <ElTree
+          <el-tree
             data={data}
             props={treeProps}
             nodeKey="id"

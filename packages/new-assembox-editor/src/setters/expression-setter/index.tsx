@@ -1,8 +1,7 @@
-/**
+﻿/**
  * ExpressionSetter - JS expression editor ({{expr}} + context hints)
  */
 import {defineComponent, ref, computed} from 'vue';
-import {ElAutocomplete} from 'element-plus';
 
 interface ExpressionValue {
   type: 'JSExpression';
@@ -63,7 +62,7 @@ export const ExpressionSetter = defineComponent({
     return () => (
       <div style="display:flex;align-items:center;gap:2px;width:100%">
         <span style="color:#909399">{'{{'}</span>
-        <ElAutocomplete
+        <el-autocomplete
           modelValue={inner.value}
           disabled={props.disabled}
           fetchSuggestions={querySearch}
@@ -84,7 +83,7 @@ export const ExpressionSetter = defineComponent({
               </div>
             )
           }}
-        </ElAutocomplete>
+        </el-autocomplete>
         <span style="color:#909399">{'}}'}</span>
       </div>
     );

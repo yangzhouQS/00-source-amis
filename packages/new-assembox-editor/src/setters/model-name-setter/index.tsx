@@ -1,8 +1,7 @@
-/**
+﻿/**
  * ModelNameSetter - model/field binding picker (tree-select)
  */
 import {defineComponent, ref, watch} from 'vue';
-import {ElPopover, ElInput, ElScrollbar, ElTree, ElIcon} from 'element-plus';
 import {CircleCheck} from '@element-plus/icons-vue';
 
 interface ModelTreeItem {
@@ -53,7 +52,7 @@ export const ModelNameSetter = defineComponent({
     };
 
     return () => (
-      <ElPopover
+      <el-popover
         v-model:visible={visible.value}
         placement="bottom"
         width={320}
@@ -61,7 +60,7 @@ export const ModelNameSetter = defineComponent({
       >
         {{
           reference: () => (
-            <ElInput
+            <el-input
               modelValue={String(props.value ?? '')}
               placeholder={props.placeholder}
               clearable={props.clearable}
@@ -71,15 +70,15 @@ export const ModelNameSetter = defineComponent({
           ),
           default: () => (
             <>
-              <ElInput
+              <el-input
                 v-model={filterText.value}
                 placeholder="Search field"
                 clearable
                 size="small"
                 style="margin-bottom:8px"
               />
-              <ElScrollbar max-height={300}>
-                <ElTree
+              <el-scrollbar max-height={300}>
+                <el-tree
                   ref={treeRef}
                   data={props.modelTree as any}
                   nodeKey="fullPath"
@@ -99,20 +98,20 @@ export const ModelNameSetter = defineComponent({
                             </em>
                           ) : null}
                           {data.isLeaf && (
-                            <ElIcon color="var(--el-color-success)">
+                            <el-icon color="var(--el-color-success)">
                               <CircleCheck />
-                            </ElIcon>
+                            </el-icon>
                           )}
                         </span>
                       </div>
                     )
                   }}
-                </ElTree>
-              </ElScrollbar>
+                </el-tree>
+              </el-scrollbar>
             </>
           )
         }}
-      </ElPopover>
+      </el-popover>
     );
   }
 });

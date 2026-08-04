@@ -1,7 +1,6 @@
-/**
+﻿/**
  * RadioGroupSetter - 单选按钮组
  */
-import {ElRadioGroup, ElRadioButton, ElRadio} from 'element-plus';
 import {defineSetter, normalizeOptions, renderPreview} from '../base';
 
 export const RadioGroupSetter = defineSetter<any>('RadioGroupSetter', props => {
@@ -14,7 +13,7 @@ export const RadioGroupSetter = defineSetter<any>('RadioGroupSetter', props => {
   const options = normalizeOptions(props.options);
   const button = props.button ?? true;
   return (
-    <ElRadioGroup
+    <el-radio-group
       modelValue={props.value}
       disabled={props.disabled}
       size={props.size ?? 'small'}
@@ -22,19 +21,19 @@ export const RadioGroupSetter = defineSetter<any>('RadioGroupSetter', props => {
     >
       {options.map(o =>
         button ? (
-          <ElRadioButton
+          <el-radio-button
             key={String(o.value)}
             value={o.value}
             disabled={o.disabled}
           >
             {o.label}
-          </ElRadioButton>
+          </el-radio-button>
         ) : (
-          <ElRadio key={String(o.value)} value={o.value} disabled={o.disabled}>
+          <el-radio key={String(o.value)} value={o.value} disabled={o.disabled}>
             {o.label}
-          </ElRadio>
+          </el-radio>
         )
       )}
-    </ElRadioGroup>
+    </el-radio-group>
   );
 });

@@ -5,7 +5,6 @@ const ns = useAssemNamespace('mixed-setter');
  * MixedSetter - switch between multiple setters
  */
 import {defineComponent, ref, watch, h} from 'vue';
-import {ElDropdown, ElDropdownMenu, ElDropdownItem} from 'element-plus';
 import {useSetterCtx} from '../base';
 import './../composite.less';
 
@@ -94,7 +93,7 @@ export const MixedSetter = defineComponent({
             )}
           </div>
           {list.length > 1 && (
-            <ElDropdown
+            <el-dropdown
               trigger="click"
               disabled={props.disabled}
               onCommand={(cmd: string) => {
@@ -105,20 +104,20 @@ export const MixedSetter = defineComponent({
               {{
                 default: () => <span class="assem-mixed-trigger">&#8646;</span>,
                 dropdown: () => (
-                  <ElDropdownMenu>
+                  <el-dropdown-menu>
                     {list.map(s => (
-                      <ElDropdownItem
+                      <el-dropdown-item
                         key={s.name}
                         command={s.name}
                         disabled={cur?.name === s.name}
                       >
                         {s.title}
-                      </ElDropdownItem>
+                      </el-dropdown-item>
                     ))}
-                  </ElDropdownMenu>
+                  </el-dropdown-menu>
                 )
               }}
-            </ElDropdown>
+            </el-dropdown>
           )}
         </div>
       );

@@ -1,9 +1,9 @@
-/**
+﻿/**
  * FunctionSetter - code editor (textarea + fullscreen + syntax validation)
  * Props contract kept compatible so Monaco can be swapped in later
  */
 import {defineComponent, ref, computed} from 'vue';
-import {ElButton, ElMessage, ElDialog} from 'element-plus';
+import { ElMessage } from 'element-plus';
 import {FullScreen, Check} from '@element-plus/icons-vue';
 import {useAssemNamespace} from '../../hooks/use-assem-namespace';
 import './function-setter.less';
@@ -59,7 +59,7 @@ export const FunctionSetter = defineComponent({
           />
         </div>
         <div class={ns.e('actions')}>
-          <ElButton
+          <el-button
             size="small"
             type="primary"
             icon={Check}
@@ -67,9 +67,9 @@ export const FunctionSetter = defineComponent({
             onClick={commit}
           >
             Save
-          </ElButton>
+          </el-button>
           {props.supportFullScreen && (
-            <ElButton
+            <el-button
               size="small"
               icon={FullScreen}
               disabled={props.disabled}
@@ -79,11 +79,11 @@ export const FunctionSetter = defineComponent({
               }}
             >
               Fullscreen
-            </ElButton>
+            </el-button>
           )}
         </div>
         {props.supportFullScreen && (
-          <ElDialog
+          <el-dialog
             v-model={fullscreen.value}
             title="Code Editor"
             width="70%"
@@ -102,16 +102,16 @@ export const FunctionSetter = defineComponent({
             {{
               footer: () => (
                 <span>
-                  <ElButton onClick={() => (fullscreen.value = false)}>
+                  <el-button onClick={() => (fullscreen.value = false)}>
                     Cancel
-                  </ElButton>
-                  <ElButton type="primary" onClick={commit}>
+                  </el-button>
+                  <el-button type="primary" onClick={commit}>
                     Save
-                  </ElButton>
+                  </el-button>
                 </span>
               )
             }}
-          </ElDialog>
+          </el-dialog>
         )}
       </div>
     );

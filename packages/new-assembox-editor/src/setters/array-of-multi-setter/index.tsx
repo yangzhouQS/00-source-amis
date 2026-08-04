@@ -1,8 +1,7 @@
-/**
+﻿/**
  * ArrayOfMultiSetter - multi-select checkbox group
  */
 import {defineComponent} from 'vue';
-import {ElCheckboxGroup, ElCheckbox} from 'element-plus';
 import {normalizeOptions} from '../base';
 
 export const ArrayOfMultiSetter = defineComponent({
@@ -19,7 +18,7 @@ export const ArrayOfMultiSetter = defineComponent({
       const options = normalizeOptions(props.options);
       const current = Array.isArray(props.value) ? props.value : [];
       return (
-        <ElCheckboxGroup
+        <el-checkbox-group
           modelValue={current as any}
           disabled={props.disabled}
           onUpdate:modelValue={(v: any) =>
@@ -35,16 +34,16 @@ export const ArrayOfMultiSetter = defineComponent({
             }}
           >
             {options.map(opt => (
-              <ElCheckbox
+              <el-checkbox
                 key={String(opt.value)}
                 value={opt.value}
                 disabled={opt.disabled}
               >
                 {opt.label}
-              </ElCheckbox>
+              </el-checkbox>
             ))}
           </div>
-        </ElCheckboxGroup>
+        </el-checkbox-group>
       );
     };
   }

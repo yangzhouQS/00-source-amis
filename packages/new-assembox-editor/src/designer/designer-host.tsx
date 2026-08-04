@@ -1,4 +1,4 @@
-/**
+﻿/**
  * DesignerHost 画布宿主组件
  * 聚合：IRenderer + BemTools + DnD 容器
  * inline 模式：renderer 挂载到 div 容器（同 DOM）
@@ -6,7 +6,6 @@
  *             拖拽坐标按 iframe 局部坐标系换算（mouse 事件源于 iframe 文档）
  */
 import {defineComponent, PropType, ref, onMounted, onBeforeUnmount, computed} from 'vue';
-import {ElEmpty} from 'element-plus';
 import type {Editor} from '../core/editor';
 import {BemTools} from './bem-tools';
 import {CanvasSensor} from './drag/canvas-sensor';
@@ -110,7 +109,7 @@ export const DesignerHost = defineComponent({
           <div class={ns.e('canvas')} ref={canvasRef}>
             {isEmpty ? (
               <div class={ns.e('canvas-empty')}>
-                <ElEmpty description="从左侧组件库拖入组件开始搭建" />
+                <el-empty description="从左侧组件库拖入组件开始搭建" />
               </div>
             ) : null}
             <BemTools

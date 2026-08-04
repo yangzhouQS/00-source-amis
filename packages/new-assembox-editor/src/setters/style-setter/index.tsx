@@ -5,7 +5,6 @@ const ns = useAssemNamespace('style-setter');
  * StyleSetter - CSS style editor (grouped panels)
  */
 import {defineComponent, computed} from 'vue';
-import {ElCollapse, ElCollapseItem, ElForm, ElFormItem} from 'element-plus';
 import {useSetterCtx} from '../base';
 import './style-setter.less';
 
@@ -49,18 +48,18 @@ export const StyleSetter = defineComponent({
 
     const renderColorField = (key: string, label: string) =>
       ColorSetter ? (
-        <ElFormItem label={label}>
+        <el-form-item label={label}>
           <ColorSetter
             value={style.value[key]}
             predefine={PRESET_COLORS}
             onUpdate:modelValue={(v: string) => set(key, v)}
           />
-        </ElFormItem>
+        </el-form-item>
       ) : null;
 
     const renderNumberField = (key: string, label: string) =>
       NumberSetter ? (
-        <ElFormItem label={label}>
+        <el-form-item label={label}>
           <NumberSetter
             value={
               typeof style.value[key] === 'number' ||
@@ -70,25 +69,25 @@ export const StyleSetter = defineComponent({
             }
             onUpdate:modelValue={(v: number) => set(key, v ? `${v}px` : '')}
           />
-        </ElFormItem>
+        </el-form-item>
       ) : null;
 
     const renderSelectField = (key: string, label: string, options: any[]) =>
       SelectSetter ? (
-        <ElFormItem label={label}>
+        <el-form-item label={label}>
           <SelectSetter
             value={style.value[key] ?? ''}
             options={options}
             onUpdate:modelValue={(v: any) => set(key, v)}
           />
-        </ElFormItem>
+        </el-form-item>
       ) : null;
 
     return () => (
       <div class={ns.b()}>
-        <ElCollapse modelValue={['layout', 'font', 'border', 'position']}>
-          <ElCollapseItem title="Layout" name="layout">
-            <ElForm labelWidth="80px" size="small" disabled={props.disabled}>
+        <el-collapse modelValue={['layout', 'font', 'border', 'position']}>
+          <el-collapse-item title="Layout" name="layout">
+            <el-form labelWidth="80px" size="small" disabled={props.disabled}>
               {renderSelectField('display', 'display', [
                 {label: 'default', value: ''},
                 {label: 'block', value: 'block'},
@@ -117,10 +116,10 @@ export const StyleSetter = defineComponent({
               {renderNumberField('height', 'height')}
               {renderNumberField('padding', 'padding')}
               {renderNumberField('margin', 'margin')}
-            </ElForm>
-          </ElCollapseItem>
-          <ElCollapseItem title="Font" name="font">
-            <ElForm labelWidth="80px" size="small" disabled={props.disabled}>
+            </el-form>
+          </el-collapse-item>
+          <el-collapse-item title="Font" name="font">
+            <el-form labelWidth="80px" size="small" disabled={props.disabled}>
               {renderColorField('color', 'color')}
               {renderNumberField('fontSize', 'font-size')}
               {renderNumberField('lineHeight', 'line-height')}
@@ -131,18 +130,18 @@ export const StyleSetter = defineComponent({
                 {label: 'center', value: 'center'},
                 {label: 'right', value: 'right'}
               ])}
-            </ElForm>
-          </ElCollapseItem>
-          <ElCollapseItem title="Border & Background" name="border">
-            <ElForm labelWidth="80px" size="small" disabled={props.disabled}>
+            </el-form>
+          </el-collapse-item>
+          <el-collapse-item title="Border & Background" name="border">
+            <el-form labelWidth="80px" size="small" disabled={props.disabled}>
               {renderColorField('backgroundColor', 'background')}
               {renderColorField('borderColor', 'border-color')}
               {renderNumberField('borderWidth', 'border-width')}
               {renderNumberField('borderRadius', 'border-radius')}
-            </ElForm>
-          </ElCollapseItem>
-          <ElCollapseItem title="Position" name="position">
-            <ElForm labelWidth="80px" size="small" disabled={props.disabled}>
+            </el-form>
+          </el-collapse-item>
+          <el-collapse-item title="Position" name="position">
+            <el-form labelWidth="80px" size="small" disabled={props.disabled}>
               {renderSelectField('position', 'position', [
                 {label: 'default', value: ''},
                 {label: 'static', value: 'static'},
@@ -156,9 +155,9 @@ export const StyleSetter = defineComponent({
               {renderNumberField('bottom', 'bottom')}
               {renderNumberField('left', 'left')}
               {renderNumberField('zIndex', 'z-index')}
-            </ElForm>
-          </ElCollapseItem>
-        </ElCollapse>
+            </el-form>
+          </el-collapse-item>
+        </el-collapse>
       </div>
     );
   }

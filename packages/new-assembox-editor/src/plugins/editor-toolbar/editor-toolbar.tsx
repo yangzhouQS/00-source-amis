@@ -1,15 +1,7 @@
-/**
+﻿/**
  * 顶部工具栏（预览/设计切换 + 撤销/重做 + 设备预设）
  */
 import {defineComponent, PropType} from 'vue';
-import {
-  ElButton,
-  ElButtonGroup,
-  ElTooltip,
-  ElDivider,
-  ElRadioGroup,
-  ElRadioButton
-} from 'element-plus';
 import {
   RefreshLeft,
   RefreshRight,
@@ -48,8 +40,8 @@ export const EditorToolbar = defineComponent({
           }}
         >
           {/* 设计/预览切换 */}
-          <ElButtonGroup>
-            <ElButton
+          <el-button-group>
+            <el-button
               size="small"
               type={store.state.designMode === 'design' ? 'primary' : 'default'}
               icon={Edit}
@@ -59,8 +51,8 @@ export const EditorToolbar = defineComponent({
               }}
             >
               设计
-            </ElButton>
-            <ElButton
+            </el-button>
+            <el-button
               size="small"
               type={
                 store.state.designMode === 'preview' ? 'primary' : 'default'
@@ -72,60 +64,60 @@ export const EditorToolbar = defineComponent({
               }}
             >
               预览
-            </ElButton>
-          </ElButtonGroup>
+            </el-button>
+          </el-button-group>
 
-          <ElDivider direction="vertical" />
+          <el-divider direction="vertical" />
 
           {/* 撤销/重做 */}
-          <ElButtonGroup>
-            <ElTooltip content="撤销 (Ctrl+Z)" placement="bottom">
-              <ElButton
+          <el-button-group>
+            <el-tooltip content="撤销 (Ctrl+Z)" placement="bottom">
+              <el-button
                 size="small"
                 disabled={!store.canUndo}
                 icon={RefreshLeft}
                 onClick={() => props.editor.undo()}
               />
-            </ElTooltip>
-            <ElTooltip content="重做 (Ctrl+Y)" placement="bottom">
-              <ElButton
+            </el-tooltip>
+            <el-tooltip content="重做 (Ctrl+Y)" placement="bottom">
+              <el-button
                 size="small"
                 disabled={!store.canRedo}
                 icon={RefreshRight}
                 onClick={() => props.editor.redo()}
               />
-            </ElTooltip>
-          </ElButtonGroup>
+            </el-tooltip>
+          </el-button-group>
 
-          <ElDivider direction="vertical" />
+          <el-divider direction="vertical" />
 
           {/* 节点操作（有选中时可用） */}
           {store.state.activeId && (
-            <ElButtonGroup>
-              <ElTooltip content="复制 (Ctrl+D)" placement="bottom">
-                <ElButton
+            <el-button-group>
+              <el-tooltip content="复制 (Ctrl+D)" placement="bottom">
+                <el-button
                   size="small"
                   icon={CopyDocument}
                   onClick={() => props.editor.duplicate(store.state.activeId!)}
                 />
-              </ElTooltip>
-              <ElTooltip content="删除 (Delete)" placement="bottom">
-                <ElButton
+              </el-tooltip>
+              <el-tooltip content="删除 (Delete)" placement="bottom">
+                <el-button
                   size="small"
                   icon={Delete}
                   type="danger"
                   onClick={() => props.editor.remove(store.state.activeId!)}
                 />
-              </ElTooltip>
-            </ElButtonGroup>
+              </el-tooltip>
+            </el-button-group>
           )}
 
           <div style={{flex: 1}} />
 
           {/* 右侧面板切换 */}
-          <ElButton size="small" link onClick={() => store.toggleRightPanel()}>
+          <el-button size="small" link onClick={() => store.toggleRightPanel()}>
             {store.state.rightPanelVisible ? '隐藏面板' : '显示面板'}
-          </ElButton>
+          </el-button>
         </div>
       );
     };

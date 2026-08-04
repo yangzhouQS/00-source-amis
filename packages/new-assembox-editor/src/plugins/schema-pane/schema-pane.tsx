@@ -1,10 +1,10 @@
-/**
+﻿/**
  * Schema 源码面板（Monaco JSON 编辑器）
  * 查看/编辑当前 schema，编辑后应用回画布
  * 使用 @guolao/vue-monaco-editor（CDN loader，免本地 worker 配置）
  */
 import {defineComponent, PropType, ref, watch} from 'vue';
-import {ElButton, ElMessage} from 'element-plus';
+import { ElMessage } from 'element-plus';
 import {VueMonacoEditor} from '@guolao/vue-monaco-editor';
 import type {Editor} from '../../core/editor';
 import {useAssemNamespace} from '../../hooks/use-assem-namespace';
@@ -42,15 +42,15 @@ export const SchemaPane = defineComponent({
     return () => (
       <div class={ns.b()}>
         <div class={ns.e('toolbar')}>
-          <ElButton size="small" type="primary" onClick={apply}>
+          <el-button size="small" type="primary" onClick={apply}>
             应用
-          </ElButton>
-          <ElButton
+          </el-button>
+          <el-button
             size="small"
             onClick={() => navigator.clipboard?.writeText(text.value)}
           >
             复制
-          </ElButton>
+          </el-button>
         </div>
         <div class={ns.e('editor')} style={{flex: 1, minHeight: 0}}>
           <VueMonacoEditor

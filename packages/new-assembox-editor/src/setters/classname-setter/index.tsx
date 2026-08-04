@@ -1,8 +1,7 @@
-/**
+﻿/**
  * ClassNameSetter - CSS class name multi-select (tag mode)
  */
 import {defineComponent} from 'vue';
-import {ElSelect, ElOption} from 'element-plus';
 
 export const ClassNameSetter = defineComponent({
   name: 'ClassNameSetter',
@@ -20,7 +19,7 @@ export const ClassNameSetter = defineComponent({
         new Set([...props.classNameList, ...selected])
       );
       return (
-        <ElSelect
+        <el-select
           modelValue={selected}
           multiple
           filterable
@@ -35,9 +34,9 @@ export const ClassNameSetter = defineComponent({
           }
         >
           {options.map(cls => (
-            <ElOption key={cls} label={cls} value={cls} />
+            <el-option key={cls} label={cls} value={cls} />
           ))}
-        </ElSelect>
+        </el-select>
       );
     };
   }

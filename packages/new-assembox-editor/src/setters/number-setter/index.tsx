@@ -1,13 +1,12 @@
-/**
+﻿/**
  * NumberSetter - 数字输入
  */
-import {ElInputNumber} from 'element-plus';
 import {defineSetter, renderPreview} from '../base';
 
 export const NumberSetter = defineSetter<number>('NumberSetter', props => {
   if (props.isPreview) return renderPreview(props.value);
   return (
-    <ElInputNumber
+    <el-input-number
       modelValue={
         typeof props.value === 'number' ? props.value : props.defaultValue ?? 0
       }

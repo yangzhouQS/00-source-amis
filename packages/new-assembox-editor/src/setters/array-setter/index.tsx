@@ -5,7 +5,6 @@ const ns = useAssemNamespace('array-setter');
  * ArraySetter - array editor (add/remove/sort items, itemSetter for children)
  */
 import {defineComponent, h, ref} from 'vue';
-import {ElButton, ElEmpty} from 'element-plus';
 import {Plus, Delete, Rank} from '@element-plus/icons-vue';
 import {useSetterCtx} from '../base';
 import './../composite.less';
@@ -129,32 +128,32 @@ export const ArraySetter = defineComponent({
                     )}
                   </div>
                   <div class="assem-array-item-actions">
-                    <ElButton
+                    <el-button
                       link
                       disabled={props.disabled}
                       onClick={() => removeItem(index)}
                     >
                       <Delete />
-                    </ElButton>
+                    </el-button>
                   </div>
                 </div>
               ))}
             </div>
           ) : (
-            <ElEmpty
+            <el-empty
               description="No items, click below to add"
               imageSize={40}
             />
           )}
           {!reachedMax && !props.disabled && (
-            <ElButton
+            <el-button
               class="assem-array-add"
               type="primary"
               link
               onClick={addItem}
             >
               <Plus /> Add item
-            </ElButton>
+            </el-button>
           )}
         </div>
       );

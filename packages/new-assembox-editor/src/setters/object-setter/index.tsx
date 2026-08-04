@@ -6,7 +6,6 @@ const ns = useAssemNamespace('object-setter');
  * Renders child fields from config.items; child setters resolved via SetterRegistry
  */
 import {defineComponent, h} from 'vue';
-import {ElForm, ElFormItem, ElEmpty} from 'element-plus';
 import {useSetterCtx} from '../base';
 import {resolveSetter, isFieldHidden} from '../resolve';
 import type {PropConfig} from '../../schema/types';
@@ -30,11 +29,11 @@ export const ObjectSetter = defineComponent({
         props.value && typeof props.value === 'object' ? props.value : {};
       const items = props.config?.items ?? [];
       if (!items.length) {
-        return <ElEmpty description="No field config" imageSize={50} />;
+        return <el-empty description="No field config" imageSize={50} />;
       }
       return (
         <div class="assem-object-setter">
-          <ElForm labelWidth="90px" size="small" disabled={props.disabled}>
+          <el-form labelWidth="90px" size="small" disabled={props.disabled}>
             {items.map(prop => {
               if (isFieldHidden(prop, value)) return null;
               const resolved = ctx?.setterRegistry
@@ -43,7 +42,7 @@ export const ObjectSetter = defineComponent({
               const childValue = value[prop.name];
               const SetterComp = resolved?.component;
               return (
-                <ElFormItem key={prop.name} label={prop.title ?? prop.name}>
+                <el-form-item key={prop.name} label={prop.title ?? prop.name}>
                   {SetterComp ? (
                     h(SetterComp, {
                       value: childValue,
@@ -60,10 +59,10 @@ export const ObjectSetter = defineComponent({
                       no setter: {resolved?.setterName ?? '?'}
                     </span>
                   )}
-                </ElFormItem>
+                </el-form-item>
               );
             })}
-          </ElForm>
+          </el-form>
         </div>
       );
     };

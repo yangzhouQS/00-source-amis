@@ -1,8 +1,7 @@
-/**
+﻿/**
  * VariableSetter - variable binding ({{expression}})
  */
 import {defineComponent} from 'vue';
-import {ElInput} from 'element-plus';
 
 interface VariableValue {
   type: 'variable';
@@ -28,7 +27,7 @@ export const VariableSetter = defineComponent({
       props.onChange(expr ? {type: 'variable', value: expr} : undefined);
     };
     return () => (
-      <ElInput
+      <el-input
         modelValue={getExpr()}
         disabled={props.disabled}
         placeholder="Bind variable, e.g. this.state.foo"
@@ -39,7 +38,7 @@ export const VariableSetter = defineComponent({
           prepend: () => <span style="color:#909399">{'{{'}</span>,
           append: () => <span style="color:#909399">{'}}'}</span>
         }}
-      </ElInput>
+      </el-input>
     );
   }
 });

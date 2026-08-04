@@ -1,17 +1,9 @@
-/**
+﻿/**
  * 设置面板（属性/样式/事件/高级 Tab）
  * 选区驱动：读取 store.activeNode，用 catalog 组件 props 配置渲染 setter
  * 变更通过 editor.updateProps 同步到画布（属性写入 __nodeOptions）
  */
 import {defineComponent, PropType, computed, h, provide} from 'vue';
-import {
-  ElTabs,
-  ElTabPane,
-  ElForm,
-  ElFormItem,
-  ElEmpty,
-  ElButton
-} from 'element-plus';
 import type {Editor} from '../../core/editor';
 import {resolveSetter, isFieldHidden, SETTER_CONTEXT_KEY} from '../../setters';
 import {useAssemNamespace} from '../../hooks/use-assem-namespace';
@@ -59,7 +51,7 @@ export const SettingsPane = defineComponent({
       const currentValue = nodeOptions[propConfig.name];
 
       return (
-        <ElFormItem
+        <el-form-item
           key={propConfig.name}
           label={propConfig.title ?? propConfig.name}
         >
@@ -77,7 +69,7 @@ export const SettingsPane = defineComponent({
               无 setter: {resolved.setterName}
             </span>
           )}
-        </ElFormItem>
+        </el-form-item>
       );
     };
 
@@ -86,7 +78,7 @@ export const SettingsPane = defineComponent({
       if (!node) {
         return (
           <div class={ns.b()}>
-            <ElEmpty description="请选择组件" imageSize={60} />
+            <el-empty description="请选择组件" imageSize={60} />
           </div>
         );
       }
@@ -100,30 +92,30 @@ export const SettingsPane = defineComponent({
             <span class={ns.e('title')}>{m?.name ?? node.__nodeName}</span>
             <span class={ns.e('type')}>{node.__nodeOptions?.renderType}</span>
           </div>
-          <ElTabs modelValue="attribute">
-            <ElTabPane label="属性" name="attribute">
-              <ElForm labelWidth="80px" size="small">
+          <el-tabs modelValue="attribute">
+            <el-tab-pane label="属性" name="attribute">
+              <el-form labelWidth="80px" size="small">
                 {propsList.length ? (
                   propsList.map(renderField)
                 ) : (
-                  <ElEmpty description="无可配置属性" imageSize={50} />
+                  <el-empty description="无可配置属性" imageSize={50} />
                 )}
-              </ElForm>
-            </ElTabPane>
-            <ElTabPane label="样式" name="style">
+              </el-form>
+            </el-tab-pane>
+            <el-tab-pane label="样式" name="style">
               <StyleEditor
                 editor={props.editor}
                 nodeId={node.__nodeId}
                 style={node.__nodeStyle ?? {}}
               />
-            </ElTabPane>
-            <ElTabPane label="事件" name="event">
+            </el-tab-pane>
+            <el-tab-pane label="事件" name="event">
               <EventList editor={props.editor} events={events} />
-            </ElTabPane>
-            <ElTabPane label="高级" name="advanced">
+            </el-tab-pane>
+            <el-tab-pane label="高级" name="advanced">
               <AdvancedEditor editor={props.editor} nodeId={node.__nodeId} />
-            </ElTabPane>
-          </ElTabs>
+            </el-tab-pane>
+          </el-tabs>
         </div>
       );
     };
@@ -159,27 +151,27 @@ const StyleEditor = defineComponent({
       {label: '内联块', value: 'inline-block'}
     ];
     return () => (
-      <ElForm labelWidth="80px" size="small">
+      <el-form labelWidth="80px" size="small">
         {styleFields.map(f =>
           f.setter ? (
-            <ElFormItem key={f.key} label={f.label}>
+            <el-form-item key={f.key} label={f.label}>
               {h(f.setter, {
                 value: props.style[f.key],
                 onChange: (v: any) => update(f.key, v)
               })}
-            </ElFormItem>
+            </el-form-item>
           ) : null
         )}
         {SelectSetter ? (
-          <ElFormItem label="显示模式">
+          <el-form-item label="显示模式">
             {h(SelectSetter, {
               value: props.style.display ?? '',
               options: displayOptions,
               onChange: (v: any) => update('display', v)
             })}
-          </ElFormItem>
+          </el-form-item>
         ) : null}
-      </ElForm>
+      </el-form>
     );
   }
 });
@@ -240,14 +232,14 @@ const EventList = defineComponent({
                   }}
                 >
                   <span class={ns.e('event-name')}>{ev.title ?? ev.name}</span>
-                  <ElButton
+                  <el-button
                     size="small"
                     type="primary"
                     link
                     onClick={() => addAction(ev.name)}
                   >
                     + 添加动作
-                  </ElButton>
+                  </el-button>
                 </div>
                 {actions.length > 0 && (
                   <div
@@ -333,14 +325,14 @@ const EventList = defineComponent({
                             }}
                           />
                         )}
-                        <ElButton
+                        <el-button
                           size="small"
                           link
                           type="danger"
                           onClick={() => removeAction(ev.name, idx)}
                         >
                           ×
-                        </ElButton>
+                        </el-button>
                       </div>
                     ))}
                   </div>
@@ -349,7 +341,7 @@ const EventList = defineComponent({
             );
           })
         ) : (
-          <ElEmpty description="无可配置事件" imageSize={50} />
+          <el-empty description="无可配置事件" imageSize={50} />
         )}
       </div>
     );
@@ -364,20 +356,20 @@ const AdvancedEditor = defineComponent({
   },
   setup(props) {
     return () => (
-      <ElForm labelWidth="80px" size="small">
-        <ElFormItem label="节点ID">
+      <el-form labelWidth="80px" size="small">
+        <el-form-item label="节点ID">
           <code class={ns.e('node-id')}>{props.nodeId}</code>
-        </ElFormItem>
-        <ElFormItem label="操作">
-          <ElButton
+        </el-form-item>
+        <el-form-item label="操作">
+          <el-button
             type="danger"
             size="small"
             onClick={() => props.editor.remove(props.nodeId)}
           >
             删除节点
-          </ElButton>
-        </ElFormItem>
-      </ElForm>
+          </el-button>
+        </el-form-item>
+      </el-form>
     );
   }
 });

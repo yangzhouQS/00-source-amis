@@ -1,8 +1,7 @@
-/**
+﻿/**
  * RequestFnSetter - request/data-source service picker (tree-select)
  */
 import {defineComponent} from 'vue';
-import {ElTreeSelect} from 'element-plus';
 import {CircleCheck} from '@element-plus/icons-vue';
 import {normalizeOptions} from '../base';
 
@@ -61,7 +60,7 @@ export const RequestFnSetter = defineComponent({
           'onUpdate:modelValue': (v: any) => handleChange(v)
         };
         return (
-          <ElTreeSelect {...(treeProps as any)}>
+          <el-tree-select {...(treeProps as any)}>
             {{
               default: ({data}: {data: TreeDataItem}) => (
                 <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
@@ -75,7 +74,7 @@ export const RequestFnSetter = defineComponent({
                 </div>
               )
             }}
-          </ElTreeSelect>
+          </el-tree-select>
         );
       }
       const options = normalizeOptions(
@@ -100,7 +99,7 @@ export const RequestFnSetter = defineComponent({
         'style': 'width:100%',
         'onUpdate:modelValue': (v: any) => props.onChange(v)
       };
-      return <ElTreeSelect {...(flatProps as any)} />;
+      return <el-tree-select {...(flatProps as any)} />;
     };
   }
 });
