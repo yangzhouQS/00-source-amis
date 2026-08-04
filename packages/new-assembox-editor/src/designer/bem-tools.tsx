@@ -166,11 +166,17 @@ export const BemTools = defineComponent({
             editor: props.editor
           };
 
-          // 智能定位：上方空间不够时工具栏放下方
+          // 工具栏三段智能定位（参考 lowcode border-selecting Toolbar）：
+          //   上方空间够 → 放上方；下方空间够 → 放下方；都不够 → 回退到框内顶部
+          //   避免满页/顶部组件时 toolbar 被容器裁剪
+          const BAR = 22;
+          const canvasH = props.containerRef?.clientHeight ?? 0;
           const toolbarStyle =
-            pos.top < 24
-              ? {top: `${pos.height + 2}px`, right: '0px'}
-              : {top: '-22px', right: '0px'};
+            pos.top >= BAR
+              ? {top: `-${BAR}px`, right: '0px'}
+              : pos.top + pos.height + BAR <= canvasH
+                ? {top: `${pos.height + 2}px`, right: '0px'}
+                : {top: `${Math.max(2, 2 - pos.top)}px`, right: '0px'};
 
           boxes.push(
             <div class={ns.e('select-box')} style={posStyle(pos)}>
@@ -223,11 +229,15 @@ export const BemTools = defineComponent({
   }
 });
 
+/**
+ * border 定位样式：用 transform 而非 left/top。
+ * 关键：transform 是视觉变换，不参与父级 scrollWidth/scrollHeight 计算，
+ * 即使 border 移到容器外也不会撑高滚动容器（参考 lowcode lc-borders）。
+ */
 function posStyle(pos: BoxPos): Record<string, string> {
   return {
-    left: `${pos.left}px`,
-    top: `${pos.top}px`,
+    transform: `translate3d(${pos.left}px, ${pos.top}px, 0)`,
     width: `${pos.width}px`,
-    height: `${pos.height}px`
+    height: `${pos.height}px`,
   };
 }

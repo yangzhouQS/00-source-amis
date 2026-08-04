@@ -8,10 +8,12 @@
   overflow: visible;
 }
 
-/* ── 通用边框 ── */
+/* ── 通用边框（transform 定位：top/left 固定 0，由 translate3d 移动，避免撑高滚动容器） ── */
 .lc-assem-bem-tools__hover-box,
 .lc-assem-bem-tools__select-box {
   position: absolute;
+  top: 0;
+  left: 0;
   pointer-events: none;
   box-sizing: border-box;
   will-change: transform, width, height;
