@@ -9,7 +9,8 @@ import {
   ElCollapseItem,
   ElEmpty,
   ElIcon,
-  ElInput
+  ElInput,
+  ElScrollbar
 } from 'element-plus';
 import type {Editor} from '../../core/editor';
 import type {ComponentCatalogItem} from '../../scenario/types';
@@ -87,41 +88,44 @@ export const ComponentsPane = defineComponent({
       const groupList = Array.from(groups.entries());
       return (
         <div class={ns.b()}>
-          <div class={ns.e('search')} style={{padding: '8px'}}>
+          <div class={ns.e('search')}>
             <ElInput
               modelValue={keyword.value}
               onUpdate:modelValue={(v: string) => (keyword.value = v)}
               placeholder="搜索组件"
               clearable
               size="small"
+              prefix-icon="Search"
             />
           </div>
-          {groups.size === 0 ? (
-            <ElEmpty
-              description={
-                keyword.value ? '未找到匹配组件' : '暂无组件，请注册组件'
-              }
-              imageSize={60}
-            />
-          ) : groupList.length > 1 ? (
-            <ElCollapse modelValue={groupList.map(g => g[0])}>
-              {groupList.map(([groupName, categories]) => (
-                <ElCollapseItem
-                  key={groupName}
-                  title={groupName}
-                  name={groupName}
-                >
-                  {renderCategories(categories, onMouseDown, onClickInsert)}
-                </ElCollapseItem>
-              ))}
-            </ElCollapse>
-          ) : (
-            renderCategories(
-              groups.values().next().value ?? new Map(),
-              onMouseDown,
-              onClickInsert
-            )
-          )}
+          <ElScrollbar class={ns.e('scroll')}>
+            {groups.size === 0 ? (
+              <ElEmpty
+                description={
+                  keyword.value ? '未找到匹配组件' : '暂无组件，请注册组件'
+                }
+                imageSize={60}
+              />
+            ) : groupList.length > 1 ? (
+              <ElCollapse modelValue={groupList.map(g => g[0])}>
+                {groupList.map(([groupName, categories]) => (
+                  <ElCollapseItem
+                    key={groupName}
+                    title={groupName}
+                    name={groupName}
+                  >
+                    {renderCategories(categories, onMouseDown, onClickInsert)}
+                  </ElCollapseItem>
+                ))}
+              </ElCollapse>
+            ) : (
+              renderCategories(
+                groups.values().next().value ?? new Map(),
+                onMouseDown,
+                onClickInsert
+              )
+            )}
+          </ElScrollbar>
         </div>
       );
     };
