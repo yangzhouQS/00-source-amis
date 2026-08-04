@@ -1,10 +1,12 @@
 /**
  * BoolSetter - 布尔开关
  */
-import {defineSetter, renderPreview} from '../base';
+import { defineSetter, renderPreview } from "../base";
 
-export const BoolSetter = defineSetter<boolean>('BoolSetter', props => {
-  if (props.isPreview) return renderPreview(props.value ? '是' : '否');
+export const BoolSetter = defineSetter<boolean>("BoolSetter", (props) => {
+  if (props.isPreview) {
+    return renderPreview(props.value ? "是" : "否");
+  }
   return (
     <el-switch
       modelValue={!!props.value}

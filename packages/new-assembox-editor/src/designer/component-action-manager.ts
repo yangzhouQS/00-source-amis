@@ -46,7 +46,9 @@ export class ComponentActionManager {
   /** 移除 */
   unregister(name: string): void {
     const idx = this.actions.findIndex(a => a.name === name);
-    if (idx >= 0) this.actions.splice(idx, 1);
+    if (idx >= 0) {
+      this.actions.splice(idx, 1);
+    }
   }
 
   /** 获取可用动作（已过滤 condition） */

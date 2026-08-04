@@ -13,6 +13,7 @@
 **问题**：当前每个组件的 `props[]`（PropConfig 数组）全量手写，大量重复（label/placeholder/visible/disabled/layout...）。
 
 **amis 方案**：三层 DRY 复用
+
 ```
 层1：ae-* 控件（原子能力：APIControl/OptionControl/ValidationControl/EventControl）
 层2：tpl 片段（setSchemaTpl('label', schema) 全局注册，getSchemaTpl('label', patch) 参数化取用）
@@ -20,6 +21,7 @@
 ```
 
 **关键机制**：
+
 - `setSchemaTpl(name, value | (patch, options) => schema)` — 全局注册
 - `getSchemaTpl(name, patch, options)` — 取用，patch 合并
   - value 是函数：`tpl(patch, options)` 调用，patch 作入参
@@ -43,6 +45,7 @@
 - `submitOnChange:true` 实时保存
 
 **面板渲染链路**：
+
 ```
 Plugin.panelBodyCreator(context) → SchemaCollection
   ↓
@@ -76,6 +79,7 @@ class ButtonPlugin extends BasePlugin {
 ```
 
 编辑器全局收集所有插件的 events/actions 成 `pluginActions/pluginEvents`，`EventControl` 控件做跨组件联动编排：
+
 - 选事件 → 添加动作 → 选目标组件 → 配参数
 - 动作拖拽排序（Sortable.js）
 - 常用动作记忆（localStorage）
@@ -111,6 +115,7 @@ async buildDataSchemas(node, region, trigger) {
 ```
 
 **关键设计**：
+
 - **`$id` 稳定标识**（`节点id-节点type`）+ removeSchema/addSchema 去重
 - **递归聚合**：Table 不直接知道列字段，递归调子组件
 - **trigger 感知**：表格列内联动时自动建立"当前行"子作用域
@@ -133,6 +138,7 @@ async buildDataSchemas(node, region, trigger) {
 ```
 
 **工厂函数**：
+
 - `getSchemaTpl('tabs', config)` — 扁平化 body + 自动 p-none
 - `getSchemaTpl('collapseGroup', config)` — 折叠面板组，activeKey 自动计算
 - `config.filter(Boolean)` — 支持条件渲染写法
@@ -180,11 +186,12 @@ scope.close('dialogB');
 ```
 
 **组件查找 API**：
-| API | 策略 |
-|---|---|
-| `getComponentByName(name)` | 本作用域 → 向上递归 parent；支持 `a.b.c` 点号路径 |
-| `getComponentById(id)` | 从当前 scope 逐层向上到 root |
-| `getComponentByIdUnderCurrentScope(id)` | 只在当前 scope 子树内 |
+
+| API                                     | 策略                                              |
+| --------------------------------------- | ------------------------------------------------- |
+| `getComponentByName(name)`              | 本作用域 → 向上递归 parent；支持 `a.b.c` 点号路径 |
+| `getComponentById(id)`                  | 从当前 scope 逐层向上到 root                      |
+| `getComponentByIdUnderCurrentScope(id)` | 只在当前 scope 子树内                             |
 
 **Vue3 迁移**：`provide/inject` + 组件实例注册表（Map<name, instance>）。
 
@@ -194,11 +201,11 @@ scope.close('dialogB');
 
 **amis**：schema 属性加后缀即变表达式：
 
-| 后缀 | 处理 | 示例 |
-|---|---|---|
-| `xxxOn` | 布尔条件求值 | `visibleOn: "this.status == 1"` |
-| `xxxExpr` | 模板字符串渲染 | `classNameExpr: "bg-${type}"` |
-| `xxxClassName` | 类名对象递归求值 | `{active: "this.active"}` |
+| 后缀           | 处理             | 示例                            |
+| -------------- | ---------------- | ------------------------------- |
+| `xxxOn`        | 布尔条件求值     | `visibleOn: "this.status == 1"` |
+| `xxxExpr`      | 模板字符串渲染   | `classNameExpr: "bg-${type}"`   |
+| `xxxClassName` | 类名对象递归求值 | `{active: "this.active"}`       |
 
 `getExprProperties(schema, data)` 遍历 schema 所有属性，正则匹配后缀，求值后生成最终 props。配合 MobX `reaction` 实现**响应式**（表达式结果随 store.data 自动更新）。
 
@@ -208,12 +215,12 @@ scope.close('dialogB');
 
 ### 9. filterProps 编辑态 mock ★★★★☆
 
-| 场景 | mock 内容 | 原因 |
-|---|---|---|
-| Table/Cards/List 无数据 | 根据 columns 定义生成假数据行 | 空容器无法预览样式 |
-| Dialog/Drawer 编辑态 | `InlineModal` 内联化展示 | 弹窗默认不显示，无法选中 |
-| 有数据时 | `slice(0, 3)` 限流 | 大数据卡死编辑器 |
-| Form | 规范化 rules 结构 | 编辑态需序列化 |
+| 场景                    | mock 内容                     | 原因                     |
+| ----------------------- | ----------------------------- | ------------------------ |
+| Table/Cards/List 无数据 | 根据 columns 定义生成假数据行 | 空容器无法预览样式       |
+| Dialog/Drawer 编辑态    | `InlineModal` 内联化展示      | 弹窗默认不显示，无法选中 |
+| 有数据时                | `slice(0, 3)` 限流            | 大数据卡死编辑器         |
+| Form                    | 规范化 rules 结构             | 编辑态需序列化           |
 
 **关键**：mock 结果缓存在 `node.state` 避免重复计算。
 
@@ -228,6 +235,7 @@ DSBuilderManager                 // 每插件持有一个，管理多 builder
 ```
 
 核心能力：
+
 - `match(schema)` — 反查当前 schema 用哪个 builder
 - `makeSourceSettingForm()` — 生成数据源配置表单
 - `buildInsertSchema/buildEditSchema/buildViewSchema` — 各场景 schema 构建
@@ -238,11 +246,11 @@ DSBuilderManager                 // 每插件持有一个，管理多 builder
 
 ### 11. 渲染器注册三表 + weight ★★★☆☆
 
-| 表 | 类型 | 用途 | 复杂度 |
-|---|---|---|---|
-| `renderers` | 有序数组 | path 正则匹配（weight 小优先） | O(n) |
-| `renderersTypeMap` | 哈希映射 | type 直接映射 | **O(1)** |
-| `renderersMap` | 标记表 | 存在性判断 | O(1) |
+| 表                 | 类型     | 用途                           | 复杂度   |
+| ------------------ | -------- | ------------------------------ | -------- |
+| `renderers`        | 有序数组 | path 正则匹配（weight 小优先） | O(n)     |
+| `renderersTypeMap` | 哈希映射 | type 直接映射                  | **O(1)** |
+| `renderersMap`     | 标记表   | 存在性判断                     | O(1)     |
 
 `resolveRenderer` 先查 typeMap（O(1)），未命中才走 weight 排序数组。缓存策略只缓存纯正则结果。
 
@@ -296,6 +304,7 @@ StoreNode（基础：树形结构 + 生命周期）
 ### Store 注入与数据同步
 
 `HocStoreFactory`（WithStore.tsx）的 `componentDidUpdate` 是多分支数据同步状态机：
+
 - `extendsData === false`（独立数据域）→ initData 合并
 - `scope === data`（嵌套场景）→ createObject
 - `data.__super` 存在 → extendObject + syncDataFromSuper
@@ -303,12 +312,12 @@ StoreNode（基础：树形结构 + 生命周期）
 
 ### Vue3 对比
 
-| amis（React + MST） | Vue3 对应 |
-|---|---|
-| MST Store 树 | Pinia store 树 / reactive 嵌套 |
-| `__super` 原型链（frozen + clone） | Proxy + reactive（响应式免费） |
+| amis（React + MST）                   | Vue3 对应                        |
+| ------------------------------------- | -------------------------------- |
+| MST Store 树                          | Pinia store 树 / reactive 嵌套   |
+| `__super` 原型链（frozen + clone）    | Proxy + reactive（响应式免费）   |
 | MobX reaction（手动订阅 + stringify） | computed / watch（自动依赖追踪） |
-| React Context | provide / inject |
+| React Context                         | provide / inject                 |
 
 **核心启示**：Vue3 的响应式系统可大幅简化 amis 中因 React + MST frozen 特性带来的 clone/reaction 复杂度。
 
@@ -325,17 +334,18 @@ runActions(actions, renderer, event);       // 统一调度
 
 **Action 分类**：
 
-| 分类 | 动作 |
-|---|---|
-| 逻辑控制 | loop/break/continue/switch/parallel/wait |
+| 分类     | 动作                                                  |
+| -------- | ----------------------------------------------------- |
+| 逻辑控制 | loop/break/continue/switch/parallel/wait              |
 | 组件交互 | setValue/reload/validateFormItem/show/hidden/disabled |
-| 接口 | ajax/download |
-| UI | dialog/drawer/closeDialog/toast/copy/email/link/print |
-| 事件 | broadcast/setEventData/preventDefault/stopPropagation |
-| 页面 | goBack/refresh/goPage |
-| 自定义 | custom（执行 script） |
+| 接口     | ajax/download                                         |
+| UI       | dialog/drawer/closeDialog/toast/copy/email/link/print |
+| 事件     | broadcast/setEventData/preventDefault/stopPropagation |
+| 页面     | goBack/refresh/goPage                                 |
+| 自定义   | custom（执行 script）                                 |
 
 **RendererEvent 上下文**：
+
 - `preventDefault()` — 阻止组件原有行为
 - `stopPropagation()` — 阻止后续动作
 - `setData(data)` — 动作链间传递数据（如 ajax 结果供后续用）
@@ -359,16 +369,16 @@ DSBuilderManager（每 Plugin 持有一个，管理多 builder）
 
 ### 核心方法
 
-| 方法组 | 能力 |
-|---|---|
-| 元信息 | name/order/features（List/Insert/Edit/View/Delete）/isDefault |
-| 匹配 | match(schema, key) — 判断属于哪个 builder |
-| 字段 | getContextFields / getAvailableContextFields — 数据联动 |
-| 配置表单 | makeSourceSettingForm / makeFieldsSettingForm |
-| 场景构建 | buildInsertSchema/buildEditSchema/buildViewSchema |
-| CRUD 专属 | buildCRUDColumnsSchema/buildCRUDFilterSchema |
-| 脚手架 | buildFormSchema/buildCRUDSchema |
-| 还原 | guessCRUDScaffoldConfig/guessFormScaffoldConfig |
+| 方法组    | 能力                                                          |
+| --------- | ------------------------------------------------------------- |
+| 元信息    | name/order/features（List/Insert/Edit/View/Delete）/isDefault |
+| 匹配      | match(schema, key) — 判断属于哪个 builder                     |
+| 字段      | getContextFields / getAvailableContextFields — 数据联动       |
+| 配置表单  | makeSourceSettingForm / makeFieldsSettingForm                 |
+| 场景构建  | buildInsertSchema/buildEditSchema/buildViewSchema             |
+| CRUD 专属 | buildCRUDColumnsSchema/buildCRUDFilterSchema                  |
+| 脚手架    | buildFormSchema/buildCRUDSchema                               |
+| 还原      | guessCRUDScaffoldConfig/guessFormScaffoldConfig               |
 
 **协作模式**：面板用 `getDSSelectorSchema()` 生成"数据来源"单选 + 每个 builder 一组配置，`visibleOn` 切换。新增数据源只需 `registerDSBuilder(new DBDSBuilder)`，无需改 Form 插件。
 
@@ -416,18 +426,18 @@ interface PanelItem {
 
 ## 八、配置片段高频清单（100+ 片段分类）
 
-| 类别 | 高频片段 | 用途 |
-|---|---|---|
-| 容器结构 | tabs/collapseGroup/collapse/divider | 面板骨架 |
-| 表单项 | formItemName/label/placeholder/required/description | 几乎每个表单组件都用 |
-| 状态 | disabled/readonly/visible/hidden/static | 统一 ae-StatusControl |
-| 公式 | formulaControl/textareaFormulaControl/expression | 公式编辑器 |
-| API | apiControl/source/initFetch/interval | 数据源配置 |
-| 选项 | options/multiple/menuTpl | 选项编辑 |
-| 校验 | validations/validationErrors | 校验规则 |
-| 布局 | layout:position/layout:flex/layout:inset | 20+ 布局片段 |
-| 样式 | theme:base/theme:font/theme:border/theme:paddingAndMargin | 主题令牌系统 |
-| 事件 | eventControl/status | 事件编排 |
+| 类别     | 高频片段                                                  | 用途                  |
+| -------- | --------------------------------------------------------- | --------------------- |
+| 容器结构 | tabs/collapseGroup/collapse/divider                       | 面板骨架              |
+| 表单项   | formItemName/label/placeholder/required/description       | 几乎每个表单组件都用  |
+| 状态     | disabled/readonly/visible/hidden/static                   | 统一 ae-StatusControl |
+| 公式     | formulaControl/textareaFormulaControl/expression          | 公式编辑器            |
+| API      | apiControl/source/initFetch/interval                      | 数据源配置            |
+| 选项     | options/multiple/menuTpl                                  | 选项编辑              |
+| 校验     | validations/validationErrors                              | 校验规则              |
+| 布局     | layout:position/layout:flex/layout:inset                  | 20+ 布局片段          |
+| 样式     | theme:base/theme:font/theme:border/theme:paddingAndMargin | 主题令牌系统          |
+| 事件     | eventControl/status                                       | 事件编排              |
 
 ---
 
@@ -477,10 +487,10 @@ interface PanelItem {
 
 ## 十一、与配套文档的关系
 
-| 文档 | 主题 | 本文增量 |
-|---|---|---|
-| `04-lowcode插件设计借鉴分析.md` | lowcode 插件（factory + skeleton） | — |
-| `05-lowcode物料meta设计借鉴分析.md` | lowcode 物料 meta（PropConfig/ComponentMeta） | — |
-| `06-amis插件系统设计借鉴分析.md` | amis 插件系统（PanelDock/Dock/调度） | — |
-| `09-编辑器骨架灵活化设计.md` | 骨架/面板（浮动固定/FocusTracker） | — |
-| **本文 10** | **amis 运行时 + 编辑器内核 + 配置体系** | **配置片段工厂/数据契约/事件编排/DSBuilder/Store/Scoped/动作系统** |
+| 文档                                | 主题                                          | 本文增量                                                           |
+| ----------------------------------- | --------------------------------------------- | ------------------------------------------------------------------ |
+| `04-lowcode插件设计借鉴分析.md`     | lowcode 插件（factory + skeleton）            | —                                                                  |
+| `05-lowcode物料meta设计借鉴分析.md` | lowcode 物料 meta（PropConfig/ComponentMeta） | —                                                                  |
+| `06-amis插件系统设计借鉴分析.md`    | amis 插件系统（PanelDock/Dock/调度）          | —                                                                  |
+| `09-编辑器骨架灵活化设计.md`        | 骨架/面板（浮动固定/FocusTracker）            | —                                                                  |
+| **本文 10**                         | **amis 运行时 + 编辑器内核 + 配置体系**       | **配置片段工厂/数据契约/事件编排/DSBuilder/Store/Scoped/动作系统** |

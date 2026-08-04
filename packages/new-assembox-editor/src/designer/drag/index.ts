@@ -1,15 +1,15 @@
+export { CanvasSensor } from "./canvas-sensor";
+export type { CanvasSensorOptions } from "./canvas-sensor";
+export { DragGhost } from "./drag-ghost";
 /**
  * 拖拽引擎模块出口
  */
-export {Dragon, isShaken} from './dragon';
-export {CanvasSensor} from './canvas-sensor';
-export type {CanvasSensorOptions} from './canvas-sensor';
-export {DragGhost} from './drag-ghost';
+export { Dragon, isShaken } from "./dragon";
 export type {
   DragObject,
   DragObjectType,
-  LocateEvent,
-  DropLocation,
+  DragonCallbacks,
   DragSensor,
-  DragonCallbacks
-} from './types';
+  DropLocation,
+  LocateEvent,
+} from "./types";

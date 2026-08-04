@@ -1,3 +1,25 @@
+import type { DragObject, DropLocation } from "../designer/drag/types";
+import type {
+  IComponentCatalog,
+  INestingRules,
+  IRenderer,
+  ISchemaOps,
+  ScenarioProfile,
+} from "../scenario/types";
+import type { InjectionToken } from "./di-container";
+import type { Logger } from "./logger";
+import type { EditorPluginObject, PluginContext } from "./plugin-types";
+import { ComponentActionManager } from "../designer/component-action-manager";
+import { ContextMenuManager } from "../designer/context-menu-manager";
+import { Dragon } from "../designer/drag/dragon";
+import { LiveEditing } from "../designer/live-editing";
+import { builtinPlugins } from "../plugins/builtin-plugins";
+import { ActionRegistry } from "../registry/action-registry";
+import { AssetRegistry } from "../registry/asset-registry";
+import { SetterRegistry } from "../registry/setter-registry";
+import * as TOKENS from "../registry/tokens";
+import { scenarioRegistry } from "../scenario/registry";
+import { Skeleton } from "../skeleton/skeleton";
 /**
  * Editor 门面
  * 聚合所有核心子系统，对外提供高层 API
@@ -6,37 +28,16 @@
  * 场景驱动：通过 ScenarioProfile 提供 schemaOps / renderer / catalog / nestingRules，
  * 不再依赖 amis 风格的 PageSchema/operations/bridge。
  */
-import {DIContainer} from './di-container';
-import {EventBus, EVENT} from './event-bus';
-import {EditorStore} from './store';
-import {Selection} from './selection';
-import {PluginManager} from './plugin-manager';
-import {SetterRegistry} from '../registry/setter-registry';
-import {AssetRegistry} from '../registry/asset-registry';
-import {ActionRegistry} from '../registry/action-registry';
-import {Skeleton} from '../skeleton/skeleton';
-import {Dragon} from '../designer/drag/dragon';
-import {KeyboardManager} from './keyboard-manager';
-import {LiveEditing} from '../designer/live-editing';
-import {ContextMenuManager} from '../designer/context-menu-manager';
-import {ComponentActionManager} from '../designer/component-action-manager';
-import type {DragObject, DropLocation} from '../designer/drag/types';
-import {getLogger, type Logger} from './logger';
-import * as TOKENS from '../registry/tokens';
-import type {
-  ISchemaOps,
-  IRenderer,
-  INestingRules,
-  IComponentCatalog,
-  ScenarioProfile
-} from '../scenario/types';
-import {scenarioRegistry} from '../scenario/registry';
-import type {PluginContext, EditorPluginObject} from './plugin-types';
-import type {InjectionToken} from './di-container';
-import {builtinPlugins} from '../plugins/builtin-plugins';
+import { DIContainer } from "./di-container";
+import { EVENT, EventBus } from "./event-bus";
+import { KeyboardManager } from "./keyboard-manager";
+import { getLogger } from "./logger";
+import { PluginManager } from "./plugin-manager";
+import { Selection } from "./selection";
+import { EditorStore } from "./store";
 
 export interface EditorOptions {
-  platform?: 'desktop' | 'mobile';
+  platform?: "desktop" | "mobile";
   /** 场景 id（决定 schemaOps/renderer/catalog/nestingRules） */
   scenario: string;
   /** 初始 schema（PC 格式，省略则用场景空模板） */
@@ -46,7 +47,7 @@ export interface EditorOptions {
   /** 是否禁用内置插件（默认 false） */
   disableBuiltin?: boolean;
   /** 画布模式：inline（同 DOM 进程内） | iframe（资源隔离） */
-  canvasMode?: 'inline' | 'iframe';
+  canvasMode?: "inline" | "iframe";
 }
 
 export class Editor {
@@ -81,11 +82,19 @@ export class Editor {
   private destroyed = false;
 
   /** 便捷别名：schema 操作 */
-  get schemaOps(): ISchemaOps { return this.profile.schemaOps; }
+  get schemaOps(): ISchemaOps {
+    return this.profile.schemaOps;
+  }
+
   /** 便捷别名：嵌套校验 */
-  get nestingRules(): INestingRules { return this.profile.nestingRules; }
+  get nestingRules(): INestingRules {
+    return this.profile.nestingRules;
+  }
+
   /** 便捷别名：组件目录 */
-  get catalog(): IComponentCatalog { return this.profile.componentCatalog; }
+  get catalog(): IComponentCatalog {
+    return this.profile.componentCatalog;
+  }
 
   constructor(options: EditorOptions) {
     // 1. 激活场景档案
@@ -94,10 +103,10 @@ export class Editor {
     // 2. 初始化 store（场景驱动 schemaOps）
     this.store = new EditorStore(
       options.schema ?? this.profile.emptySchema(),
-      this.profile.schemaOps
+      this.profile.schemaOps,
     );
-    this.store.state.platform = options.platform ?? 'desktop';
-    (this.store.state as any).canvasMode = options.canvasMode ?? 'inline';
+    this.store.state.platform = options.platform ?? "desktop";
+    (this.store.state as any).canvasMode = options.canvasMode ?? "inline";
     // store 持有 editor 反向引用（bem-tools 用）
     (this.store as any).__editor = this;
 
@@ -105,7 +114,9 @@ export class Editor {
     this.pluginManager = new PluginManager(this.bus);
     // 注册插件：内置（除非 disableBuiltin）+ 用户插件（可带 options）
     if (!options.disableBuiltin) {
-      for (const p of builtinPlugins) this.pluginManager.register(p);
+      for (const p of builtinPlugins) {
+        this.pluginManager.register(p);
+      }
     }
     for (const item of options.plugins ?? []) {
       if (Array.isArray(item)) {
@@ -117,8 +128,8 @@ export class Editor {
 
     // 3. 创建渲染器并绑定回调（DesignerHost 负责 mount）
     // iframe 模式优先用场景的 iframe 渲染器（资源/样式隔离），否则降级 inline
-    this.renderer =
-      options.canvasMode === 'iframe' && this.profile.createIframeRenderer
+    this.renderer
+      = options.canvasMode === "iframe" && this.profile.createIframeRenderer
         ? this.profile.createIframeRenderer()
         : this.profile.createRenderer();
     this.renderer.onClick?.((nodeId, _e) => this.handleClick(nodeId));
@@ -127,7 +138,7 @@ export class Editor {
 
     // 4. 拖拽引擎（自模拟，跨 iframe 可靠）
     this.dragon = new Dragon();
-    this.logger = getLogger('editor');
+    this.logger = getLogger("editor");
     this.wireDragon();
 
     // 快捷键
@@ -162,7 +173,7 @@ export class Editor {
     // 投放执行
     this.dragon.on({
       onDrop: (dragObject: DragObject, location: DropLocation) => {
-        if (dragObject.type === 'nodeData' && dragObject.data) {
+        if (dragObject.type === "nodeData" && dragObject.data) {
           // 新增组件：从目录取 scaffold 创建节点
           const renderType = dragObject.data.renderType ?? dragObject.data.type;
           const item = this.catalog
@@ -172,37 +183,37 @@ export class Editor {
             const node = this.schemaOps.createNode(
               renderType,
               item.name,
-              this.schemaOps.cloneSchema(item.scaffold)
+              this.schemaOps.cloneSchema(item.scaffold),
             );
             this.insert(
               location.containerId,
               location.region,
               node,
-              location.index
+              location.index,
             );
           }
-        } else if (dragObject.type === 'node' && dragObject.nodeId) {
+        } else if (dragObject.type === "node" && dragObject.nodeId) {
           // 移动现有节点
           if (!this.isDescendantNode(dragObject.nodeId, location.containerId)) {
             this.move(
               dragObject.nodeId,
               location.containerId,
               location.region,
-              location.index
+              location.index,
             );
           }
         }
-      }
+      },
     });
     // 拖拽态副作用（光标 + renderer 拖拽态）
     this.dragon.setDragStateSetter((active: boolean) => {
       this.renderer?.setDraggingState(active);
-      document.body.style.cursor = active ? 'copy' : '';
-      document.body.style.userSelect = active ? 'none' : '';
+      document.body.style.cursor = active ? "copy" : "";
+      document.body.style.userSelect = active ? "none" : "";
       return () => {
         this.renderer?.setDraggingState(false);
-        document.body.style.cursor = '';
-        document.body.style.userSelect = '';
+        document.body.style.cursor = "";
+        document.body.style.userSelect = "";
       };
     });
   }
@@ -210,13 +221,17 @@ export class Editor {
   /** 判断 descendant 是否为 ancestor 的后代 */
   private isDescendantNode(
     descendantId: string,
-    ancestorId: string
+    ancestorId: string,
   ): boolean {
-    if (descendantId === ancestorId) return true;
+    if (descendantId === ancestorId) {
+      return true;
+    }
     let cur = this.schemaOps.getParentById(this.store.schema, ancestorId);
     while (cur) {
       const curId = this.schemaOps.getNodeId(cur);
-      if (curId === descendantId) return true;
+      if (curId === descendantId) {
+        return true;
+      }
       cur = this.schemaOps.getParentById(this.store.schema, curId);
     }
     return false;
@@ -229,11 +244,11 @@ export class Editor {
       .find(c => c.renderType === renderType);
     this.dragon.boost(
       {
-        type: 'nodeData',
-        data: item ?? {renderType},
-        title: item?.name ?? renderType
+        type: "nodeData",
+        data: item ?? { renderType },
+        title: item?.name ?? renderType,
       },
-      e
+      e,
     );
   }
 
@@ -242,11 +257,11 @@ export class Editor {
     const node = this.schemaOps.getNodeById(this.store.schema, nodeId);
     this.dragon.boost(
       {
-        type: 'node',
+        type: "node",
         nodeId,
-        title: this.schemaOps.getNodeLabel(node ?? {}) || '节点'
+        title: this.schemaOps.getNodeLabel(node ?? {}) || "节点",
       },
-      e
+      e,
     );
   }
 
@@ -254,7 +269,9 @@ export class Editor {
   get rootNodeId(): string | null {
     let rootId: string | null = null;
     this.schemaOps.walk(this.store.schema, (node, parent) => {
-      if (parent === null && !rootId) rootId = this.schemaOps.getNodeId(node);
+      if (parent === null && !rootId) {
+        rootId = this.schemaOps.getNodeId(node);
+      }
     });
     return rootId;
   }
@@ -272,14 +289,14 @@ export class Editor {
       setterRegistry: this.setterRegistry,
       assetRegistry: this.assetRegistry,
       actionRegistry: this.actionRegistry,
-      getPlugin: (id: string) => this.pluginManager.getPlugin(id)
+      getPlugin: (id: string) => this.pluginManager.getPlugin(id),
     };
     // activate 内聚 contributes 自动应用 + setup + 钩子绑定
     await this.pluginManager.activate(ctx, this.store.state.platform);
 
-    this.bus.trigger(EVENT.EDITOR_INIT, {editor: this});
+    this.bus.trigger(EVENT.EDITOR_INIT, { editor: this });
     this.store.setReady(true);
-    this.bus.trigger(EVENT.EDITOR_READY, {editor: this});
+    this.bus.trigger(EVENT.EDITOR_READY, { editor: this });
     this.keyboard.attach();
   }
 
@@ -288,56 +305,56 @@ export class Editor {
     const cm = this.contextMenu;
 
     cm.register({
-      name: 'copy',
-      title: '复制',
+      name: "copy",
+      title: "复制",
       weight: 10,
-      condition: ({nodeId}) => !!nodeId,
-      action: ({nodeId, editor}) => editor.copy(nodeId!)
+      condition: ({ nodeId }) => !!nodeId,
+      action: ({ nodeId, editor }) => editor.copy(nodeId!),
     });
 
     cm.register({
-      name: 'paste',
-      title: '粘贴',
+      name: "paste",
+      title: "粘贴",
       weight: 20,
       // 粘贴不要求选中节点（可粘贴到根容器）
-      disabled: ({editor}) => !editor.clipboard,
-      action: ({nodeId, editor}) => {
+      disabled: ({ editor }) => !editor.clipboard,
+      action: ({ nodeId, editor }) => {
         if (nodeId) {
           editor.paste(nodeId);
         } else if (editor.clipboard) {
           // 无选中节点时粘贴到根容器
-          editor.insert(editor.store.schema.$$id ?? 'root', 'body', editor.clipboard);
+          editor.insert(editor.store.schema.$$id ?? "root", "body", editor.clipboard);
         }
-      }
+      },
     });
 
-    cm.register({name: 'sep1', title: '', separator: true, weight: 30, condition: ({nodeId}) => !!nodeId});
+    cm.register({ name: "sep1", title: "", separator: true, weight: 30, condition: ({ nodeId }) => !!nodeId });
 
     cm.register({
-      name: 'moveUp',
-      title: '上移',
+      name: "moveUp",
+      title: "上移",
       weight: 40,
-      condition: ({nodeId}) => !!nodeId,
-      action: ({nodeId, editor}) => editor.moveUp(nodeId!)
+      condition: ({ nodeId }) => !!nodeId,
+      action: ({ nodeId, editor }) => editor.moveUp(nodeId!),
     });
 
     cm.register({
-      name: 'moveDown',
-      title: '下移',
+      name: "moveDown",
+      title: "下移",
       weight: 50,
-      condition: ({nodeId}) => !!nodeId,
-      action: ({nodeId, editor}) => editor.moveDown(nodeId!)
+      condition: ({ nodeId }) => !!nodeId,
+      action: ({ nodeId, editor }) => editor.moveDown(nodeId!),
     });
 
-    cm.register({name: 'sep2', title: '', separator: true, weight: 60, condition: ({nodeId}) => !!nodeId});
+    cm.register({ name: "sep2", title: "", separator: true, weight: 60, condition: ({ nodeId }) => !!nodeId });
 
     cm.register({
-      name: 'delete',
-      title: '删除',
+      name: "delete",
+      title: "删除",
       danger: true,
       weight: 70,
-      condition: ({nodeId}) => !!nodeId,
-      action: ({nodeId, editor}) => editor.remove(nodeId!)
+      condition: ({ nodeId }) => !!nodeId,
+      action: ({ nodeId, editor }) => editor.remove(nodeId!),
     });
   }
 
@@ -346,42 +363,44 @@ export class Editor {
     const ca = this.componentActions;
 
     ca.register({
-      name: 'moveUp',
-      title: '上移',
+      name: "moveUp",
+      title: "上移",
       weight: 10,
-      condition: ({nodeId}) => !!nodeId,
-      action: ({nodeId, editor}) => editor.moveUp(nodeId)
+      condition: ({ nodeId }) => !!nodeId,
+      action: ({ nodeId, editor }) => editor.moveUp(nodeId),
     });
 
     ca.register({
-      name: 'moveDown',
-      title: '下移',
+      name: "moveDown",
+      title: "下移",
       weight: 20,
-      condition: ({nodeId}) => !!nodeId,
-      action: ({nodeId, editor}) => editor.moveDown(nodeId)
+      condition: ({ nodeId }) => !!nodeId,
+      action: ({ nodeId, editor }) => editor.moveDown(nodeId),
     });
 
     ca.register({
-      name: 'copy',
-      title: '复制',
+      name: "copy",
+      title: "复制",
       weight: 30,
-      condition: ({nodeId}) => !!nodeId,
-      action: ({nodeId, editor}) => editor.copy(nodeId)
+      condition: ({ nodeId }) => !!nodeId,
+      action: ({ nodeId, editor }) => editor.copy(nodeId),
     });
 
     ca.register({
-      name: 'delete',
-      title: '删除',
+      name: "delete",
+      title: "删除",
       danger: true,
       weight: 40,
-      condition: ({nodeId}) => !!nodeId,
-      action: ({nodeId, editor}) => editor.remove(nodeId)
+      condition: ({ nodeId }) => !!nodeId,
+      action: ({ nodeId, editor }) => editor.remove(nodeId),
     });
   }
 
   /** 销毁 */
   destroy(): void {
-    if (this.destroyed) return;
+    if (this.destroyed) {
+      return;
+    }
     this.destroyed = true;
     this.bus.trigger(EVENT.EDITOR_DESTROY, {});
     this.dragon.destroy();
@@ -406,8 +425,10 @@ export class Editor {
   /** 加载 schema */
   loadSchema(schema: any): void {
     this.store.loadSchema(schema);
-    this.bus.trigger(EVENT.SCHEMA_CHANGE, {schema});
-    if (this.renderer) this.renderer.setSchema(this.store.schema);
+    this.bus.trigger(EVENT.SCHEMA_CHANGE, { schema });
+    if (this.renderer) {
+      this.renderer.setSchema(this.store.schema);
+    }
   }
 
   /** 获取 schema（深拷贝） */
@@ -418,14 +439,20 @@ export class Editor {
   /** 复制节点到剪贴板 */
   copy(nodeId: string): void {
     const node = this.schemaOps.getNodeById(this.store.schema, nodeId);
-    if (node) this.clipboard = this.schemaOps.cloneNode(node);
+    if (node) {
+      this.clipboard = this.schemaOps.cloneNode(node);
+    }
   }
 
   /** 粘贴剪贴板节点（插入到目标节点之后） */
   paste(nodeId: string): void {
-    if (!this.clipboard) return;
+    if (!this.clipboard) {
+      return;
+    }
     const loc = this.schemaOps.findSlotOf?.(this.store.schema, nodeId);
-    if (!loc) return;
+    if (!loc) {
+      return;
+    }
     const cloned = this.schemaOps.cloneNode(this.clipboard);
     this.regenerateNodeIds(cloned);
     this.insert(loc.parentId, loc.slotKey, cloned, loc.index + 1);
@@ -434,7 +461,7 @@ export class Editor {
 
   /** 保存（触发 SAVE 事件，由宿主消费做持久化） */
   save(): void {
-    this.bus.trigger(EVENT.SAVE, {schema: this.store.schema});
+    this.bus.trigger(EVENT.SAVE, { schema: this.store.schema });
   }
 
   /** 插入节点 */
@@ -442,33 +469,37 @@ export class Editor {
     parentId: string,
     slotKey: string,
     node: any,
-    index?: number
+    index?: number,
   ): any | undefined {
     const event = this.bus.trigger(EVENT.BEFORE_INSERT, {
       parentId,
       slotKey,
       node,
-      index
+      index,
     });
-    if (event.prevented) return undefined;
+    if (event.prevented) {
+      return undefined;
+    }
     const created = this.schemaOps.cloneNode(node);
     this.ensureNodeId(created);
-    this.store.commit('insert', schema => {
+    this.store.commit("insert", (schema) => {
       this.schemaOps.insertNode(schema, parentId, slotKey, created, index);
     });
-    this.bus.trigger(EVENT.AFTER_INSERT, {parentId, slotKey, node: created});
+    this.bus.trigger(EVENT.AFTER_INSERT, { parentId, slotKey, node: created });
     this.syncRenderer();
     return created;
   }
 
   /** 更新节点 */
   update(nodeId: string, patch: any): void {
-    const event = this.bus.trigger(EVENT.BEFORE_UPDATE, {nodeId, patch});
-    if (event.prevented) return;
-    this.store.commit('update', schema => {
+    const event = this.bus.trigger(EVENT.BEFORE_UPDATE, { nodeId, patch });
+    if (event.prevented) {
+      return;
+    }
+    this.store.commit("update", (schema) => {
       this.schemaOps.updateNode(schema, nodeId, patch);
     });
-    this.bus.trigger(EVENT.AFTER_UPDATE, {nodeId, patch});
+    this.bus.trigger(EVENT.AFTER_UPDATE, { nodeId, patch });
     if (this.renderer) {
       this.renderer.setSchema(this.store.schema);
       this.renderer.updateNode?.(nodeId, patch);
@@ -477,7 +508,7 @@ export class Editor {
 
   /** 更新节点属性（便捷：属性写入 __nodeOptions） */
   updateProps(nodeId: string, props: Record<string, any>): void {
-    this.update(nodeId, {__nodeOptions: props});
+    this.update(nodeId, { __nodeOptions: props });
   }
 
   /** 移动节点 */
@@ -485,30 +516,34 @@ export class Editor {
     nodeId: string,
     toParentId: string,
     slotKey: string,
-    index?: number
+    index?: number,
   ): void {
     const event = this.bus.trigger(EVENT.BEFORE_MOVE, {
       nodeId,
       toParentId,
       slotKey,
-      index
+      index,
     });
-    if (event.prevented) return;
-    this.store.commit('move', schema => {
+    if (event.prevented) {
+      return;
+    }
+    this.store.commit("move", (schema) => {
       this.schemaOps.moveNode(schema, nodeId, toParentId, slotKey, index);
     });
-    this.bus.trigger(EVENT.AFTER_MOVE, {nodeId, toParentId, slotKey, index});
+    this.bus.trigger(EVENT.AFTER_MOVE, { nodeId, toParentId, slotKey, index });
     this.syncRenderer();
   }
 
   /** 移除节点 */
   remove(nodeId: string): void {
-    const event = this.bus.trigger(EVENT.BEFORE_DELETE, {nodeId});
-    if (event.prevented) return;
-    this.store.commit('delete', schema => {
+    const event = this.bus.trigger(EVENT.BEFORE_DELETE, { nodeId });
+    if (event.prevented) {
+      return;
+    }
+    this.store.commit("delete", (schema) => {
       this.schemaOps.removeNode(schema, nodeId);
     });
-    this.bus.trigger(EVENT.AFTER_DELETE, {nodeId});
+    this.bus.trigger(EVENT.AFTER_DELETE, { nodeId });
     if (this.store.state.activeId === nodeId) {
       this.store.select(null);
     }
@@ -518,12 +553,16 @@ export class Editor {
   /** 复制节点 */
   duplicate(nodeId: string): any | undefined {
     const node = this.schemaOps.getNodeById(this.store.schema, nodeId);
-    if (!node) return undefined;
+    if (!node) {
+      return undefined;
+    }
     const loc = this.schemaOps.findSlotOf?.(this.store.schema, nodeId);
-    if (!loc) return undefined;
+    if (!loc) {
+      return undefined;
+    }
     const cloned = this.schemaOps.cloneNode(node);
     this.regenerateNodeIds(cloned);
-    this.store.commit('duplicate', schema => {
+    this.store.commit("duplicate", (schema) => {
       this.schemaOps.insertNode(schema, loc.parentId, loc.slotKey, cloned, loc.index + 1);
     });
     this.store.select(this.schemaOps.getNodeId(cloned));
@@ -535,10 +574,12 @@ export class Editor {
   moveUp(nodeId: string): void {
     const event = this.bus.trigger(EVENT.BEFORE_MOVE, {
       nodeId,
-      direction: 'up'
+      direction: "up",
     });
-    if (event.prevented) return;
-    this.store.commit('move-up', schema => {
+    if (event.prevented) {
+      return;
+    }
+    this.store.commit("move-up", (schema) => {
       this.schemaOps.moveNodeUp?.(schema, nodeId);
     });
     this.syncRenderer();
@@ -548,10 +589,12 @@ export class Editor {
   moveDown(nodeId: string): void {
     const event = this.bus.trigger(EVENT.BEFORE_MOVE, {
       nodeId,
-      direction: 'down'
+      direction: "down",
     });
-    if (event.prevented) return;
-    this.store.commit('move-down', schema => {
+    if (event.prevented) {
+      return;
+    }
+    this.store.commit("move-down", (schema) => {
       this.schemaOps.moveNodeDown?.(schema, nodeId);
     });
     this.syncRenderer();
@@ -561,7 +604,9 @@ export class Editor {
   undo(): void {
     if (this.store.undo()) {
       this.bus.trigger(EVENT.HISTORY_CHANGE, {});
-      if (this.renderer) this.renderer.setSchema(this.store.schema);
+      if (this.renderer) {
+        this.renderer.setSchema(this.store.schema);
+      }
     }
   }
 
@@ -569,12 +614,14 @@ export class Editor {
   redo(): void {
     if (this.store.redo()) {
       this.bus.trigger(EVENT.HISTORY_CHANGE, {});
-      if (this.renderer) this.renderer.setSchema(this.store.schema);
+      if (this.renderer) {
+        this.renderer.setSchema(this.store.schema);
+      }
     }
   }
 
   /** 切换设计/预览模式（同步渲染器） */
-  setDesignMode(mode: 'design' | 'preview'): void {
+  setDesignMode(mode: "design" | "preview"): void {
     if (this.store.state.designMode !== mode) {
       this.store.toggleDesignMode();
     }
@@ -585,7 +632,7 @@ export class Editor {
 
   select(id: string | null): void {
     this.store.select(id);
-    this.bus.trigger(EVENT.ACTIVE_CHANGE, {activeId: id});
+    this.bus.trigger(EVENT.ACTIVE_CHANGE, { activeId: id });
     this.rebuildPanels();
   }
 
@@ -613,7 +660,7 @@ export class Editor {
   private handleHover(id: string | null): void {
     if (this.store.state.hoverId !== id) {
       this.store.setHover(id);
-      this.bus.trigger(EVENT.HOVER_CHANGE, {hoverId: id});
+      this.bus.trigger(EVENT.HOVER_CHANGE, { hoverId: id });
     }
   }
 
@@ -625,23 +672,30 @@ export class Editor {
 
   /** 确保节点（及其子树）拥有唯一 id，无则生成 */
   private ensureNodeId(node: any): void {
-    if (!node || typeof node !== 'object') return;
+    if (!node || typeof node !== "object") {
+      return;
+    }
     if (!node.__nodeId) {
-      const renderType = node.__nodeOptions?.renderType ?? 'node';
+      const renderType = node.__nodeOptions?.renderType ?? "node";
       node.__nodeId = this.schemaOps.genNodeId(renderType);
     }
   }
 
   /** 为克隆的节点子树重新生成全部 id（粘贴/复制用） */
   private regenerateNodeIds(node: any): void {
-    if (!node || typeof node !== 'object') return;
+    if (!node || typeof node !== "object") {
+      return;
+    }
     if (node.__nodeId) {
-      const renderType = node.__nodeOptions?.renderType ?? 'node';
+      const renderType = node.__nodeOptions?.renderType ?? "node";
       node.__nodeId = this.schemaOps.genNodeId(renderType);
     }
     for (const v of Object.values(node)) {
-      if (Array.isArray(v)) v.forEach(child => this.regenerateNodeIds(child));
-      else if (v && typeof v === 'object') this.regenerateNodeIds(v);
+      if (Array.isArray(v)) {
+        v.forEach(child => this.regenerateNodeIds(child));
+      } else if (v && typeof v === "object") {
+        this.regenerateNodeIds(v);
+      }
     }
   }
 }

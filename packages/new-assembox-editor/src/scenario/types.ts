@@ -8,32 +8,32 @@
 // ═══════════════════════════════════════════════
 
 export interface ISchemaOps {
-  getNodeId(node: any): string;
-  setNodeId(node: any, id: string): void;
-  genNodeId(type: string): string;
-  getNodeLabel(node: any): string;
+  getNodeId: (node: any) => string;
+  setNodeId: (node: any, id: string) => void;
+  genNodeId: (type: string) => string;
+  getNodeLabel: (node: any) => string;
 
-  getNodeById(schema: any, id: string): any | undefined;
-  getParentById(schema: any, id: string): any | undefined;
-  walk(schema: any, visitor: (node: any, parent: any | null, slotKey: string) => void): void;
-  getSlotChildren(parentNode: any, slotKey: string): any[];
-  getSlots(node: any): { key: string; label: string }[];
+  getNodeById: (schema: any, id: string) => any | undefined;
+  getParentById: (schema: any, id: string) => any | undefined;
+  walk: (schema: any, visitor: (node: any, parent: any | null, slotKey: string) => void) => void;
+  getSlotChildren: (parentNode: any, slotKey: string) => any[];
+  getSlots: (node: any) => { key: string; label: string }[];
 
-  insertNode(schema: any, parentId: string, slotKey: string, node: any, index?: number): any | undefined;
-  removeNode(schema: any, nodeId: string): any | undefined;
-  moveNode(schema: any, nodeId: string, toParentId: string, slotKey: string, index?: number): boolean;
-  updateNode(schema: any, nodeId: string, patch: any): any | undefined;
-  cloneNode(node: any): any;
-  cloneSchema(schema: any): any;
+  insertNode: (schema: any, parentId: string, slotKey: string, node: any, index?: number) => any | undefined;
+  removeNode: (schema: any, nodeId: string) => any | undefined;
+  moveNode: (schema: any, nodeId: string, toParentId: string, slotKey: string, index?: number) => boolean;
+  updateNode: (schema: any, nodeId: string, patch: any) => any | undefined;
+  cloneNode: (node: any) => any;
+  cloneSchema: (schema: any) => any;
 
-  createNode(renderType: string, nodeName: string, overrides?: any): any;
-  emptySchema(): any;
+  createNode: (renderType: string, nodeName: string, overrides?: any) => any;
+  emptySchema: () => any;
 
   // ── 辅助（供 Editor 的 paste/duplicate/moveUp/moveDown）──
-  isContainer?(node: any): boolean;
-  findSlotOf?(schema: any, nodeId: string): { parentId: string; slotKey: string; index: number } | undefined;
-  moveNodeUp?(schema: any, nodeId: string): boolean;
-  moveNodeDown?(schema: any, nodeId: string): boolean;
+  isContainer?: (node: any) => boolean;
+  findSlotOf?: (schema: any, nodeId: string) => { parentId: string; slotKey: string; index: number } | undefined;
+  moveNodeUp?: (schema: any, nodeId: string) => boolean;
+  moveNodeDown?: (schema: any, nodeId: string) => boolean;
 }
 
 // ═══════════════════════════════════════════════
@@ -51,24 +51,24 @@ export interface RendererMountOptions {
 }
 
 export interface IRenderer {
-  mount(container: HTMLElement, schema: any, options?: RendererMountOptions): Promise<void>;
-  setSchema(schema: any): void;
-  updateNode?(nodeId: string, patch: any): void;
-  onStructureChange?(): void;
-  setDraggingState(active: boolean): void;
-  setDesignMode(mode: 'design' | 'preview'): void;
-  dispose(): void;
+  mount: (container: HTMLElement, schema: any, options?: RendererMountOptions) => Promise<void>;
+  setSchema: (schema: any) => void;
+  updateNode?: (nodeId: string, patch: any) => void;
+  onStructureChange?: () => void;
+  setDraggingState: (active: boolean) => void;
+  setDesignMode: (mode: "design" | "preview") => void;
+  dispose: () => void;
 
-  getNodeElement(nodeId: string): HTMLElement | null;
-  getRect(nodeId: string): DOMRect | null;
-  nodeIdFromElement(el: HTMLElement | null): string | null;
+  getNodeElement: (nodeId: string) => HTMLElement | null;
+  getRect: (nodeId: string) => DOMRect | null;
+  nodeIdFromElement: (el: HTMLElement | null) => string | null;
 
-  getSlotMarkers(nodeId: string): SlotMarker[] | null;
-  resolveFromElement(el: HTMLElement | null): { nodeId: string; slotKey: string } | null;
+  getSlotMarkers: (nodeId: string) => SlotMarker[] | null;
+  resolveFromElement: (el: HTMLElement | null) => { nodeId: string; slotKey: string } | null;
 
-  onReady?(cb: () => void): void;
-  onClick?(cb: (nodeId: string | null, e: MouseEvent) => void): void;
-  onHover?(cb: (nodeId: string | null) => void): void;
+  onReady?: (cb: () => void) => void;
+  onClick?: (cb: (nodeId: string | null, e: MouseEvent) => void) => void;
+  onHover?: (cb: (nodeId: string | null) => void) => void;
 }
 
 // ═══════════════════════════════════════════════
@@ -96,9 +96,9 @@ export interface ComponentCatalogItem {
 }
 
 export interface IComponentCatalog {
-  getComponents(): ComponentCatalogItem[];
-  getGroups(): { name: string; title: string }[];
-  getCategories(groupName: string): { name: string; title: string }[];
+  getComponents: () => ComponentCatalogItem[];
+  getGroups: () => { name: string; title: string }[];
+  getCategories: (groupName: string) => { name: string; title: string }[];
 }
 
 // ═══════════════════════════════════════════════
@@ -106,9 +106,9 @@ export interface IComponentCatalog {
 // ═══════════════════════════════════════════════
 
 export interface INestingRules {
-  canNest(parentRenderType: string, slotKey: string, childRenderType: string): boolean;
-  getAllowedCategories(parentRenderType: string, slotKey: string): string[] | undefined;
-  getCategory(renderType: string): string | undefined;
+  canNest: (parentRenderType: string, slotKey: string, childRenderType: string) => boolean;
+  getAllowedCategories: (parentRenderType: string, slotKey: string) => string[] | undefined;
+  getCategory: (renderType: string) => string | undefined;
 }
 
 // ═══════════════════════════════════════════════
@@ -134,6 +134,6 @@ export interface ScenarioProfile {
   /** iframe 隔离渲染器工厂（可选，未提供时 iframe 模式降级为同 DOM） */
   readonly createIframeRenderer?: () => IRenderer;
 
-  init?(ctx: ScenarioContext): void;
-  destroy?(): void;
+  init?: (ctx: ScenarioContext) => void;
+  destroy?: () => void;
 }

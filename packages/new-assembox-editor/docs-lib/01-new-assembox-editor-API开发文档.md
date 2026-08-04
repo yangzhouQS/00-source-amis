@@ -145,6 +145,7 @@ class Editor {
 ```
 
 **工厂函数**:
+
 ```typescript
 function createEditor(options?: EditorOptions): Editor;
 
@@ -180,6 +181,7 @@ function token<T>(name: string): InjectionToken<T>;
 ```
 
 **示例**:
+
 ```typescript
 import { token } from '@cs/new-assembox-editor';
 const MY_SERVICE = token<MyService>('my-service');
@@ -218,16 +220,17 @@ interface EditorEvent<C = any> {
 ```
 
 **内置事件常量** `EVENT`:
-| 常量 | 值 | 说明 |
-|---|---|---|
-| `EDITOR_INIT` | `editor.init` | 编辑器初始化 |
-| `EDITOR_READY` | `editor.ready` | 就绪 |
+
+| 常量                             | 值                               | 说明                          |
+| -------------------------------- | -------------------------------- | ----------------------------- |
+| `EDITOR_INIT`                    | `editor.init`                    | 编辑器初始化                  |
+| `EDITOR_READY`                   | `editor.ready`                   | 就绪                          |
 | `BEFORE_INSERT` / `AFTER_INSERT` | `before-insert` / `after-insert` | 插入前后（可 preventDefault） |
-| `BEFORE_UPDATE` / `AFTER_UPDATE` | `before-update` / `after-update` | 更新前后 |
-| `BEFORE_DELETE` / `AFTER_DELETE` | `before-delete` / `after-delete` | 删除前后 |
-| `SELECTION_CHANGE` | `selection-change` | 选区变化 |
-| `HOVER_CHANGE` | `hover-change` | 悬浮变化 |
-| `SIMULATOR_READY` | `simulator-ready` | 画布就绪 |
+| `BEFORE_UPDATE` / `AFTER_UPDATE` | `before-update` / `after-update` | 更新前后                      |
+| `BEFORE_DELETE` / `AFTER_DELETE` | `before-delete` / `after-delete` | 删除前后                      |
+| `SELECTION_CHANGE`               | `selection-change`               | 选区变化                      |
+| `HOVER_CHANGE`                   | `hover-change`                   | 悬浮变化                      |
+| `SIMULATOR_READY`                | `simulator-ready`                | 画布就绪                      |
 
 ---
 
@@ -332,6 +335,7 @@ function definePlugin(plugin: Partial<EditorPluginObject>): EditorPluginObject;
 ```
 
 **PluginContext** 可注入的能力：
+
 ```typescript
 interface PluginContext {
   editor: Editor;
@@ -587,11 +591,11 @@ const PROTOCOL_NS = "assem:sim";
 > **tags**: `designer`, `canvas`, `bem-tools`, `host`
 > **文件**: `src/designer/`
 
-| 组件 | 说明 |
-|---|---|
-| `DesignerHost` | 同 DOM 画布宿主（inline 模式） |
-| `IframeDesignerHost` | iframe 隔离画布宿主（iframe 模式） |
-| `BemTools` | 覆盖层（选中高亮 + 悬浮高亮 + 工具栏） |
+| 组件                 | 说明                                   |
+| -------------------- | -------------------------------------- |
+| `DesignerHost`       | 同 DOM 画布宿主（inline 模式）         |
+| `IframeDesignerHost` | iframe 隔离画布宿主（iframe 模式）     |
+| `BemTools`           | 覆盖层（选中高亮 + 悬浮高亮 + 工具栏） |
 
 ---
 
@@ -629,32 +633,33 @@ class CanvasSensor implements DragSensor {
 
 25 个内置 setter，统一 `value` / `onChange` 契约：
 
-| Setter | propType | 说明 |
-|---|---|---|
-| `StringSetter` | string | 文本输入 |
-| `TextareaSetter` | — | 多行文本 |
-| `NumberSetter` | number | 数字（min/max/step） |
-| `BoolSetter` | boolean | 开关 |
-| `SelectSetter` | oneOf | 下拉（分组/搜索/多选） |
-| `RadioGroupSetter` | — | 单选按钮组 |
-| `ColorSetter` | color | 颜色选择 |
-| `JsonSetter` | json | JSON 编辑（校验） |
-| `IconSetter` | icon | 图标选择（Element + iconFont） |
-| `ObjectSetter` | shape | 对象表单 |
-| `ArraySetter` | array | 数组编辑（增删/拖拽排序） |
-| `ArrayOfMultiSetter` | — | 多选勾选 |
-| `MixedSetter` | — | 多 setter 切换 |
-| `FunctionSetter` | — | 代码编辑（全屏+校验） |
-| `JSFunctionSetter` | — | JS 函数编辑（参数+测试运行） |
-| `StyleSetter` | — | CSS 样式分组编辑 |
-| `ClassNameSetter` | — | 类名多选 |
-| `VariableSetter` | — | 变量绑定 `{{expr}}` |
-| `ExpressionSetter` | — | JS 表达式 |
-| `LabelSetter` | — | 只读标签 |
-| `DocSetter` | — | 文档链接 |
-| `CustomSetter` | — | 自定义渲染 |
+| Setter               | propType | 说明                           |
+| -------------------- | -------- | ------------------------------ |
+| `StringSetter`       | string   | 文本输入                       |
+| `TextareaSetter`     | —        | 多行文本                       |
+| `NumberSetter`       | number   | 数字（min/max/step）           |
+| `BoolSetter`         | boolean  | 开关                           |
+| `SelectSetter`       | oneOf    | 下拉（分组/搜索/多选）         |
+| `RadioGroupSetter`   | —        | 单选按钮组                     |
+| `ColorSetter`        | color    | 颜色选择                       |
+| `JsonSetter`         | json     | JSON 编辑（校验）              |
+| `IconSetter`         | icon     | 图标选择（Element + iconFont） |
+| `ObjectSetter`       | shape    | 对象表单                       |
+| `ArraySetter`        | array    | 数组编辑（增删/拖拽排序）      |
+| `ArrayOfMultiSetter` | —        | 多选勾选                       |
+| `MixedSetter`        | —        | 多 setter 切换                 |
+| `FunctionSetter`     | —        | 代码编辑（全屏+校验）          |
+| `JSFunctionSetter`   | —        | JS 函数编辑（参数+测试运行）   |
+| `StyleSetter`        | —        | CSS 样式分组编辑               |
+| `ClassNameSetter`    | —        | 类名多选                       |
+| `VariableSetter`     | —        | 变量绑定 `{{expr}}`            |
+| `ExpressionSetter`   | —        | JS 表达式                      |
+| `LabelSetter`        | —        | 只读标签                       |
+| `DocSetter`          | —        | 文档链接                       |
+| `CustomSetter`       | —        | 自定义渲染                     |
 
 注册函数：
+
 ```typescript
 function registerBuiltinSetters(registry: SetterRegistry): void;
 ```
@@ -666,17 +671,17 @@ function registerBuiltinSetters(registry: SetterRegistry): void;
 > **tags**: `plugin`, `builtin`
 > **文件**: `src/plugins/builtin-plugins.tsx`
 
-| 插件 | id | 区域 | 功能 |
-|---|---|---|---|
-| coreRegistry | `builtin-core-registry` | — | 注册内置 setter + action |
-| toolbar | `builtin-toolbar` | topArea | 设计/预览 + 撤销/重做 + 节点操作 |
-| simulatorSize | `builtin-simulator-size` | topArea | 设备预设（默认/平板/手机） |
-| designer | `builtin-designer` | centerArea | 画布（inline / iframe 自动切换） |
-| componentsPane | `builtin-components-pane` | leftArea→leftFixedArea | 组件库（拖拽 + 搜索） |
-| outlinePane | `builtin-outline-pane` | leftArea→leftFixedArea | 大纲树 |
-| schemaPane | `builtin-schema-pane` | leftArea→leftFloatArea | Schema 源码 |
-| historyPane | `builtin-history-pane` | leftArea→leftFloatArea | 历史记录 |
-| settingsPane | `builtin-settings-pane` | rightArea | 属性/样式/事件/高级 |
+| 插件           | id                        | 区域                   | 功能                             |
+| -------------- | ------------------------- | ---------------------- | -------------------------------- |
+| coreRegistry   | `builtin-core-registry`   | —                      | 注册内置 setter + action         |
+| toolbar        | `builtin-toolbar`         | topArea                | 设计/预览 + 撤销/重做 + 节点操作 |
+| simulatorSize  | `builtin-simulator-size`  | topArea                | 设备预设（默认/平板/手机）       |
+| designer       | `builtin-designer`        | centerArea             | 画布（inline / iframe 自动切换） |
+| componentsPane | `builtin-components-pane` | leftArea→leftFixedArea | 组件库（拖拽 + 搜索）            |
+| outlinePane    | `builtin-outline-pane`    | leftArea→leftFixedArea | 大纲树                           |
+| schemaPane     | `builtin-schema-pane`     | leftArea→leftFloatArea | Schema 源码                      |
+| historyPane    | `builtin-history-pane`    | leftArea→leftFloatArea | 历史记录                         |
+| settingsPane   | `builtin-settings-pane`   | rightArea              | 属性/样式/事件/高级              |
 
 ---
 
@@ -738,6 +743,7 @@ class EidRegistry {
 ```
 
 **依赖方向**：
+
 - Editor → 所有子系统
 - PluginManager → EventBus + 所有 Registry
 - Dragon → CanvasSensor → NodeTree + Store

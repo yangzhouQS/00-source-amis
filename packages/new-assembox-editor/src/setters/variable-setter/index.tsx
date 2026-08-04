@@ -1,30 +1,30 @@
 /**
  * VariableSetter - variable binding ({{expression}})
  */
-import {defineComponent} from 'vue';
+import { defineComponent } from "vue";
 
 interface VariableValue {
-  type: 'variable';
+  type: "variable";
   value: string;
 }
 
 export const VariableSetter = defineComponent({
-  name: 'VariableSetter',
+  name: "VariableSetter",
   props: {
-    value: {type: null as any, default: undefined},
-    onChange: {type: Function, required: true},
+    value: { type: null as any, default: undefined },
+    onChange: { type: Function, required: true },
     variables: {
-      type: Array as () => Array<{label: string; value: string}>,
-      default: () => []
+      type: Array as () => Array<{ label: string; value: string }>,
+      default: () => [],
     },
-    disabled: {type: Boolean, default: false}
+    disabled: { type: Boolean, default: false },
   },
   setup(props) {
     const isVar = (v: any): v is VariableValue =>
-      v && typeof v === 'object' && v.type === 'variable';
-    const getExpr = () => (isVar(props.value) ? props.value.value : '');
+      v && typeof v === "object" && v.type === "variable";
+    const getExpr = () => (isVar(props.value) ? props.value.value : "");
     const setExpr = (expr: string) => {
-      props.onChange(expr ? {type: 'variable', value: expr} : undefined);
+      props.onChange(expr ? { type: "variable", value: expr } : undefined);
     };
     return () => (
       <el-input
@@ -32,13 +32,13 @@ export const VariableSetter = defineComponent({
         disabled={props.disabled}
         placeholder="Bind variable, e.g. this.state.foo"
         clearable
-        onUpdate:modelValue={(v: string) => setExpr(v ?? '')}
+        onUpdate:modelValue={(v: string) => setExpr(v ?? "")}
       >
         {{
-          prepend: () => <span style="color:#909399">{'{{'}</span>,
-          append: () => <span style="color:#909399">{'}}'}</span>
+          prepend: () => <span style="color:#909399">{"{{"}</span>,
+          append: () => <span style="color:#909399">{"}}"}</span>,
         }}
       </el-input>
     );
-  }
+  },
 });

@@ -10,22 +10,22 @@
  */
 import type {
   IRenderer,
-  SlotMarker,
   RendererMountOptions,
-} from '../../scenario/types';
+  SlotMarker,
+} from "../../scenario/types";
 import type {
-  IframeRendererApi,
-  IframeHostCallbacks,
   IframeAssetsManifest,
-} from './protocol';
-import { HOST_GLOBAL_KEY, RENDERER_GLOBAL_KEY } from './protocol';
+  IframeHostCallbacks,
+  IframeRendererApi,
+} from "./protocol";
+import { HOST_GLOBAL_KEY, RENDERER_GLOBAL_KEY } from "./protocol";
 
 const CONNECT_TIMEOUT = 10000;
 const POLL_INTERVAL = 30;
 
 /** 深拷贝（与 PcSchemaOps.cloneSchema 一致的 JSON 方案，structuredClone 优先） */
 function deepClone<T>(obj: T): T {
-  if (typeof structuredClone === 'function') {
+  if (typeof structuredClone === "function") {
     try {
       return structuredClone(obj);
     } catch {
@@ -35,7 +35,7 @@ function deepClone<T>(obj: T): T {
   return JSON.parse(JSON.stringify(obj));
 }
 
-const CDN_BASE = 'https://cdn.yearrow.com/files';
+const CDN_BASE = "https://cdn.yearrow.com/files";
 
 /**
  * PC 桌面端默认依赖清单（基础 UI 库栈，按依赖顺序加载）。
@@ -45,22 +45,22 @@ const CDN_BASE = 'https://cdn.yearrow.com/files';
  */
 export const DEFAULT_PC_ASSETS: IframeAssetsManifest = {
   js: [
-    { src: `${CDN_BASE}/element-plus/2.13.7/index.full.min.js`, global: 'ElementPlus', asPlugin: true },
-    { src: `${CDN_BASE}/@element-plus/icons-vue/2.3.1/global.iife.min.js`, global: 'ElementPlusIconsVue', asIcons: true },
-    { src: `${CDN_BASE}/vue-router/4.2.5/vue-router.global.prod.js`, global: 'VueRouter' },
-    { src: `${CDN_BASE}/axios/1.7.0/axios.min.js`, global: 'axios' },
+    { src: `${CDN_BASE}/element-plus/2.13.7/index.full.min.js`, global: "ElementPlus", asPlugin: true },
+    { src: `${CDN_BASE}/@element-plus/icons-vue/2.3.1/global.iife.min.js`, global: "ElementPlusIconsVue", asIcons: true },
+    { src: `${CDN_BASE}/vue-router/4.2.5/vue-router.global.prod.js`, global: "VueRouter" },
+    { src: `${CDN_BASE}/axios/1.7.0/axios.min.js`, global: "axios" },
     {
       src: `${CDN_BASE}/@cs/element-pro/1.7.6/element-pro.iife.js`,
-      global: 'ElementPro',
+      global: "ElementPro",
       asPlugin: true,
       // 旧版兼容：Box 组件同时注册为 box / Box 全局组件
       components: [
-        { name: 'box', path: 'Box' },
-        { name: 'Box', path: 'Box' },
+        { name: "box", path: "Box" },
+        { name: "Box", path: "Box" },
       ],
     },
-    { src: `${CDN_BASE}/@cs/element-plus-ui/1.0.1/element-plus-ui.iife.js`, global: 'ElementPlusUi', asPlugin: true },
-    { src: `${CDN_BASE}/@cs/table-pro/1.0.13/table-pro.iife.js`, global: 'TablePro', asPlugin: true },
+    { src: `${CDN_BASE}/@cs/element-plus-ui/1.0.1/element-plus-ui.iife.js`, global: "ElementPlusUi", asPlugin: true },
+    { src: `${CDN_BASE}/@cs/table-pro/1.0.13/table-pro.iife.js`, global: "TablePro", asPlugin: true },
   ],
   css: [
     `${CDN_BASE}/@cs/element-pro/1.7.6/theme/index.css`,
@@ -77,7 +77,7 @@ export class PcIframeRenderer implements IRenderer {
   private rendererApi: IframeRendererApi | null = null;
   private connected = false;
   private pendingSchema: any = null;
-  private pendingDesignMode: 'design' | 'preview' = 'design';
+  private pendingDesignMode: "design" | "preview" = "design";
 
   private readyCbs: Array<() => void> = [];
   private clickCb: ((nodeId: string | null, e: MouseEvent) => void) | null = null;
@@ -94,7 +94,7 @@ export class PcIframeRenderer implements IRenderer {
     },
     onClick: (nodeId, e) => this.clickCb?.(nodeId, e),
     onHover: nodeId => this.hoverCb?.(nodeId),
-    onError: (msg, detail) => console.error('[PcIframeRenderer]', msg, detail),
+    onError: (msg, detail) => console.error("[PcIframeRenderer]", msg, detail),
   };
 
   /** 动态依赖清单（mount 时随 __ASSEM_HOST__ 下发给 iframe） */
@@ -117,11 +117,11 @@ export class PcIframeRenderer implements IRenderer {
     this.container = container;
     this.schema = schema;
 
-    const iframe = document.createElement('iframe');
-    iframe.src = '/canvas.html';
-    iframe.style.cssText =
-      'width:100%;height:100%;border:0;display:block;background:#fff;';
-    iframe.setAttribute('name', 'assembox-canvas');
+    const iframe = document.createElement("iframe");
+    iframe.src = "/canvas.html";
+    iframe.style.cssText
+      = "width:100%;height:100%;border:0;display:block;background:#fff;";
+    iframe.setAttribute("name", "assembox-canvas");
     container.appendChild(iframe);
     this.iframe = iframe;
 
@@ -130,11 +130,13 @@ export class PcIframeRenderer implements IRenderer {
 
   /** 同源直引连接：注入 hostCallbacks → 轮询等 renderer 暴露 */
   private connect(): void {
-    if (this.connected) return;
+    if (this.connected) {
+      return;
+    }
 
     const win = this.iframe?.contentWindow as any;
     if (!win) {
-      this.iframe?.addEventListener('load', () => this.connect(), { once: true });
+      this.iframe?.addEventListener("load", () => this.connect(), { once: true });
       return;
     }
 
@@ -151,7 +153,7 @@ export class PcIframeRenderer implements IRenderer {
         this.onConnected(api);
       } else if (attempts > maxAttempts) {
         clearInterval(timer);
-        console.error('[PcIframeRenderer] 渲染器连接超时');
+        console.error("[PcIframeRenderer] 渲染器连接超时");
       }
     }, POLL_INTERVAL);
   }
@@ -197,7 +199,7 @@ export class PcIframeRenderer implements IRenderer {
     this.rendererApi?.setDraggingState(active);
   }
 
-  setDesignMode(mode: 'design' | 'preview'): void {
+  setDesignMode(mode: "design" | "preview"): void {
     if (this.rendererApi) {
       this.rendererApi.setDesignMode(mode);
     } else {
@@ -213,7 +215,9 @@ export class PcIframeRenderer implements IRenderer {
 
   getNodeElement(nodeId: string): HTMLElement | null {
     const doc = this.doc;
-    if (!doc) return null;
+    if (!doc) {
+      return null;
+    }
     return doc.querySelector(`[data-editor-id="${nodeId}"]`) as HTMLElement | null;
   }
 
@@ -223,31 +227,41 @@ export class PcIframeRenderer implements IRenderer {
   }
 
   nodeIdFromElement(el: HTMLElement | null): string | null {
-    if (!el) return null;
-    const found = el.closest('[data-editor-id]') as HTMLElement | null;
-    return found ? found.getAttribute('data-editor-id') : null;
+    if (!el) {
+      return null;
+    }
+    const found = el.closest("[data-editor-id]") as HTMLElement | null;
+    return found ? found.getAttribute("data-editor-id") : null;
   }
 
   getSlotMarkers(nodeId: string): SlotMarker[] | null {
     const doc = this.doc;
-    if (!doc) return null;
+    if (!doc) {
+      return null;
+    }
     const els = doc.querySelectorAll(`[data-slot-host="${nodeId}"]`);
-    if (!els.length) return null;
+    if (!els.length) {
+      return null;
+    }
     return Array.from(els).map(el => ({
-      slotKey: el.getAttribute('data-slot-key') || 'defaultSlot',
+      slotKey: el.getAttribute("data-slot-key") || "defaultSlot",
       el: el as HTMLElement,
       rect: el.getBoundingClientRect(),
     }));
   }
 
   resolveFromElement(el: HTMLElement | null): { nodeId: string; slotKey: string } | null {
-    if (!el) return null;
-    const nodeEl = el.closest('[data-editor-id]') as HTMLElement | null;
-    if (!nodeEl) return null;
-    const slotEl = el.closest('[data-slot-host]') as HTMLElement | null;
+    if (!el) {
+      return null;
+    }
+    const nodeEl = el.closest("[data-editor-id]") as HTMLElement | null;
+    if (!nodeEl) {
+      return null;
+    }
+    const slotEl = el.closest("[data-slot-host]") as HTMLElement | null;
     return {
-      nodeId: nodeEl.getAttribute('data-editor-id')!,
-      slotKey: slotEl?.getAttribute('data-slot-key') || 'defaultSlot',
+      nodeId: nodeEl.getAttribute("data-editor-id")!,
+      slotKey: slotEl?.getAttribute("data-slot-key") || "defaultSlot",
     };
   }
 

@@ -23,6 +23,7 @@
 ```
 
 并辅以双层数据：
+
 - `dataSource`：api 列表 + requestConfig（请求参数模型）+ sharedFns（全局函数）
 - 布局容器：`flexbox` / `flexBoxOptions` → `itemConfig[]` → 每个 item 的 `defaultSlot`
 
@@ -48,13 +49,14 @@ __nodeOptions.renderType:"button"  __nodeOptions: { type, content, icon... }
 
 `__nodeId` 本应是节点唯一标识（编辑器选区、DOM 标记、事件寻址都依赖它），但实测**大量重复**：
 
-| 文件 | __nodeId 总数 | 唯一数 | 重复 |
-|---|---|---|---|
-| box.json | 19 | 13 | **6** |
+| 文件     | __nodeId 总数 | 唯一数 | 重复  |
+| -------- | ------------- | ------ | ----- |
+| box.json | 19            | 13     | **6** |
 
 box.json 中 `"5"` 出现 3 次、`"4"` 2 次、`"011121113"` 2 次、`"01111311161"` 2 次、`"42"` 2 次。
 
 **影响**：
+
 - 编辑器按 id 选中/高亮会命中多个节点 → 选区错乱；
 - DOM 标记（旧版用 Symbol / data 属性）冲突；
 - `this.$exposeds.get('01112skk')` 这类按 id 跨节点引用（实测 **212 处**）会指向错误目标；
@@ -82,6 +84,7 @@ uiSkeleton
 每层都是 `{__nodeId, __nodeName, __nodeType, __nodeOptions}` 的重复包装。**真正的业务属性（type/content/icon）埋在最深处**。
 
 **影响**：
+
 - 渲染器必须递归剥离 3–4 层包装才能拿到组件 → 渲染逻辑臃肿、易错；
 - 编辑器「属性面板」要深挖 `__nodeOptions.elementOptions.__nodeOptions` 才能读写属性；
 - diff/序列化体积膨胀，JSON 噪声占比极高（有效信息 < 20%）；
@@ -138,6 +141,7 @@ page.__nodeOptions.flexbox.itemConfig[i].defaultSlot → 内容节点
 ```
 
 布局（栅格/间距/固定列）与组件树未分层，导致：
+
 - 调整布局会改动内容节点所在路径；
 - 换皮肤/换布局方案需重写整棵子树；
 - 编辑器难以独立编辑「布局属性」与「组件属性」。
@@ -154,6 +158,7 @@ page.__nodeOptions.flexbox.itemConfig[i].defaultSlot → 内容节点
 实测全量：**393 处** `"fn":"function..."` 代码字符串；**212 处** `this.$exposeds.get('id')` 跨节点引用。
 
 **影响**：
+
 - **安全**：`new Function()` 执行任意代码，XSS/注入风险；
 - **可读/可维护**：业务逻辑散落在 JSON 字符串里，无类型、无静态检查、无 IDE 支持；
 - **可校验性差**：schema 无法校验事件意图，无法做动作编排；
@@ -175,13 +180,13 @@ page.__nodeOptions.flexbox.itemConfig[i].defaultSlot → 内容节点
 
 每个节点重复 4 个 `__` 前缀键（`__nodeId/__nodeName/__nodeType/__nodeOptions`），有效信息被噪声淹没。实测文件体积：
 
-| 文件 | 行数 |
-|---|---|
+| 文件                   | 行数     |
+| ---------------------- | -------- |
 | lc-lease-contract.json | **7294** |
-| lc-waste-manage.json | **6242** |
+| lc-waste-manage.json   | **6242** |
 | single-table copy.json | **5333** |
-| receive-order.json | **4510** |
-| single-table.json | 2824 |
+| receive-order.json     | **4510** |
+| single-table.json      | 2824     |
 
 单文件数千行，**人工无法阅读/审查/合并**，git diff 噪声巨大。
 
@@ -191,41 +196,41 @@ page.__nodeOptions.flexbox.itemConfig[i].defaultSlot → 内容节点
 
 ### 3.1 渲染（Rendering）
 
-| 维度 | 评价 |
-|---|---|
-| 渲染逻辑 | ❌ 需层层剥离 renderNode→baseNode + switch(renderType) 找选项键，复杂易错 |
-| 子节点遍历 | ❌ defaultSlot 三态（对象/数组/混合）无法统一递归 |
-| 性能 | ❌ 深嵌套 + 包装层导致渲染递归深、JSON 解析慢、patch 粒度粗 |
-| 容器/区域 | ❌ 无显式 region 概念，靠 defaultSlot 隐式约定，拖拽投放难判定 |
+| 维度       | 评价                                                                      |
+| ---------- | ------------------------------------------------------------------------- |
+| 渲染逻辑   | ❌ 需层层剥离 renderNode→baseNode + switch(renderType) 找选项键，复杂易错 |
+| 子节点遍历 | ❌ defaultSlot 三态（对象/数组/混合）无法统一递归                         |
+| 性能       | ❌ 深嵌套 + 包装层导致渲染递归深、JSON 解析慢、patch 粒度粗               |
+| 容器/区域  | ❌ 无显式 region 概念，靠 defaultSlot 隐式约定，拖拽投放难判定            |
 
 ### 3.2 组件交互（Component Interaction）
 
-| 维度 | 评价 |
-|---|---|
-| 属性读写 | ❌ 属性埋在 `elementOptions.__nodeOptions`，深路径，易错 |
-| 布局编辑 | ❌ 布局与内容交织，独立编辑布局困难 |
+| 维度     | 评价                                                        |
+| -------- | ----------------------------------------------------------- |
+| 属性读写 | ❌ 属性埋在 `elementOptions.__nodeOptions`，深路径，易错    |
+| 布局编辑 | ❌ 布局与内容交织，独立编辑布局困难                         |
 | 数据绑定 | ⚠️ modelName 点路径（376 处）可用，但与 UI 耦合、无类型校验 |
-| 组件寻址 | ❌ id 重复 + `$exposeds.get(id)` 魔法引用，脆弱 |
+| 组件寻址 | ❌ id 重复 + `$exposeds.get(id)` 魔法引用，脆弱             |
 
 ### 3.3 事件绑定（Event Binding）
 
-| 维度 | 评价 |
-|---|---|
-| 表达形式 | ❌ 代码字符串（393 处），不可声明、不可校验、不可编排 |
-| 安全 | ❌ new Function 执行任意代码 |
-| 跨节点联动 | ❌ 魔法 id 硬编码（212 处），id 重复即错乱 |
-| 可视化编辑 | ❌ 只能 Monaco 手写代码，无动作编排器 |
+| 维度       | 评价                                                  |
+| ---------- | ----------------------------------------------------- |
+| 表达形式   | ❌ 代码字符串（393 处），不可声明、不可校验、不可编排 |
+| 安全       | ❌ new Function 执行任意代码                          |
+| 跨节点联动 | ❌ 魔法 id 硬编码（212 处），id 重复即错乱            |
+| 可视化编辑 | ❌ 只能 Monaco 手写代码，无动作编排器                 |
 
 ### 3.4 编辑器渲染/实现（Editor）
 
-| 维度 | 评价 |
-|---|---|
-| 节点选中/DOM 标记 | ❌ id 重复导致选中/高亮错乱 |
-| 属性面板 | ❌ 深挖多层 __nodeOptions，属性 schema 难以声明式驱动 |
-| 大纲树 | ⚠️ 可构建，但包装层（renderNode）污染树结构，需过滤 |
-| 拖拽投放 | ❌ 无 region，defaultSlot 三态，投放位置难计算 |
-| 撤销/重做 | ⚠️ 整树深拷贝，体积大、性能差 |
-| 序列化/diff | ❌ 噪声多、文件巨大、不可读 |
+| 维度              | 评价                                                  |
+| ----------------- | ----------------------------------------------------- |
+| 节点选中/DOM 标记 | ❌ id 重复导致选中/高亮错乱                           |
+| 属性面板          | ❌ 深挖多层 __nodeOptions，属性 schema 难以声明式驱动 |
+| 大纲树            | ⚠️ 可构建，但包装层（renderNode）污染树结构，需过滤   |
+| 拖拽投放          | ❌ 无 region，defaultSlot 三态，投放位置难计算        |
+| 撤销/重做         | ⚠️ 整树深拷贝，体积大、性能差                         |
+| 序列化/diff       | ❌ 噪声多、文件巨大、不可读                           |
 
 ---
 
@@ -234,6 +239,7 @@ page.__nodeOptions.flexbox.itemConfig[i].defaultSlot → 内容节点
 **总体评价：该 Schema 模型设计不合理，属于「能用但难维护、难扩展、难编辑」的早期试错设计。**
 
 核心症结：
+
 1. **双层节点模型（renderNode+baseNode）** 引入冗余间接层，本可单层；
 2. **id 非唯一** 动摇了编辑器与跨节点引用的根基；
 3. **defaultSlot 三态 + 布局/内容交织** 破坏了树的规整性；
@@ -254,6 +260,7 @@ page.__nodeOptions.flexbox.itemConfig[i].defaultSlot → 内容节点
 { "type": "button", "$$id": "btn_a3f9",  // type 即组件类型，单层；$$id 全局唯一（编辑器保证）
   "props": { "type": "primary", "text": "保存" } }   // 属性扁平，无需深挖
 ```
+
 - `type` 直接 = 组件（取消 renderType+双层模型）；
 - `$$id` 由编辑器 `genNodeId()` 保证唯一，杜绝重复；
 - `props` 扁平，属性面板声明式驱动。
@@ -264,6 +271,7 @@ page.__nodeOptions.flexbox.itemConfig[i].defaultSlot → 内容节点
 { "type": "container", "$$id": "c1",
   "body": [ { "type": "button", "$$id": "b1" } ] }   // 子节点恒为数组
 ```
+
 - `body` 永远是数组，渲染器统一 `map`；
 - 复杂容器用 `regions` 声明可投放区，拖拽投放清晰；
 - 布局属性进 `props`/`style`，与内容树分层。
@@ -276,6 +284,7 @@ page.__nodeOptions.flexbox.itemConfig[i].defaultSlot → 内容节点
     { "actionType": "emit", "componentId": "drawer_1" }   // 按 $$id 引用，唯一可靠
 ] } } }
 ```
+
 - 动作声明式、可校验、可编排、跨端复用；
 - 按 `$$id`（唯一）引用目标，取代魔法 id；
 - 安全：动作白名单注册执行，无 `new Function` 任意代码。
@@ -286,20 +295,21 @@ page.__nodeOptions.flexbox.itemConfig[i].defaultSlot → 内容节点
 page.schema          // 纯 UI 树（type/$$id/body/props/style/onEvent）
 page.datasource      // api/requestConfig（独立契约）
 ```
+
 - UI 与数据独立演进、独立联调、可复用。
 
 ### 5.5 收益对照
 
-| 问题（旧） | 新方案 | 收益 |
-|---|---|---|
-| id 重复 | `$$id` 编辑器保证唯一 | 选区/引用可靠 |
-| 双层包装爆炸 | 单层 `type` 节点 | 渲染/属性面板简化 ~70% |
-| defaultSlot 三态 | `body` 恒数组 + region | 子树遍历统一 |
-| 布局/内容交织 | 布局入 props/style | 可独立编辑 |
-| 事件代码字符串 | `onEvent.actions` 声明式 | 安全/可校验/可编排 |
-| 魔法 id 引用 | `$$id` 引用 | 不脆弱 |
-| UI/数据耦合 | 分离 | 独立演进 |
-| 文件数千行 | 扁平 schema | 体积↓、可读↑ |
+| 问题（旧）       | 新方案                   | 收益                   |
+| ---------------- | ------------------------ | ---------------------- |
+| id 重复          | `$$id` 编辑器保证唯一    | 选区/引用可靠          |
+| 双层包装爆炸     | 单层 `type` 节点         | 渲染/属性面板简化 ~70% |
+| defaultSlot 三态 | `body` 恒数组 + region   | 子树遍历统一           |
+| 布局/内容交织    | 布局入 props/style       | 可独立编辑             |
+| 事件代码字符串   | `onEvent.actions` 声明式 | 安全/可校验/可编排     |
+| 魔法 id 引用     | `$$id` 引用              | 不脆弱                 |
+| UI/数据耦合      | 分离                     | 独立演进               |
+| 文件数千行       | 扁平 schema              | 体积↓、可读↑           |
 
 ---
 

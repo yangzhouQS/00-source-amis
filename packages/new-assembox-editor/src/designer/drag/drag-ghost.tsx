@@ -1,45 +1,45 @@
+import type { Dragon } from "./dragon";
+import type { DragObject } from "./types";
 /**
  * DragGhost —— 拖拽跟随提示（fixed 定位在 host 文档，跟随鼠标）
  * 参考 lowcode drag-ghost + assembox drag-ghost
  */
-import {defineComponent, PropType, ref, onMounted, onBeforeUnmount} from 'vue';
-import type {Dragon} from './dragon';
-import type {DragObject} from './types';
-import {useAssemNamespace} from '../../hooks/use-assem-namespace';
-import './drag-ghost.less';
+import { defineComponent, onBeforeUnmount, onMounted, PropType, ref } from "vue";
+import { useAssemNamespace } from "../../hooks/use-assem-namespace";
+import "./drag-ghost.less";
 
-const ns = useAssemNamespace('drag-ghost');
+const ns = useAssemNamespace("drag-ghost");
 
 export const DragGhost = defineComponent({
-  name: 'DragGhost',
+  name: "DragGhost",
   props: {
-    dragon: {type: Object as PropType<Dragon>, required: true}
+    dragon: { type: Object as PropType<Dragon>, required: true },
   },
   setup(props) {
     const x = ref(0);
     const y = ref(0);
     const visible = ref(false);
-    const title = ref('');
+    const title = ref("");
 
     let off: (() => void) | null = null;
 
     onMounted(() => {
       off = props.dragon.on({
-        onDragstart: e => {
+        onDragstart: (e) => {
           const titles = getTitles(e.dragObject);
           title.value = titles;
           x.value = e.globalX;
           y.value = e.globalY;
           visible.value = true;
         },
-        onDrag: e => {
+        onDrag: (e) => {
           x.value = e.globalX;
           y.value = e.globalY;
         },
         onDragend: () => {
           visible.value = false;
-          title.value = '';
-        }
+          title.value = "";
+        },
       });
     });
 
@@ -51,22 +51,22 @@ export const DragGhost = defineComponent({
       <div
         class={ns.b()}
         style={{
-          display: visible.value ? 'flex' : 'none',
+          display: visible.value ? "flex" : "none",
           left: `${x.value}px`,
-          top: `${y.value}px`
+          top: `${y.value}px`,
         }}
       >
-        <div class={ns.e('inner')}>
-          <span class={ns.e('title')}>{title.value || '拖拽中'}</span>
+        <div class={ns.e("inner")}>
+          <span class={ns.e("title")}>{title.value || "拖拽中"}</span>
         </div>
       </div>
     );
-  }
+  },
 });
 
 function getTitles(dragObject: DragObject): string {
-  if (dragObject.type === 'nodeData' && dragObject.data) {
-    return dragObject.data.name || dragObject.data.title || '组件';
+  if (dragObject.type === "nodeData" && dragObject.data) {
+    return dragObject.data.name || dragObject.data.title || "组件";
   }
-  return dragObject.title || '节点';
+  return dragObject.title || "节点";
 }

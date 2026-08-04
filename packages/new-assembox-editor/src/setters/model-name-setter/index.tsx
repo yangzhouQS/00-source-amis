@@ -1,8 +1,8 @@
+import { CircleCheck } from "@element-plus/icons-vue";
 /**
  * ModelNameSetter - model/field binding picker (tree-select)
  */
-import {defineComponent, ref, watch} from 'vue';
-import {CircleCheck} from '@element-plus/icons-vue';
+import { defineComponent, ref, watch } from "vue";
 
 interface ModelTreeItem {
   key: string;
@@ -13,31 +13,33 @@ interface ModelTreeItem {
 }
 
 export const ModelNameSetter = defineComponent({
-  name: 'ModelNameSetter',
+  name: "ModelNameSetter",
   props: {
-    value: {type: [Object, String], default: ''},
-    onChange: {type: Function, required: true},
-    modelTree: {type: Array as () => ModelTreeItem[], default: () => []},
-    placeholder: {type: String, default: 'Select bound model'},
-    clearable: {type: Boolean, default: true},
-    disabled: {type: Boolean, default: false}
+    value: { type: [Object, String], default: "" },
+    onChange: { type: Function, required: true },
+    modelTree: { type: Array as () => ModelTreeItem[], default: () => [] },
+    placeholder: { type: String, default: "Select bound model" },
+    clearable: { type: Boolean, default: true },
+    disabled: { type: Boolean, default: false },
   },
   setup(props) {
     const visible = ref(false);
-    const filterText = ref('');
+    const filterText = ref("");
     const treeRef = ref<any>(null);
     const defaultExpandedKeys = ref<string[]>([]);
 
-    watch(filterText, val => {
+    watch(filterText, (val) => {
       treeRef.value?.filter(val?.trim());
     });
 
     watch(
       () => props.value,
-      val => {
-        if (val) defaultExpandedKeys.value = [String(val)];
+      (val) => {
+        if (val) {
+          defaultExpandedKeys.value = [String(val)];
+        }
       },
-      {immediate: true}
+      { immediate: true },
     );
 
     const handleNodeClick = (data: ModelTreeItem) => {
@@ -47,8 +49,10 @@ export const ModelNameSetter = defineComponent({
     };
 
     const filterNodeMethod = (val: string, data: any) => {
-      if (!val) return true;
-      return (data.key ?? '').includes(val);
+      if (!val) {
+        return true;
+      }
+      return (data.key ?? "").includes(val);
     };
 
     return () => (
@@ -61,7 +65,7 @@ export const ModelNameSetter = defineComponent({
         {{
           reference: () => (
             <el-input
-              modelValue={String(props.value ?? '')}
+              modelValue={String(props.value ?? "")}
               placeholder={props.placeholder}
               clearable={props.clearable}
               disabled={props.disabled}
@@ -84,19 +88,23 @@ export const ModelNameSetter = defineComponent({
                   nodeKey="fullPath"
                   defaultExpandedKeys={defaultExpandedKeys.value}
                   filterNodeMethod={filterNodeMethod}
-                  props={{children: 'children', label: 'key'}}
+                  props={{ children: "children", label: "key" }}
                   onNode-click={handleNodeClick}
                 >
                   {{
-                    default: ({data}: {data: ModelTreeItem}) => (
+                    default: ({ data }: { data: ModelTreeItem }) => (
                       <div style="display:flex;justify-content:space-between;align-items:center;width:100%">
                         <span>{data.key}</span>
                         <span style="display:flex;align-items:center;gap:4px">
-                          {data.description ? (
-                            <em style="color:#909399;font-style:normal">
-                              ({data.description})
-                            </em>
-                          ) : null}
+                          {data.description
+                            ? (
+                                <em style="color:#909399;font-style:normal">
+                                  (
+                                  {data.description}
+                                  )
+                                </em>
+                              )
+                            : null}
                           {data.isLeaf && (
                             <el-icon color="var(--el-color-success)">
                               <CircleCheck />
@@ -104,14 +112,14 @@ export const ModelNameSetter = defineComponent({
                           )}
                         </span>
                       </div>
-                    )
+                    ),
                   }}
                 </el-tree>
               </el-scrollbar>
             </>
-          )
+          ),
         }}
       </el-popover>
     );
-  }
+  },
 });

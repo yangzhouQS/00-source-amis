@@ -1,8 +1,8 @@
 /**
  * 选区管理
  */
-import type {NodeId} from '../schema/types';
-import type {EditorStore} from './store';
+import type { NodeId } from "../schema/types";
+import type { EditorStore } from "./store";
 
 export class Selection {
   constructor(private readonly store: EditorStore) {}

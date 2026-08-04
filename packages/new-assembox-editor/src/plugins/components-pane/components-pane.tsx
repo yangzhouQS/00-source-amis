@@ -1,23 +1,23 @@
+import type { Editor } from "../../core/editor";
+import type { ComponentCatalogItem } from "../../scenario/types";
 /**
  * 组件库面板（拖拽源）
  * 从场景 catalog（IComponentCatalog）读取，按 group/category 分组
  * 支持搜索过滤 + 拖入画布（DnD）与点击插入；BEM 类名（component-pane block）
  */
-import {defineComponent, PropType, ref, computed} from 'vue';
-import type {Editor} from '../../core/editor';
-import type {ComponentCatalogItem} from '../../scenario/types';
-import {useAssemNamespace} from '../../hooks/use-assem-namespace';
-import './../pane.less';
+import { computed, defineComponent, PropType, ref } from "vue";
+import { useAssemNamespace } from "../../hooks/use-assem-namespace";
+import "./../pane.less";
 
-const ns = useAssemNamespace('component-pane');
+const ns = useAssemNamespace("component-pane");
 
 export const ComponentsPane = defineComponent({
-  name: 'ComponentsPane',
+  name: "ComponentsPane",
   props: {
-    editor: {type: Object as PropType<Editor>, required: true}
+    editor: { type: Object as PropType<Editor>, required: true },
   },
   setup(props) {
-    const keyword = ref('');
+    const keyword = ref("");
 
     const onMouseDown = (e: MouseEvent, item: ComponentCatalogItem) => {
       props.editor.startComponentDrag(e, item.renderType);
@@ -25,13 +25,15 @@ export const ComponentsPane = defineComponent({
 
     const onClickInsert = (item: ComponentCatalogItem) => {
       const parentId = props.editor.rootNodeId;
-      if (!parentId) return;
+      if (!parentId) {
+        return;
+      }
       const node = props.editor.schemaOps.createNode(
         item.renderType,
         item.name,
-        props.editor.schemaOps.cloneSchema(item.scaffold)
+        props.editor.schemaOps.cloneSchema(item.scaffold),
       );
-      props.editor.insert(parentId, 'defaultSlot', node);
+      props.editor.insert(parentId, "defaultSlot", node);
     };
 
     /** 按 group/category 分组（结构：group → category → items） */
@@ -44,11 +46,15 @@ export const ComponentsPane = defineComponent({
       }
       for (const c of components) {
         const g = groups.find(x => x.name === c.group);
-        const gTitle = g?.title ?? c.group ?? '其他';
-        if (!map.has(gTitle)) map.set(gTitle, new Map());
+        const gTitle = g?.title ?? c.group ?? "其他";
+        if (!map.has(gTitle)) {
+          map.set(gTitle, new Map());
+        }
         const cats = map.get(gTitle)!;
-        const cTitle = c.category ?? '其他';
-        if (!cats.has(cTitle)) cats.set(cTitle, []);
+        const cTitle = c.category ?? "其他";
+        if (!cats.has(cTitle)) {
+          cats.set(cTitle, []);
+        }
         cats.get(cTitle)!.push(c);
       }
       return map;
@@ -58,19 +64,25 @@ export const ComponentsPane = defineComponent({
     const filteredGroups = computed(() => {
       const groups = grouped.value;
       const kw = keyword.value.trim().toLowerCase();
-      if (!kw) return groups;
+      if (!kw) {
+        return groups;
+      }
       const result = new Map<string, Map<string, ComponentCatalogItem[]>>();
       for (const [groupName, categories] of groups) {
         const newCats = new Map<string, ComponentCatalogItem[]>();
         for (const [catName, items] of categories) {
           const matched = items.filter(
             m =>
-              (m.name ?? '').toLowerCase().includes(kw) ||
-              m.renderType.toLowerCase().includes(kw)
+              (m.name ?? "").toLowerCase().includes(kw)
+              || m.renderType.toLowerCase().includes(kw),
           );
-          if (matched.length) newCats.set(catName, matched);
+          if (matched.length) {
+            newCats.set(catName, matched);
+          }
         }
-        if (newCats.size) result.set(groupName, newCats);
+        if (newCats.size) {
+          result.set(groupName, newCats);
+        }
       }
       return result;
     });
@@ -80,7 +92,7 @@ export const ComponentsPane = defineComponent({
       const groupList = Array.from(groups.entries());
       return (
         <div class={ns.b()}>
-          <div class={ns.e('search')}>
+          <div class={ns.e("search")}>
             <el-input
               modelValue={keyword.value}
               onUpdate:modelValue={(v: string) => (keyword.value = v)}
@@ -90,61 +102,65 @@ export const ComponentsPane = defineComponent({
               prefix-icon="Search"
             />
           </div>
-          <el-scrollbar class={ns.e('scroll')}>
-            {groups.size === 0 ? (
-              <el-empty
-                description={
-                  keyword.value ? '未找到匹配组件' : '暂无组件，请注册组件'
-                }
-                imageSize={60}
-              />
-            ) : groupList.length > 1 ? (
-              <el-collapse modelValue={groupList.map(g => g[0])}>
-                {groupList.map(([groupName, categories]) => (
-                  <el-collapse-item
-                    key={groupName}
-                    title={groupName}
-                    name={groupName}
-                  >
-                    {renderCategories(categories, onMouseDown, onClickInsert)}
-                  </el-collapse-item>
-                ))}
-              </el-collapse>
-            ) : (
-              renderCategories(
-                groups.values().next().value ?? new Map(),
-                onMouseDown,
-                onClickInsert
-              )
-            )}
+          <el-scrollbar class={ns.e("scroll")}>
+            {groups.size === 0
+              ? (
+                  <el-empty
+                    description={
+                      keyword.value ? "未找到匹配组件" : "暂无组件，请注册组件"
+                    }
+                    imageSize={60}
+                  />
+                )
+              : groupList.length > 1
+                ? (
+                    <el-collapse modelValue={groupList.map(g => g[0])}>
+                      {groupList.map(([groupName, categories]) => (
+                        <el-collapse-item
+                          key={groupName}
+                          title={groupName}
+                          name={groupName}
+                        >
+                          {renderCategories(categories, onMouseDown, onClickInsert)}
+                        </el-collapse-item>
+                      ))}
+                    </el-collapse>
+                  )
+                : (
+                    renderCategories(
+                      groups.values().next().value ?? new Map(),
+                      onMouseDown,
+                      onClickInsert,
+                    )
+                  )}
           </el-scrollbar>
         </div>
       );
     };
-  }
+  },
 });
 
 function renderCategories(
   categories: Map<string, ComponentCatalogItem[]>,
   onMouseDown: (e: MouseEvent, m: ComponentCatalogItem) => void,
-  onClickInsert: (m: ComponentCatalogItem) => void
+  onClickInsert: (m: ComponentCatalogItem) => void,
 ) {
   return Array.from(categories.entries()).map(([catName, items]) => (
-    <div class={ns.e('category')} key={catName}>
-      <div class={ns.e('category-title')}>{catName}</div>
-      <div class={ns.e('category-grid')}>
+    <div class={ns.e("category")} key={catName}>
+      <div class={ns.e("category-title")}>{catName}</div>
+      <div class={ns.e("category-grid")}>
         {items.map(item => (
           <div
             key={item.renderType}
-            class={ns.e('item')}
+            class={ns.e("item")}
             onMousedown={(e: MouseEvent) => onMouseDown(e, item)}
             onClick={() => onClickInsert(item)}
             title={item.name}
           >
-            <el-icon class={ns.e('icon')}>
+            <el-icon class={ns.e("icon")}>
               <span>·</span>
             </el-icon>
-            <span class={ns.e('name')}>{item.name}</span>
+            <span class={ns.e("name")}>{item.name}</span>
           </div>
         ))}
       </div>

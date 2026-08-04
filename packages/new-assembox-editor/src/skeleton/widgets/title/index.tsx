@@ -1,11 +1,12 @@
+import type { PropType } from "vue";
 /**
  * Title 组件（参考 lowcode-engine title 设计）
  * 渲染 label + 可选 tip；有 tip 时显示虚线下划线 + cursor help
  * 支持字符串 `{label}` 或对象 `{label, icon, tip, description, className}`
  */
-import {defineComponent, type PropType} from 'vue';
-import {Tip} from '../tip';
-import './title.less';
+import { defineComponent } from "vue";
+import { Tip } from "../tip";
+import "./title.less";
 
 export interface TitleConfig {
   label?: string;
@@ -16,29 +17,31 @@ export interface TitleConfig {
 }
 
 export const Title = defineComponent({
-  name: 'AssemTitle',
+  name: "AssemTitle",
   props: {
     title: {
       type: [String, Object] as PropType<string | TitleConfig>,
-      default: ''
+      default: "",
     },
     placement: {
-      type: String as PropType<'top' | 'right' | 'bottom' | 'left'>,
-      default: 'right'
-    }
+      type: String as PropType<"top" | "right" | "bottom" | "left">,
+      default: "right",
+    },
   },
-  setup(props, {slots}) {
+  setup(props, { slots }) {
     return () => {
-      const t: TitleConfig =
-        typeof props.title === 'string'
-          ? {label: props.title}
+      const t: TitleConfig
+        = typeof props.title === "string"
+          ? { label: props.title }
           : (props.title as TitleConfig) || {};
-      if (!t.label && !slots.default) return null;
+      if (!t.label && !slots.default) {
+        return null;
+      }
 
       const tip = t.tip || t.description;
       const inner = (
         <span
-          class={['assem-title', t.className, {'assem-title--has-tip': !!tip}]}
+          class={["assem-title", t.className, { "assem-title--has-tip": !!tip }]}
         >
           {slots.default?.() ?? <span class="assem-title__txt">{t.label}</span>}
         </span>
@@ -53,5 +56,5 @@ export const Title = defineComponent({
       }
       return inner;
     };
-  }
+  },
 });

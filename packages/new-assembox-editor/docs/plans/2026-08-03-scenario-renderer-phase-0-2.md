@@ -19,7 +19,7 @@
 - assembox-desktop-next 路径：`assembox-packages-project/libs/assembox-desktop-next`
 - assembox-core-next 路径：`assembox-packages-project/libs/assembox-core-next`
 - new-assembox-editor 路径：`packages/new-assembox-editor`
-- 两个 *-next 包已在根 pnpm-workspace.yaml 注册（workspace:* 链接已建立）
+- 两个 _-next 包已在根 pnpm-workspace.yaml 注册（workspace:_ 链接已建立）
 - assembox-desktop-next 的 `useEditor.ts` 已有 `isEditorEnv()` 门控 + `window.AssemVueRenderer` 回调
 - assembox-desktop-next 的容器组件模板各自渲染 `defaultSlot`/`toolSlot`/`filterSlot` 等
 - assembox-desktop-next 的 `nesting.ts` 有 SLOTS 表 + `lookupSlotGate()` + `isCategoryAllowed()`
@@ -31,23 +31,23 @@
 
 ## File Structure
 
-| 文件 | 责任 | 动作 |
-|---|---|---|
-| `assembox-desktop-next/src/composables/use-editor.ts` | DOM 标记 + designMode 门控 | 修改 |
-| `assembox-desktop-next/src/composables/use-node-events.ts` | 设计态事件拦截 | 修改 |
-| `assembox-desktop-next/src/composables/use-node-register.ts` | data-editor-id 双保险 | 修改 |
-| `assembox-desktop-next/src/components/block-contanier/panel/assem-panel.vue` | defaultSlot 标记 | 修改 |
-| `assembox-desktop-next/src/components/block-contanier/box/assem-box.vue` | defaultSlot 标记 | 修改 |
-| `assembox-desktop-next/src/components/layout/assem-flex-box.vue` | item slot 标记 | 修改 |
-| `assembox-desktop-next/src/components/layout/assem-flex-line.vue` | defaultSlot/rightSlot 标记 | 修改 |
+| 文件                                                                                  | 责任                        | 动作 |
+| ------------------------------------------------------------------------------------- | --------------------------- | ---- |
+| `assembox-desktop-next/src/composables/use-editor.ts`                                 | DOM 标记 + designMode 门控  | 修改 |
+| `assembox-desktop-next/src/composables/use-node-events.ts`                            | 设计态事件拦截              | 修改 |
+| `assembox-desktop-next/src/composables/use-node-register.ts`                          | data-editor-id 双保险       | 修改 |
+| `assembox-desktop-next/src/components/block-contanier/panel/assem-panel.vue`          | defaultSlot 标记            | 修改 |
+| `assembox-desktop-next/src/components/block-contanier/box/assem-box.vue`              | defaultSlot 标记            | 修改 |
+| `assembox-desktop-next/src/components/layout/assem-flex-box.vue`                      | item slot 标记              | 修改 |
+| `assembox-desktop-next/src/components/layout/assem-flex-line.vue`                     | defaultSlot/rightSlot 标记  | 修改 |
 | `assembox-desktop-next/src/components/element-container/block-element/assem-card.vue` | headerSlot/defaultSlot 标记 | 修改 |
-| `assembox-desktop-next/src/constants.ts` | assemBoxDesignMode 变量声明 | 修改 |
-| `packages/new-assembox-editor/src/scenario/types.ts` | 5 个接口定义 | 新建 |
-| `packages/new-assembox-editor/src/scenario/registry.ts` | ScenarioRegistry | 新建 |
-| `packages/new-assembox-editor/src/scenario/index.ts` | 出口 | 新建 |
-| `packages/new-assembox-editor/src/scenarios/pc-desktop/schema-ops.ts` | PcSchemaOps | 新建 |
-| `packages/new-assembox-editor/src/scenarios/pc-desktop/index.ts` | PC ScenarioProfile | 新建 |
-| `packages/new-assembox-editor/src/scenarios/pc-desktop/empty-schema.ts` | PC 空模板 | 新建 |
+| `assembox-desktop-next/src/constants.ts`                                              | assemBoxDesignMode 变量声明 | 修改 |
+| `packages/new-assembox-editor/src/scenario/types.ts`                                  | 5 个接口定义                | 新建 |
+| `packages/new-assembox-editor/src/scenario/registry.ts`                               | ScenarioRegistry            | 新建 |
+| `packages/new-assembox-editor/src/scenario/index.ts`                                  | 出口                        | 新建 |
+| `packages/new-assembox-editor/src/scenarios/pc-desktop/schema-ops.ts`                 | PcSchemaOps                 | 新建 |
+| `packages/new-assembox-editor/src/scenarios/pc-desktop/index.ts`                      | PC ScenarioProfile          | 新建 |
+| `packages/new-assembox-editor/src/scenarios/pc-desktop/empty-schema.ts`               | PC 空模板                   | 新建 |
 
 ---
 
@@ -56,6 +56,7 @@
 ## Task 0.1: 全局变量声明 + useEditor DOM 标记
 
 **Files:**
+
 - Modify: `assembox-desktop-next/src/constants.ts`
 - Modify: `assembox-desktop-next/src/composables/use-editor.ts`
 
@@ -125,9 +126,11 @@ export function isDesignMode(): boolean {
 - [ ] **Step 4: 验证 typecheck（不提交，此项目禁止 git commit）**
 
 Run:
+
 ```bash
 cd assembox-packages-project/libs/assembox-desktop-next && npx tsc --noEmit
 ```
+
 Expected: 无新增错误（已有错误可忽略）
 
 > ⚠️ **assembox-packages-project 目录禁止 git commit**，所有改动仅保留工作区。
@@ -135,6 +138,7 @@ Expected: 无新增错误（已有错误可忽略）
 ## Task 0.2: 设计态事件拦截
 
 **Files:**
+
 - Modify: `assembox-desktop-next/src/composables/use-node-events.ts`
 
 - [ ] **Step 1: 在 useNodeEvents 中增加设计态事件跳过**
@@ -164,6 +168,7 @@ npx tsc --noEmit
 ## Task 0.3: 容器组件槽位 DOM 标记
 
 **Files:**
+
 - Modify: `assembox-desktop-next/src/components/block-contanier/panel/assem-panel.vue`
 - Modify: `assembox-desktop-next/src/components/block-contanier/box/assem-box.vue`
 - Modify: `assembox-desktop-next/src/components/layout/assem-flex-line.vue`
@@ -175,6 +180,7 @@ npx tsc --noEmit
 在 `<NodeRenderer>` 的外层包裹一个 `<div>`（仅编辑态），加 `data-slot-host` + `data-slot-key`：
 
 找到模板中的：
+
 ```vue
 <template v-for="(slot, idx) in normalizedSlots" :key="idx">
   <NodeRenderer :node="slot" parent="Panel" slot-name="defaultSlot" />
@@ -182,6 +188,7 @@ npx tsc --noEmit
 ```
 
 改为：
+
 ```vue
 <template v-for="(slot, idx) in normalizedSlots" :key="idx">
   <div v-if="isEditorEnv()" :data-slot-host="options.__nodeId" data-slot-key="defaultSlot">
@@ -192,6 +199,7 @@ npx tsc --noEmit
 ```
 
 并在 `<script setup>` 中引入：
+
 ```typescript
 import { isEditorEnv } from '../../../composables/use-editor';
 ```
@@ -215,16 +223,19 @@ npx tsc --noEmit
 ## Task 0.4: 剩余容器组件槽位标记
 
 **Files:**
+
 - Modify: `assem-flex-box.vue`, `assem-toolbar.vue`(如有), `assem-card.vue`, `assem-grid-item.vue`, `assem-tabpanel/*.vue`
 
 - [ ] **Step 1: 逐个为剩余容器组件加 data-slot-host + data-slot-key**
 
 对每个容器组件：
+
 1. 读取模板，找到渲染各 slot 子节点的位置
 2. 用 `v-if="isEditorEnv()"` 包裹 `<div :data-slot-host="nodeId" :data-slot-key="slotName">`
 3. 引入 `isEditorEnv`
 
 涉及组件及其 slot：
+
 - FlexBox: `itemConfig[].defaultSlot` → 每个 item 一个标记
 - Toolbar: `toolSlot` + `filterSlot`
 - Card: `headerSlot` + `defaultSlot`
@@ -246,6 +257,7 @@ npx tsc --noEmit
 ## Task 1.1: 定义 5 个核心接口
 
 **Files:**
+
 - Create: `packages/new-assembox-editor/src/scenario/types.ts`
 
 - [ ] **Step 1: 创建 types.ts，写入全部接口定义**
@@ -396,6 +408,7 @@ git commit -m "feat(editor): 定义场景框架 5 个核心接口（ISchemaOps/I
 ## Task 1.2: ScenarioRegistry + 出口
 
 **Files:**
+
 - Create: `packages/new-assembox-editor/src/scenario/registry.ts`
 - Create: `packages/new-assembox-editor/src/scenario/index.ts`
 
@@ -483,6 +496,7 @@ git commit -m "feat(editor): ScenarioRegistry + 模块出口"
 ## Task 2.1: PC 空模板 + PcSchemaOps 核心
 
 **Files:**
+
 - Create: `packages/new-assembox-editor/src/scenarios/pc-desktop/empty-schema.ts`
 - Create: `packages/new-assembox-editor/src/scenarios/pc-desktop/schema-ops.ts`
 
@@ -811,6 +825,7 @@ import { createPcEmptySchema } from './empty-schema';
 ```bash
 npx vue-tsc --noEmit
 ```
+
 Expected: 无错误（如果 `@cs/assembox-desktop-next` 的 SLOTS 导出方式不同，调整 import）
 
 - [ ] **Step 5: 提交**
@@ -825,6 +840,7 @@ git commit -m "feat(editor): PC 场景 PcSchemaOps（IBaseNode 9 种 slot 操作
 ## Self-Review
 
 **1. Spec coverage:**
+
 - P0-1 (DOM 标记): Task 0.1 ✓
 - P0-2 (事件拦截): Task 0.2 ✓
 - P0-3 (槽位标记): Task 0.3 + 0.4 ✓
@@ -842,6 +858,7 @@ git commit -m "feat(editor): PC 场景 PcSchemaOps（IBaseNode 9 种 slot 操作
 **3. Type consistency:** ISchemaOps 方法名在 Task 1.1 定义，在 Task 2.1 实现中完全一致（getNodeId/insertNode/moveNode 等）。SLOTS 导出需验证（`@cs/assembox-desktop-next` 是否直接导出 SLOTS 对象）。
 
 **未覆盖（后续计划）：**
+
 - Phase 0.5（AssemCore reactive 验证）→ Phase 3 renderer.ts 前验证
 - Phase 3（PC renderer.ts）→ 需 Phase 0.5 结论
 - Phase 4-7 → 依赖 Phase 3

@@ -1,20 +1,20 @@
+import type { Editor } from "../../core/editor";
+import { Document, RefreshLeft, RefreshRight } from "@element-plus/icons-vue";
 /**
  * 历史记录面板
  * 本地版本数组（取代旧版服务端 Redis history）
  * 支持撤销/重做
  */
-import {defineComponent, PropType} from 'vue';
-import {RefreshLeft, RefreshRight, Document} from '@element-plus/icons-vue';
-import type {Editor} from '../../core/editor';
-import {useAssemNamespace} from '../../hooks/use-assem-namespace';
-import './../pane.less';
+import { defineComponent, PropType } from "vue";
+import { useAssemNamespace } from "../../hooks/use-assem-namespace";
+import "./../pane.less";
 
-const ns = useAssemNamespace('history-pane');
+const ns = useAssemNamespace("history-pane");
 
 export const HistoryPane = defineComponent({
-  name: 'HistoryPane',
+  name: "HistoryPane",
   props: {
-    editor: {type: Object as PropType<Editor>, required: true}
+    editor: { type: Object as PropType<Editor>, required: true },
   },
   setup(props) {
     return () => {
@@ -22,7 +22,7 @@ export const HistoryPane = defineComponent({
       const history = store.history;
       return (
         <div class={ns.b()}>
-          <div class={ns.e('toolbar')}>
+          <div class={ns.e("toolbar")}>
             <el-button-group>
               <el-tooltip content="撤销" placement="top">
                 <el-button
@@ -44,24 +44,29 @@ export const HistoryPane = defineComponent({
               </el-tooltip>
             </el-button-group>
           </div>
-          <div class={ns.e('list')}>
-            {history.length ? (
-              history
-                .slice()
-                .reverse()
-                .map((entry, idx) => (
-                  <div class={ns.e('item')} key={entry.timestamp}>
-                    <Document class={ns.e('icon')} />
-                    <span class={ns.e('label')}>{entry.label}</span>
-                    <span class={ns.e('index')}>#{history.length - idx}</span>
-                  </div>
-                ))
-            ) : (
-              <el-empty description="暂无历史记录" imageSize={50} />
-            )}
+          <div class={ns.e("list")}>
+            {history.length
+              ? (
+                  history
+                    .slice()
+                    .reverse()
+                    .map((entry, idx) => (
+                      <div class={ns.e("item")} key={entry.timestamp}>
+                        <Document class={ns.e("icon")} />
+                        <span class={ns.e("label")}>{entry.label}</span>
+                        <span class={ns.e("index")}>
+                          #
+                          {history.length - idx}
+                        </span>
+                      </div>
+                    ))
+                )
+              : (
+                  <el-empty description="暂无历史记录" imageSize={50} />
+                )}
           </div>
         </div>
       );
     };
-  }
+  },
 });

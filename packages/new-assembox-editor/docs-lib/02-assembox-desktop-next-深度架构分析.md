@@ -71,13 +71,13 @@
 
 ### 1.2 核心设计理念
 
-| 原则 | 说明 |
-|---|---|
-| **Manifest 单一真相源** | 所有组件的 Props/Events/Exposed 类型 + 运行时实现 + 分类，集中在 `manifest.ts` 一张表 |
-| **类型/运行时分层** | `ComponentTypes`（类型层）→ `COMPONENTS`（运行时层），双向锁死 key 一致，避免循环依赖 |
-| **Nesting 声明式** | 嵌套规则集中在 `nesting.ts` 的 `SLOTS` 表，模板只声明「我是谁的哪个槽」，不自己写白名单 |
-| **Composable 统一** | 10 个 hook 收编旧版分散逻辑，组件 setup 调用模式完全一致 |
-| **外部组件零知识接入** | `registerExternal()` 自动套适配器，外部组件写普通 Vue 组件即可 |
+| 原则                    | 说明                                                                                    |
+| ----------------------- | --------------------------------------------------------------------------------------- |
+| **Manifest 单一真相源** | 所有组件的 Props/Events/Exposed 类型 + 运行时实现 + 分类，集中在 `manifest.ts` 一张表   |
+| **类型/运行时分层**     | `ComponentTypes`（类型层）→ `COMPONENTS`（运行时层），双向锁死 key 一致，避免循环依赖   |
+| **Nesting 声明式**      | 嵌套规则集中在 `nesting.ts` 的 `SLOTS` 表，模板只声明「我是谁的哪个槽」，不自己写白名单 |
+| **Composable 统一**     | 10 个 hook 收编旧版分散逻辑，组件 setup 调用模式完全一致                                |
+| **外部组件零知识接入**  | `registerExternal()` 自动套适配器，外部组件写普通 Vue 组件即可                          |
 
 ---
 
@@ -164,6 +164,7 @@ component-catalog.ts（运行时目录）
 ```
 
 **为什么分两层**（manifest.ts 注释）：
+
 - 三张类型映射由类型层派生，`IBaseNode` 依赖这些映射
 - 组件的 `.vue` setup 里又用到 `IBaseNode`
 - 若改由 `typeof COMPONENTS` 派生 → 形成 `类型映射 → 组件值 → 类型映射` 的闭环 → TS7022/TS2313
@@ -255,24 +256,24 @@ export const SLOTS: Partial<Record<SlotHost, SlotMap>> = {
 
 ### 4.3 槽位类型
 
-| 槽位字段 | 典型宿主 | 说明 |
-|---|---|---|
-| `defaultSlot` | Panel/Box/FlexBox/Card | 主内容区 |
-| `toolSlot` | Toolbar | 工具按钮区 |
-| `filterSlot` | Toolbar | 筛选项区 |
-| `headerSlot` | Card | 卡片头部 |
-| `bottomSlot` | TableAsync | 分页下方 |
-| `labelSlot` | TabPanel | 标签页标签 |
-| `rightSlot` | FlexLine | 行右侧 |
-| `columRender` | Table 族 | 单元格 |
-| `buttonOption` | ButtonGroup | 按钮组子项 |
+| 槽位字段       | 典型宿主               | 说明       |
+| -------------- | ---------------------- | ---------- |
+| `defaultSlot`  | Panel/Box/FlexBox/Card | 主内容区   |
+| `toolSlot`     | Toolbar                | 工具按钮区 |
+| `filterSlot`   | Toolbar                | 筛选项区   |
+| `headerSlot`   | Card                   | 卡片头部   |
+| `bottomSlot`   | TableAsync             | 分页下方   |
+| `labelSlot`    | TabPanel               | 标签页标签 |
+| `rightSlot`    | FlexLine               | 行右侧     |
+| `columRender`  | Table 族               | 单元格     |
+| `buttonOption` | ButtonGroup            | 按钮组子项 |
 
 ### 4.4 `'any'` vs 未登记
 
-| 取值 | 行为 |
-|---|---|
-| `['lineElement']` | 只允许内联元素 |
-| `'any'` | **有意**不限制，不告警 |
+| 取值                | 行为                                                            |
+| ------------------- | --------------------------------------------------------------- |
+| `['lineElement']`   | 只允许内联元素                                                  |
+| `'any'`             | **有意**不限制，不告警                                          |
 | 未登记（undefined） | 不设限但**告警** `NEST_SLOT_UNDECLARED`（有人加了新槽忘了登记） |
 
 ---
@@ -298,6 +299,7 @@ export const SLOTS: Partial<Record<SlotHost, SlotMap>> = {
 ```
 
 **Props**:
+
 ```typescript
 defineProps<{
   node: IBaseNode;           // 节点配置
@@ -329,17 +331,17 @@ defineProps<{
 
 ### 6.1 十个核心 Composable
 
-| Composable | 文件 | 职责 |
-|---|---|---|
-| `useEventContext()` | `use-event-context.ts` | inject 获取 EventContext（类型安全） |
-| `useNodeOptions(props, ctx, defaults)` | `use-node-options.ts` | 统一节点选项 computed（3 源 + onValueRender + defaults 合并） |
-| `useNodeEvents(nodeEvent, ctx)` | `use-node-events.ts` | 事件注册/触发/自动清理（dispatch + EventBus） |
-| `useNodeRegister(opts)` | `use-node-register.ts` | 节点注册到 NodeRegistry（Proxy props + updateProps + patchProps） |
-| `useInputValue(props, ctx)` | `use-input-value.ts` | 输入组件双向绑定（modelName → modelValue） |
-| `usePermission(ctx)` | `use-permission.ts` | 权限 + 显示控制 |
-| `useEditor()` | `use-editor.ts` | 编辑器环境集成（assemBoxIsEdit → AssemVueRenderer 回调） |
-| `useRemoteData(ctx)` | `use-remote-data.ts` | 统一的远端数据拉取入口（loading + 信封剥离 + 错误处理） |
-| `readModelValue` / `writeModelValue` | `model-value.ts` | modelName 取值/写回的唯一解析口 |
+| Composable                             | 文件                   | 职责                                                              |
+| -------------------------------------- | ---------------------- | ----------------------------------------------------------------- |
+| `useEventContext()`                    | `use-event-context.ts` | inject 获取 EventContext（类型安全）                              |
+| `useNodeOptions(props, ctx, defaults)` | `use-node-options.ts`  | 统一节点选项 computed（3 源 + onValueRender + defaults 合并）     |
+| `useNodeEvents(nodeEvent, ctx)`        | `use-node-events.ts`   | 事件注册/触发/自动清理（dispatch + EventBus）                     |
+| `useNodeRegister(opts)`                | `use-node-register.ts` | 节点注册到 NodeRegistry（Proxy props + updateProps + patchProps） |
+| `useInputValue(props, ctx)`            | `use-input-value.ts`   | 输入组件双向绑定（modelName → modelValue）                        |
+| `usePermission(ctx)`                   | `use-permission.ts`    | 权限 + 显示控制                                                   |
+| `useEditor()`                          | `use-editor.ts`        | 编辑器环境集成（assemBoxIsEdit → AssemVueRenderer 回调）          |
+| `useRemoteData(ctx)`                   | `use-remote-data.ts`   | 统一的远端数据拉取入口（loading + 信封剥离 + 错误处理）           |
+| `readModelValue` / `writeModelValue`   | `model-value.ts`       | modelName 取值/写回的唯一解析口                                   |
 
 ### 6.2 标准组件 setup 模式
 
@@ -402,12 +404,12 @@ toPaged<T>(payload): {count, result}  // payload → 分页结构
 
 ### 7.3 数据绑定
 
-| 绑定模式 | 解析 | 写回 |
-|---|---|---|
-| `modelName` → `$dataModels` | `readModelValue(source, ctx, modelName)` | `writeModelValue(...)` |
-| `modelName` + `__nodeProps`（表格行） | 相对行数据解析 | 写回行数据 |
-| `useNodeOptions` 内部 | `content = resolveRawValue()` | `_overrides` 覆盖 |
-| `useInputValue`（v-model） | `get: readModelValue` | `set: writeModelValue` |
+| 绑定模式                              | 解析                                     | 写回                   |
+| ------------------------------------- | ---------------------------------------- | ---------------------- |
+| `modelName` → `$dataModels`           | `readModelValue(source, ctx, modelName)` | `writeModelValue(...)` |
+| `modelName` + `__nodeProps`（表格行） | 相对行数据解析                           | 写回行数据             |
+| `useNodeOptions` 内部                 | `content = resolveRawValue()`            | `_overrides` 覆盖      |
+| `useInputValue`（v-model）            | `get: readModelValue`                    | `set: writeModelValue` |
 
 ---
 
@@ -415,11 +417,11 @@ toPaged<T>(payload): {count, result}  // payload → 分页结构
 
 ### 8.1 三种事件类型
 
-| 类型 | 触发 | 示例 |
-|---|---|---|
-| **内置事件** | 组件内 `dispatch('onClick', payload)` | Button 点击、Input 变化 |
-| **自定义事件** | `eventBus.emitCustom('refresh')` | 跨组件联动 |
-| **生命周期** | `useNodeEvents` onMounted 自动触发 | 初始化加载 |
+| 类型           | 触发                                  | 示例                    |
+| -------------- | ------------------------------------- | ----------------------- |
+| **内置事件**   | 组件内 `dispatch('onClick', payload)` | Button 点击、Input 变化 |
+| **自定义事件** | `eventBus.emitCustom('refresh')`      | 跨组件联动              |
+| **生命周期**   | `useNodeEvents` onMounted 自动触发    | 初始化加载              |
 
 ### 8.2 dispatch 签名
 
@@ -462,14 +464,14 @@ registerExternal({
 
 `createAdapter()` 自动套一层包装：
 
-| 翻译项 | 说明 |
-|---|---|
-| **属性透传** | `__nodeOptions` 去除框架字段后透传为普通 props |
-| **值绑定** | `modelName` → `modelValue` + `onUpdate:modelValue`（v-model） |
-| **事件转接** | DSL 事件 → Vue emit 监听（事件名同名，无需映射表） |
-| **权限** | `display` / `permissionSetting` → v-if |
-| **实例注册** | `defineExpose` → `exposed` Proxy → NodeRegistry |
-| **编辑器集成** | `useEditor()` 自动接入 |
+| 翻译项         | 说明                                                          |
+| -------------- | ------------------------------------------------------------- |
+| **属性透传**   | `__nodeOptions` 去除框架字段后透传为普通 props                |
+| **值绑定**     | `modelName` → `modelValue` + `onUpdate:modelValue`（v-model） |
+| **事件转接**   | DSL 事件 → Vue emit 监听（事件名同名，无需映射表）            |
+| **权限**       | `display` / `permissionSetting` → v-if                        |
+| **实例注册**   | `defineExpose` → `exposed` Proxy → NodeRegistry               |
+| **编辑器集成** | `useEditor()` 自动接入                                        |
 
 ### 9.3 框架自用字段（不透传）
 
@@ -539,30 +541,30 @@ desktop-next: defaultIssueReporter
 
 **用户可见 vs 开发者可见**：
 
-| 问题码 | 收件人 | 弹 ElMessage |
-|---|---|---|
-| `REQUEST_FAILED` | 最终用户 | ✅ |
-| `EVENT_HANDLER_ERROR` | 最终用户 | ✅ |
-| `UNKNOWN_RENDER_TYPE` | 搭页面的人 | ❌（仅 console） |
-| `NEST_CATEGORY_NOT_ALLOWED` | 搭页面的人 | ❌ |
-| `COMPONENT_OVERRIDDEN` | 搭页面的人 | ❌ |
-| `UNSAFE_FN` | 搭页面的人 | ❌ |
+| 问题码                      | 收件人     | 弹 ElMessage     |
+| --------------------------- | ---------- | ---------------- |
+| `REQUEST_FAILED`            | 最终用户   | ✅               |
+| `EVENT_HANDLER_ERROR`       | 最终用户   | ✅               |
+| `UNKNOWN_RENDER_TYPE`       | 搭页面的人 | ❌（仅 console） |
+| `NEST_CATEGORY_NOT_ALLOWED` | 搭页面的人 | ❌               |
+| `COMPONENT_OVERRIDDEN`      | 搭页面的人 | ❌               |
+| `UNSAFE_FN`                 | 搭页面的人 | ❌               |
 
 **宿主可覆盖**：`setIssueReporter(myReporter)`，插件不覆盖已装好的（`isDefaultIssueReporter()` 检查）。
 
 ### 11.2 边界处理
 
-| 场景 | 处理 |
-|---|---|
-| 未注册的 renderType | reportError + 不渲染 |
-| 嵌套类别不允许 | reportError + 不渲染 |
-| 槽位未在 SLOTS 登记 | reportWarn + 不校验（保持渲染） |
-| 事件 fn 字符串未 adapt | reportWarn（DEV 环境） |
-| 请求函数不存在 | reportWarn + 返回 null |
-| 请求失败 | core 已上报 + 返回 null（不重复弹窗） |
-| modelName 未配置 | 回退到 content/nodeProps |
-| 权限不足 | getUtilsAttr → false → v-if 隐藏 |
-| 组件卸载 | useNodeRegister 自动注销 + useNodeEvents 自动清理 |
+| 场景                   | 处理                                              |
+| ---------------------- | ------------------------------------------------- |
+| 未注册的 renderType    | reportError + 不渲染                              |
+| 嵌套类别不允许         | reportError + 不渲染                              |
+| 槽位未在 SLOTS 登记    | reportWarn + 不校验（保持渲染）                   |
+| 事件 fn 字符串未 adapt | reportWarn（DEV 环境）                            |
+| 请求函数不存在         | reportWarn + 返回 null                            |
+| 请求失败               | core 已上报 + 返回 null（不重复弹窗）             |
+| modelName 未配置       | 回退到 content/nodeProps                          |
+| 权限不足               | getUtilsAttr → false → v-if 隐藏                  |
+| 组件卸载               | useNodeRegister 自动注销 + useNodeEvents 自动清理 |
 
 ---
 
@@ -570,73 +572,73 @@ desktop-next: defaultIssueReporter
 
 ### 12.1 组件分类总览
 
-| 分类 | 数量 | 说明 |
-|---|---|---|
-| container | 5 | 容器（Panel/Box/Toolbar/TabPanel/NavigationBar） |
-| layout | 4 | 布局（FlexBox/FlexLine/GridBox/GridItem） |
-| element | 14 | 块级元素（Form/Table×6/List×4/Chart/Card/Step/Tree/WebCamera） |
-| lineElement-显示 | 8 | Button/Label/Tag/Dropdown/Image/Icon/Statistic/RawHtml |
-| lineElement-输入 | 15 | Input/Select/Switch/RadioGroup/CheckboxGroup/Checkbox/DatePicker/DateRangePicker/TimePicker/InputNumber/SearchSelect/SearchTreeSelect/FormItem/FilterItem |
-| columnElement | 2 | ButtonGroup/ListElement |
-| 视图层 | 3 | Dialog/Drawer/Plane（不经 NodeRenderer） |
-| **合计** | **51** | |
+| 分类             | 数量   | 说明                                                                                                                                                      |
+| ---------------- | ------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| container        | 5      | 容器（Panel/Box/Toolbar/TabPanel/NavigationBar）                                                                                                          |
+| layout           | 4      | 布局（FlexBox/FlexLine/GridBox/GridItem）                                                                                                                 |
+| element          | 14     | 块级元素（Form/Table×6/List×4/Chart/Card/Step/Tree/WebCamera）                                                                                            |
+| lineElement-显示 | 8      | Button/Label/Tag/Dropdown/Image/Icon/Statistic/RawHtml                                                                                                    |
+| lineElement-输入 | 15     | Input/Select/Switch/RadioGroup/CheckboxGroup/Checkbox/DatePicker/DateRangePicker/TimePicker/InputNumber/SearchSelect/SearchTreeSelect/FormItem/FilterItem |
+| columnElement    | 2      | ButtonGroup/ListElement                                                                                                                                   |
+| 视图层           | 3      | Dialog/Drawer/Plane（不经 NodeRenderer）                                                                                                                  |
+| **合计**         | **51** |                                                                                                                                                           |
 
 ### 12.2 详细清单（含暴露方法）
 
-| renderType | 分类 | 暴露方法 |
-|---|---|---|
-| **Button** | lineElement | — |
-| **Input** | lineElement | — |
-| **Select** | lineElement | loadOptions, setOptions, clearOptions, getOptions |
-| **Label** | lineElement | — |
-| **Tag** | lineElement | — |
-| **Dropdown** | lineElement | — |
-| **Image** | lineElement | — |
-| **Icon** | lineElement | — |
-| **Statistic** | lineElement | — |
-| **RawHtml** | lineElement | — |
-| **InputNumber** | lineElement | — |
-| **Switch** | lineElement | — |
-| **Checkbox** | lineElement | — |
-| **CheckboxGroup** | lineElement | loadOptions, setOptions, clearOptions, getOptions |
-| **RadioGroup** | lineElement | loadOptions, setOptions, clearOptions, getOptions |
-| **DatePicker** | lineElement | focus, handleOpen, handleClose |
-| **DateRangePicker** | lineElement | — |
-| **TimePicker** | lineElement | getTimePickerInstance |
-| **SearchSelect** | lineElement | — |
-| **SearchTreeSelect** | lineElement | — |
-| **FormItem** | lineElement | — |
-| **FilterItem** | lineElement | — |
-| **Form** | element | validateForm, resetFields, clearValidate, saveFormData |
-| **TableAsync** | element | reloadData, setData, clearData, getData, getPaginationParams, setCurrentPage, getLoading |
-| **TableNext** | element | 同 TableAsync |
-| **TableOnly** | element | reloadData, setData, clearData, getData |
-| **TableReport** | element | getNativeRefs, reloadData, clearData, setData, setCurrentPage |
-| **TableTree** | element | reloadData, clearData, getNativeRefs, setData |
-| **TableEdit** | element | growData, getNativeRefs, deleteData, deleteAllData, sumRow |
-| **ListAsync** | element | getScrollRef, reloadData, setData, clearData, getData |
-| **ListNext** | element | 同 ListAsync + setCurrentPage |
-| **ListOnly** | element | 同 ListAsync |
-| **ListReport** | element | 同 ListAsync + setCurrentPage |
-| **Chart** | element | loadData, updateOption, reRender |
-| **Card** | element | — |
-| **Step** | element | — |
-| **Tree** | element | reload |
-| **WebCamera** | element | initCamera, getPhotoBase64 |
-| **FlexBox** | layout | — |
-| **FlexLine** | layout | — |
-| **GridBox** | layout | — |
-| **GridItem** | layout | — |
-| **Panel** | container | — |
-| **Box** | container | — |
-| **Toolbar** | container | — |
-| **TabPanel** | container | — |
-| **NavigationBar** | container | — |
-| **ButtonGroup** | columnElement | — |
-| **ListElement** | columnElement | — |
-| **Dialog** | 视图层 | open, close |
-| **Drawer** | 视图层 | open, close |
-| **Plane** | 视图层 | — |
+| renderType           | 分类          | 暴露方法                                                                                 |
+| -------------------- | ------------- | ---------------------------------------------------------------------------------------- |
+| **Button**           | lineElement   | —                                                                                        |
+| **Input**            | lineElement   | —                                                                                        |
+| **Select**           | lineElement   | loadOptions, setOptions, clearOptions, getOptions                                        |
+| **Label**            | lineElement   | —                                                                                        |
+| **Tag**              | lineElement   | —                                                                                        |
+| **Dropdown**         | lineElement   | —                                                                                        |
+| **Image**            | lineElement   | —                                                                                        |
+| **Icon**             | lineElement   | —                                                                                        |
+| **Statistic**        | lineElement   | —                                                                                        |
+| **RawHtml**          | lineElement   | —                                                                                        |
+| **InputNumber**      | lineElement   | —                                                                                        |
+| **Switch**           | lineElement   | —                                                                                        |
+| **Checkbox**         | lineElement   | —                                                                                        |
+| **CheckboxGroup**    | lineElement   | loadOptions, setOptions, clearOptions, getOptions                                        |
+| **RadioGroup**       | lineElement   | loadOptions, setOptions, clearOptions, getOptions                                        |
+| **DatePicker**       | lineElement   | focus, handleOpen, handleClose                                                           |
+| **DateRangePicker**  | lineElement   | —                                                                                        |
+| **TimePicker**       | lineElement   | getTimePickerInstance                                                                    |
+| **SearchSelect**     | lineElement   | —                                                                                        |
+| **SearchTreeSelect** | lineElement   | —                                                                                        |
+| **FormItem**         | lineElement   | —                                                                                        |
+| **FilterItem**       | lineElement   | —                                                                                        |
+| **Form**             | element       | validateForm, resetFields, clearValidate, saveFormData                                   |
+| **TableAsync**       | element       | reloadData, setData, clearData, getData, getPaginationParams, setCurrentPage, getLoading |
+| **TableNext**        | element       | 同 TableAsync                                                                            |
+| **TableOnly**        | element       | reloadData, setData, clearData, getData                                                  |
+| **TableReport**      | element       | getNativeRefs, reloadData, clearData, setData, setCurrentPage                            |
+| **TableTree**        | element       | reloadData, clearData, getNativeRefs, setData                                            |
+| **TableEdit**        | element       | growData, getNativeRefs, deleteData, deleteAllData, sumRow                               |
+| **ListAsync**        | element       | getScrollRef, reloadData, setData, clearData, getData                                    |
+| **ListNext**         | element       | 同 ListAsync + setCurrentPage                                                            |
+| **ListOnly**         | element       | 同 ListAsync                                                                             |
+| **ListReport**       | element       | 同 ListAsync + setCurrentPage                                                            |
+| **Chart**            | element       | loadData, updateOption, reRender                                                         |
+| **Card**             | element       | —                                                                                        |
+| **Step**             | element       | —                                                                                        |
+| **Tree**             | element       | reload                                                                                   |
+| **WebCamera**        | element       | initCamera, getPhotoBase64                                                               |
+| **FlexBox**          | layout        | —                                                                                        |
+| **FlexLine**         | layout        | —                                                                                        |
+| **GridBox**          | layout        | —                                                                                        |
+| **GridItem**         | layout        | —                                                                                        |
+| **Panel**            | container     | —                                                                                        |
+| **Box**              | container     | —                                                                                        |
+| **Toolbar**          | container     | —                                                                                        |
+| **TabPanel**         | container     | —                                                                                        |
+| **NavigationBar**    | container     | —                                                                                        |
+| **ButtonGroup**      | columnElement | —                                                                                        |
+| **ListElement**      | columnElement | —                                                                                        |
+| **Dialog**           | 视图层        | open, close                                                                              |
+| **Drawer**           | 视图层        | open, close                                                                              |
+| **Plane**            | 视图层        | —                                                                                        |
 
 ---
 
@@ -644,30 +646,30 @@ desktop-next: defaultIssueReporter
 
 ### 13.1 从 index.ts 导出
 
-| 导出 | 类型 | 说明 |
-|---|---|---|
-| `AssemPlugin` | Vue Plugin | 安装 AssemCore + reactive 包装 + provide/inject |
-| `registerDefaults()` | Function | 注册全部内置组件（遍历 manifest） |
-| `registerExternal(def)` | Function | 注册外部组件（自动套适配器） |
-| `defaultIssueReporter` | IssueReporter | 桌面层默认上报器（ElMessage 弹窗） |
-| `ASSEM_CONTEXT_KEY` | InjectionKey | EventContext 注入键 |
-| `NODE_REGISTRY_KEY` | InjectionKey | NodeRegistry 注入键 |
-| `useEventContext()` | Composable | 获取事件上下文 |
-| `useNodeOptions(props, ctx, defaults)` | Composable | 节点选项 computed |
-| `useNodeEvents(nodeEvent, ctx)` | Composable | 事件管理（dispatch + 自动清理） |
-| `useNodeRegister(opts)` | Composable | 节点注册（Proxy props + updateProps） |
-| `useInputValue(props, ctx)` | Composable | 输入双向绑定 |
-| `usePermission(ctx)` | Composable | 权限控制 |
-| `useEditor()` | Composable | 编辑器集成 |
-| `isEditorEnv()` | Function | 判断编辑器环境 |
-| `useRemoteData(ctx)` | Composable | 远端数据拉取（loading + 信封剥离） |
-| `toRows(payload)` | Function | payload → 行数组 |
-| `toPaged(payload)` | Function | payload → 分页结构 |
-| `registerComponent(name, comp, cat)` | Function | 底层组件注册 |
-| `lookupComponent(name)` | Function | 查找组件 |
-| `lookupMeta(name)` | Function | 查找组件元信息 |
-| `AssemNodeRenderer` | Component | 递归渲染器 |
-| 所有 core-next 导出 | Re-export | AssemCore/EventBus/NodeRegistry/utils 等 |
+| 导出                                   | 类型          | 说明                                            |
+| -------------------------------------- | ------------- | ----------------------------------------------- |
+| `AssemPlugin`                          | Vue Plugin    | 安装 AssemCore + reactive 包装 + provide/inject |
+| `registerDefaults()`                   | Function      | 注册全部内置组件（遍历 manifest）               |
+| `registerExternal(def)`                | Function      | 注册外部组件（自动套适配器）                    |
+| `defaultIssueReporter`                 | IssueReporter | 桌面层默认上报器（ElMessage 弹窗）              |
+| `ASSEM_CONTEXT_KEY`                    | InjectionKey  | EventContext 注入键                             |
+| `NODE_REGISTRY_KEY`                    | InjectionKey  | NodeRegistry 注入键                             |
+| `useEventContext()`                    | Composable    | 获取事件上下文                                  |
+| `useNodeOptions(props, ctx, defaults)` | Composable    | 节点选项 computed                               |
+| `useNodeEvents(nodeEvent, ctx)`        | Composable    | 事件管理（dispatch + 自动清理）                 |
+| `useNodeRegister(opts)`                | Composable    | 节点注册（Proxy props + updateProps）           |
+| `useInputValue(props, ctx)`            | Composable    | 输入双向绑定                                    |
+| `usePermission(ctx)`                   | Composable    | 权限控制                                        |
+| `useEditor()`                          | Composable    | 编辑器集成                                      |
+| `isEditorEnv()`                        | Function      | 判断编辑器环境                                  |
+| `useRemoteData(ctx)`                   | Composable    | 远端数据拉取（loading + 信封剥离）              |
+| `toRows(payload)`                      | Function      | payload → 行数组                                |
+| `toPaged(payload)`                     | Function      | payload → 分页结构                              |
+| `registerComponent(name, comp, cat)`   | Function      | 底层组件注册                                    |
+| `lookupComponent(name)`                | Function      | 查找组件                                        |
+| `lookupMeta(name)`                     | Function      | 查找组件元信息                                  |
+| `AssemNodeRenderer`                    | Component     | 递归渲染器                                      |
+| 所有 core-next 导出                    | Re-export     | AssemCore/EventBus/NodeRegistry/utils 等        |
 
 ### 13.2 类型导出
 
@@ -694,38 +696,38 @@ RenderTypeMapFromManifest, NodeEventConfigMapFromManifest, NodeExposedMapFromMan
 
 ### 14.1 性能措施
 
-| 措施 | 位置 | 说明 |
-|---|---|---|
-| `shallowReactive(Map)` | component-catalog | 只跟踪键增删，不深度代理 Vue 组件对象 |
-| reactive 仅包装 `$dataModels/$globalVars` | AssemPlugin | 非全量 schema 响应式 |
-| Proxy 代替快照 | useNodeRegister | props 实时读取，不拷贝 |
-| computed 缓存 | useNodeOptions | 内部计算结果缓存 |
-| onUnmounted 自动清理 | useNodeEvents/useNodeRegister | 事件监听/注册表条目不泄漏 |
-| ElMessage grouping | defaultIssueReporter | 同一文案短时间内重复只弹一次 |
+| 措施                                      | 位置                          | 说明                                  |
+| ----------------------------------------- | ----------------------------- | ------------------------------------- |
+| `shallowReactive(Map)`                    | component-catalog             | 只跟踪键增删，不深度代理 Vue 组件对象 |
+| reactive 仅包装 `$dataModels/$globalVars` | AssemPlugin                   | 非全量 schema 响应式                  |
+| Proxy 代替快照                            | useNodeRegister               | props 实时读取，不拷贝                |
+| computed 缓存                             | useNodeOptions                | 内部计算结果缓存                      |
+| onUnmounted 自动清理                      | useNodeEvents/useNodeRegister | 事件监听/注册表条目不泄漏             |
+| ElMessage grouping                        | defaultIssueReporter          | 同一文案短时间内重复只弹一次          |
 
 ### 14.2 扩展性
 
-| 扩展点 | 方式 |
-|---|---|
-| 新增内置组件 | manifest.ts `ComponentTypes` 加类型 + `COMPONENTS` 加运行时 → 自动注册 + 类型派生 |
-| 新增外部组件 | `registerExternal({ name, component, category })` → 零协议知识 |
-| 新增嵌套规则 | nesting.ts `SLOTS` 加槽位约束 |
-| 自定义 IssueReporter | `setIssueReporter(myReporter)` |
-| 新增 Composable | 复用 useEventContext + useNodeRegister 模式 |
-| 覆盖内置组件 | `registerComponent(name, newImpl, cat)` → 自动告警 + 替换 |
+| 扩展点               | 方式                                                                              |
+| -------------------- | --------------------------------------------------------------------------------- |
+| 新增内置组件         | manifest.ts `ComponentTypes` 加类型 + `COMPONENTS` 加运行时 → 自动注册 + 类型派生 |
+| 新增外部组件         | `registerExternal({ name, component, category })` → 零协议知识                    |
+| 新增嵌套规则         | nesting.ts `SLOTS` 加槽位约束                                                     |
+| 自定义 IssueReporter | `setIssueReporter(myReporter)`                                                    |
+| 新增 Composable      | 复用 useEventContext + useNodeRegister 模式                                       |
+| 覆盖内置组件         | `registerComponent(name, newImpl, cat)` → 自动告警 + 替换                         |
 
 ### 14.3 与旧版关键改进
 
-| 维度 | 旧版 | 新版 |
-|---|---|---|
-| 组件注册 | regist-coms.ts 硬编码 4 层 | manifest.ts 单一真相源 + 类型派生 |
-| 嵌套规则 | 模板各自传白名单数组 | nesting.ts SLOTS 集中声明 |
-| 属性解析 | 4 个重复 computed | useNodeOptions 统一（3 源 + onValueRender） |
-| 远端数据 | 16 个组件各自实现（多数有 bug） | useRemoteData 统一（7 步标准流程） |
-| 外部接入 | 需手写 6 个 __ prop + 5 个 composable | registerExternal 自动适配 |
-| 类型安全 | 无 | manifest 派生三张映射 + 编译期检测 |
-| 错误处理 | 散落 console | IssueReporter 统一 + ElMessage 用户可见 |
-| 框架耦合 | globalProperties | provide/inject + Composable |
+| 维度     | 旧版                                  | 新版                                        |
+| -------- | ------------------------------------- | ------------------------------------------- |
+| 组件注册 | regist-coms.ts 硬编码 4 层            | manifest.ts 单一真相源 + 类型派生           |
+| 嵌套规则 | 模板各自传白名单数组                  | nesting.ts SLOTS 集中声明                   |
+| 属性解析 | 4 个重复 computed                     | useNodeOptions 统一（3 源 + onValueRender） |
+| 远端数据 | 16 个组件各自实现（多数有 bug）       | useRemoteData 统一（7 步标准流程）          |
+| 外部接入 | 需手写 6 个 __ prop + 5 个 composable | registerExternal 自动适配                   |
+| 类型安全 | 无                                    | manifest 派生三张映射 + 编译期检测          |
+| 错误处理 | 散落 console                          | IssueReporter 统一 + ElMessage 用户可见     |
+| 框架耦合 | globalProperties                      | provide/inject + Composable                 |
 
 ---
 

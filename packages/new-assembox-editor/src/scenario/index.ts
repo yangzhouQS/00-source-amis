@@ -1,14 +1,14 @@
+export { registerScenario, scenarioRegistry } from "./registry";
+
 export type {
-  ISchemaOps,
-  IRenderer,
-  IComponentCatalog,
-  INestingRules,
-  ScenarioProfile,
-  ScenarioContext,
   ComponentCatalogItem,
   ComponentPropConfig,
+  IComponentCatalog,
+  INestingRules,
+  IRenderer,
+  ISchemaOps,
+  RendererMountOptions,
+  ScenarioContext,
+  ScenarioProfile,
   SlotMarker,
-  RendererMountOptions
-} from './types';
-
-export { scenarioRegistry, registerScenario } from './registry';
+} from "./types";

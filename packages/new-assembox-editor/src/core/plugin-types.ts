@@ -1,23 +1,23 @@
+import type { ActionRegistry } from "../registry/action-registry";
+import type { AssetRegistry } from "../registry/asset-registry";
+import type { SetterRegistry } from "../registry/setter-registry";
+import type {
+  ActionMeta,
+  AssetMeta,
+  ContextMenuItem,
+  PanelItem,
+  SetterMeta,
+  ToolbarItem,
+} from "../schema/types";
+import type { Skeleton } from "../skeleton/skeleton";
+import type { DIContainer } from "./di-container";
 /**
  * 插件契约与上下文类型定义
  * definePlugin 工厂（对象式）+ contributes(静态)/setup(动态)/钩子(事件) 三入口
  */
-import type {Editor} from './editor';
-import type {EditorStore} from './store';
-import type {DIContainer} from './di-container';
-import type {EventBus} from './event-bus';
-import type {Skeleton} from '../skeleton/skeleton';
-import type {SetterRegistry} from '../registry/setter-registry';
-import type {AssetRegistry} from '../registry/asset-registry';
-import type {ActionRegistry} from '../registry/action-registry';
-import type {
-  SetterMeta,
-  ActionMeta,
-  AssetMeta,
-  PanelItem,
-  ToolbarItem,
-  ContextMenuItem
-} from '../schema/types';
+import type { Editor } from "./editor";
+import type { EventBus } from "./event-bus";
+import type { EditorStore } from "./store";
 
 /** 插件可注入的上下文 */
 export interface PluginContext {
@@ -30,9 +30,9 @@ export interface PluginContext {
   assetRegistry: AssetRegistry;
   actionRegistry: ActionRegistry;
   /** 跨插件协作：按 id 查找其它插件及其 options */
-  getPlugin<T = any>(
-    id: string
-  ): {plugin: EditorPluginObject<T>; options?: T} | undefined;
+  getPlugin: <T = any>(
+    id: string,
+  ) => { plugin: EditorPluginObject<T>; options?: T } | undefined;
 }
 
 /** 插件声明式贡献（任选，静态自动注册） */
@@ -46,14 +46,14 @@ export interface PluginContributes {
 /** 骨架面板贡献 */
 export interface SkeletonContribution {
   area:
-    | 'topArea'
-    | 'leftArea'
-    | 'leftFixedArea'
-    | 'leftFloatArea'
-    | 'centerArea'
-    | 'rightArea'
-    | 'bottomArea';
-  type: 'Widget' | 'Panel' | 'PanelDock';
+    | "topArea"
+    | "leftArea"
+    | "leftFixedArea"
+    | "leftFloatArea"
+    | "centerArea"
+    | "rightArea"
+    | "bottomArea";
+  type: "Widget" | "Panel" | "PanelDock";
   name: string;
   content?: any;
   contentProps?: Record<string, any>;
@@ -72,28 +72,28 @@ export interface EditorPluginObject<TOptions = any> {
   scene?: string | string[];
   dep?: string[];
   contributes?: PluginContributes;
-  setup?(
+  setup?: (
     ctx: PluginContext,
-    options?: TOptions
-  ): void | Promise<void> | (() => void | Promise<void>);
-  beforeInsert?(context: any): void | false | Promise<void | false>;
-  afterInsert?(context: any): void;
-  beforeUpdate?(context: any): void | false | Promise<void | false>;
-  afterUpdate?(context: any): void;
-  beforeDelete?(context: any): void | false | Promise<void | false>;
-  afterDelete?(context: any): void;
-  beforeMove?(context: any): void | false | Promise<void | false>;
-  afterMove?(context: any): void;
-  buildPanels?(node: any | null, panels: PanelItem[]): void;
-  buildToolbars?(node: any | null, toolbars: ToolbarItem[]): void;
-  buildContextMenu?(node: any | null, menus: ContextMenuItem[]): void;
+    options?: TOptions,
+  ) => void | Promise<void> | (() => void | Promise<void>);
+  beforeInsert?: (context: any) => void | false | Promise<void | false>;
+  afterInsert?: (context: any) => void;
+  beforeUpdate?: (context: any) => void | false | Promise<void | false>;
+  afterUpdate?: (context: any) => void;
+  beforeDelete?: (context: any) => void | false | Promise<void | false>;
+  afterDelete?: (context: any) => void;
+  beforeMove?: (context: any) => void | false | Promise<void | false>;
+  afterMove?: (context: any) => void;
+  buildPanels?: (node: any | null, panels: PanelItem[]) => void;
+  buildToolbars?: (node: any | null, toolbars: ToolbarItem[]) => void;
+  buildContextMenu?: (node: any | null, menus: ContextMenuItem[]) => void;
 }
 
 /** 工厂函数：类型守卫 + 保留扩展点（默认值注入） */
 export function definePlugin<TOptions = any>(
-  def: EditorPluginObject<TOptions>
+  def: EditorPluginObject<TOptions>,
 ): EditorPluginObject<TOptions> {
   return def;
 }
 
-export type {ActionMeta};
+export type { ActionMeta };

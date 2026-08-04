@@ -1,3 +1,4 @@
+import type { Editor } from "../../core/editor";
 /**
  * CanvasSensor —— 画布感应区
  * 负责：命中测试、坐标换算、投放位置计算、插入指示线渲染
@@ -7,9 +8,8 @@
  *  - 子节点列表：schemaOps.getSlotChildren
  *  - DOM 元素：renderer.getNodeElement / resolveFromElement
  */
-import type {DragSensor, DropLocation} from './types';
-import type {Editor} from '../../core/editor';
-import {ATTR_EDITOR_ID} from '../dom-marking';
+import type { DragSensor, DropLocation } from "./types";
+import { ATTR_EDITOR_ID } from "../dom-marking";
 
 export interface CanvasSensorOptions {
   id: string;
@@ -18,7 +18,7 @@ export interface CanvasSensorOptions {
   /** 感应区边界（host 视口坐标，用于命中） */
   getBounds: () => DOMRect | null;
   /** 局部坐标 → 全局坐标（host 视口） */
-  toGlobal: (localX: number, localY: number) => {x: number; y: number};
+  toGlobal: (localX: number, localY: number) => { x: number; y: number };
   /** 局部坐标下取元素 */
   elementFromPoint: (localX: number, localY: number) => Element | null;
 }
@@ -30,7 +30,7 @@ export class CanvasSensor implements DragSensor {
 
   constructor(
     private readonly opts: CanvasSensorOptions,
-    private readonly editor: Editor
+    private readonly editor: Editor,
   ) {
     this.id = opts.id;
   }
@@ -41,16 +41,18 @@ export class CanvasSensor implements DragSensor {
 
   isEnter(globalX: number, globalY: number): boolean {
     const b = this.opts.getBounds();
-    if (!b) return false;
+    if (!b) {
+      return false;
+    }
     return (
-      globalX >= b.left &&
-      globalX <= b.right &&
-      globalY >= b.top &&
-      globalY <= b.bottom
+      globalX >= b.left
+      && globalX <= b.right
+      && globalY >= b.top
+      && globalY <= b.bottom
     );
   }
 
-  toGlobal(localX: number, localY: number): {x: number; y: number} {
+  toGlobal(localX: number, localY: number): { x: number; y: number } {
     return this.opts.toGlobal(localX, localY);
   }
 
@@ -65,19 +67,21 @@ export class CanvasSensor implements DragSensor {
   locate(
     target: Element | null,
     canvasX: number,
-    canvasY: number
+    canvasY: number,
   ): DropLocation | null {
     const doc = this.contentDocument;
-    if (!doc) return null;
+    if (!doc) {
+      return null;
+    }
 
     // 1. 找落点容器（向上找最近容器节点），同时拿到 DOM 元素
-    const {id: containerId, el: containerEl, slotKey} = this.findContainerEl(target);
-    const finalSlotKey = slotKey ?? 'defaultSlot';
-    const finalContainerId =
-      containerId ?? this.editor.rootNodeId ?? '';
-    const finalContainerEl =
-      containerEl ??
-      (this.editor.renderer?.getNodeElement(finalContainerId) ?? null);
+    const { id: containerId, el: containerEl, slotKey } = this.findContainerEl(target);
+    const finalSlotKey = slotKey ?? "defaultSlot";
+    const finalContainerId
+      = containerId ?? this.editor.rootNodeId ?? "";
+    const finalContainerEl
+      = containerEl
+        ?? (this.editor.renderer?.getNodeElement(finalContainerId) ?? null);
 
     // 2. 计算插入索引（用 DOM 实时元素测几何）
     const index = this.computeInsertIndex(
@@ -85,7 +89,7 @@ export class CanvasSensor implements DragSensor {
       finalSlotKey,
       canvasX,
       canvasY,
-      doc
+      doc,
     );
 
     // 3. 计算指示线位置
@@ -93,7 +97,7 @@ export class CanvasSensor implements DragSensor {
       finalContainerId,
       finalSlotKey,
       index,
-      finalContainerEl
+      finalContainerEl,
     );
 
     // 4. 渲染指示线
@@ -103,7 +107,7 @@ export class CanvasSensor implements DragSensor {
       containerId: finalContainerId,
       region: finalSlotKey,
       index,
-      indicator
+      indicator,
     };
   }
 
@@ -120,21 +124,23 @@ export class CanvasSensor implements DragSensor {
       if (id) {
         const node = this.editor.schemaOps.getNodeById(
           this.editor.store.schema,
-          id
+          id,
         );
         if (node && this.editor.schemaOps.isContainer?.(node)) {
-          return {id, el: cur, slotKey: 'defaultSlot'};
+          return { id, el: cur, slotKey: "defaultSlot" };
         }
       }
       // 检测槽位宿主标记（data-slot-host / data-slot-key）
-      const slotHost = cur.getAttribute && cur.getAttribute('data-slot-host');
-      const slotKey = cur.getAttribute && cur.getAttribute('data-slot-key');
+      const slotHost = cur.getAttribute && cur.getAttribute("data-slot-host");
+      const slotKey = cur.getAttribute && cur.getAttribute("data-slot-key");
       if (slotHost && slotKey) {
         const slotNode = this.editor.schemaOps.getNodeById(
           this.editor.store.schema,
-          slotHost
+          slotHost,
         );
-        if (slotNode) return {id: slotHost, el: cur, slotKey};
+        if (slotNode) {
+          return { id: slotHost, el: cur, slotKey };
+        }
       }
       // 渲染器解析兜底
       if (renderer) {
@@ -142,23 +148,23 @@ export class CanvasSensor implements DragSensor {
         if (resolved) {
           const node = this.editor.schemaOps.getNodeById(
             this.editor.store.schema,
-            resolved.nodeId
+            resolved.nodeId,
           );
           if (node && this.editor.schemaOps.isContainer?.(node)) {
-            return {id: resolved.nodeId, el: cur, slotKey: resolved.slotKey};
+            return { id: resolved.nodeId, el: cur, slotKey: resolved.slotKey };
           }
         }
       }
       cur = cur.parentElement;
     }
-    return {id: null, el: null, slotKey: null};
+    return { id: null, el: null, slotKey: null };
   }
 
   /** DOM 实时查询节点元素（避免缓存 stale） */
   private freshEl(doc: Document, id: string): HTMLElement | null {
     return (
-      this.editor.renderer?.getNodeElement(id) ??
-      (doc.querySelector(`[${ATTR_EDITOR_ID}="${id}"]`) as HTMLElement | null)
+      this.editor.renderer?.getNodeElement(id)
+      ?? (doc.querySelector(`[${ATTR_EDITOR_ID}="${id}"]`) as HTMLElement | null)
     );
   }
 
@@ -168,36 +174,42 @@ export class CanvasSensor implements DragSensor {
     slotKey: string,
     canvasX: number,
     canvasY: number,
-    doc: Document
+    doc: Document,
   ): number {
     const parentNode = this.editor.schemaOps.getNodeById(
       this.editor.store.schema,
-      containerId
+      containerId,
     );
-    if (!parentNode) return 0;
+    if (!parentNode) {
+      return 0;
+    }
     const children = this.editor.schemaOps.getSlotChildren(parentNode, slotKey);
-    if (!children.length) return 0;
+    if (!children.length) {
+      return 0;
+    }
 
     // 用 DOM 实时查询元素（避免 el stale）
     const measured = children
-      .map(c => {
+      .map((c) => {
         const id = this.editor.schemaOps.getNodeId(c);
         const el = this.freshEl(doc, id);
-        return el ? {id, rect: el.getBoundingClientRect()} : null;
+        return el ? { id, rect: el.getBoundingClientRect() } : null;
       })
-      .filter((m): m is {id: string; rect: DOMRect} => !!m && !!m.rect);
-    if (!measured.length) return 0;
+      .filter((m): m is { id: string; rect: DOMRect } => !!m && !!m.rect);
+    if (!measured.length) {
+      return 0;
+    }
 
     measured.sort(
-      (a, b) => a.rect.top - b.rect.top || a.rect.left - b.rect.left
+      (a, b) => a.rect.top - b.rect.top || a.rect.left - b.rect.left,
     );
 
     // 主轴判定
-    const vRange =
-      measured[measured.length - 1].rect.bottom - measured[0].rect.top;
-    const hRange =
-      Math.max(...measured.map(m => m.rect.right)) -
-      Math.min(...measured.map(m => m.rect.left));
+    const vRange
+      = measured.at(-1).rect.bottom - measured[0].rect.top;
+    const hRange
+      = Math.max(...measured.map(m => m.rect.right))
+        - Math.min(...measured.map(m => m.rect.left));
     const horizontal = hRange > vRange * 1.2;
     const cursor = horizontal ? canvasX : canvasY;
 
@@ -205,7 +217,9 @@ export class CanvasSensor implements DragSensor {
       const mid = horizontal
         ? measured[i].rect.left + measured[i].rect.width / 2
         : measured[i].rect.top + measured[i].rect.height / 2;
-      if (cursor < mid) return i;
+      if (cursor < mid) {
+        return i;
+      }
     }
     return measured.length;
   }
@@ -215,7 +229,7 @@ export class CanvasSensor implements DragSensor {
     containerId: string,
     slotKey: string,
     index: number,
-    containerEl: Element | null
+    containerEl: Element | null,
   ): {
     x: number;
     y: number;
@@ -227,7 +241,7 @@ export class CanvasSensor implements DragSensor {
     const containerRect = containerEl?.getBoundingClientRect();
     const parentNode = this.editor.schemaOps.getNodeById(
       this.editor.store.schema,
-      containerId
+      containerId,
     );
     const children = parentNode
       ? this.editor.schemaOps.getSlotChildren(parentNode, slotKey)
@@ -245,32 +259,32 @@ export class CanvasSensor implements DragSensor {
     const childRects = childEls.map(el => el.getBoundingClientRect());
 
     // 主轴判定
-    const horizontal =
-      childRects.length > 0 &&
-      Math.max(...childRects.map(m => m.right)) -
-        Math.min(...childRects.map(m => m.left)) >
-        (Math.max(...childRects.map(m => m.bottom)) -
-          Math.min(...childRects.map(m => m.top))) *
-          1.2;
+    const horizontal
+      = childRects.length > 0
+        && Math.max(...childRects.map(m => m.right))
+        - Math.min(...childRects.map(m => m.left))
+        > (Math.max(...childRects.map(m => m.bottom))
+          - Math.min(...childRects.map(m => m.top)))
+        * 1.2;
 
     if (horizontal) {
       let x: number;
       if (index >= childRects.length) {
-        x = childRects.length ? childRects[childRects.length - 1].right : cLeft;
+        x = childRects.length ? childRects.at(-1).right : cLeft;
       } else {
         x = childRects[index]?.left ?? cLeft;
       }
-      return {x, y: cTop, width: 2, height: cHeight, horizontal: true};
+      return { x, y: cTop, width: 2, height: cHeight, horizontal: true };
     }
 
     // 纵向布局：横向指示线
     let y: number;
     if (index >= childRects.length) {
-      y = childRects.length ? childRects[childRects.length - 1].bottom : cTop;
+      y = childRects.length ? childRects.at(-1).bottom : cTop;
     } else {
       y = childRects[index]?.top ?? cTop;
     }
-    return {x: cLeft, y, width: cWidth, height: 2, horizontal: false};
+    return { x: cLeft, y, width: cWidth, height: 2, horizontal: false };
   }
 
   /** 渲染指示线到感应区文档（支持横/竖两种方向） */
@@ -282,16 +296,16 @@ export class CanvasSensor implements DragSensor {
       width: number;
       height: number;
       horizontal: boolean;
-    }
+    },
   ): void {
     if (this.indicatorEl && this.indicatorEl.ownerDocument !== doc) {
       this.clearIndicator();
     }
     if (!this.indicatorEl) {
-      this.indicatorEl = doc.createElement('div');
-      this.indicatorEl.className = 'assem-drag-indicator';
-      this.indicatorEl.style.cssText =
-        'position:absolute;background:#0079f2;z-index:99999;pointer-events:none;box-shadow:0 0 0 1px rgba(0,121,242,0.4);transition:top 0.05s,left 0.05s;';
+      this.indicatorEl = doc.createElement("div");
+      this.indicatorEl.className = "assem-drag-indicator";
+      this.indicatorEl.style.cssText
+        = "position:absolute;background:#0079f2;z-index:99999;pointer-events:none;box-shadow:0 0 0 1px rgba(0,121,242,0.4);transition:top 0.05s,left 0.05s;";
     }
     if (!this.indicatorEl.parentElement) {
       doc.body.appendChild(this.indicatorEl);

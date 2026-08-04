@@ -1,26 +1,25 @@
-/**
- * 顶部工具栏（预览/设计切换 + 撤销/重做 + 设备预设）
- */
-import {defineComponent, PropType} from 'vue';
+import type { Editor } from "../../core/editor";
 import {
+  CopyDocument,
+  Delete,
+  Edit,
   RefreshLeft,
   RefreshRight,
   View,
-  Edit,
-  CopyDocument,
-  Delete
-} from '@element-plus/icons-vue';
-import type {Editor} from '../../core/editor';
-import {DEVICE_PRESETS} from '../../core/store';
-import {useAssemNamespace} from '../../hooks/use-assem-namespace';
-import './../pane.less';
+} from "@element-plus/icons-vue";
+/**
+ * 顶部工具栏（预览/设计切换 + 撤销/重做 + 设备预设）
+ */
+import { defineComponent, PropType } from "vue";
+import { useAssemNamespace } from "../../hooks/use-assem-namespace";
+import "./../pane.less";
 
-const ns = useAssemNamespace('toolbar');
+const ns = useAssemNamespace("toolbar");
 
 export const EditorToolbar = defineComponent({
-  name: 'EditorToolbar',
+  name: "EditorToolbar",
   props: {
-    editor: {type: Object as PropType<Editor>, required: true}
+    editor: { type: Object as PropType<Editor>, required: true },
   },
   setup(props) {
     return () => {
@@ -29,25 +28,26 @@ export const EditorToolbar = defineComponent({
         <div
           class={ns.b()}
           style={{
-            'display': 'flex',
-            'flex-wrap': 'nowrap',
-            'align-items': 'center',
-            'gap': '6px',
-            'padding': '0 12px',
-            'width': '100%',
-            'height': '100%',
-            'overflow': 'hidden'
+            "display": "flex",
+            "flex-wrap": "nowrap",
+            "align-items": "center",
+            "gap": "6px",
+            "padding": "0 12px",
+            "width": "100%",
+            "height": "100%",
+            "overflow": "hidden",
           }}
         >
           {/* 设计/预览切换 */}
           <el-button-group>
             <el-button
               size="small"
-              type={store.state.designMode === 'design' ? 'primary' : 'default'}
+              type={store.state.designMode === "design" ? "primary" : "default"}
               icon={Edit}
               onClick={() => {
-                if (store.state.designMode !== 'design')
-                  props.editor.setDesignMode('design');
+                if (store.state.designMode !== "design") {
+                  props.editor.setDesignMode("design");
+                }
               }}
             >
               设计
@@ -55,12 +55,13 @@ export const EditorToolbar = defineComponent({
             <el-button
               size="small"
               type={
-                store.state.designMode === 'preview' ? 'primary' : 'default'
+                store.state.designMode === "preview" ? "primary" : "default"
               }
               icon={View}
               onClick={() => {
-                if (store.state.designMode !== 'preview')
-                  props.editor.setDesignMode('preview');
+                if (store.state.designMode !== "preview") {
+                  props.editor.setDesignMode("preview");
+                }
               }}
             >
               预览
@@ -112,14 +113,14 @@ export const EditorToolbar = defineComponent({
             </el-button-group>
           )}
 
-          <div style={{flex: 1}} />
+          <div style={{ flex: 1 }} />
 
           {/* 右侧面板切换 */}
           <el-button size="small" link onClick={() => store.toggleRightPanel()}>
-            {store.state.rightPanelVisible ? '隐藏面板' : '显示面板'}
+            {store.state.rightPanelVisible ? "隐藏面板" : "显示面板"}
           </el-button>
         </div>
       );
     };
-  }
+  },
 });

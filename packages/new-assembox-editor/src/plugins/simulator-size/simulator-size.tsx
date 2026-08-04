@@ -1,22 +1,22 @@
+import type { Editor } from "../../core/editor";
+import { Cellphone, Iphone, Monitor } from "@element-plus/icons-vue";
 /**
  * 画布尺寸切换（设备预设）
  * 顶栏 Widget：默认/平板/手机 切换，驱动 iframe 宽度
  */
-import {defineComponent, PropType} from 'vue';
-import {Monitor, Cellphone, Iphone} from '@element-plus/icons-vue';
-import type {Editor} from '../../core/editor';
-import {DEVICE_PRESETS} from '../../core/store';
+import { defineComponent, PropType } from "vue";
+import { DEVICE_PRESETS } from "../../core/store";
 
 const ICON_MAP: Record<string, any> = {
   default: Monitor,
   tablet: Iphone,
-  phone: Cellphone
+  phone: Cellphone,
 };
 
 export const SimulatorSize = defineComponent({
-  name: 'SimulatorSize',
+  name: "SimulatorSize",
   props: {
-    editor: {type: Object as PropType<Editor>, required: true}
+    editor: { type: Object as PropType<Editor>, required: true },
   },
   setup(props) {
     return () => {
@@ -27,18 +27,22 @@ export const SimulatorSize = defineComponent({
           size="small"
           onUpdate:modelValue={(val: any) => {
             const preset = DEVICE_PRESETS.find(d => d.key === val);
-            if (preset) props.editor.store.setDevice(preset);
+            if (preset) {
+              props.editor.store.setDevice(preset);
+            }
           }}
         >
-          {DEVICE_PRESETS.map(d => {
+          {DEVICE_PRESETS.map((d) => {
             const Icon = ICON_MAP[d.key];
             return (
               <el-radio-button key={d.key} value={d.key}>
-                {Icon ? (
-                  <el-icon style="margin-right:2px">
-                    <Icon />
-                  </el-icon>
-                ) : null}
+                {Icon
+                  ? (
+                      <el-icon style="margin-right:2px">
+                        <Icon />
+                      </el-icon>
+                    )
+                  : null}
                 {d.label}
               </el-radio-button>
             );
@@ -46,5 +50,5 @@ export const SimulatorSize = defineComponent({
         </el-radio-group>
       );
     };
-  }
+  },
 });

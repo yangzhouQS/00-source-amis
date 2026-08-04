@@ -12,6 +12,7 @@ iframe 画布运行在独立的 `canvas.html` 文档内，与编辑器主窗口�
 **关键约束**：iframe 内必须保持**单一 Vue 实例**——`assembox-desktop-next`（ESM Vue）与 CDN 全局包（element-pro 等）必须共用同一个 Vue，否则会出现双实例崩溃（`Cannot read properties of null (reading 'isCE')`）。
 
 assets 协议解决两件事：
+
 1. **加载顺序**：先把 ESM Vue 挂到 `window.Vue`，再按依赖顺序加载 CDN JS（element-pro 依赖 element-plus）。
 2. **注册齐全**：覆盖旧版 `registerPlugin(app)` 的全部注册能力（插件/locale/图标/别名/引导/外部组件）。
 
@@ -53,14 +54,14 @@ export interface IframeAssetsManifest {
 
 ### JsAsset 标记（一条 JS 依赖可叠加多个标记）
 
-| 标记 | 渲染器处理 | 对应旧版 registerPlugin |
-|---|---|---|
-| `global` | 加载后赋值 `window[global]`，供后续标记引用 | `window.ElementPro` 等 |
-| `asPlugin: true` | `app.use(window[global], pluginOptions)` | `app.use(window.ElementPro)` |
-| `pluginOptions` | 传给 `app.use` 的第二参数 | `{ locale: zhCn }` |
-| `asIcons: true` | 遍历 `window[global]` 全部属性，`app.component(key, val)` | 遍历 `ElementPlusIconsVue` 注册图标 |
-| `components: [{name, path}]` | `app.component(name, resolvePath(window[global], path))` | `app.component('box', ElementPro.Box)` |
-| `bootstrap: {ctorPath, args}` | `new window[global][ctorPath](...args)` | `new Vue3WebFramework.WebFramework({})` |
+| 标记                          | 渲染器处理                                                | 对应旧版 registerPlugin                 |
+| ----------------------------- | --------------------------------------------------------- | --------------------------------------- |
+| `global`                      | 加载后赋值 `window[global]`，供后续标记引用               | `window.ElementPro` 等                  |
+| `asPlugin: true`              | `app.use(window[global], pluginOptions)`                  | `app.use(window.ElementPro)`            |
+| `pluginOptions`               | 传给 `app.use` 的第二参数                                 | `{ locale: zhCn }`                      |
+| `asIcons: true`               | 遍历 `window[global]` 全部属性，`app.component(key, val)` | 遍历 `ElementPlusIconsVue` 注册图标     |
+| `components: [{name, path}]`  | `app.component(name, resolvePath(window[global], path))`  | `app.component('box', ElementPro.Box)`  |
+| `bootstrap: {ctorPath, args}` | `new window[global][ctorPath](...args)`                   | `new Vue3WebFramework.WebFramework({})` |
 
 **特殊处理**：当 `global === 'ElementPlus'` 且 `pluginOptions.locale` 未指定时，渲染器自动注入 `element-plus/es/locale/lang/zh-cn`（中文），无需手动配置。
 
@@ -225,6 +226,7 @@ host 轮询拿到 __ASSEM_RENDERER__ → api.init(schema) → renderer.mount():
 ```
 
 **关键点**：
+
 - `loadScript` 用 `await` 顺序加载，保证 element-pro 在 element-plus 之后。
 - 所有插件/图标/组件注册都在 `app.mount()` **之前**完成。
 - `window.Vue` 在加载任何 CDN JS 前就绪，CDN IIFE 包据此与 assembox-desktop-next 共用同一 Vue。
@@ -233,16 +235,16 @@ host 轮询拿到 __ASSEM_RENDERER__ → api.init(schema) → renderer.mount():
 
 ## 七、与旧版 registerPlugin 对照
 
-| 旧版（plugin-vue-renderer-desktop） | 现在 assets 配置 |
-|---|---|
-| `new window.Vue3WebFramework.WebFramework({})` | `bootstrap: { ctorPath: 'WebFramework', args: [{}] }` |
-| `app.use(window.ElementPlus, { locale: zhCn })` | `asPlugin: true`（locale 自动注入）或 `pluginOptions: { locale }` |
-| `app.use(window.ElementPro)` | `asPlugin: true` |
-| `if (window.Vue3ComComponents) app.use(...)` | `asPlugin: true`（target 为空自动跳过） |
-| `app.use(window.TablePro)` | `asPlugin: true` |
-| `app.component('box', ElementPro.Box)` | `components: [{ name: 'box', path: 'Box' }]` |
-| 遍历 `ElementPlusIconsVue` 注册图标 | `asIcons: true` |
-| —（旧版无） | `externals: [{ renderType, globalPath, category }]`（外部组件 registerExternal） |
+| 旧版（plugin-vue-renderer-desktop）             | 现在 assets 配置                                                                 |
+| ----------------------------------------------- | -------------------------------------------------------------------------------- |
+| `new window.Vue3WebFramework.WebFramework({})`  | `bootstrap: { ctorPath: 'WebFramework', args: [{}] }`                            |
+| `app.use(window.ElementPlus, { locale: zhCn })` | `asPlugin: true`（locale 自动注入）或 `pluginOptions: { locale }`                |
+| `app.use(window.ElementPro)`                    | `asPlugin: true`                                                                 |
+| `if (window.Vue3ComComponents) app.use(...)`    | `asPlugin: true`（target 为空自动跳过）                                          |
+| `app.use(window.TablePro)`                      | `asPlugin: true`                                                                 |
+| `app.component('box', ElementPro.Box)`          | `components: [{ name: 'box', path: 'Box' }]`                                     |
+| 遍历 `ElementPlusIconsVue` 注册图标             | `asIcons: true`                                                                  |
+| —（旧版无）                                     | `externals: [{ renderType, globalPath, category }]`（外部组件 registerExternal） |
 
 ---
 
@@ -270,9 +272,9 @@ A：是。改 `DEFAULT_PC_ASSETS` 的 `src`/`global`/版本号即可，无需改
 
 ## 九、相关源码索引
 
-| 文件 | 职责 |
-|---|---|
-| `src/simulator/iframe/protocol.ts` | assets 类型定义（JsAsset / IframeAssetsManifest / IframeHostPayload） |
-| `src/simulator/iframe/pc-iframe-renderer.ts` | `DEFAULT_PC_ASSETS` 默认清单；`PcIframeRenderer` 构造/setAssets/注入 |
-| `src/simulator/iframe/iframe-renderer-entry.ts` | waitForHost → window.Vue → loadScript/loadStyle → 创建 renderer |
+| 文件                                             | 职责                                                                              |
+| ------------------------------------------------ | --------------------------------------------------------------------------------- |
+| `src/simulator/iframe/protocol.ts`               | assets 类型定义（JsAsset / IframeAssetsManifest / IframeHostPayload）             |
+| `src/simulator/iframe/pc-iframe-renderer.ts`     | `DEFAULT_PC_ASSETS` 默认清单；`PcIframeRenderer` 构造/setAssets/注入              |
+| `src/simulator/iframe/iframe-renderer-entry.ts`  | waitForHost → window.Vue → loadScript/loadStyle → 创建 renderer                   |
 | `src/simulator/iframe/iframe-canvas-renderer.ts` | `mount()` 遍历 assets.js 注册（bootstrap/asPlugin/asIcons/components）+ externals |

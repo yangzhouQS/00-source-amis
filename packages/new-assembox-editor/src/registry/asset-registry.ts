@@ -4,7 +4,7 @@
  * - 去重（id + version）
  * - 向 iframe/window 按序注入
  */
-import type {AssetMeta} from '../schema/types';
+import type { AssetMeta } from "../schema/types";
 
 export class AssetRegistry {
   private assets = new Map<string, AssetMeta>();
@@ -28,7 +28,7 @@ export class AssetRegistry {
 
   /** 取消注册 */
   unregister(id: string, version?: string): boolean {
-    return this.assets.delete(`${id}@${version ?? '0.0.0'}`);
+    return this.assets.delete(`${id}@${version ?? "0.0.0"}`);
   }
 
   /** 全部资产 */
@@ -37,7 +37,7 @@ export class AssetRegistry {
   }
 
   /** 按类型筛选 */
-  filter(kind: 'js' | 'css'): AssetMeta[] {
+  filter(kind: "js" | "css"): AssetMeta[] {
     return this.all().filter(a => a.kind === kind);
   }
 
@@ -47,17 +47,21 @@ export class AssetRegistry {
    */
   async injectInto(win: Window): Promise<void> {
     const doc = win.document;
-    const scripts = this.filter('js');
-    const styles = this.filter('css');
+    const scripts = this.filter("js");
+    const styles = this.filter("css");
 
     // 先注入样式
     for (const style of styles) {
-      if (style.global && (win as any)[style.global]) continue;
+      if (style.global && (win as any)[style.global]) {
+        continue;
+      }
       this.injectStyle(doc, style);
     }
     // 再串行注入脚本
     for (const script of scripts) {
-      if (script.global && (win as any)[script.global]) continue;
+      if (script.global && (win as any)[script.global]) {
+        continue;
+      }
       await this.injectScript(doc, script);
     }
   }
@@ -68,11 +72,13 @@ export class AssetRegistry {
   }
 
   private injectStyle(doc: Document, asset: AssetMeta): void {
-    if (doc.querySelector(`link[data-asset="${asset.id}"]`)) return;
-    const link = doc.createElement('link');
-    link.rel = 'stylesheet';
+    if (doc.querySelector(`link[data-asset="${asset.id}"]`)) {
+      return;
+    }
+    const link = doc.createElement("link");
+    link.rel = "stylesheet";
     link.href = asset.url;
-    link.setAttribute('data-asset', asset.id);
+    link.setAttribute("data-asset", asset.id);
     doc.head.appendChild(link);
   }
 
@@ -82,20 +88,20 @@ export class AssetRegistry {
         resolve();
         return;
       }
-      const script = doc.createElement('script');
+      const script = doc.createElement("script");
       script.src = asset.url;
-      script.setAttribute('data-asset', asset.id);
+      script.setAttribute("data-asset", asset.id);
       script.onload = () => resolve();
       script.onerror = () => {
         if (asset.required) {
           reject(
             new Error(
-              `[AssetRegistry] 必需资产加载失败: ${asset.id} (${asset.url})`
-            )
+              `[AssetRegistry] 必需资产加载失败: ${asset.id} (${asset.url})`,
+            ),
           );
         } else {
           console.warn(
-            `[AssetRegistry] 资产加载失败: ${asset.id} (${asset.url})`
+            `[AssetRegistry] 资产加载失败: ${asset.id} (${asset.url})`,
           );
           resolve();
         }
@@ -104,7 +110,7 @@ export class AssetRegistry {
     });
   }
 
-  private key(asset: {id: string; version?: string}): string {
-    return `${asset.id}@${asset.version ?? '0.0.0'}`;
+  private key(asset: { id: string; version?: string }): string {
+    return `${asset.id}@${asset.version ?? "0.0.0"}`;
   }
 }

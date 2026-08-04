@@ -18,6 +18,7 @@
 ```
 
 **关键决策：**
+
 - **同源直引**（非 postMessage）：dev/prod 同源，直引同步、简单。postMessage 仅作跨源兜底（本期不实现）。
 - **iframe 内加载 AssemViews**：与 PcRenderer 完全一致的渲染引擎，保证设计态 === 生产态。
 - **schema 同步**：Host 每次 commit 后发 `setSchema(clone)` 给 iframe，iframe 维护自己的响应式副本。
@@ -25,27 +26,28 @@
 
 **文件结构：**
 
-| 文件 | 职责 |
-|---|---|
-| 新建 `src/simulator/iframe/protocol.ts` | 通信协议：双向 API 接口 + 握手常量 |
-| 新建 `src/simulator/iframe/iframe-canvas-renderer.ts` | iframe 内侧渲染器：包装 AssemViews，实现 RendererApi |
-| 新建 `src/simulator/iframe/iframe-renderer-entry.ts` | iframe 入口 bootstrap：加载 Vue+EP+assembox，暴露 renderer |
-| 新建 `src/simulator/iframe/pc-iframe-renderer.ts` | Host 侧渲染器：管理 iframe 生命周期，实现 IRenderer |
-| 新建 `canvas.html` | iframe 入口页（Vite 多页） |
-| 改 `vite.config.ts` | 恢复 main + canvas 双入口 |
-| 改 `src/scenario/types.ts` | ScenarioProfile 增 `createIframeRenderer?` |
-| 改 `src/scenarios/pc-desktop/index.ts` | 提供 createIframeRenderer |
-| 改 `src/core/editor.ts` | EditorOptions 增 `canvasMode`，选择渲染器 |
-| 改 `src/designer/designer-host.tsx` | iframe 模式：创建 iframe 元素 + 挂载 |
-| 改 `src/designer/drag/canvas-sensor.ts` | 感应区适配 iframe contentDocument |
-| 改 `src/designer/bem-tools.tsx` | iframe rect 偏移（已有 iframeEl prop） |
-| 改 `src/demo/main.tsx` | canvasMode: 'iframe' |
+| 文件                                                  | 职责                                                       |
+| ----------------------------------------------------- | ---------------------------------------------------------- |
+| 新建 `src/simulator/iframe/protocol.ts`               | 通信协议：双向 API 接口 + 握手常量                         |
+| 新建 `src/simulator/iframe/iframe-canvas-renderer.ts` | iframe 内侧渲染器：包装 AssemViews，实现 RendererApi       |
+| 新建 `src/simulator/iframe/iframe-renderer-entry.ts`  | iframe 入口 bootstrap：加载 Vue+EP+assembox，暴露 renderer |
+| 新建 `src/simulator/iframe/pc-iframe-renderer.ts`     | Host 侧渲染器：管理 iframe 生命周期，实现 IRenderer        |
+| 新建 `canvas.html`                                    | iframe 入口页（Vite 多页）                                 |
+| 改 `vite.config.ts`                                   | 恢复 main + canvas 双入口                                  |
+| 改 `src/scenario/types.ts`                            | ScenarioProfile 增 `createIframeRenderer?`                 |
+| 改 `src/scenarios/pc-desktop/index.ts`                | 提供 createIframeRenderer                                  |
+| 改 `src/core/editor.ts`                               | EditorOptions 增 `canvasMode`，选择渲染器                  |
+| 改 `src/designer/designer-host.tsx`                   | iframe 模式：创建 iframe 元素 + 挂载                       |
+| 改 `src/designer/drag/canvas-sensor.ts`               | 感应区适配 iframe contentDocument                          |
+| 改 `src/designer/bem-tools.tsx`                       | iframe rect 偏移（已有 iframeEl prop）                     |
+| 改 `src/demo/main.tsx`                                | canvasMode: 'iframe'                                       |
 
 ---
 
 ## Task 1: 通信协议 `protocol.ts`
 
 **Files:**
+
 - Create: `src/simulator/iframe/protocol.ts`
 
 - [ ] **Step 1: 编写协议文件**
@@ -110,6 +112,7 @@ Expected: 无 protocol.ts 相关错误
 ## Task 2: iframe 内侧渲染器 `iframe-canvas-renderer.ts`
 
 **Files:**
+
 - Create: `src/simulator/iframe/iframe-canvas-renderer.ts`
 
 此文件运行在 iframe 内部，与 PcRenderer 同构（都用 AssemViews），但不直接操作 Host store，而是通过 hostApi 回报事件。
@@ -288,6 +291,7 @@ Expected: 无错误
 ## Task 3: iframe 入口 + canvas.html + Vite 配置
 
 **Files:**
+
 - Create: `src/simulator/iframe/iframe-renderer-entry.ts`
 - Create: `canvas.html`
 - Modify: `vite.config.ts`
@@ -397,6 +401,7 @@ Expected: 成功，dist 下出现 `canvas.html` + `canvas-*.js`
 ## Task 4: Host 侧渲染器 `pc-iframe-renderer.ts`
 
 **Files:**
+
 - Create: `src/simulator/iframe/pc-iframe-renderer.ts`
 
 此文件运行在 Host 侧，实现 `IRenderer` 接口，管理 iframe 生命周期 + 同源直引通信 + DOM 查询。
@@ -638,6 +643,7 @@ Expected: 无错误
 ## Task 5: 场景集成（types + pc-desktop + editor）
 
 **Files:**
+
 - Modify: `src/scenario/types.ts`
 - Modify: `src/scenarios/pc-desktop/index.ts`
 - Modify: `src/core/editor.ts`
@@ -693,6 +699,7 @@ export const pcDesktopProfile: ScenarioProfile = {
 `src/core/editor.ts`：
 
 `EditorOptions` 接口加字段：
+
 ```ts
 export interface EditorOptions {
   platform?: 'desktop' | 'mobile';
@@ -706,6 +713,7 @@ export interface EditorOptions {
 ```
 
 构造函数中渲染器选择逻辑改为：
+
 ```ts
     // 3. 创建渲染器并绑定回调（DesignerHost 负责 mount）
     this.renderer =
@@ -718,6 +726,7 @@ export interface EditorOptions {
 ```
 
 并在 store 上记录 canvasMode（供 DesignerHost 判断）：
+
 ```ts
     this.store.state.platform = options.platform ?? 'desktop';
     (this.store.state as any).canvasMode = options.canvasMode ?? 'inline';
@@ -733,6 +742,7 @@ Expected: 无错误
 ## Task 6: DesignerHost iframe 支持
 
 **Files:**
+
 - Modify: `src/designer/designer-host.tsx`
 
 DesignerHost 需根据 canvasMode 渲染 `<iframe>` 或普通 `<div>` 容器，并把 iframe 信息传给 CanvasSensor 和 BemTools。
@@ -855,6 +865,7 @@ Expected: 无错误
 ## Task 7: CanvasSensor 适配 iframe contentDocument
 
 **Files:**
+
 - Modify: `src/designer/drag/canvas-sensor.ts`
 
 CanvasSensor 已通过 `opts.getContentDocument()` 获取感应区文档，对 iframe 天然支持。需确认 `freshEl` 等方法用感应区文档查询（当前用 `editor.renderer.getNodeElement`，PcIframeRenderer 的 getNodeElement 走 contentDocument，已兼容）。
@@ -876,6 +887,7 @@ CanvasSensor 的 `freshEl` 调用 `this.editor.renderer?.getNodeElement(id)`，P
 ## Task 8: BemTools iframe rect 偏移
 
 **Files:**
+
 - Modify: `src/designer/bem-tools.tsx`
 
 BemTools 已有 `iframeEl` prop 和 rect 偏移逻辑（computePos 中 `iRect` 偏移）。需确认 `containerRef` 为画布外层容器时偏移正确。
@@ -883,6 +895,7 @@ BemTools 已有 `iframeEl` prop 和 rect 偏移逻辑（computePos 中 `iRect` �
 - [ ] **Step 1: 验证 BemTools 偏移逻辑**
 
 BemTools.computePos 当前逻辑：
+
 - `el.getBoundingClientRect()` 得到 iframe 内元素的视口坐标
 - 加上 iframe 自身的 `iRect.left/top` 偏移（iframe 在宿主文档中的位置）
 - 减去 container 的坐标
@@ -898,6 +911,7 @@ BemTools.computePos 当前逻辑：
 ## Task 9: Demo + 验证
 
 **Files:**
+
 - Modify: `src/demo/main.tsx`
 
 - [ ] **Step 1: demo 启用 iframe 模式**
@@ -918,6 +932,7 @@ Run: `npx vite`
 打开 `http://localhost:5174/index.html`
 
 验证清单：
+
 - [ ] iframe 画布出现（DevTools 可见 iframe[src="/canvas.html"]）
 - [ ] PC 空 schema 正常渲染
 - [ ] 拖组件到画布 → 正确插入
@@ -938,12 +953,12 @@ Expected: 全部通过
 
 ### 为什么用同源直引而非 postMessage
 
-| 维度 | 同源直引（本方案） | postMessage |
-|---|---|---|
-| 调用方式 | `win.__ASSEM_RENDERER__.setSchema()` 同步 | `postMessage` + 监听，异步 |
-| DOM 查询 | `iframe.contentDocument.querySelector` 同步 | 需请求-响应配对，复杂 |
-| 适用场景 | dev/prod 同源（本项目） | 跨源 / CDN 部署 |
-| 复杂度 | 低 | 高（序列化、id 配对、超时） |
+| 维度     | 同源直引（本方案）                          | postMessage                 |
+| -------- | ------------------------------------------- | --------------------------- |
+| 调用方式 | `win.__ASSEM_RENDERER__.setSchema()` 同步   | `postMessage` + 监听，异步  |
+| DOM 查询 | `iframe.contentDocument.querySelector` 同步 | 需请求-响应配对，复杂       |
+| 适用场景 | dev/prod 同源（本项目）                     | 跨源 / CDN 部署             |
+| 复杂度   | 低                                          | 高（序列化、id 配对、超时） |
 
 本项目 dev（localhost）与 prod（同站）均同源，同源直引最简单可靠。postMessage 协议接口（protocol.ts）保留抽象，跨源时可在其上桥接。
 

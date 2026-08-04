@@ -1,3 +1,4 @@
+import type { IframeAssetsManifest, IframeHostPayload } from "./protocol";
 /**
  * iframe 渲染器入口（运行于 canvas.html 内部）
  *
@@ -9,18 +10,17 @@
  *     动态 app.use 插件、registerExternal 外部组件
  *  5. 暴露 win.__ASSEM_RENDERER__ 供 host 直引
  */
-import * as Vue from 'vue';
-import 'element-plus/dist/index.css';
-import { IframeCanvasRenderer } from './iframe-canvas-renderer';
-import type { IframeHostPayload, IframeAssetsManifest } from './protocol';
-import { HOST_GLOBAL_KEY, RENDERER_GLOBAL_KEY } from './protocol';
+import * as Vue from "vue";
+import { IframeCanvasRenderer } from "./iframe-canvas-renderer";
+import { HOST_GLOBAL_KEY, RENDERER_GLOBAL_KEY } from "./protocol";
+import "element-plus/dist/index.css";
 
 const win = window as any;
 
 /** 动态加载一个 JS 脚本 */
 function loadScript(src: string): Promise<void> {
   return new Promise((resolve, reject) => {
-    const s = document.createElement('script');
+    const s = document.createElement("script");
     s.src = src;
     s.onload = () => resolve();
     s.onerror = () => reject(new Error(`CDN 加载失败: ${src}`));
@@ -30,8 +30,8 @@ function loadScript(src: string): Promise<void> {
 
 /** 动态加载一条 CSS（link rel=stylesheet） */
 function loadStyle(href: string): void {
-  const link = document.createElement('link');
-  link.rel = 'stylesheet';
+  const link = document.createElement("link");
+  link.rel = "stylesheet";
   link.href = href;
   document.head.appendChild(link);
 }
@@ -42,12 +42,12 @@ function waitForHost(timeout = 10000): Promise<IframeHostPayload> {
     const start = Date.now();
     const timer = win.setInterval(() => {
       const host = win[HOST_GLOBAL_KEY] as IframeHostPayload | undefined;
-      if (host && typeof host.onReady === 'function') {
+      if (host && typeof host.onReady === "function") {
         win.clearInterval(timer);
         resolve(host);
       } else if (Date.now() - start > timeout) {
         win.clearInterval(timer);
-        reject(new Error('等待 host 注入 __ASSEM_HOST__ 超时'));
+        reject(new Error("等待 host 注入 __ASSEM_HOST__ 超时"));
       }
     }, 16);
   });
@@ -59,7 +59,7 @@ async function bootstrap(): Promise<void> {
   try {
     host = await waitForHost();
   } catch (e) {
-    console.error('[iframe-entry]', e);
+    console.error("[iframe-entry]", e);
     return;
   }
 
@@ -73,16 +73,18 @@ async function bootstrap(): Promise<void> {
     try {
       await loadScript(a.src);
     } catch (e) {
-      console.error('[iframe-entry]', e);
+      console.error("[iframe-entry]", e);
     }
   }
-  for (const href of assets.css ?? []) loadStyle(href);
+  for (const href of assets.css ?? []) {
+    loadStyle(href);
+  }
 
   // 4. 创建渲染器（host 回调 + assets），暴露给 host 直引
   const renderer = new IframeCanvasRenderer(host, assets);
   win[RENDERER_GLOBAL_KEY] = renderer;
 
-  win.addEventListener('beforeunload', () => {
+  win.addEventListener("beforeunload", () => {
     win[RENDERER_GLOBAL_KEY] = null;
     renderer.dispose();
   });

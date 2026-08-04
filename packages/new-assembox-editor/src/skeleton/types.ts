@@ -1,18 +1,18 @@
 /**
  * 骨架类型定义
  */
-import type {VueComponent} from '../schema/types';
+import type { VueComponent } from "../schema/types";
 
-export type AreaName =
-  | 'topArea'
-  | 'leftArea'
-  | 'leftFixedArea'
-  | 'leftFloatArea'
-  | 'centerArea'
-  | 'rightArea'
-  | 'bottomArea';
+export type AreaName
+  = | "topArea"
+    | "leftArea"
+    | "leftFixedArea"
+    | "leftFloatArea"
+    | "centerArea"
+    | "rightArea"
+    | "bottomArea";
 
-export type WidgetType = 'Widget' | 'Panel' | 'PanelDock' | 'Dock';
+export type WidgetType = "Widget" | "Panel" | "PanelDock" | "Dock";
 
 export interface WidgetConfig {
   type: WidgetType;
@@ -35,7 +35,7 @@ export interface WidgetConfig {
   props?: {
     title?: string;
     icon?: any;
-    align?: 'top' | 'bottom' | 'left' | 'center' | 'right';
+    align?: "top" | "bottom" | "left" | "center" | "right";
     description?: string;
     /** 排序（升序，越小越靠前） */
     index?: number;
@@ -66,10 +66,10 @@ export interface WidgetLike {
   /** VNode 内容 */
   readonly content: any;
   /** 激活/取消 */
-  setActive(flag: boolean): void;
-  toggle(): void;
-  hide(): void;
-  show(): void;
-  disable(): void;
-  enable(): void;
+  setActive: (flag: boolean) => void;
+  toggle: () => void;
+  hide: () => void;
+  show: () => void;
+  disable: () => void;
+  enable: () => void;
 }

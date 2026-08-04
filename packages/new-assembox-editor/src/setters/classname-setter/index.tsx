@@ -1,22 +1,22 @@
 /**
  * ClassNameSetter - CSS class name multi-select (tag mode)
  */
-import {defineComponent} from 'vue';
+import { defineComponent } from "vue";
 
 export const ClassNameSetter = defineComponent({
-  name: 'ClassNameSetter',
+  name: "ClassNameSetter",
   props: {
-    value: {type: String, default: ''},
-    onChange: {type: Function, required: true},
-    classNameList: {type: Array as () => string[], default: () => []},
-    allowCreate: {type: Boolean, default: true},
-    disabled: {type: Boolean, default: false}
+    value: { type: String, default: "" },
+    onChange: { type: Function, required: true },
+    classNameList: { type: Array as () => string[], default: () => [] },
+    allowCreate: { type: Boolean, default: true },
+    disabled: { type: Boolean, default: false },
   },
   setup(props) {
     return () => {
-      const selected = (props.value || '').split(/\s+/).filter(Boolean);
+      const selected = (props.value || "").split(/\s+/).filter(Boolean);
       const options = Array.from(
-        new Set([...props.classNameList, ...selected])
+        new Set([...props.classNameList, ...selected]),
       );
       return (
         <el-select
@@ -30,8 +30,7 @@ export const ClassNameSetter = defineComponent({
           placeholder="Select or type class name"
           style="width:100%"
           onUpdate:modelValue={(v: any) =>
-            props.onChange(Array.isArray(v) ? v.join(' ') : String(v))
-          }
+            props.onChange(Array.isArray(v) ? v.join(" ") : String(v))}
         >
           {options.map(cls => (
             <el-option key={cls} label={cls} value={cls} />
@@ -39,5 +38,5 @@ export const ClassNameSetter = defineComponent({
         </el-select>
       );
     };
-  }
+  },
 });

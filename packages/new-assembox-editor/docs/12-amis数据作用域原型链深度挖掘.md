@@ -61,12 +61,12 @@ export function createObject(superProps, props, properties) {
 
 ### 关键设计意图
 
-| 设计点 | 机制 | 为什么这么做 |
-|---|---|---|
-| `Object.create(superProps)` | superProps 成为 `[[Prototype]]` | 原生实现"读继承"：`obj.foo` 找不到自身就自动向上找，零运行时开销 |
+| 设计点                       | 机制                                              | 为什么这么做                                                                         |
+| ---------------------------- | ------------------------------------------------- | ------------------------------------------------------------------------------------ |
+| `Object.create(superProps)`  | superProps 成为 `[[Prototype]]`                   | 原生实现"读继承"：`obj.foo` 找不到自身就自动向上找，零运行时开销                     |
 | `__super.enumerable = false` | `Object.keys` / `JSON.stringify` 看不到 `__super` | **序列化安全**：提交表单、打印数据时不泄漏链结构；**diff 安全**：浅比较只比 own keys |
-| `__super.writable = false` | 防止运行时被改写 | 链结构是数据作用域骨架，被篡改会污染子树 |
-| `Object.isFrozen` 防御 | 冻结对象先 cloneObject | frozen 对象作为原型时子对象写继承属性会失败 |
+| `__super.writable = false`   | 防止运行时被改写                                  | 链结构是数据作用域骨架，被篡改会污染子树                                             |
+| `Object.isFrozen` 防御       | 冻结对象先 cloneObject                            | frozen 对象作为原型时子对象写继承属性会失败                                          |
 
 > **可迁移模式**：任何需要"作用域栈 / 作用域链"的场景（模板引擎数据上下文、低代码运行时），都可以用「`Object.create` 建原型 + 不可枚举 `__super` 反向指针」这一组合，比维护 `scopeChain: Array` 在读取时手动 reduce 要高效得多。
 
@@ -105,10 +105,10 @@ export function getVariable(data, key, canAccessSuper = true) {
 
 ### canAccessSuper 双面语义
 
-| `canAccessSuper` | 判定操作符 | 语义 | 典型调用方 |
-|---|---|---|---|
-| `true`（默认） | `key in data` | **穿透原型链**，子可读父 | 模板 `${xxx}` 解析、dataMapping |
-| `false` | `data.hasOwnProperty(key)` | **仅自身层**，屏蔽父级 | changeValue 里取 origin（避免误判继承值为"已存在"） |
+| `canAccessSuper` | 判定操作符                 | 语义                     | 典型调用方                                          |
+| ---------------- | -------------------------- | ------------------------ | --------------------------------------------------- |
+| `true`（默认）   | `key in data`              | **穿透原型链**，子可读父 | 模板 `${xxx}` 解析、dataMapping                     |
+| `false`          | `data.hasOwnProperty(key)` | **仅自身层**，屏蔽父级   | changeValue 里取 origin（避免误判继承值为"已存在"） |
 
 ### keyToPath 路径解析
 
@@ -127,12 +127,13 @@ export function getVariable(data, key, canAccessSuper = true) {
 
 这是整个系统最精妙的部分。JavaScript 的**赋值（put）语义**与**读取（get）语义**不对称：
 
-| 操作 | 行为 |
-|---|---|
-| 读取 `obj[key]`（无 own） | 沿 `[[Prototype]]` 向上找 |
+| 操作                                                   | 行为                                     |
+| ------------------------------------------------------ | ---------------------------------------- |
+| 读取 `obj[key]`（无 own）                              | 沿 `[[Prototype]]` 向上找                |
 | **赋值 `obj[key] = v`**（key 在原型上有，但无 setter） | **在 obj 自身创建新 own 属性**，原型不变 |
 
 所以当父级有 `name`，子级 `setVariable(child, 'name', x)`：
+
 - `key in data` → true（继承自父）
 - `data[key] = value` → 在 child 自身写入，**遮蔽**了父级的 name
 - 父级的 `name` 毫发无损 ✅
@@ -242,11 +243,11 @@ openDialog(ctx, additional) {
 
 ### 同步策略矩阵
 
-| Store 类型 | force | 同步的 keys | 行为 |
-|---|---|---|---|
-| FormStore | 任意 | formItem.name 顶级 + 自身 keys | **字段级定向同步**：只有表单项关心的字段会被父级覆盖 |
-| 非 FormStore | true | 自身全部 keys | 全量同步 |
-| 非 FormStore | false | 空 | **不同步** |
+| Store 类型   | force | 同步的 keys                    | 行为                                                 |
+| ------------ | ----- | ------------------------------ | ---------------------------------------------------- |
+| FormStore    | 任意  | formItem.name 顶级 + 自身 keys | **字段级定向同步**：只有表单项关心的字段会被父级覆盖 |
+| 非 FormStore | true  | 自身全部 keys                  | 全量同步                                             |
+| 非 FormStore | false | 空                             | **不同步**                                           |
 
 ### 为什么 FormStore 特殊
 
@@ -289,10 +290,10 @@ get downStream() {
 
 ### 双态机制（临时/正式）
 
-| 视图 | 数据源 | 用途 |
-|---|---|---|
+| 视图             | 数据源                        | 用途                           |
+| ---------------- | ----------------------------- | ------------------------------ |
 | `nextGlobalData` | `globalVarTempStates`（临时） | 触发 reaction，一轮 RAF 后转正 |
-| `downStream` | `globalVarStates`（正式） | 子树实际读取的数据域 |
+| `downStream`     | `globalVarStates`（正式）     | 子树实际读取的数据域           |
 
 **为什么分两态**：让"需要重新渲染的组件"能感知到 `props.data !== prevProps.data`。临时态先变，等渲染完成后再转正，避免渲染中途数据链抖动导致 diff 失效。
 
@@ -323,12 +324,12 @@ get downStream() {
 
 ### iRendererStore 关键操作的链行为
 
-| 操作 | 链行为 |
-|---|---|
-| `initData(data)` | 设 data 为新链顶（data.__super 指向父级） |
-| `updateData(values)` | `extendObject(self.data, values)` — clone + 合并，保留 __super |
-| `changeValue(name, v)` | `cloneObject(self.data)` + `setVariable` — 克隆后写自身 |
-| `openDialog(ctx)` | `extractObjectChain → splice → createObjectFromChain` — 拼接弹窗链 |
+| 操作                   | 链行为                                                             |
+| ---------------------- | ------------------------------------------------------------------ |
+| `initData(data)`       | 设 data 为新链顶（data.__super 指向父级）                          |
+| `updateData(values)`   | `extendObject(self.data, values)` — clone + 合并，保留 __super     |
+| `changeValue(name, v)` | `cloneObject(self.data)` + `setVariable` — 克隆后写自身            |
+| `openDialog(ctx)`      | `extractObjectChain → splice → createObjectFromChain` — 拼接弹窗链 |
 
 ---
 
@@ -336,11 +337,11 @@ get downStream() {
 
 ### 关键挑战
 
-| 挑战 | 说明 |
-|---|---|
-| Vue3 `reactive()` 自身是 Proxy | 与"继承 Proxy"叠加会导致两层 Proxy 嵌套 |
-| 原型链穿透不建立响应式依赖 | `getVariable(data, 'parentField')` 读取不触发 Vue track |
-| Proxy 性能 | get/has trap 每次都是函数调用，远慢于 `[[Prototype]]` 查找 |
+| 挑战                           | 说明                                                       |
+| ------------------------------ | ---------------------------------------------------------- |
+| Vue3 `reactive()` 自身是 Proxy | 与"继承 Proxy"叠加会导致两层 Proxy 嵌套                    |
+| 原型链穿透不建立响应式依赖     | `getVariable(data, 'parentField')` 读取不触发 Vue track    |
+| Proxy 性能                     | get/has trap 每次都是函数调用，远慢于 `[[Prototype]]` 查找 |
 
 ### 推荐方案：保留 Object.create + shallowRef 桥接
 
@@ -371,11 +372,11 @@ class DataScope {
 
 ### 方案对比
 
-| 方案 | 做法 | 响应式 | 改造成本 | 推荐度 |
-|---|---|---|---|---|
-| **A. 保留 Object.create + shallowRef** | 数据链对象不变，外层 shallowRef 桥接 | 引用变更触发 | 低 | ★★★★★ |
-| B. Object.create + markRaw | 数据链用 markRaw 跳过 reactive | 同 A | 低 | ★★★★ |
-| C. 全量 Proxy 继承 | 用 Proxy 模拟 __super 链 | 原生 track/trigger | 极高 | ★ |
+| 方案                                   | 做法                                 | 响应式             | 改造成本 | 推荐度 |
+| -------------------------------------- | ------------------------------------ | ------------------ | -------- | ------ |
+| **A. 保留 Object.create + shallowRef** | 数据链对象不变，外层 shallowRef 桥接 | 引用变更触发       | 低       | ★★★★★  |
+| B. Object.create + markRaw             | 数据链用 markRaw 跳过 reactive       | 同 A               | 低       | ★★★★   |
+| C. 全量 Proxy 继承                     | 用 Proxy 模拟 __super 链             | 原生 track/trigger | 极高     | ★      |
 
 **结论**：`Object.create` 原型链方案与 Vue3 **不冲突，且无需替换**。最佳实践是「保留原型链数据模型 + `shallowRef` 桥接响应式」，既复用 amis 全部工具函数（getVariable/setVariable/dataMapping/syncDataFromSuper 零改动），又获得 Vue 的组件级响应式更新。
 
@@ -385,18 +386,18 @@ class DataScope {
 
 > 验证项目：`vue3-examples/src/data-scope/data-scope.ts` + `data-scope-demo.tsx`
 
-| # | 验证场景 | 验证项 | 结果 |
-|---|---|---|---|
-| 1 | **createObject 原型链读取** | 自身层读取 / 穿透读取父级 / __super 指向 / 不可枚举 | ✅ |
-| 2 | **写隔离（赋值遮蔽）** | 子写入继承属性遮蔽父级 / 子写新属性不影响父 | ✅ |
-| 3 | **getVariable canAccessSuper** | 穿透读取 / 仅自身层 / 点号路径 / 不存在返回 undefined | ✅ |
-| 4 | **deleteVariable** | 只删自身层 / 删继承属性后穿透父级 | ✅ |
-| 5 | **链折叠/展开** | extractObjectChain 链长度+顺序 / createObjectFromChain 读取 / injectObjectChain 插入 | ✅ |
-| 6 | **cloneObject / extendObject** | 克隆保留 __super / 改克隆不影响原始 / extend 合并+保留链 | ✅ |
-| 7 | **DataScope 响应式** | set 触发引用替换 / update 批量更新 / delete | ✅ |
-| 8 | **DataScope 父子继承** | 子穿透读父 / 自身遮蔽 / getOwn 仅自身 / 子改不影响父 | ✅ |
-| 9 | **isObjectShallowModified** | 相同 → false / 值不同 → true / key 数不同 / 忽略指定 key | ✅ |
-| 10 | **DataScope.fromChain 弹窗场景** | 全局层穿透 / 页面层穿透 / 表单自身层 / 优先级 | ✅ |
+| #   | 验证场景                         | 验证项                                                                               | 结果 |
+| --- | -------------------------------- | ------------------------------------------------------------------------------------ | ---- |
+| 1   | **createObject 原型链读取**      | 自身层读取 / 穿透读取父级 / __super 指向 / 不可枚举                                  | ✅   |
+| 2   | **写隔离（赋值遮蔽）**           | 子写入继承属性遮蔽父级 / 子写新属性不影响父                                          | ✅   |
+| 3   | **getVariable canAccessSuper**   | 穿透读取 / 仅自身层 / 点号路径 / 不存在返回 undefined                                | ✅   |
+| 4   | **deleteVariable**               | 只删自身层 / 删继承属性后穿透父级                                                    | ✅   |
+| 5   | **链折叠/展开**                  | extractObjectChain 链长度+顺序 / createObjectFromChain 读取 / injectObjectChain 插入 | ✅   |
+| 6   | **cloneObject / extendObject**   | 克隆保留 __super / 改克隆不影响原始 / extend 合并+保留链                             | ✅   |
+| 7   | **DataScope 响应式**             | set 触发引用替换 / update 批量更新 / delete                                          | ✅   |
+| 8   | **DataScope 父子继承**           | 子穿透读父 / 自身遮蔽 / getOwn 仅自身 / 子改不影响父                                 | ✅   |
+| 9   | **isObjectShallowModified**      | 相同 → false / 值不同 → true / key 数不同 / 忽略指定 key                             | ✅   |
+| 10  | **DataScope.fromChain 弹窗场景** | 全局层穿透 / 页面层穿透 / 表单自身层 / 优先级                                        | ✅   |
 
 ### 验证架构
 
@@ -421,19 +422,19 @@ vue3-examples/src/
 
 ## 十一、完整工具函数索引
 
-| 函数 | 签名 | 用途 |
-|---|---|---|
-| `createObject` | `(superProps?, props?, properties?) => object` | 建原型链 + __super 指针 |
-| `extractObjectChain` | `(value) => object[]` | 对象 → 链数组（顶到自身） |
-| `createObjectFromChain` | `(chain) => object` | 链数组 → 嵌套原型对象 |
-| `injectObjectChain` | `(obj, value) => object` | 在自身层前插一层 |
-| `cloneObject` | `(target, persistOwnProps=true) => object` | 克隆自身层、保留 __super |
-| `extendObject` | `(target, src?, persistOwnProps=true) => object` | clone + 浅合并 |
-| `getVariable` | `(data, key, canAccessSuper=true) => any` | 沿链读 |
-| `setVariable` | `(data, key, value) => void` | 写隔离赋值 |
-| `deleteVariable` | `(data, key) => void` | 仅删自身层 |
-| `isObjectShallowModified` | `(prev, next, ignoreKeys?) => boolean` | 自身层浅比较 |
-| `syncDataFromSuper` | `(data, superObj, prevSuperObj, store, force) => any` | 父→子按 key 同步 |
+| 函数                      | 签名                                                  | 用途                      |
+| ------------------------- | ----------------------------------------------------- | ------------------------- |
+| `createObject`            | `(superProps?, props?, properties?) => object`        | 建原型链 + __super 指针   |
+| `extractObjectChain`      | `(value) => object[]`                                 | 对象 → 链数组（顶到自身） |
+| `createObjectFromChain`   | `(chain) => object`                                   | 链数组 → 嵌套原型对象     |
+| `injectObjectChain`       | `(obj, value) => object`                              | 在自身层前插一层          |
+| `cloneObject`             | `(target, persistOwnProps=true) => object`            | 克隆自身层、保留 __super  |
+| `extendObject`            | `(target, src?, persistOwnProps=true) => object`      | clone + 浅合并            |
+| `getVariable`             | `(data, key, canAccessSuper=true) => any`             | 沿链读                    |
+| `setVariable`             | `(data, key, value) => void`                          | 写隔离赋值                |
+| `deleteVariable`          | `(data, key) => void`                                 | 仅删自身层                |
+| `isObjectShallowModified` | `(prev, next, ignoreKeys?) => boolean`                | 自身层浅比较              |
+| `syncDataFromSuper`       | `(data, superObj, prevSuperObj, store, force) => any` | 父→子按 key 同步          |
 
 ---
 
@@ -455,10 +456,10 @@ vue3-examples/src/
 
 ## 十三、与配套文档的关系
 
-| 文档 | 主题 | 本文增量 |
-|---|---|---|
-| `10-amis优秀设计借鉴分析.md` | amis 设计概览（6-11 节涉及数据作用域） | — |
-| `11-amis-Scoped组件通信系统深度挖掘.md` | Scoped 通信（组件间 reload/send/close） | — |
-| **本文 12** | **__super 原型链数据作用域（数据层）** | **createObject 逐行/读写隔离/链折叠展开/syncDataFromSuper/RootStore.downStream/Vue3 迁移验证** |
+| 文档                                    | 主题                                    | 本文增量                                                                                       |
+| --------------------------------------- | --------------------------------------- | ---------------------------------------------------------------------------------------------- |
+| `10-amis优秀设计借鉴分析.md`            | amis 设计概览（6-11 节涉及数据作用域）  | —                                                                                              |
+| `11-amis-Scoped组件通信系统深度挖掘.md` | Scoped 通信（组件间 reload/send/close） | —                                                                                              |
+| **本文 12**                             | **\__super 原型链数据作用域（数据层）** | **createObject 逐行/读写隔离/链折叠展开/syncDataFromSuper/RootStore.downStream/Vue3 迁移验证** |
 
-三份文档构成 amis 运行时的完整剖析：**Scoped（组件通信层）+ __super 原型链（数据作用域层）+ 渲染器注册（渲染层）**。
+三份文档构成 amis 运行时的完整剖析：**Scoped（组件通信层）+ \__super 原型链（数据作用域层）+ 渲染器注册（渲染层）**。

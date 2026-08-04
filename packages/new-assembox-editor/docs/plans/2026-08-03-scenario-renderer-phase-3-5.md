@@ -28,13 +28,13 @@
 
 ## File Structure
 
-| 文件 | 责任 | 动作 |
-|---|---|---|
-| `scenarios/pc-desktop/renderer.ts` | PcRenderer（IRenderer 实现） | 新建 |
-| `scenarios/pc-desktop/nesting-rules.ts` | PcNestingRules（INestingRules 实现） | 新建 |
-| `scenarios/pc-desktop/component-catalog.ts` | PcComponentCatalog（IComponentCatalog 实现） | 新建 |
-| `scenarios/pc-desktop/component-metadata.ts` | 组件元数据（scaffold + props） | 新建 |
-| `scenarios/pc-desktop/index.ts` | ScenarioProfile 聚合 | 新建 |
+| 文件                                         | 责任                                         | 动作 |
+| -------------------------------------------- | -------------------------------------------- | ---- |
+| `scenarios/pc-desktop/renderer.ts`           | PcRenderer（IRenderer 实现）                 | 新建 |
+| `scenarios/pc-desktop/nesting-rules.ts`      | PcNestingRules（INestingRules 实现）         | 新建 |
+| `scenarios/pc-desktop/component-catalog.ts`  | PcComponentCatalog（IComponentCatalog 实现） | 新建 |
+| `scenarios/pc-desktop/component-metadata.ts` | 组件元数据（scaffold + props）               | 新建 |
+| `scenarios/pc-desktop/index.ts`              | ScenarioProfile 聚合                         | 新建 |
 
 ---
 
@@ -45,11 +45,13 @@
 **结论（已通过代码审查确认）**：
 
 AssemCore 构造函数（`assem-core.ts:49`）：
+
 ```typescript
 this.uiSkeleton = config.uiSkeleton;  // 直接赋值，不拷贝
 ```
 
 AssemPlugin.install（`desktop-next/index.ts:15`）：
+
 ```typescript
 const core = new AssemCore(config);  // core.uiSkeleton === config.uiSkeleton（同一引用）
 ```
@@ -67,6 +69,7 @@ const core = new AssemCore(config);  // core.uiSkeleton === config.uiSkeleton（
 ## Task 3.1: PcRenderer 骨架 + mount/dispose
 
 **Files:**
+
 - Create: `packages/new-assembox-editor/src/scenarios/pc-desktop/renderer.ts`
 
 - [ ] **Step 1: 创建 renderer.ts**
@@ -396,9 +399,11 @@ cd packages/new-assembox-editor && npx vue-tsc --noEmit
 - [ ] **Step 3: 修正 import（把 require 改为顶部 import）**
 
 将 renderer.ts 中 `renderNode` 方法的 `lookupComponent` 从 require 改为：
+
 ```typescript
 import { lookupComponent } from '@cs/assembox-desktop-next';
 ```
+
 放在文件顶部 import 区。
 
 - [ ] **Step 4: 重新 typecheck**
@@ -421,6 +426,7 @@ git commit -m "feat(editor): PC 场景 PcRenderer（设计态渲染器 — Assem
 ## Task 4.1: PcNestingRules
 
 **Files:**
+
 - Create: `packages/new-assembox-editor/src/scenarios/pc-desktop/nesting-rules.ts`
 
 - [ ] **Step 1: 创建 nesting-rules.ts**
@@ -489,6 +495,7 @@ git commit -m "feat(editor): PC 场景 PcNestingRules（包装 nesting.ts SLOTS 
 ## Task 5.1: 组件元数据定义
 
 **Files:**
+
 - Create: `packages/new-assembox-editor/src/scenarios/pc-desktop/component-metadata.ts`
 
 - [ ] **Step 1: 创建 component-metadata.ts（常用组件元数据）**
@@ -771,6 +778,7 @@ npx vue-tsc --noEmit
 ## Task 5.2: PcComponentCatalog + ScenarioProfile 聚合
 
 **Files:**
+
 - Create: `packages/new-assembox-editor/src/scenarios/pc-desktop/component-catalog.ts`
 - Create: `packages/new-assembox-editor/src/scenarios/pc-desktop/index.ts`
 
@@ -839,6 +847,7 @@ git commit -m "feat(editor): PC 场景完整实现（PcRenderer + PcNestingRules
 ## Self-Review
 
 **1. Spec coverage:**
+
 - Phase 0.5 (reactive 验证): Task 0.5 ✅（代码审查确认引用共享）
 - IRenderer.mount/dispose/setSchema/updateNode: Task 3.1 ✅
 - IRenderer DOM 查询 (getNodeElement/getRect/nodeIdFromElement): Task 3.1 ✅
@@ -853,6 +862,7 @@ git commit -m "feat(editor): PC 场景完整实现（PcRenderer + PcNestingRules
 **2. Placeholder scan:** 无 TBD。所有代码完整。renderNode 用了简化实现（lookupComponent），实际效果需运行验证。
 
 **3. Type consistency:**
+
 - PcRenderer 实现 IRenderer 全部方法 ✓
 - PcNestingRules 实现 INestingRules 全部方法 ✓
 - PcComponentCatalog 实现 IComponentCatalog 全部方法 ✓
@@ -860,6 +870,7 @@ git commit -m "feat(editor): PC 场景完整实现（PcRenderer + PcNestingRules
 - ComponentCatalogItem 字段名与 component-metadata.ts 一致 ✓
 
 **已知风险（实施时验证）：**
+
 - PcRenderer.renderNode 的简化渲染是否完整（可能需要用 AssemNodeRenderer 而非手动 lookupComponent）
 - reactive schema 是否真的自动传播到 useNodeOptions（需运行验证）
 - Window 全局变量在 SSR 下可能不存在（编辑器环境无此问题）

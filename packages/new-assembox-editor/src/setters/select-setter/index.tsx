@@ -2,12 +2,12 @@
  * SelectSetter - 下拉选择
  * 支持 options（{label,value} / string）、分组、搜索、多选
  */
-import {defineSetter, normalizeOptions, renderPreview} from '../base';
+import { defineSetter, normalizeOptions, renderPreview } from "../base";
 
-export const SelectSetter = defineSetter<any>('SelectSetter', props => {
+export const SelectSetter = defineSetter<any>("SelectSetter", (props) => {
   if (props.isPreview) {
     const opt = normalizeOptions(props.options).find(
-      o => o.value === props.value
+      o => o.value === props.value,
     );
     return renderPreview(opt?.label ?? props.value);
   }
@@ -27,14 +27,14 @@ export const SelectSetter = defineSetter<any>('SelectSetter', props => {
     <el-select
       modelValue={props.value}
       disabled={props.disabled}
-      multiple={mode === 'multiple' || mode === 'tags'}
+      multiple={mode === "multiple" || mode === "tags"}
       filterable={props.showSearch ?? false}
       clearable={props.hasClear ?? true}
-      placeholder={props.placeholder || '请选择'}
+      placeholder={props.placeholder || "请选择"}
       style="width:100%"
       onUpdate:modelValue={(v: any) => props.onChange(v)}
     >
-      {options.map(o => {
+      {options.map((o) => {
         // 分组：children
         if (o.children && Array.isArray(o.children)) {
           return (

@@ -8,14 +8,14 @@
 
 /** 注入 token（携带类型信息） */
 export interface InjectionToken<T = any> {
-  readonly __brand: 'InjectionToken';
+  readonly __brand: "InjectionToken";
   readonly name: string;
   readonly __type?: T;
 }
 
 /** 创建一个类型安全的注入 token */
 export function token<T>(name: string): InjectionToken<T> {
-  return {__brand: 'InjectionToken', name} as InjectionToken<T>;
+  return { __brand: "InjectionToken", name } as InjectionToken<T>;
 }
 
 export class DIContainer {
@@ -64,8 +64,10 @@ export class DIContainer {
   /** 异步等待某个 token 注册完成（已注册则立即 resolve） */
   when<T>(key: InjectionToken<T>): Promise<T> {
     const v = this.store.get(key);
-    if (v !== undefined) return Promise.resolve(v);
-    return new Promise<T>(resolve => {
+    if (v !== undefined) {
+      return Promise.resolve(v);
+    }
+    return new Promise<T>((resolve) => {
       const arr = this.resolvers.get(key) ?? [];
       arr.push(resolve as (value: any) => void);
       this.resolvers.set(key, arr);

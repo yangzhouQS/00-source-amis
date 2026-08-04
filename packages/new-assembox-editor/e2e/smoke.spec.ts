@@ -1,4 +1,5 @@
-import { test, expect, type Page } from "@playwright/test";
+import type { Page } from "@playwright/test";
+import { expect, test } from "@playwright/test";
 
 /**
  * 编辑器冒烟测试
@@ -22,7 +23,7 @@ test("编辑器加载并渲染 demo 内容", async ({ page }) => {
   // 2. 画布 iframe 内：demo schema 渲染的卡片标题
   const canvas = canvasFrame(page);
   await expect(
-    canvas.getByText("欢迎使用新版 assembox 编辑器")
+    canvas.getByText("欢迎使用新版 assembox 编辑器"),
   ).toBeVisible();
 
   // 3. 画布 iframe 内：demo schema 渲染的按钮
@@ -31,7 +32,7 @@ test("编辑器加载并渲染 demo 内容", async ({ page }) => {
 
 test("页面无致命控制台错误", async ({ page }) => {
   const errors: string[] = [];
-  page.on("pageerror", (err) => errors.push(err.message));
+  page.on("pageerror", err => errors.push(err.message));
 
   await page.goto("/");
 
@@ -41,12 +42,12 @@ test("页面无致命控制台错误", async ({ page }) => {
   });
   // 等待画布渲染稳定
   await expect(
-    canvasFrame(page).getByText("欢迎使用新版 assembox 编辑器")
+    canvasFrame(page).getByText("欢迎使用新版 assembox 编辑器"),
   ).toBeVisible();
 
   // 过滤掉已知的第三方库无害告警，仅关注真正的运行时错误
   const fatal = errors.filter(
-    (msg) => !msg.includes("ResizeObserver") && !msg.includes("element-plus")
+    msg => !msg.includes("ResizeObserver") && !msg.includes("element-plus"),
   );
   expect(fatal).toEqual([]);
 });

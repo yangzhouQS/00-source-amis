@@ -10,35 +10,35 @@ function shortId(): string {
   return `${Date.now().toString(36)}${counter.toString(36)}`;
 }
 
-export function createPcEmptySchema(sceneName = 'main'): any {
+export function createPcEmptySchema(sceneName = "main"): any {
   return {
     [sceneName]: {
       viewsProps: {
         planeOptions: {
-          __nodeName: 'root',
+          __nodeName: "root",
           __nodeId: `FlexBox::root-${shortId()}`,
-          __nodeType: 'renderNode',
+          __nodeType: "renderNode",
           __nodeEvent: {},
           __nodeOptions: {
-            renderType: 'FlexBox',
+            renderType: "FlexBox",
             isRow: false,
             itemNum: 1,
-            width: '100%',
-            height: '100%',
+            width: "100%",
+            height: "100%",
             itemConfig: [
               {
                 isFixed: false,
-                size: '',
-                paddingSize: 'base',
+                size: "",
+                paddingSize: "base",
                 clearPadding: [],
                 isHidden: false,
-                contentType: 'container',
-                defaultSlot: null
-              }
-            ]
-          }
-        }
-      }
-    }
+                contentType: "container",
+                defaultSlot: null,
+              },
+            ],
+          },
+        },
+      },
+    },
   };
 }

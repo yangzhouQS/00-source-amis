@@ -3,9 +3,9 @@
  * 兼容新项目设计：所有 setter 通过 props 接收 value/onChange
  * 兼容旧版 lowcode-engine / assembox 的 setter 概念（移植为 Vue3 + Element Plus）
  */
-import type {Editor} from '../core/editor';
-import type {SetterRegistry} from '../registry/setter-registry';
-import type {NodeId, PropConfig} from '../schema/types';
+import type { Editor } from "../core/editor";
+import type { SetterRegistry } from "../registry/setter-registry";
+import type { NodeId, PropConfig } from "../schema/types";
 
 /** 所有 setter 的通用 props */
 export interface SetterProps<T = any> {
@@ -40,7 +40,7 @@ export interface SetterContext {
 }
 
 /** provide/inject key */
-export const SETTER_CONTEXT_KEY = Symbol('assem-setter-context');
+export const SETTER_CONTEXT_KEY = Symbol("assem-setter-context");
 
 /** 列表项配置（ArraySetter 的子项配置） */
 export interface ListItemConfig {

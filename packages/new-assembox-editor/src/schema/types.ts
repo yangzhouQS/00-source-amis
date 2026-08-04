@@ -8,17 +8,17 @@
 export type NodeId = string;
 
 /** 属性值类型描述（驱动 setter 推断） */
-export type PropType =
-  | 'string'
-  | 'number'
-  | 'boolean'
-  | 'json'
-  | 'color'
-  | 'icon'
-  | {type: 'oneOf'; value: Array<string | number>; labels?: string[]}
-  | {type: 'shape'; value: PropConfig[]}
-  | {type: 'arrayOf'; value: PropType}
-  | {type: 'array'; value: PropConfig[]};
+export type PropType
+  = | "string"
+    | "number"
+    | "boolean"
+    | "json"
+    | "color"
+    | "icon"
+    | { type: "oneOf"; value: Array<string | number>; labels?: string[] }
+    | { type: "shape"; value: PropConfig[] }
+    | { type: "arrayOf"; value: PropType }
+    | { type: "array"; value: PropConfig[] };
 
 /** 属性配置（驱动设置面板） */
 export interface PropConfig {
@@ -63,7 +63,7 @@ export interface RegionConfig {
   /** 占位提示 */
   placeholder?: string;
   /** 拖拽模式 */
-  dndMode?: 'default' | 'position-h' | 'position-v' | 'flex';
+  dndMode?: "default" | "position-h" | "position-v" | "flex";
   /** 子节点合法性校验 */
   accept?: (child: PageNode, parent: PageNode) => boolean;
   /** 是否可选 */
@@ -128,7 +128,7 @@ export interface PageNode {
 
 /** 页面 schema（根节点） */
 export interface PageSchema extends PageNode {
-  type: 'page';
+  type: "page";
   $$id: NodeId;
   body?: PageNode[];
 }
@@ -139,7 +139,7 @@ export interface PanelItem {
   title: string;
   icon?: any;
   order?: number;
-  position?: 'left' | 'right';
+  position?: "left" | "right";
   component?: any;
   render?: (props: any) => any;
 }
@@ -204,7 +204,7 @@ export interface ComponentMeta {
   /** 父子约束（更细粒度，补充 regions.accept） */
   acceptParent?: string[];
   /** 实际渲染组件（可异步） */
-  renderComponent?: VueComponent | (() => Promise<{default: VueComponent}>);
+  renderComponent?: VueComponent | (() => Promise<{ default: VueComponent }>);
   /** 允许覆盖同名 */
   override?: boolean;
   /** 优先级（越大越优先） */
@@ -226,7 +226,7 @@ export interface LiveTextEditingConfig {
   /** CSS selector 定位可编辑 DOM 元素（iframe 画布内） */
   selector?: string;
   /** 编辑模式 */
-  mode?: 'plaintext' | 'richtext';
+  mode?: "plaintext" | "richtext";
 }
 
 /** Setter 元信息 */
@@ -248,7 +248,7 @@ export interface ActionMeta {
 /** 资产（第三方 JS/CSS 依赖） */
 export interface AssetMeta {
   id: string;
-  kind: 'js' | 'css';
+  kind: "js" | "css";
   url: string;
   version?: string;
   /** 全局变量名（注入后挂到 window，便于检测是否已加载） */

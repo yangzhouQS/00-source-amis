@@ -1,4 +1,4 @@
-import type { ScenarioProfile } from './types';
+import type { ScenarioProfile } from "./types";
 
 class ScenarioRegistryImpl {
   private profiles = new Map<string, ScenarioProfile>();
@@ -16,7 +16,9 @@ class ScenarioRegistryImpl {
     if (!profile) {
       throw new Error(`[ScenarioRegistry] 场景 "${id}" 未注册`);
     }
-    if (this.currentProfile?.id === id) return this.currentProfile;
+    if (this.currentProfile?.id === id) {
+      return this.currentProfile;
+    }
     this.currentProfile?.destroy?.();
     this.currentProfile = profile;
     return profile;
@@ -24,7 +26,7 @@ class ScenarioRegistryImpl {
 
   getCurrent(): ScenarioProfile {
     if (!this.currentProfile) {
-      throw new Error('[ScenarioRegistry] 未激活任何场景，请先 activate');
+      throw new Error("[ScenarioRegistry] 未激活任何场景，请先 activate");
     }
     return this.currentProfile;
   }
