@@ -183,6 +183,11 @@ export class PcIframeRenderer implements IRenderer {
     }
   }
 
+  /** 切换当前渲染的场景（透传给 iframe 内渲染器） */
+  setScene(sceneName: string): void {
+    this.rendererApi?.setScene?.(sceneName);
+  }
+
   updateNode(nodeId: string, patch: any): void {
     if (this.rendererApi?.updateNode) {
       this.rendererApi.updateNode(nodeId, patch);

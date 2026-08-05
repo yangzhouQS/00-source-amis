@@ -53,6 +53,8 @@ export interface RendererMountOptions {
 export interface IRenderer {
   mount: (container: HTMLElement, schema: any, options?: RendererMountOptions) => Promise<void>;
   setSchema: (schema: any) => void;
+  /** 切换当前渲染的场景（场景名 = uiSkeleton 的顶层 key） */
+  setScene?: (sceneName: string) => void;
   updateNode?: (nodeId: string, patch: any) => void;
   onStructureChange?: () => void;
   setDraggingState: (active: boolean) => void;

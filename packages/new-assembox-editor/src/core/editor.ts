@@ -753,6 +753,37 @@ export class Editor {
     this.rebuildPanels();
   }
 
+  // --------------------- 场景 ---------------------
+
+  /** 当前激活场景名 */
+  get activeScene(): string {
+    return this.store.state.activeScene;
+  }
+
+  /** 获取所有场景名列表 */
+  getScenes(): string[] {
+    const schema = this.store.schema;
+    return schema && typeof schema === "object" ? Object.keys(schema) : [];
+  }
+
+  /** 切换激活场景（路由跳转 + 画布渲染 + 清空选区） */
+  setScene(sceneName: string): void {
+    const scenes = this.getScenes();
+    if (!scenes.includes(sceneName) || sceneName === this.activeScene) {
+      return;
+    }
+    const ev = this.bus.trigger(EVENT.BEFORE_SCENE_CHANGE, {
+      from: this.activeScene,
+      to: sceneName,
+    });
+    if (ev.prevented) {
+      return;
+    }
+    this.store.setActiveScene(sceneName);
+    this.renderer?.setScene?.(sceneName);
+    this.bus.trigger(EVENT.AFTER_SCENE_CHANGE, { sceneName });
+  }
+
   /** 重新构建右侧面板（插件驱动） */
   rebuildPanels(): void {
     const node = this.store.activeNode;

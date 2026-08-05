@@ -20,6 +20,8 @@ export interface IframeRendererApi {
   init: (schema: any, designMode: "design" | "preview") => void;
   /** 全量同步 schema（结构变更后） */
   setSchema: (schema: any) => void;
+  /** 切换当前渲染的场景（场景名 = uiSkeleton 的顶层 key） */
+  setScene?: (sceneName: string) => void;
   /** 定向更新节点属性（增量，可选实现） */
   updateNode?: (nodeId: string, patch: any) => void;
   /** 设计/预览模式切换 */

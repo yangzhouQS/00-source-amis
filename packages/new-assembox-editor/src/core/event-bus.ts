@@ -170,6 +170,9 @@ export const EVENT = {
   SELECTION_CHANGE: "selection-change",
   ACTIVE_CHANGE: "active-change",
   HOVER_CHANGE: "hover-change",
+  // 场景切换（before/after，before 可 preventDefault）
+  BEFORE_SCENE_CHANGE: "before-scene-change",
+  AFTER_SCENE_CHANGE: "after-scene-change",
   // 构建（插件贡献）
   BUILD_PANELS: "build-panels",
   BUILD_TOOLBARS: "build-toolbars",

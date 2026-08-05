@@ -18,7 +18,7 @@ import zhCn from "element-plus/es/locale/lang/zh-cn";
  * 包装 assembox-desktop-next 的 AssemViews，渲染 PC schema 并标记 DOM。
  * 与 PcRenderer 同构，但 schema 来自 host 下发，事件通过 hostApi 回报。
  */
-import { createApp, h, nextTick, reactive } from "vue";
+import { computed, createApp, h, nextTick, reactive } from "vue";
 
 /** 按点分路径从 window 取全局值（如 'ElementPlusUi.ToggleChip'） */
 function resolveGlobalPath(root: any, path: string): unknown {
@@ -31,6 +31,8 @@ export class IframeCanvasRenderer implements IframeRendererApi {
   /** 响应式 schema（驱动 AssemViews 渲染，host 下发克隆副本，in-place 同步触发重渲染） */
   private schema = reactive<Record<string, any>>({});
   private designMode: "design" | "preview" = "design";
+  /** 当前激活场景名 */
+  private activeScene = reactive({ name: "" });
   /** 动态依赖清单（host 下发：插件 / 外部组件） */
   private assets: IframeAssetsManifest;
   ready = false;
@@ -49,6 +51,9 @@ export class IframeCanvasRenderer implements IframeRendererApi {
     this.designMode = designMode;
     (window as any).assemBoxIsEdit = true;
     (window as any).assemBoxDesignMode = designMode;
+    // 推断初始场景名（取 uiSkeleton 第一个 key）
+    const sceneKeys = Object.keys(this.schema);
+    this.activeScene.name = this.activeScene.name || sceneKeys[0] || "";
     this.mount();
   }
 
@@ -59,6 +64,14 @@ export class IframeCanvasRenderer implements IframeRendererApi {
       return;
     }
     this.syncSchema(schema);
+    // 若当前场景在新 schema 中不存在，回退到第一个
+    if (!(this.activeScene.name in this.schema)) {
+      this.activeScene.name = Object.keys(this.schema)[0] ?? "";
+    }
+  }
+
+  setScene(sceneName: string): void {
+    this.activeScene.name = sceneName;
   }
 
   setDesignMode(mode: "design" | "preview"): void {
@@ -119,13 +132,18 @@ export class IframeCanvasRenderer implements IframeRendererApi {
     };
 
     this.app = createApp({
-      render: () => {
-        const scenes = Object.values(this.schema);
-        const scene = scenes[0] as any;
-        if (!scene?.viewsProps) {
-          return h("div", "空场景");
-        }
-        return h(AssemViews, { viewsProps: scene.viewsProps });
+      setup: () => {
+        const viewsProps = computed(() => {
+          const scene = this.schema[this.activeScene.name];
+          return scene?.viewsProps ?? null;
+        });
+        return () => {
+          const vp = viewsProps.value;
+          if (!vp) {
+            return h("div", "空场景");
+          }
+          return h(AssemViews, { viewsProps: vp });
+        };
       },
     });
     // 遍历 assets.js 清单，按标记注册（对应旧版 registerPlugin 的全部能力）。

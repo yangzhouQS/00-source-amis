@@ -9,7 +9,7 @@ import type { ContextMenuAction } from "../../designer/context-menu-manager";
  * - 右键菜单（复用 editor.contextMenu 注册的动作）
  */
 import { computed, defineComponent, onBeforeUnmount, onMounted, PropType, ref } from "vue";
-import { buildOutlineFromSchemaOps } from "../../core/store";
+import { buildOutlineFromSchemaOps, buildOutlineGroupedByScene } from "../../core/store";
 import { useAssemNamespace } from "../../hooks/use-assem-namespace";
 import "./outline-pane-style.less";
 
@@ -63,11 +63,16 @@ export const OutlinePane = defineComponent({
       children: "children",
     };
 
-    /** 响应式大纲：依赖 store.schemaRef */
+    /** 响应式大纲：依赖 store.schemaRef（多场景时按场景分组） */
     const outlineData = computed<OutlineNode[]>(() => {
       void props.editor.store.schemaRef.value;
+      void props.editor.store.state.activeScene;
       const schema = props.editor.store.schema;
-      return buildOutlineFromSchemaOps(schema, props.editor.schemaOps);
+      const sceneKeys = schema && typeof schema === "object" ? Object.keys(schema) : [];
+      if (sceneKeys.length <= 1) {
+        return buildOutlineFromSchemaOps(schema, props.editor.schemaOps);
+      }
+      return buildOutlineGroupedByScene(schema, props.editor.schemaOps);
     });
 
     // ── 右键菜单状态 ──
@@ -118,12 +123,23 @@ export const OutlinePane = defineComponent({
     };
 
     // ── 节点交互 ──
+    /** 判断是否为场景分组节点（不可选，点击切场景） */
+    const isSceneNode = (data: OutlineNode): boolean => data.id.startsWith("__scene__");
+
     const handleNodeClick = (data: OutlineNode) => {
+      if (isSceneNode(data)) {
+        // 点击场景分组 → 切换到该场景
+        props.editor.setScene(data.id.replace("__scene__", ""));
+        return;
+      }
       props.editor.select(data.id);
     };
 
     /** 右键节点：选中并弹出菜单 */
     const handleNodeContextMenu = (e: Event, data: OutlineNode) => {
+      if (isSceneNode(data)) {
+        return; // 场景分组无右键菜单
+      }
       const me = e as MouseEvent;
       me.preventDefault();
       props.editor.select(data.id);
@@ -140,6 +156,10 @@ export const OutlinePane = defineComponent({
       const dragId = draggingNode?.data?.id as string | undefined;
       const dropId = dropNode?.data?.id as string | undefined;
       if (!dragId || !dropId || dragId === dropId) {
+        return false;
+      }
+      // 场景分组节点不可拖拽 / 不可作为放置目标
+      if (dragId.startsWith("__scene__") || dropId.startsWith("__scene__")) {
         return false;
       }
       // 禁止拖入自身后代（成环）

@@ -11,7 +11,7 @@ import {
   registerDefaults,
 } from "@cs/assembox-desktop-next";
 import ElementPlus from "element-plus";
-import { createApp, h } from "vue";
+import { computed, createApp, h, reactive } from "vue";
 import { DOCUMENT_ARRAYS, forEachChild } from "./slot-accessors";
 
 /**
@@ -27,6 +27,8 @@ export class PcRenderer implements IRenderer {
   private container: HTMLElement | null = null;
   private schema: any = null;
   private core: any = null;
+  /** 响应式场景状态（驱动 render 渲染当前激活场景） */
+  private sceneState = reactive({ name: "" });
 
   private readyCbs: Array<() => void> = [];
   private clickCb: ((nodeId: string | null, e: MouseEvent) => void) | null = null;
@@ -40,6 +42,10 @@ export class PcRenderer implements IRenderer {
   ): Promise<void> {
     this.container = container;
     this.schema = schema;
+
+    // 推断初始场景名（取 uiSkeleton 第一个 key）
+    const sceneKeys = schema && typeof schema === "object" ? Object.keys(schema) : [];
+    this.sceneState.name = sceneKeys[0] ?? "";
 
     (window as any).assemBoxIsEdit = true;
     (window as any).assemBoxDesignMode = "design";
@@ -64,13 +70,19 @@ export class PcRenderer implements IRenderer {
     };
 
     this.app = createApp({
-      render: () => {
-        const scenes = Object.values(this.schema || {});
-        const scene = scenes[0] as any;
-        if (!scene?.viewsProps) {
-          return h("div", "空场景");
-        }
-        return h(AssemViews, { viewsProps: scene.viewsProps });
+      setup: () => {
+        // 响应式：sceneState.name 变化时自动重渲染当前场景
+        const viewsProps = computed(() => {
+          const scene = this.schema?.[this.sceneState.name];
+          return scene?.viewsProps ?? null;
+        });
+        return () => {
+          const vp = viewsProps.value;
+          if (!vp) {
+            return h("div", "空场景");
+          }
+          return h(AssemViews, { viewsProps: vp });
+        };
       },
     });
 
@@ -80,6 +92,11 @@ export class PcRenderer implements IRenderer {
     this.app.mount(container);
 
     this.core = this.app.config.globalProperties.$assemCore;
+  }
+
+  /** 切换当前渲染的场景 */
+  setScene(sceneName: string): void {
+    this.sceneState.name = sceneName;
   }
 
   setSchema(schema: any): void {

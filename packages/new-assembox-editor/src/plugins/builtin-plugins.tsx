@@ -19,6 +19,7 @@ import { DocLibraryLink } from "./doc-library/doc-library-link";
 import { EditorToolbar } from "./editor-toolbar/editor-toolbar";
 import { HistoryPane } from "./history-pane/history-pane";
 import { OutlinePane } from "./outline-pane/outline-pane";
+import { SceneSwitcher } from "./scene-switcher/scene-switcher";
 import { SchemaPane } from "./schema-pane/schema-pane";
 import { SettingsPane } from "./settings-pane/settings-pane";
 import { SimulatorSize } from "./simulator-size/simulator-size";
@@ -239,6 +240,26 @@ export const simulatorSizePlugin: EditorPluginObject = {
   },
 };
 
+/**
+ * 场景切换插件（顶栏 Widget，多路由页面切换）
+ */
+export const sceneSwitcherPlugin: EditorPluginObject = {
+  id: "builtin-scene-switcher",
+  name: "场景切换",
+  scene: ["global"],
+  contributes: {
+    skeleton: [
+      {
+        area: "topArea",
+        type: "Widget",
+        name: "sceneSwitcher",
+        content: SceneSwitcher,
+        props: {},
+      },
+    ],
+  },
+};
+
 /** 所有内置插件 */
 /** 顶部工具栏插件（预览/撤销/节点操作） */
 export const toolbarPlugin: EditorPluginObject = {
@@ -262,6 +283,7 @@ export const builtinPlugins: EditorPluginObject[] = [
   coreRegistryPlugin,
   toolbarPlugin,
   simulatorSizePlugin,
+  sceneSwitcherPlugin,
   designerPlugin,
   componentsPanePlugin,
   outlinePanePlugin,

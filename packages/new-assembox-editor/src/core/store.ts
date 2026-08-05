@@ -7,6 +7,12 @@ import { reactive, shallowRef } from "vue";
 
 const HISTORY_LIMIT = 50;
 
+/** 从 schema（uiSkeleton）推断初始场景名（取第一个 key） */
+function inferInitialScene(schema: any): string {
+  const keys = schema && typeof schema === "object" ? Object.keys(schema) : [];
+  return keys[0] ?? "";
+}
+
 export interface HistoryEntry {
   schema: any;
   label: string;
@@ -35,6 +41,8 @@ export interface EditorState {
   ready: boolean;
   rightPanelVisible: boolean;
   designMode: "design" | "preview";
+  /** 当前激活场景名（uiSkeleton 的顶层 key） */
+  activeScene: string;
 }
 
 export class EditorStore {
@@ -60,6 +68,7 @@ export class EditorStore {
       ready: false,
       rightPanelVisible: true,
       designMode: "design",
+      activeScene: inferInitialScene(schema),
     });
   }
 
@@ -82,6 +91,17 @@ export class EditorStore {
     this.future = [];
     this.state.schema = cloned;
     this.schemaRef.value = cloned;
+    this.state.activeId = null;
+    this.state.selectedIds = [];
+    // 若当前场景在新 schema 中不存在，回退到第一个场景
+    if (!cloned || typeof cloned !== "object" || !(this.state.activeScene in cloned)) {
+      this.state.activeScene = inferInitialScene(cloned);
+    }
+  }
+
+  /** 切换激活场景（清空选区，不产生历史记录） */
+  setActiveScene(name: string): void {
+    this.state.activeScene = name;
     this.state.activeId = null;
     this.state.selectedIds = [];
   }
@@ -251,4 +271,22 @@ export function buildOutlineFromSchemaOps(schema: any, ops: ISchemaOps): Outline
   }
 
   return roots;
+}
+
+/** 用 schemaOps.walk 构建大纲树，按场景分组（多路由页面） */
+export function buildOutlineGroupedByScene(
+  schema: any,
+  ops: ISchemaOps,
+): OutlineNode[] {
+  const sceneKeys = schema && typeof schema === "object" ? Object.keys(schema) : [];
+  return sceneKeys.map((sceneName) => {
+    const sceneData = schema[sceneName];
+    const children = buildOutlineFromSchemaOps({ [sceneName]: sceneData } as any, ops);
+    return {
+      id: `__scene__${sceneName}`,
+      label: sceneName,
+      type: "scene",
+      children,
+    } as OutlineNode;
+  });
 }
