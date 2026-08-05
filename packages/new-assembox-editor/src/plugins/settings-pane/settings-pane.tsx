@@ -7,67 +7,10 @@ import type { Editor } from "../../core/editor";
 import { computed, defineComponent, h, PropType, provide } from "vue";
 import { useAssemNamespace } from "../../hooks/use-assem-namespace";
 import { isFieldHidden, resolveSetter, SETTER_CONTEXT_KEY } from "../../setters";
+import { StyleSetter } from "../../setters/style-setter";
 import "./setting-pane-style.less";
 
 const ns = useAssemNamespace("setting-pane");
-
-/** 样式编辑器（常用样式，写入 __nodeStyle） */
-const StyleEditor = defineComponent({
-  props: {
-    editor: { type: Object as PropType<Editor>, required: true },
-    nodeId: { type: String, required: true },
-    style: { type: Object, required: true },
-  },
-  setup(props) {
-    const update = (key: string, value: any) => {
-      props.editor.update(props.nodeId, { __nodeStyle: { [key]: value } });
-    };
-    const ColorSetter = props.editor.setterRegistry.get("ColorSetter");
-    const NumberSetter = props.editor.setterRegistry.get("NumberSetter");
-    const SelectSetter = props.editor.setterRegistry.get("SelectSetter");
-    const styleFields = [
-      { key: "width", label: "宽度", setter: NumberSetter, unit: true },
-      { key: "height", label: "高度", setter: NumberSetter, unit: true },
-      { key: "marginTop", label: "上边距", setter: NumberSetter, unit: true },
-      { key: "marginBottom", label: "下边距", setter: NumberSetter, unit: true },
-      { key: "backgroundColor", label: "背景色", setter: ColorSetter },
-      { key: "color", label: "文字颜色", setter: ColorSetter },
-    ];
-    const displayOptions = [
-      { label: "默认", value: "" },
-      { label: "块级", value: "block" },
-      { label: "弹性", value: "flex" },
-      { label: "内联块", value: "inline-block" },
-    ];
-    return () => (
-      <el-form labelWidth="80px" size="small">
-        {styleFields.map(f =>
-          f.setter
-            ? (
-                <el-form-item key={f.key} label={f.label}>
-                  {h(f.setter, {
-                    value: props.style[f.key],
-                    onChange: (v: any) => update(f.key, v),
-                  })}
-                </el-form-item>
-              )
-            : null,
-        )}
-        {SelectSetter
-          ? (
-              <el-form-item label="显示模式">
-                {h(SelectSetter, {
-                  value: props.style.display ?? "",
-                  options: displayOptions,
-                  onChange: (v: any) => update("display", v),
-                })}
-              </el-form-item>
-            )
-          : null}
-      </el-form>
-    );
-  },
-});
 
 /** 事件动作编排器（声明式 __nodeEvent.actions 卡片编辑） */
 const EventList = defineComponent({
@@ -371,10 +314,11 @@ export const SettingsPane = defineComponent({
                 </el-form>
               </el-tab-pane>
               <el-tab-pane label="样式" name="style">
-                <StyleEditor
-                  editor={props.editor}
-                  nodeId={node.__nodeId}
-                  style={node.__nodeStyle ?? {}}
+                <StyleSetter
+                  value={node.__nodeStyle ?? {}}
+                  onChange={(v: Record<string, any>) => {
+                    props.editor.update(node.__nodeId, { __nodeStyle: v });
+                  }}
                 />
               </el-tab-pane>
               <el-tab-pane label="事件" name="event">
