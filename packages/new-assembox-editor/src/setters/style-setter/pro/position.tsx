@@ -1,12 +1,12 @@
 import type { PropType } from "vue";
 import type { OnStyleChange } from "../utils";
 /**
- * Position 面板 — position / top / right / bottom / left / zIndex / float
- * 参考 lowcode pro/position
+ * Position 面板 — 深度复刻 lowcode pro/position
+ * position / PositionBox(可视化偏移) / zIndex / float / clear
  */
 import { computed, defineComponent } from "vue";
 import { StyleRow } from "../components";
-import { StyleNumberInput } from "../components/number-input";
+import { PositionBox } from "../components/position-box";
 
 export const PositionPanel = defineComponent({
   name: "StylePositionPanel",
@@ -21,7 +21,7 @@ export const PositionPanel = defineComponent({
       props.onStyleChange([{ styleKey, value: value ?? null }]);
     };
     return () => (
-      <div class="style-panel">
+      <div class="position-style-container">
         <StyleRow title="定位" hasValue={!!sd.value.position}>
           <el-select modelValue={sd.value.position ?? ""} size="small" style="width:100%" onChange={(v: string) => emit("position", v)}>
             <el-option value="" label="默认" />
@@ -34,14 +34,7 @@ export const PositionPanel = defineComponent({
         </StyleRow>
 
         {showOffset.value && (
-          <StyleRow title="偏移">
-            <div class="style-panel__box">
-              <StyleNumberInput modelValue={sd.value.top ?? ""} units={["px", "%"]} placeholder="top" on-change={(v: string) => emit("top", v)} />
-              <StyleNumberInput modelValue={sd.value.right ?? ""} units={["px", "%"]} placeholder="right" on-change={(v: string) => emit("right", v)} />
-              <StyleNumberInput modelValue={sd.value.bottom ?? ""} units={["px", "%"]} placeholder="bottom" on-change={(v: string) => emit("bottom", v)} />
-              <StyleNumberInput modelValue={sd.value.left ?? ""} units={["px", "%"]} placeholder="left" on-change={(v: string) => emit("left", v)} />
-            </div>
-          </StyleRow>
+          <PositionBox styleData={sd.value} onStyleChange={props.onStyleChange} />
         )}
 
         <StyleRow title="层级" hasValue={sd.value.zIndex != null}>

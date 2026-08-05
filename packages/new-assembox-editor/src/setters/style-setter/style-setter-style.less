@@ -1,11 +1,12 @@
-/* StyleSetter 样式 */
+/* ═══ StyleSetter 完整样式（深度复刻 lowcode style-setter v2） ═══ */
 
+/* ── 主容器 ── */
 .style-setter {
   &__topbar {
     display: flex;
     align-items: center;
     justify-content: space-between;
-    padding: 4px 0 8px;
+    padding: 4px 0 10px;
   }
 
   &__css-code {
@@ -19,10 +20,11 @@
   }
 
   .el-collapse-item__header {
-    font-size: var(--assem-font-size-label, 13px);
+    font-size: 12px;
     font-weight: 600;
-    height: 36px;
-    line-height: 36px;
+    height: 34px;
+    line-height: 34px;
+    color: var(--assem-color-text-primary, #303133);
   }
 
   .el-collapse-item__content {
@@ -30,25 +32,30 @@
   }
 }
 
-/* 属性行 */
+/* ── 属性行（复刻 lowcode row-container） ── */
 .style-row {
   display: flex;
-  align-items: flex-start;
-  gap: 8px;
-  padding: 4px 0;
+  flex-direction: row;
+  align-items: center;
+  margin-bottom: 10px;
 
   &__title {
+    width: 50px;
     flex-shrink: 0;
-    width: 56px;
-    font-size: var(--assem-font-size-text, 12px);
-    line-height: 28px;
-    color: var(--assem-color-text-secondary, #909399);
+    font-size: 12px;
+    line-height: 1;
+    color: rgba(0, 0, 0, 0.6);
     text-align: right;
+    padding-right: 8px;
   }
 
   &__content {
     flex: 1;
     min-width: 0;
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 4px;
 
     .el-select,
     .el-input-number,
@@ -57,17 +64,16 @@
     }
   }
 
-  /* 有值时标题高亮 */
   &.is-active &__title {
     color: var(--assem-color-brand, #0079f2);
   }
 }
 
-/* 数值输入 + 单位 */
+/* ── 数值输入 + 单位选择 ── */
 .style-number-input {
   display: flex;
   align-items: center;
-  gap: 4px;
+  gap: 2px;
 
   .el-input-number {
     flex: 1;
@@ -75,7 +81,7 @@
   }
 }
 
-/* 颜色输入 */
+/* ── 颜色输入 ── */
 .style-color-input {
   display: flex;
   align-items: center;
@@ -91,8 +97,441 @@
   }
 }
 
-/* 面板内部容器 */
-.style-panel {
+/* ── LayoutBox 可视化盒子模型（核心视觉，复刻 lowcode layout-box） ── */
+.layout-box {
+  position: relative;
+  width: 100%;
+  height: 150px;
+  margin-bottom: 8px;
+
+  &__center {
+    position: absolute;
+    top: 40px;
+    left: 40px;
+    right: 40px;
+    bottom: 40px;
+    background: var(--assem-color-bg-hover, #f5f7fa);
+    border: 1px solid var(--assem-color-border, #e4e7ed);
+  }
+
+  &__label {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 10px;
+    color: var(--assem-color-text-placeholder, #c0c4cc);
+    pointer-events: none;
+  }
+
+  &__input {
+    border: none;
+    background: transparent;
+    text-align: center;
+    font-size: 12px;
+    outline: none;
+    width: 100%;
+    line-height: 20px;
+    height: 20px;
+    padding: 0;
+
+    &::placeholder {
+      color: var(--assem-color-text-placeholder, #c0c4cc);
+      font-size: 10px;
+    }
+
+    &--vertical {
+      width: 60px;
+    }
+  }
+
+  &__var-bind {
+    font-size: 10px;
+    color: var(--assem-color-text-secondary, #909399);
+    overflow: hidden;
+    white-space: nowrap;
+    text-overflow: ellipsis;
+    display: block;
+    text-align: center;
+    line-height: 20px;
+  }
+
+  /* ── margin 三角形（外层，蓝色 #d6e4ff） ── */
+  &__margin-top {
+    position: absolute;
+    top: 0;
+    left: 0;
+    right: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 20px solid #d6e4ff;
+    transition: border-color 0.3s ease;
+
+    .layout-box__input {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -20px;
+    }
+
+    &:hover {
+      border-top-color: #bfd4fb;
+    }
+
+    &.is-var {
+      border-top-color: #bcd1fa;
+    }
+  }
+
+  &__margin-right {
+    position: absolute;
+    top: 5px;
+    bottom: 5px;
+    right: 0;
+    width: 0;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-right: 20px solid #d6e4ff;
+    transition: border-color 0.3s ease;
+
+    .layout-box__input {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: -20px;
+      width: 60px;
+      margin: auto;
+    }
+
+    &:hover {
+      border-right-color: #bfd4fb;
+    }
+
+    &.is-var {
+      border-right-color: #bcd1fa;
+    }
+  }
+
+  &__margin-bottom {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 20px solid #d6e4ff;
+    transition: border-color 0.3s ease;
+
+    .layout-box__input {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -20px;
+    }
+
+    &:hover {
+      border-bottom-color: #bfd4fb;
+    }
+
+    &.is-var {
+      border-bottom-color: #bcd1fa;
+    }
+  }
+
+  &__margin-left {
+    position: absolute;
+    top: 5px;
+    bottom: 5px;
+    left: 0;
+    width: 0;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-left: 20px solid #d6e4ff;
+    transition: border-color 0.3s ease;
+
+    .layout-box__input {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: -20px;
+      width: 60px;
+      margin: auto;
+    }
+
+    &:hover {
+      border-left-color: #bfd4fb;
+    }
+
+    &.is-var {
+      border-left-color: #bcd1fa;
+    }
+  }
+
+  /* ── padding 三角形（内层，偏移 25px） ── */
+  &__padding-top {
+    position: absolute;
+    top: 25px;
+    left: 25px;
+    right: 25px;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-top: 20px solid #d6e4ff;
+    transition: border-color 0.3s ease;
+
+    .layout-box__input {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: -20px;
+    }
+
+    &:hover {
+      border-top-color: #bfd4fb;
+    }
+
+    &.is-var {
+      border-top-color: #bcd1fa;
+    }
+  }
+
+  &__padding-right {
+    position: absolute;
+    top: 30px;
+    bottom: 30px;
+    right: 25px;
+    width: 0;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-right: 20px solid #d6e4ff;
+    transition: border-color 0.3s ease;
+
+    .layout-box__input {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      right: 0;
+      width: 30px;
+      margin: auto;
+      padding: 0 5px;
+    }
+
+    &:hover {
+      border-right-color: #bfd4fb;
+    }
+
+    &.is-var {
+      border-right-color: #bcd1fa;
+    }
+  }
+
+  &__padding-bottom {
+    position: absolute;
+    bottom: 25px;
+    left: 25px;
+    right: 25px;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    border-bottom: 20px solid #d6e4ff;
+    transition: border-color 0.3s ease;
+
+    .layout-box__input {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: -20px;
+    }
+
+    &:hover {
+      border-bottom-color: #bfd4fb;
+    }
+
+    &.is-var {
+      border-bottom-color: #bcd1fa;
+    }
+  }
+
+  &__padding-left {
+    position: absolute;
+    top: 30px;
+    bottom: 30px;
+    left: 25px;
+    width: 0;
+    border-top: 20px solid transparent;
+    border-bottom: 20px solid transparent;
+    border-left: 20px solid #d6e4ff;
+    transition: border-color 0.3s ease;
+
+    .layout-box__input {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 0;
+      width: 30px;
+      margin: auto;
+      padding: 0 5px;
+    }
+
+    &:hover {
+      border-left-color: #bfd4fb;
+    }
+
+    &.is-var {
+      border-left-color: #bcd1fa;
+    }
+  }
+}
+
+/* ── PositionBox 定位盒子（复刻 lowcode position-box） ── */
+.position-box {
+  margin-bottom: 8px;
+
+  &__templates {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 2px;
+    margin-bottom: 8px;
+
+    .el-button {
+      font-size: 11px;
+      padding: 2px 6px;
+      height: auto;
+    }
+  }
+
+  &__visual {
+    position: relative;
+    width: 100%;
+    height: 120px;
+
+    .position-box__top {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      height: 0;
+      border-left: 30px solid transparent;
+      border-right: 30px solid transparent;
+      border-top: 30px solid #d6e4ff;
+      transition: border-color 0.3s ease;
+
+      .position-box__input {
+        position: absolute;
+        left: 0;
+        right: 0;
+        top: -30px;
+        line-height: 30px;
+      }
+
+      &:hover {
+        border-top-color: #bfd4fb;
+      }
+    }
+
+    .position-box__right {
+      position: absolute;
+      top: 5px;
+      bottom: 5px;
+      right: 0;
+      width: 0;
+      border-top: 30px solid transparent;
+      border-bottom: 30px solid transparent;
+      border-right: 30px solid #d6e4ff;
+      transition: border-color 0.3s ease;
+
+      .position-box__input {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        right: -15px;
+        width: 60px;
+        margin: auto;
+        line-height: 30px;
+      }
+
+      &:hover {
+        border-right-color: #bfd4fb;
+      }
+    }
+
+    .position-box__bottom {
+      position: absolute;
+      bottom: 0;
+      left: 0;
+      right: 0;
+      height: 0;
+      border-left: 30px solid transparent;
+      border-right: 30px solid transparent;
+      border-bottom: 30px solid #d6e4ff;
+      transition: border-color 0.3s ease;
+
+      .position-box__input {
+        position: absolute;
+        left: 0;
+        right: 0;
+        bottom: -30px;
+        line-height: 30px;
+      }
+
+      &:hover {
+        border-bottom-color: #bfd4fb;
+      }
+    }
+
+    .position-box__left {
+      position: absolute;
+      top: 5px;
+      bottom: 5px;
+      left: 0;
+      width: 0;
+      border-top: 30px solid transparent;
+      border-bottom: 30px solid transparent;
+      border-left: 30px solid #d6e4ff;
+      transition: border-color 0.3s ease;
+
+      .position-box__input {
+        position: absolute;
+        top: 0;
+        bottom: 0;
+        left: -15px;
+        width: 60px;
+        margin: auto;
+        line-height: 30px;
+      }
+
+      &:hover {
+        border-left-color: #bfd4fb;
+      }
+    }
+  }
+
+  &__input {
+    border: none;
+    background: transparent;
+    text-align: center;
+    font-size: 12px;
+    outline: none;
+    width: 100%;
+    height: 30px;
+    padding: 0;
+
+    &::placeholder {
+      color: var(--assem-color-text-placeholder, #c0c4cc);
+      font-size: 10px;
+    }
+  }
+}
+
+/* ── 面板内部通用 ── */
+.style-panel,
+.layout-style-container,
+.font-style-container,
+.border-style-container,
+.background-style-container,
+.position-style-container {
   &__pair {
     display: flex;
     gap: 6px;
@@ -103,14 +542,33 @@
     }
   }
 
-  /* 四方向盒子（margin / padding / position offset） */
   &__box {
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 6px;
   }
 
-  /* 边框网格 */
+  &__slider {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .el-slider {
+      flex: 1;
+    }
+  }
+
+  &__slider-value {
+    flex-shrink: 0;
+    width: 36px;
+    text-align: right;
+    font-size: 12px;
+    color: var(--assem-color-text-secondary, #909399);
+  }
+}
+
+/* ── 边框面板 ── */
+.border-style-container {
   &__border-grid {
     display: flex;
     align-items: center;
@@ -126,33 +584,31 @@
     }
   }
 
-  /* 阴影区域 */
   &__shadow {
     display: flex;
     flex-direction: column;
     gap: 6px;
 
     .el-checkbox {
-      font-size: var(--assem-font-size-text, 12px);
+      font-size: 12px;
     }
   }
+}
 
-  /* 滑块行 */
-  &__slider {
+/* ── 背景面板 ── */
+.background-style-container {
+  /* 背景位置 9 宫格选择器样式继承 el-select */
+}
+
+/* ── Font 面板 ── */
+.font-style-container {
+  &__pair {
     display: flex;
-    align-items: center;
-    gap: 8px;
+    gap: 6px;
 
-    .el-slider {
+    > * {
       flex: 1;
+      min-width: 0;
     }
-  }
-
-  &__slider-value {
-    flex-shrink: 0;
-    width: 36px;
-    text-align: right;
-    font-size: var(--assem-font-size-text, 12px);
-    color: var(--assem-color-text-secondary, #909399);
   }
 }

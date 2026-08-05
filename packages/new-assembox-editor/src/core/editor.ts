@@ -294,8 +294,8 @@ export class Editor {
     });
   }
 
-  /** 判断 descendant 是否为 ancestor 的后代 */
-  private isDescendantNode(
+  /** 判断 descendant 是否为 ancestor 的后代（public：供 CanvasSensor 拖拽阶段提前拦截） */
+  isDescendantNode(
     descendantId: string,
     ancestorId: string,
   ): boolean {

@@ -40,6 +40,9 @@ export class Dragon {
   private _dragging = false;
   /** 上一次定位（供 drop 使用） */
   private lastLocation: DropLocation | null = null;
+  /** 最后一次 mousemove 的全局坐标（供 mouseup 终态校验：是否仍在感应区内） */
+  private lastGlobalX = 0;
+  private lastGlobalY = 0;
   /** 当前激活感应区 */
   private activeSensor: DragSensor | null = null;
   /** 事件回调（多订阅：每个事件类型独立数组，支持多个监听器） */
@@ -225,6 +228,8 @@ export class Dragon {
     /** 处理拖拽移动（已开始拖拽后） */
     const drag = (e: MouseEvent) => {
       const locateEvent = createLocateEvent(e);
+      this.lastGlobalX = locateEvent.globalX;
+      this.lastGlobalY = locateEvent.globalY;
       const sensor = chooseSensor(locateEvent);
       if (sensor !== this.activeSensor) {
         this.activeSensor?.deactiveSensor();
@@ -273,7 +278,15 @@ export class Dragon {
         // 不立即 deactive（保留指示线直到 drop 完成）；drop 后清理
       }
       const dragObj = this.dragObject;
-      const loc = this.lastLocation;
+      let loc = this.lastLocation;
+      // P1-2：mouseup 时若最后一次鼠标位置已离开当前感应区，视为取消投放（不插入）
+      if (
+        this._dragging
+        && this.activeSensor
+        && !this.activeSensor.isEnter(this.lastGlobalX, this.lastGlobalY)
+      ) {
+        loc = null;
+      }
       if (this._dragging) {
         this._dragging = false;
         // 执行投放
@@ -288,6 +301,8 @@ export class Dragon {
       this.activeSensor = null;
       this.dragObject = null;
       this.lastLocation = null;
+      this.lastGlobalX = 0;
+      this.lastGlobalY = 0;
       this.removeAllListeners();
     };
 

@@ -11,6 +11,38 @@ import type { Editor } from "../../core/editor";
 import type { DragSensor, DropLocation } from "./types";
 import { ATTR_EDITOR_ID } from "../dom-marking";
 
+/**
+ * 由子元素矩形集合判定主轴方向。
+ * @returns true=水平主轴（横向排列），false=纵向主轴
+ *
+ * 关键：插入索引(computeInsertIndex)与指示线(computeIndicator)必须共用同一判定，
+ * 否则会出现「索引按水平算、指示线按垂直画」的方向矛盾。
+ * 用 max(bottom)-min(top) 而非排序首尾，避免高度不一时 vRange 偏小误判为水平。
+ */
+function detectMainAxis(rects: DOMRect[]): boolean {
+  if (rects.length === 0) {
+    return false;
+  } // 空容器默认纵向
+  let minTop = Infinity; let maxBottom = -Infinity; let minLeft = Infinity; let maxRight = -Infinity;
+  for (const r of rects) {
+    if (r.top < minTop) {
+      minTop = r.top;
+    }
+    if (r.bottom > maxBottom) {
+      maxBottom = r.bottom;
+    }
+    if (r.left < minLeft) {
+      minLeft = r.left;
+    }
+    if (r.right > maxRight) {
+      maxRight = r.right;
+    }
+  }
+  const vRange = maxBottom - minTop;
+  const hRange = maxRight - minLeft;
+  return hRange > vRange * 1.2;
+}
+
 export interface CanvasSensorOptions {
   id: string;
   /** 感应区文档 */
@@ -85,6 +117,7 @@ export class CanvasSensor implements DragSensor {
 
     // 1.5 嵌套校验：拖拽的组件类型是否允许放入目标槽位
     const childRenderType = this.editor.dragon.dragObject?.data?.renderType;
+    const dragNode = this.editor.dragon.dragObject;
     if (childRenderType && finalContainerId) {
       const parentNode = this.editor.schemaOps.getNodeById(
         this.editor.store.schema,
@@ -95,6 +128,16 @@ export class CanvasSensor implements DragSensor {
         parentRenderType
         && !this.editor.nestingRules.canNest(parentRenderType, finalSlotKey, childRenderType)
       ) {
+        this.clearIndicator(); // P0-2：不允许时清除残留指示线，避免误导
+        return null;
+      }
+    }
+
+    // 1.6 后代拦截：拖拽已有节点时，禁止拖入自身或自身后代（避免循环引用）
+    //      在拖拽阶段就拦截并隐藏指示线，而非等到 onDrop 静默失败
+    if (dragNode?.type === "node" && dragNode.nodeId && finalContainerId) {
+      if (this.editor.isDescendantNode(finalContainerId, dragNode.nodeId)) {
+        this.clearIndicator();
         return null;
       }
     }
@@ -216,28 +259,53 @@ export class CanvasSensor implements DragSensor {
       return 0;
     }
 
-    measured.sort(
-      (a, b) => a.rect.top - b.rect.top || a.rect.left - b.rect.left,
+    // 主轴判定（与 computeIndicator 共用 detectMainAxis，杜绝方向不一致）
+    const horizontal = detectMainAxis(measured.map(m => m.rect));
+
+    // 按主轴排序，保证遍历顺序与视觉顺序一致
+    measured.sort((a, b) =>
+      horizontal ? a.rect.left - b.rect.left : a.rect.top - b.rect.top,
     );
 
-    // 主轴判定
-    const vRange
-      = measured.at(-1)!.rect.bottom - measured[0].rect.top;
-    const hRange
-      = Math.max(...measured.map(m => m.rect.right))
-        - Math.min(...measured.map(m => m.rect.left));
-    const horizontal = hRange > vRange * 1.2;
     const cursor = horizontal ? canvasX : canvasY;
-
+    let rawIndex = measured.length;
     for (let i = 0; i < measured.length; i++) {
       const mid = horizontal
         ? measured[i].rect.left + measured[i].rect.width / 2
         : measured[i].rect.top + measured[i].rect.height / 2;
       if (cursor < mid) {
-        return i;
+        rawIndex = i;
+        break;
       }
     }
-    return measured.length;
+
+    // P2：CSS 反向布局（flex-direction: row-reverse / column-reverse）时，
+    // 视觉顺序与 schema children 顺序相反，需翻转索引才能插入正确位置
+    if (this.isLayoutReversed(doc, containerId, horizontal)) {
+      return measured.length - rawIndex;
+    }
+    return rawIndex;
+  }
+
+  /**
+   * 检测容器是否为反向布局（flex-direction: row-reverse / column-reverse）。
+   * 反向布局下 DOM 视觉顺序与 schema children 顺序相反，插入索引需翻转。
+   */
+  private isLayoutReversed(
+    doc: Document,
+    containerId: string,
+    horizontal: boolean,
+  ): boolean {
+    const el = this.freshEl(doc, containerId);
+    if (!el) {
+      return false;
+    }
+    const view = doc.defaultView;
+    if (!view) {
+      return false;
+    }
+    const fd = view.getComputedStyle(el).flexDirection;
+    return horizontal ? fd === "row-reverse" : fd === "column-reverse";
   }
 
   /** 计算指示线位置（感应区文档坐标，支持横/竖布局） */
@@ -274,14 +342,8 @@ export class CanvasSensor implements DragSensor {
       .filter((el): el is HTMLElement => !!el);
     const childRects = childEls.map(el => el.getBoundingClientRect());
 
-    // 主轴判定
-    const horizontal
-      = childRects.length > 0
-        && Math.max(...childRects.map(m => m.right))
-        - Math.min(...childRects.map(m => m.left))
-        > (Math.max(...childRects.map(m => m.bottom))
-          - Math.min(...childRects.map(m => m.top)))
-        * 1.2;
+    // 主轴判定（与 computeInsertIndex 共用 detectMainAxis）
+    const horizontal = detectMainAxis(childRects);
 
     if (horizontal) {
       let x: number;
