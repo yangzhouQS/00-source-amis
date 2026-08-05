@@ -15,6 +15,7 @@ import { registerBuiltinActions } from "../actions/builtin-actions";
 import { DesignerHost } from "../designer/designer-host";
 import { registerBuiltinSetters } from "../setters";
 import { ComponentsPane } from "./components-pane/components-pane";
+import { DocLibraryLink } from "./doc-library/doc-library-link";
 import { EditorToolbar } from "./editor-toolbar/editor-toolbar";
 import { HistoryPane } from "./history-pane/history-pane";
 import { OutlinePane } from "./outline-pane/outline-pane";
@@ -177,6 +178,32 @@ export const historyPanePlugin: EditorPluginObject = {
 };
 
 /**
+ * 文档库链接插件（左侧底部图标，点击跳转外部组件文档）
+ */
+export const docLibraryPlugin: EditorPluginObject = {
+  id: "builtin-doc-library",
+  name: "文档库",
+  priority: 100,
+  scene: ["global"],
+  contributes: {
+    skeleton: [
+      {
+        area: "leftArea",
+        type: "Widget",
+        name: "docLibraryLink",
+        content: DocLibraryLink,
+        props: {
+          align: "bottom",
+        },
+        contentProps: {
+          url: "https://test.yearrow.com/yunque-element/component-library/02-layout-guide/04-panel.html",
+        },
+      },
+    ],
+  },
+};
+
+/**
  * 核心 setter/action 注册插件
  * 在 init 阶段注册内置 setter 与动作
  */
@@ -239,6 +266,7 @@ export const builtinPlugins: EditorPluginObject[] = [
   outlinePanePlugin,
   schemaPanePlugin,
   historyPanePlugin,
+  docLibraryPlugin,
   settingsPanePlugin,
 ];
 
