@@ -34,6 +34,11 @@ export interface ISchemaOps {
   findSlotOf?: (schema: any, nodeId: string) => { parentId: string; slotKey: string; index: number } | undefined;
   moveNodeUp?: (schema: any, nodeId: string) => boolean;
   moveNodeDown?: (schema: any, nodeId: string) => boolean;
+
+  // ── 场景级操作（多路由页面增删）──
+  listScenes?: (schema: any) => string[];
+  addScene?: (schema: any, sceneName: string, sceneData: any) => boolean;
+  removeScene?: (schema: any, sceneName: string) => boolean;
 }
 
 // ═══════════════════════════════════════════════

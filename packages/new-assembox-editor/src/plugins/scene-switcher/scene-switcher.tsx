@@ -2,9 +2,11 @@ import type { PropType } from "vue";
 /**
  * 场景切换器（顶部工具栏 Widget）
  * 下拉选择当前编辑的场景（uiSkeleton 顶层 key），
- * 切换后画布 + 大纲树响应更新
+ * 切换后画布 + 大纲树响应更新。
+ * 支持新增页面 / 删除页面（多路由页面管理）。
  */
 import type { Editor } from "../../core/editor";
+import { ElMessage, ElMessageBox } from "element-plus";
 import { computed, defineComponent } from "vue";
 import { useAssemNamespace } from "../../hooks/use-assem-namespace";
 
@@ -28,9 +30,55 @@ export const SceneSwitcher = defineComponent({
       props.editor.setScene(name);
     };
 
+    const handleAddScene = async () => {
+      try {
+        const { value } = await ElMessageBox.prompt(
+          "请输入页面名称（字母开头，仅含字母数字和连字符）",
+          "新建页面",
+          {
+            inputPattern: /^[a-zA-Z][\w-]*$/,
+            inputErrorMessage: "名称需以字母开头，只能包含字母数字和连字符",
+            confirmButtonText: "确定",
+            cancelButtonText: "取消",
+          },
+        );
+        const ok = props.editor.addScene(value);
+        if (!ok) {
+          ElMessage.warning("页面名称已存在或创建失败");
+        }
+      } catch {
+        // 用户取消
+      }
+    };
+
+    const handleRemoveScene = async () => {
+      const current = props.editor.activeScene;
+      if (sceneOptions.value.length <= 1) {
+        ElMessage.warning("至少保留一个页面");
+        return;
+      }
+      try {
+        await ElMessageBox.confirm(
+          `确定删除页面「${current}」吗？删除后历史记录将清空。`,
+          "删除页面",
+          {
+            type: "warning",
+            confirmButtonText: "删除",
+            cancelButtonText: "取消",
+          },
+        );
+        const ok = props.editor.removeScene(current);
+        if (!ok) {
+          ElMessage.warning("删除失败");
+        }
+      } catch {
+        // 用户取消
+      }
+    };
+
     return () => {
       const options = sceneOptions.value;
-      if (options.length <= 1) {
+      if (options.length === 0) {
         return null;
       }
       return (
@@ -38,13 +86,27 @@ export const SceneSwitcher = defineComponent({
           <el-select
             modelValue={props.editor.activeScene}
             size="small"
-            style="width: 140px"
+            style="width: 120px"
             onChange={handleSceneChange}
           >
             {options.map(opt => (
               <el-option key={opt.value} value={opt.value} label={opt.label} />
             ))}
           </el-select>
+          <el-button
+            size="small"
+            icon="Plus"
+            title="新建页面"
+            onClick={handleAddScene}
+          />
+          {options.length > 1 && (
+            <el-button
+              size="small"
+              icon="Delete"
+              title="删除当前页面"
+              onClick={handleRemoveScene}
+            />
+          )}
         </div>
       );
     };

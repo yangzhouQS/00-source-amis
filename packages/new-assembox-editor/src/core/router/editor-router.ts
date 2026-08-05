@@ -11,10 +11,8 @@
  */
 import type { Router } from "vue-router";
 import type { RouterConfig, RouterSceneConfig } from "./build-router";
-import {
-  buildSceneRouter,
-
-} from "./build-router";
+import { h } from "vue";
+import { buildSceneRouter } from "./build-router";
 
 export class EditorRouter {
   readonly instance: Router;
@@ -41,6 +39,31 @@ export class EditorRouter {
 
   getPath(name: string): string | undefined {
     return this.sceneMap.get(name)?.path;
+  }
+
+  /** 动态新增场景路由（vue-router addRoute） */
+  addScene(name: string, config: RouterSceneConfig): void {
+    if (this.sceneMap.has(name)) {
+      return;
+    }
+    this.sceneMap.set(name, config);
+    this.routerConfig[name] = config;
+    this.instance.addRoute({
+      path: config.path,
+      name,
+      component: { render: () => h("div") },
+      meta: config.meta ?? {},
+    } as any);
+  }
+
+  /** 动态移除场景路由（vue-router removeRoute） */
+  removeScene(name: string): void {
+    if (!this.sceneMap.has(name)) {
+      return;
+    }
+    this.sceneMap.delete(name);
+    delete this.routerConfig[name];
+    this.instance.removeRoute(name);
   }
 
   /** 切换到指定场景（路由跳转） */

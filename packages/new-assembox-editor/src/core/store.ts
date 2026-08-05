@@ -106,6 +106,12 @@ export class EditorStore {
     this.state.selectedIds = [];
   }
 
+  /** 清空历史记录（场景增删后调用，从头累积） */
+  clearHistory(): void {
+    this.past = [];
+    this.future = [];
+  }
+
   commit(label: string, mutator: (schema: any) => void): any {
     if (!this.suspendHistory) {
       this.pushHistory(label);

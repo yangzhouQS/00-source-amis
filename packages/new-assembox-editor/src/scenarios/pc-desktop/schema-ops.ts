@@ -225,4 +225,32 @@ export class PcSchemaOps implements ISchemaOps {
     [arr[loc.index + 1], arr[loc.index]] = [arr[loc.index], arr[loc.index + 1]];
     return true;
   }
+
+  // ── 场景级操作（多路由页面增删）──
+
+  /** 列出所有场景名（schema 顶层 key） */
+  listScenes(schema: any): string[] {
+    return schema && typeof schema === "object" ? Object.keys(schema) : [];
+  }
+
+  /** 新增场景（往 schema 顶层加 key，已存在则拒绝） */
+  addScene(schema: any, sceneName: string, sceneData: any): boolean {
+    if (!schema || typeof schema !== "object" || schema[sceneName]) {
+      return false;
+    }
+    schema[sceneName] = sceneData;
+    return true;
+  }
+
+  /** 删除场景（从 schema 顶层移除 key，至少保留一个） */
+  removeScene(schema: any, sceneName: string): boolean {
+    if (!schema || typeof schema !== "object" || Object.keys(schema).length <= 1) {
+      return false;
+    }
+    if (!schema[sceneName]) {
+      return false;
+    }
+    delete schema[sceneName];
+    return true;
+  }
 }

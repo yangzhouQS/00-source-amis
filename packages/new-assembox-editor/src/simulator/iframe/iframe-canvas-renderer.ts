@@ -77,6 +77,35 @@ export class IframeCanvasRenderer implements IframeRendererApi {
     if (!(this.activeScene.name in this.schema)) {
       this.activeScene.name = Object.keys(this.schema)[0] ?? "";
     }
+    // 增删场景后动态同步路由
+    this.syncRouterRoutes();
+  }
+
+  /** 动态同步路由（场景增删后补缺失 / 移多余） */
+  private syncRouterRoutes(): void {
+    if (!this.router) {
+      return;
+    }
+    const sceneKeys = Object.keys(this.schema);
+    const existing = new Set(
+      this.router.getRoutes().map((r: any) => r.name).filter(Boolean),
+    );
+    for (const name of sceneKeys) {
+      if (!existing.has(name)) {
+        const cfg = this.runtimeConfig.routerConfig[name];
+        this.router.addRoute({
+          path: cfg?.path ?? `/${name}`,
+          name,
+          component: { render: () => h("div") },
+          meta: cfg?.meta ?? {},
+        } as any);
+      }
+    }
+    for (const routeName of existing) {
+      if (typeof routeName === "string" && !sceneKeys.includes(routeName)) {
+        this.router.removeRoute(routeName);
+      }
+    }
   }
 
   setScene(sceneName: string): void {

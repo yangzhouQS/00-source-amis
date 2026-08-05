@@ -587,19 +587,38 @@ export class Editor {
     }
   }
 
-  /** 粘贴剪贴板节点（插入到目标节点之后） */
-  paste(nodeId: string): void {
+  /** 粘贴剪贴板节点（插入到目标节点之后；无选中节点时粘贴到当前场景根） */
+  paste(nodeId?: string): void {
     if (!this.clipboard) {
       return;
     }
-    const loc = this.schemaOps.findSlotOf?.(this.store.schema, nodeId);
-    if (!loc) {
-      return;
+
+    // 有选中节点：粘贴到该节点之后（现有逻辑）
+    if (nodeId) {
+      const loc = this.schemaOps.findSlotOf?.(this.store.schema, nodeId);
+      if (loc) {
+        const cloned = this.schemaOps.cloneNode(this.clipboard);
+        this.regenerateNodeIds(cloned);
+        this.insert(loc.parentId, loc.slotKey, cloned, loc.index + 1);
+        this.select(this.schemaOps.getNodeId(cloned));
+        return;
+      }
     }
-    const cloned = this.schemaOps.cloneNode(this.clipboard);
-    this.regenerateNodeIds(cloned);
-    this.insert(loc.parentId, loc.slotKey, cloned, loc.index + 1);
-    this.select(this.schemaOps.getNodeId(cloned));
+
+    // 无选中节点（场景切换后）：粘贴到当前场景根节点的 defaultSlot
+    const rootId = this.getCurrentSceneRootId();
+    if (rootId) {
+      const cloned = this.schemaOps.cloneNode(this.clipboard);
+      this.regenerateNodeIds(cloned);
+      this.insert(rootId, "defaultSlot", cloned);
+      this.select(this.schemaOps.getNodeId(cloned));
+    }
+  }
+
+  /** 获取当前激活场景的根节点 ID */
+  private getCurrentSceneRootId(): string {
+    const root = this.store.schema?.[this.activeScene]?.viewsProps?.planeOptions;
+    return root ? this.schemaOps.getNodeId(root) : "";
   }
 
   /** 保存（触发 SAVE 事件，由宿主消费做持久化） */
@@ -809,6 +828,71 @@ export class Editor {
     this.renderer?.setScene?.(sceneName);
     this.router.pushScene(sceneName);
     this.bus.trigger(EVENT.AFTER_SCENE_CHANGE, { sceneName });
+  }
+
+  /** 新增场景（页面）— 直接修改 schema + 清空历史，不走 commit */
+  addScene(sceneName: string, path?: string): boolean {
+    if (!sceneName || this.getScenes().includes(sceneName)) {
+      return false;
+    }
+
+    // 生成空场景数据（复用场景空模板）
+    const emptySchema = this.profile.emptySchema();
+    const sceneData = emptySchema[Object.keys(emptySchema)[0]] ?? {
+      viewsProps: { planeOptions: this.profile.emptySchema()[sceneName]?.viewsProps?.planeOptions },
+    };
+
+    // 直接修改 schema + 更新 schemaRef + 清空历史
+    const ok = this.schemaOps.addScene?.(this.store.schema, sceneName, sceneData) ?? false;
+    if (!ok) {
+      return false;
+    }
+    this.store.schemaRef.value = this.store.schema;
+    this.store.clearHistory();
+
+    // EditorRouter 动态加路由
+    this.router.addScene(sceneName, {
+      name: sceneName,
+      path: path ?? `/${sceneName}`,
+      meta: { title: sceneName },
+    });
+
+    // 同步渲染器
+    this.syncRenderer();
+
+    // 自动切换到新场景
+    this.setScene(sceneName);
+    return true;
+  }
+
+  /** 删除场景（页面）— 直接修改 schema + 清空历史 */
+  removeScene(sceneName: string): boolean {
+    const scenes = this.getScenes();
+    if (scenes.length <= 1 || !scenes.includes(sceneName)) {
+      return false;
+    }
+
+    // 删的是当前场景：先切换到其他场景
+    if (this.activeScene === sceneName) {
+      const fallback = scenes.find(s => s !== sceneName)!;
+      this.store.setActiveScene(fallback);
+      this.renderer?.setScene?.(fallback);
+    }
+
+    // 直接删除 + 清空历史
+    const ok = this.schemaOps.removeScene?.(this.store.schema, sceneName) ?? false;
+    if (!ok) {
+      return false;
+    }
+    this.store.schemaRef.value = this.store.schema;
+    this.store.clearHistory();
+
+    // EditorRouter 动态移除路由
+    this.router.removeScene(sceneName);
+
+    // 同步渲染器
+    this.syncRenderer();
+    return true;
   }
 
   /** 重新构建右侧面板（插件驱动） */
