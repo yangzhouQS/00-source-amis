@@ -82,11 +82,11 @@ export const SceneSwitcher = defineComponent({
         return null;
       }
       return (
-        <div class={ns.b()}>
+        <div class={ns.b()} style="display: flex; align-items: center; gap: 4px; flex-shrink: 0; white-space: nowrap;">
           <el-select
             modelValue={props.editor.activeScene}
             size="small"
-            style="width: 120px"
+            style="width: 120px; flex-shrink: 0;"
             onChange={handleSceneChange}
           >
             {options.map(opt => (
