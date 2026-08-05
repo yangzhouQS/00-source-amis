@@ -43,7 +43,7 @@ async function main() {
     scenario: "pc-desktop",
     canvasMode: "iframe",
     schema: (schemaJson as any).uiSkeleton,
-    autoSave: { key: "assem-editor:draft:demo" },
+    // autoSave: { key: "assem-editor:draft:demo" },
   });
 
   // 暴露 editor 便于调试
