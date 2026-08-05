@@ -194,6 +194,7 @@ export const docLibraryPlugin: EditorPluginObject = {
         content: DocLibraryLink,
         props: {
           align: "bottom",
+          description: "组件文档库",
         },
         contentProps: {
           url: "https://test.yearrow.com/yunque-element/component-library/02-layout-guide/04-panel.html",
