@@ -35,7 +35,20 @@ export const DesignerHost = defineComponent({
       }
 
       // 1. 挂载渲染器（iframe 模式下 PcIframeRenderer 会创建 iframe 到 el 内）
-      await renderer.mount(el, props.editor.store.schema, { isEditor: true });
+      //    透传 routerConfig/dataSource/globalVars（vue-router 安装 + $globalVars 注入）
+      const editor = props.editor;
+      const runtimeOpts = {
+        isEditor: true,
+        routerConfig: editor.router?.getRouterConfig(),
+        dataSource: editor.dataSource,
+        globalVars: editor.globalVars,
+      };
+      // iframe 模式：先 setRuntime 再 mount（PcIframeRenderer 暂存，连接后下发）
+      const iframeRenderer = renderer as any;
+      if (isIframe.value && typeof iframeRenderer.setRuntime === "function") {
+        iframeRenderer.setRuntime(runtimeOpts);
+      }
+      await renderer.mount(el, editor.store.schema, runtimeOpts);
 
       // 2. iframe 模式下获取 renderer 创建的 iframe（元素已立即入 DOM，contentDocument 异步 load）
       if (isIframe.value) {

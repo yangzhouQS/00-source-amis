@@ -25,24 +25,25 @@
     "@guolao/vue-monaco-editor": "^1.6.0",
     "element-plus": "^2.13.7",
     "monaco-editor": "^0.56.0",
-    "vue": "^3.5.34"
+    "vue": "^3.5.34",
+    "vue-router": "^4.4.5"
   },
   "devDependencies": {
+    "@cs/js-eslint-config-library": "0.2.7",
     "@playwright/test": "1.57.0",
     "@vitejs/plugin-vue": "^6.0.7",
     "@vitejs/plugin-vue-jsx": "^4.1.1",
-    "@cs/js-eslint-config-library": "0.2.7",
     "eslint": "^10.8.0",
     "jsdom": "^25.0.1",
-    "vitest": "^2.1.9",
+    "less": "^4.6.4",
     "typescript": "^5.9.3",
     "vite": "^6.2.0",
-    "vue-tsc": "^3.3.2",
-    "less": "^4.6.4"
+    "vitest": "^2.1.9",
+    "vue-tsc": "^3.3.2"
   },
   "peerDependencies": {
-    "element-plus": "^2.13.0",
     "@element-plus/icons-vue": "^2.3.0",
+    "element-plus": "^2.13.0",
     "vue": "^3.5.0"
   }
 }

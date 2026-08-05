@@ -33,6 +33,15 @@ export class IframeCanvasRenderer implements IframeRendererApi {
   private designMode: "design" | "preview" = "design";
   /** 当前激活场景名 */
   private activeScene = reactive({ name: "" });
+  /** 运行时配置（routerConfig/dataSource/globalVars，host 通过 setRuntime 下发） */
+  private runtimeConfig = {
+    routerConfig: {} as Record<string, any>,
+    dataSource: null as any,
+    globalVars: {} as Record<string, any>,
+  };
+
+  /** vue-router 实例（用 window.VueRouter 构建） */
+  private router: any = null;
   /** 动态依赖清单（host 下发：插件 / 外部组件） */
   private assets: IframeAssetsManifest;
   ready = false;
@@ -72,6 +81,20 @@ export class IframeCanvasRenderer implements IframeRendererApi {
 
   setScene(sceneName: string): void {
     this.activeScene.name = sceneName;
+    this.router?.push?.({ name: sceneName });
+  }
+
+  /** host 下发运行时配置（routerConfig/dataSource/globalVars），mount 前调用 */
+  setRuntime(payload: { routerConfig?: any; dataSource?: any; globalVars?: Record<string, any> }): void {
+    if (payload.routerConfig) {
+      this.runtimeConfig.routerConfig = payload.routerConfig;
+    }
+    if (payload.dataSource) {
+      this.runtimeConfig.dataSource = payload.dataSource;
+    }
+    if (payload.globalVars) {
+      this.runtimeConfig.globalVars = payload.globalVars;
+    }
   }
 
   setDesignMode(mode: "design" | "preview"): void {
@@ -85,6 +108,32 @@ export class IframeCanvasRenderer implements IframeRendererApi {
 
   rerender(): void {
     this.syncSchema(this.schema);
+  }
+
+  /** 用 window.VueRouter 构建场景路由（memory history） */
+  private buildSceneRouter(): any {
+    const VR = (window as any).VueRouter;
+    if (!VR || !VR.createRouter || !VR.createMemoryHistory) {
+      return null;
+    }
+    const cfg = this.runtimeConfig.routerConfig ?? {};
+    const scenes = Object.keys(this.schema);
+    const routes = scenes.map((name) => {
+      const c = cfg[name];
+      return {
+        path: c?.path ?? `/${name}`,
+        name,
+        component: { render: () => h("div") },
+        meta: c?.meta ?? {},
+      } as any;
+    });
+    if (routes.length > 0) {
+      const firstPath = cfg[this.activeScene.name]?.path
+        ?? cfg[scenes[0]]?.path
+        ?? routes[0].path;
+      routes.push({ path: "/", redirect: firstPath } as any);
+    }
+    return VR.createRouter({ history: VR.createMemoryHistory(), routes });
   }
 
   /** 同步 schema 到响应式对象（in-place 替换 key；adaptNodeTree 编译事件 handler） */
@@ -122,14 +171,18 @@ export class IframeCanvasRenderer implements IframeRendererApi {
 
     const config: AssemConfig = {
       uiSkeleton: this.schema,
-      dataSource: {
+      dataSource: (this.runtimeConfig.dataSource ?? {
         api: { config: {} },
         requestConfig: {},
         dataModelConfig: {},
         sharedFns: {},
-      } as any,
+      }) as any,
+      routerConfig: this.runtimeConfig.routerConfig as any,
       security: {},
     };
+
+    // 构建 vue-router（用 window.VueRouter 全局，canvas.html CDN 已加载）
+    this.router = this.buildSceneRouter();
 
     this.app = createApp({
       setup: () => {
@@ -209,6 +262,11 @@ export class IframeCanvasRenderer implements IframeRendererApi {
       }
     }
 
+    // 安装 vue-router（NavigationBar 等组件 useRouter 生效）
+    if (this.router) {
+      this.app.use(this.router);
+    }
+
     this.app.use(AssemPlugin, config);
     registerDefaults();
 
@@ -231,6 +289,16 @@ export class IframeCanvasRenderer implements IframeRendererApi {
     }
 
     this.app.mount(el);
+
+    // 注入 $globalVars.$router + 业务全局变量（对齐旧版 bindAssemContext）
+    const assemCore = this.app.config.globalProperties.$assemCore;
+    if (assemCore) {
+      assemCore.$globalVars = assemCore.$globalVars ?? {};
+      if (this.router) {
+        assemCore.$globalVars.$router = this.router;
+      }
+      Object.assign(assemCore.$globalVars, this.runtimeConfig.globalVars);
+    }
 
     this.bindCanvasEvents(el);
 

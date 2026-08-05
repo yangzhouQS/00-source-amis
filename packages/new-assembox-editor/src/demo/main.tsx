@@ -38,11 +38,15 @@ async function main() {
   registerScenario(pcDesktopProfile);
 
   // 2. 创建编辑器实例（场景驱动，渲染器由 DesignerHost 挂载）
+  //    传入完整 config：uiSkeleton + routerConfig + dataSource（多路由页面 + 数据源）
+  const config = schemaJson as any;
   const editor = createEditor({
     platform: "desktop",
     scenario: "pc-desktop",
     canvasMode: "iframe",
-    schema: (schemaJson as any).uiSkeleton,
+    schema: config.uiSkeleton,
+    routerConfig: config.routerConfig,
+    dataSource: config.dataSource,
     // autoSave: { key: "assem-editor:draft:demo" },
   });
 

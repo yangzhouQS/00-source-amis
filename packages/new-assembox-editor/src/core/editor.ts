@@ -33,6 +33,7 @@ import { EVENT, EventBus } from "./event-bus";
 import { KeyboardManager } from "./keyboard-manager";
 import { getLogger } from "./logger";
 import { PluginManager } from "./plugin-manager";
+import { EditorRouter } from "./router/editor-router";
 import { Selection } from "./selection";
 import { EditorStore } from "./store";
 
@@ -42,6 +43,12 @@ export interface EditorOptions {
   scenario: string;
   /** 初始 schema（PC 格式，省略则用场景空模板） */
   schema?: any;
+  /** 路由配置（sceneName → 路由信息，1:1 对应 schema 场景） */
+  routerConfig?: import("./router/build-router").RouterConfig;
+  /** 数据源配置（api/requestConfig/dataModelConfig/sharedFns） */
+  dataSource?: any;
+  /** 全局变量注入（扩展 $globalVars，如 $http/$portal，对齐旧版 bindAssemContext） */
+  globalVars?: Record<string, any>;
   /** 用户插件（可带 options：[plugin, options]） */
   plugins?: Array<EditorPluginObject | [EditorPluginObject, any]>;
   /** 是否禁用内置插件（默认 false） */
@@ -83,6 +90,12 @@ export class Editor {
   readonly contextMenu: ContextMenuManager;
   /** 组件工具栏动作管理器（选中节点工具栏按钮） */
   readonly componentActions: ComponentActionManager;
+  /** 路由管理（vue-router 封装，管理场景切换路由状态） */
+  readonly router: EditorRouter;
+  /** 数据源配置（透传给渲染器） */
+  readonly dataSource: any;
+  /** 全局变量注入（透传给渲染器 $globalVars） */
+  readonly globalVars: Record<string, any>;
   /** 剪贴板（复制/粘贴用） */
   clipboard: any | null = null;
 
@@ -133,6 +146,19 @@ export class Editor {
     (this.store.state as any).canvasMode = options.canvasMode ?? "inline";
     // store 持有 editor 反向引用（bem-tools 用）
     (this.store as any).__editor = this;
+
+    // 3.5 初始化路由 + 数据源 + 全局变量
+    const scenes = this.store.schema && typeof this.store.schema === "object"
+      ? Object.keys(this.store.schema)
+      : [];
+    this.router = new EditorRouter(options.routerConfig, scenes);
+    this.dataSource = options.dataSource ?? {
+      api: { config: {} },
+      requestConfig: {},
+      dataModelConfig: {},
+      sharedFns: {},
+    };
+    this.globalVars = options.globalVars ?? {};
 
     this.selection = new Selection(this.store);
     this.pluginManager = new PluginManager(this.bus);
@@ -781,6 +807,7 @@ export class Editor {
     }
     this.store.setActiveScene(sceneName);
     this.renderer?.setScene?.(sceneName);
+    this.router.pushScene(sceneName);
     this.bus.trigger(EVENT.AFTER_SCENE_CHANGE, { sceneName });
   }
 

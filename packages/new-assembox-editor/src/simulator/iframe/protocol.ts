@@ -22,6 +22,8 @@ export interface IframeRendererApi {
   setSchema: (schema: any) => void;
   /** 切换当前渲染的场景（场景名 = uiSkeleton 的顶层 key） */
   setScene?: (sceneName: string) => void;
+  /** host 下发运行时配置（routerConfig/dataSource/globalVars），mount 前调用 */
+  setRuntime?: (payload: { routerConfig?: any; dataSource?: any; globalVars?: Record<string, any> }) => void;
   /** 定向更新节点属性（增量，可选实现） */
   updateNode?: (nodeId: string, patch: any) => void;
   /** 设计/预览模式切换 */

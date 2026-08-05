@@ -48,6 +48,12 @@ export interface SlotMarker {
 
 export interface RendererMountOptions {
   isEditor?: boolean;
+  /** 路由配置（sceneName → 路由信息），用于 iframe 内构建 vue-router */
+  routerConfig?: Record<string, { name: string; path: string; meta?: Record<string, any> }>;
+  /** 数据源配置（api/requestConfig/dataModelConfig/sharedFns） */
+  dataSource?: any;
+  /** 全局变量注入（扩展 $globalVars，如 $http/$portal） */
+  globalVars?: Record<string, any>;
 }
 
 export interface IRenderer {

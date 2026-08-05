@@ -78,6 +78,8 @@ export class PcIframeRenderer implements IRenderer {
   private connected = false;
   private pendingSchema: any = null;
   private pendingDesignMode: "design" | "preview" = "design";
+  /** 运时配置缓存（routerConfig/dataSource/globalVars，连接前暂存，连接后下发） */
+  private runtimeConfig: { routerConfig?: any; dataSource?: any; globalVars?: Record<string, any> } = {};
 
   private readyCbs: Array<() => void> = [];
   private clickCb: ((nodeId: string | null, e: MouseEvent) => void) | null = null;
@@ -166,6 +168,9 @@ export class PcIframeRenderer implements IRenderer {
     const designMode = this.pendingDesignMode;
     this.pendingSchema = null;
 
+    // 先下发运行时配置（mount 前），再初始化 schema
+    api.setRuntime?.(this.runtimeConfig);
+
     if (api.ready) {
       api.setSchema(deepClone(schema));
       api.setDesignMode(designMode);
@@ -186,6 +191,12 @@ export class PcIframeRenderer implements IRenderer {
   /** 切换当前渲染的场景（透传给 iframe 内渲染器） */
   setScene(sceneName: string): void {
     this.rendererApi?.setScene?.(sceneName);
+  }
+
+  /** 下发运行时配置（透传给 iframe 内渲染器） */
+  setRuntime(payload: { routerConfig?: any; dataSource?: any; globalVars?: Record<string, any> }): void {
+    this.runtimeConfig = { ...this.runtimeConfig, ...payload };
+    this.rendererApi?.setRuntime?.(payload);
   }
 
   updateNode(nodeId: string, patch: any): void {

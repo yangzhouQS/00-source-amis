@@ -1,5 +1,6 @@
 import type { AssemConfig } from "@cs/assembox-core-next";
 import type { App } from "vue";
+import type { RouterConfig } from "../../core/router/build-router";
 import type {
   IRenderer,
   RendererMountOptions,
@@ -12,6 +13,7 @@ import {
 } from "@cs/assembox-desktop-next";
 import ElementPlus from "element-plus";
 import { computed, createApp, h, reactive } from "vue";
+import { buildSceneRouter } from "../../core/router/build-router";
 import { DOCUMENT_ARRAYS, forEachChild } from "./slot-accessors";
 
 /**
@@ -29,6 +31,14 @@ export class PcRenderer implements IRenderer {
   private core: any = null;
   /** 响应式场景状态（驱动 render 渲染当前激活场景） */
   private sceneState = reactive({ name: "" });
+  /** vue-router 实例（供 NavigationBar 等组件 useRouter） */
+  private router: any = null;
+  /** 运行时配置缓存（routerConfig/dataSource/globalVars） */
+  private runtimeConfig: { routerConfig: RouterConfig; dataSource: any; globalVars: Record<string, any> } = {
+    routerConfig: {},
+    dataSource: {},
+    globalVars: {},
+  };
 
   private readyCbs: Array<() => void> = [];
   private clickCb: ((nodeId: string | null, e: MouseEvent) => void) | null = null;
@@ -38,7 +48,7 @@ export class PcRenderer implements IRenderer {
   async mount(
     container: HTMLElement,
     schema: any,
-    _options?: RendererMountOptions,
+    options?: RendererMountOptions,
   ): Promise<void> {
     this.container = container;
     this.schema = schema;
@@ -46,6 +56,17 @@ export class PcRenderer implements IRenderer {
     // 推断初始场景名（取 uiSkeleton 第一个 key）
     const sceneKeys = schema && typeof schema === "object" ? Object.keys(schema) : [];
     this.sceneState.name = sceneKeys[0] ?? "";
+
+    // 缓存运行时配置（供 setScene 后重新 install router 时使用）
+    const routerConfig = (options?.routerConfig ?? {}) as RouterConfig;
+    const dataSource = options?.dataSource ?? {
+      api: { config: {} },
+      requestConfig: {},
+      dataModelConfig: {},
+      sharedFns: {},
+    };
+    const globalVars = options?.globalVars ?? {};
+    this.runtimeConfig = { routerConfig, dataSource, globalVars };
 
     (window as any).assemBoxIsEdit = true;
     (window as any).assemBoxDesignMode = "design";
@@ -65,9 +86,14 @@ export class PcRenderer implements IRenderer {
 
     const config: AssemConfig = {
       uiSkeleton: schema,
-      dataSource: { api: { config: {} }, requestConfig: {}, dataModelConfig: {}, sharedFns: {} } as any,
+      dataSource: dataSource as any,
+      routerConfig: routerConfig as any,
       security: {},
     };
+
+    // 构建 vue-router（memory history，供 NavigationBar 等组件 useRouter 使用）
+    const router = buildSceneRouter(routerConfig, sceneKeys, this.sceneState.name);
+    this.router = router;
 
     this.app = createApp({
       setup: () => {
@@ -86,17 +112,34 @@ export class PcRenderer implements IRenderer {
       },
     });
 
+    this.app.use(router);
     this.app.use(AssemPlugin, config);
     this.app.use(ElementPlus);
     registerDefaults();
     this.app.mount(container);
 
     this.core = this.app.config.globalProperties.$assemCore;
+    // 注入 $globalVars.$router + 业务全局变量（对齐旧版 bindAssemContext）
+    this.injectGlobalVars();
   }
 
   /** 切换当前渲染的场景 */
   setScene(sceneName: string): void {
     this.sceneState.name = sceneName;
+    this.router?.push?.({ name: sceneName });
+  }
+
+  /** 注入 $globalVars.$router + 业务全局变量（对齐旧版 bindAssemContext） */
+  private injectGlobalVars(): void {
+    const assemCore = this.core;
+    if (!assemCore) {
+      return;
+    }
+    assemCore.$globalVars = assemCore.$globalVars ?? {};
+    if (this.router) {
+      assemCore.$globalVars.$router = this.router;
+    }
+    Object.assign(assemCore.$globalVars, this.runtimeConfig.globalVars);
   }
 
   setSchema(schema: any): void {
