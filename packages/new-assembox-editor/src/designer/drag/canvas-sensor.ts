@@ -206,7 +206,7 @@ export class CanvasSensor implements DragSensor {
 
     // 主轴判定
     const vRange
-      = measured.at(-1).rect.bottom - measured[0].rect.top;
+      = measured.at(-1)!.rect.bottom - measured[0].rect.top;
     const hRange
       = Math.max(...measured.map(m => m.rect.right))
         - Math.min(...measured.map(m => m.rect.left));
@@ -270,7 +270,7 @@ export class CanvasSensor implements DragSensor {
     if (horizontal) {
       let x: number;
       if (index >= childRects.length) {
-        x = childRects.length ? childRects.at(-1).right : cLeft;
+        x = childRects.length ? childRects.at(-1)!.right : cLeft;
       } else {
         x = childRects[index]?.left ?? cLeft;
       }
@@ -280,7 +280,7 @@ export class CanvasSensor implements DragSensor {
     // 纵向布局：横向指示线
     let y: number;
     if (index >= childRects.length) {
-      y = childRects.length ? childRects.at(-1).bottom : cTop;
+      y = childRects.length ? childRects.at(-1)!.bottom : cTop;
     } else {
       y = childRects[index]?.top ?? cTop;
     }
