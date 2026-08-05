@@ -34,7 +34,8 @@ export class Dragon {
   /** 已注册的感应区 */
   private sensors: DragSensor[] = [];
   /** 当前拖拽对象 */
-  private dragObject: DragObject | null = null;
+  /** 当前拖拽对象（公开，供 CanvasSensor 读取做嵌套校验） */
+  dragObject: DragObject | null = null;
   /** 是否正在拖拽 */
   private _dragging = false;
   /** 上一次定位（供 drop 使用） */

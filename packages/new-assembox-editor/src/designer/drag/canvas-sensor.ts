@@ -77,11 +77,27 @@ export class CanvasSensor implements DragSensor {
     // 1. 找落点容器（向上找最近容器节点），同时拿到 DOM 元素
     const { id: containerId, el: containerEl, slotKey } = this.findContainerEl(target);
     const finalSlotKey = slotKey ?? "defaultSlot";
-    const finalContainerId
-      = containerId ?? this.editor.rootNodeId ?? "";
-    const finalContainerEl
-      = containerEl
-        ?? (this.editor.renderer?.getNodeElement(finalContainerId) ?? null);
+    const finalContainerId = containerId ?? this.editor.rootNodeId ?? "";
+    const finalContainerEl = containerEl
+      ?? doc.querySelector(`[${ATTR_EDITOR_ID}="${finalContainerId}"]`)
+      ?? this.editor.renderer?.getNodeElement(finalContainerId)
+      ?? null;
+
+    // 1.5 嵌套校验：拖拽的组件类型是否允许放入目标槽位
+    const childRenderType = this.editor.dragon.dragObject?.data?.renderType;
+    if (childRenderType && finalContainerId) {
+      const parentNode = this.editor.schemaOps.getNodeById(
+        this.editor.store.schema,
+        finalContainerId,
+      );
+      const parentRenderType = parentNode?.__nodeOptions?.renderType;
+      if (
+        parentRenderType
+        && !this.editor.nestingRules.canNest(parentRenderType, finalSlotKey, childRenderType)
+      ) {
+        return null;
+      }
+    }
 
     // 2. 计算插入索引（用 DOM 实时元素测几何）
     const index = this.computeInsertIndex(

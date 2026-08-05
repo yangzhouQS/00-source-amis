@@ -173,8 +173,33 @@ export class Editor {
     // 投放执行
     this.dragon.on({
       onDrop: (dragObject: DragObject, location: DropLocation) => {
+        // 嵌套校验（最终拦截，兜底防漏）
+        const parentNode = this.schemaOps.getNodeById(
+          this.store.schema,
+          location.containerId,
+        );
+        const parentRenderType = parentNode?.__nodeOptions?.renderType;
+        const childRenderType
+          = dragObject.type === "nodeData"
+            ? dragObject.data?.renderType
+            : dragObject.type === "node"
+              ? this.schemaOps.getNodeById(this.store.schema, dragObject.nodeId!)
+                ?.__nodeOptions
+                ?.renderType
+              : undefined;
+        if (
+          parentRenderType
+          && childRenderType
+          && !this.nestingRules.canNest(
+            parentRenderType,
+            location.region,
+            childRenderType,
+          )
+        ) {
+          return;
+        }
+
         if (dragObject.type === "nodeData" && dragObject.data) {
-          // 新增组件：从目录取 scaffold 创建节点
           const renderType = dragObject.data.renderType ?? dragObject.data.type;
           const item = this.catalog
             .getComponents()
@@ -193,7 +218,6 @@ export class Editor {
             );
           }
         } else if (dragObject.type === "node" && dragObject.nodeId) {
-          // 移动现有节点
           if (!this.isDescendantNode(dragObject.nodeId, location.containerId)) {
             this.move(
               dragObject.nodeId,
