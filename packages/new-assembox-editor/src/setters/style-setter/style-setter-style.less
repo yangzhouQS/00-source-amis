@@ -1,11 +1,158 @@
-.lc-assem-style-setter {
-  width: 100%;
+/* StyleSetter 样式 */
+
+.style-setter {
+  &__topbar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 4px 0 8px;
+  }
+
+  &__css-code {
+    margin-bottom: 8px;
+    font-family: var(--assem-code-bg, monospace);
+    font-size: 11px;
+  }
 
   .el-collapse {
-    border: none;
+    border-top: none;
   }
 
   .el-collapse-item__header {
-    font-size: 13px;
+    font-size: var(--assem-font-size-label, 13px);
+    font-weight: 600;
+    height: 36px;
+    line-height: 36px;
+  }
+
+  .el-collapse-item__content {
+    padding-bottom: 8px;
+  }
+}
+
+/* 属性行 */
+.style-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  padding: 4px 0;
+
+  &__title {
+    flex-shrink: 0;
+    width: 56px;
+    font-size: var(--assem-font-size-text, 12px);
+    line-height: 28px;
+    color: var(--assem-color-text-secondary, #909399);
+    text-align: right;
+  }
+
+  &__content {
+    flex: 1;
+    min-width: 0;
+
+    .el-select,
+    .el-input-number,
+    .el-input {
+      width: 100%;
+    }
+  }
+
+  /* 有值时标题高亮 */
+  &.is-active &__title {
+    color: var(--assem-color-brand, #0079f2);
+  }
+}
+
+/* 数值输入 + 单位 */
+.style-number-input {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  .el-input-number {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+/* 颜色输入 */
+.style-color-input {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+
+  .el-color-picker {
+    flex-shrink: 0;
+  }
+
+  .el-input {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+/* 面板内部容器 */
+.style-panel {
+  &__pair {
+    display: flex;
+    gap: 6px;
+
+    > * {
+      flex: 1;
+      min-width: 0;
+    }
+  }
+
+  /* 四方向盒子（margin / padding / position offset） */
+  &__box {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 6px;
+  }
+
+  /* 边框网格 */
+  &__border-grid {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+
+    > * {
+      flex: 1;
+      min-width: 0;
+    }
+
+    .el-select {
+      max-width: 80px;
+    }
+  }
+
+  /* 阴影区域 */
+  &__shadow {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+
+    .el-checkbox {
+      font-size: var(--assem-font-size-text, 12px);
+    }
+  }
+
+  /* 滑块行 */
+  &__slider {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+
+    .el-slider {
+      flex: 1;
+    }
+  }
+
+  &__slider-value {
+    flex-shrink: 0;
+    width: 36px;
+    text-align: right;
+    font-size: var(--assem-font-size-text, 12px);
+    color: var(--assem-color-text-secondary, #909399);
   }
 }
