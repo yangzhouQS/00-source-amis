@@ -8,3 +8,52 @@
     background: transparent;
   }
 }
+
+/* 右键菜单（自包含，与画布 ContextMenu 视觉一致） */
+.lc-assem-outline-pane__context-menu {
+  min-width: 120px;
+  padding: 4px;
+  background: var(--assem-color-bg-pane, #ffffff);
+  border: 1px solid var(--assem-color-border, #e4e7ed);
+  border-radius: var(--assem-radius-md, 4px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+
+  &__item {
+    padding: 6px 12px;
+    font-size: var(--assem-font-size-text, 12px);
+    line-height: 1;
+    color: var(--assem-color-text-primary, #303133);
+    cursor: pointer;
+    border-radius: var(--assem-radius-sm, 2px);
+    white-space: nowrap;
+
+    &:hover {
+      background: var(--assem-color-bg-hover, #f5f7fa);
+    }
+
+    &.lc-assem-is-danger {
+      color: var(--assem-color-danger, #f56c6c);
+    }
+
+    &.lc-assem-is-disabled {
+      color: var(--assem-color-text-placeholder, #c0c4cc);
+      cursor: not-allowed;
+
+      &:hover {
+        background: transparent;
+      }
+    }
+  }
+
+  &__separator {
+    height: 1px;
+    margin: 4px 0;
+    background: var(--assem-color-border-light, #ebeef5);
+  }
+
+  &__empty {
+    padding: 6px 12px;
+    font-size: var(--assem-font-size-text, 12px);
+    color: var(--assem-color-text-placeholder, #c0c4cc);
+  }
+}
