@@ -9,22 +9,23 @@
   --right-area-width: 300px;
   --top-area-height: 48px;
   --dock-fixed-pane-width: 280px;
-  --color-brand: #0079f2;
+  --color-brand: #165dff;
   --color-brand-light: rgba(0, 121, 242, 0.15);
   --color-pane-background: #ffffff;
-  --color-text: #303133;
-  --color-border: #e4e7ed;
+  --color-text: var(--el-text-color-primary);
+  --color-border: var(--el-text-color-disabled);
   --color-hover: #f5f7fa;
 }
 
 html,
 body {
   position: relative;
+  width: 100%;
   height: 100%;
   padding: 0;
   margin: 0;
   overflow: hidden;
-  font-family: var(--font-family);
+  font-family: var(--font-family), serif;
   color: var(--color-text);
   background-color: #edeff3;
 }

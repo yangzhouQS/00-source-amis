@@ -12,8 +12,6 @@ import {
  */
 import { defineComponent, PropType } from "vue";
 import { useAssemNamespace } from "../../hooks/use-assem-namespace";
-import "./../pane.less";
-
 const ns = useAssemNamespace("toolbar");
 
 export const EditorToolbar = defineComponent({

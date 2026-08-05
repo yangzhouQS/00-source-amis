@@ -1,0 +1,82 @@
+/* 组件库面板 */
+.lc-assem-component-pane {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: hidden;
+
+  .lc-assem-component-pane__search {
+    flex-shrink: 0;
+    padding: 8px;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .lc-assem-component-pane__scroll {
+    flex: 1;
+    min-height: 0;
+
+    .el-scrollbar__wrap {
+      padding: 8px;
+    }
+  }
+
+  .el-collapse {
+    border: none;
+  }
+
+  .lc-assem-component-pane__category {
+    margin-bottom: 12px;
+  }
+
+  .lc-assem-component-pane__category-title {
+    margin: 8px 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: #909399;
+  }
+
+  .lc-assem-component-pane__category-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 6px;
+  }
+
+  .lc-assem-component-pane__item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 4px;
+    height: 64px;
+    padding: 4px;
+    font-size: 11px;
+    cursor: grab;
+    user-select: none;
+    background: #f5f7fa;
+    border: 1px solid transparent;
+    border-radius: 4px;
+    transition: all 0.15s;
+
+    &:hover {
+      color: var(--color-brand);
+      background: var(--color-brand-light);
+      border-color: var(--color-brand);
+    }
+
+    &:active {
+      cursor: grabbing;
+    }
+
+    .lc-assem-component-pane__icon {
+      font-size: 18px;
+    }
+
+    .lc-assem-component-pane__name {
+      max-width: 100%;
+      overflow: hidden;
+      text-align: center;
+      text-overflow: ellipsis;
+      white-space: nowrap;
+    }
+  }
+}

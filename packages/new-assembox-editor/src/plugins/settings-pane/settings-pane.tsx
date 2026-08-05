@@ -7,7 +7,7 @@ import type { Editor } from "../../core/editor";
 import { computed, defineComponent, h, PropType, provide } from "vue";
 import { useAssemNamespace } from "../../hooks/use-assem-namespace";
 import { isFieldHidden, resolveSetter, SETTER_CONTEXT_KEY } from "../../setters";
-import "./../pane.less";
+import "./setting-pane-style.less";
 
 const ns = useAssemNamespace("setting-pane");
 
@@ -357,32 +357,34 @@ export const SettingsPane = defineComponent({
             <span class={ns.e("title")}>{m?.name ?? node.__nodeName}</span>
             <span class={ns.e("type")}>{node.__nodeOptions?.renderType}</span>
           </div>
-          <el-tabs modelValue="attribute">
-            <el-tab-pane label="属性" name="attribute">
-              <el-form labelWidth="80px" size="small">
-                {propsList.length
-                  ? (
-                      propsList.map(renderField)
-                    )
-                  : (
-                      <el-empty description="无可配置属性" imageSize={50} />
-                    )}
-              </el-form>
-            </el-tab-pane>
-            <el-tab-pane label="样式" name="style">
-              <StyleEditor
-                editor={props.editor}
-                nodeId={node.__nodeId}
-                style={node.__nodeStyle ?? {}}
-              />
-            </el-tab-pane>
-            <el-tab-pane label="事件" name="event">
-              <EventList editor={props.editor} events={events} />
-            </el-tab-pane>
-            <el-tab-pane label="高级" name="advanced">
-              <AdvancedEditor editor={props.editor} nodeId={node.__nodeId} />
-            </el-tab-pane>
-          </el-tabs>
+          <div class={ns.e("content")}>
+            <el-tabs modelValue="attribute">
+              <el-tab-pane label="属性" name="attribute">
+                <el-form labelWidth="80px" size="small">
+                  {propsList.length
+                    ? (
+                        propsList.map(renderField)
+                      )
+                    : (
+                        <el-empty description="无可配置属性" imageSize={50} />
+                      )}
+                </el-form>
+              </el-tab-pane>
+              <el-tab-pane label="样式" name="style">
+                <StyleEditor
+                  editor={props.editor}
+                  nodeId={node.__nodeId}
+                  style={node.__nodeStyle ?? {}}
+                />
+              </el-tab-pane>
+              <el-tab-pane label="事件" name="event">
+                <EventList editor={props.editor} events={events} />
+              </el-tab-pane>
+              <el-tab-pane label="高级" name="advanced">
+                <AdvancedEditor editor={props.editor} nodeId={node.__nodeId} />
+              </el-tab-pane>
+            </el-tabs>
+          </div>
         </div>
       );
     };

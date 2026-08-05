@@ -7,7 +7,7 @@ import { Document, RefreshLeft, RefreshRight } from "@element-plus/icons-vue";
  */
 import { defineComponent, PropType } from "vue";
 import { useAssemNamespace } from "../../hooks/use-assem-namespace";
-import "./../pane.less";
+import "./history-pane-style.less";
 
 const ns = useAssemNamespace("history-pane");
 

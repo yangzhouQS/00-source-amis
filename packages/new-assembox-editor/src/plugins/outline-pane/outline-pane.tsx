@@ -8,7 +8,7 @@ import type { OutlineNode } from "../../core/store";
 import { computed, defineComponent, PropType } from "vue";
 import { buildOutlineFromSchemaOps } from "../../core/store";
 import { useAssemNamespace } from "../../hooks/use-assem-namespace";
-import "./../pane.less";
+import "./outline-pane-style.less";
 
 const ns = useAssemNamespace("outline-pane");
 

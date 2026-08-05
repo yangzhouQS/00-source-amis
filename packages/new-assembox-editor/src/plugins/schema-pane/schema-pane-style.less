@@ -1,0 +1,23 @@
+/* Schema 面板 */
+.lc-assem-schema-pane {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  padding: 8px;
+
+  .lc-assem-schema-pane__toolbar {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 8px;
+  }
+
+  .lc-assem-schema-pane__textarea {
+    flex: 1;
+
+    .el-textarea__inner {
+      height: 100%;
+      font-family: monospace;
+      font-size: 12px;
+    }
+  }
+}

@@ -7,7 +7,7 @@ import type { ComponentCatalogItem } from "../../scenario/types";
  */
 import { computed, defineComponent, PropType, ref } from "vue";
 import { useAssemNamespace } from "../../hooks/use-assem-namespace";
-import "./../pane.less";
+import "./component-pane-style.less";
 
 const ns = useAssemNamespace("component-pane");
 

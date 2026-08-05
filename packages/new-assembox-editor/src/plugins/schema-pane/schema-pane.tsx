@@ -8,7 +8,7 @@ import { ElMessage } from "element-plus";
  */
 import { defineComponent, PropType, ref, watch } from "vue";
 import { useAssemNamespace } from "../../hooks/use-assem-namespace";
-import "./../pane.less";
+import "./schema-pane-style.less";
 
 const ns = useAssemNamespace("schema-pane");
 

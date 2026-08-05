@@ -16,6 +16,7 @@ import {
   ref,
 } from "vue";
 import { useAssemNamespace } from "../../hooks/use-assem-namespace";
+import "./context-menu.style.less.css";
 
 const ns = useAssemNamespace("context-menu");
 
