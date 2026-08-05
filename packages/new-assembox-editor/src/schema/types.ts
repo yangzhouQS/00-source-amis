@@ -1,7 +1,8 @@
 /**
- * Schema 类型定义
- * 采用 amis 风格：type + $$id 标识节点，props/style/onEvent 分离
- * 取代旧版 __nodeOptions/__nodeEvent/__nodeStyle 魔法键
+ * Schema Leaf 类型定义
+ *
+ * 仅保留与具体 schema 格式无关的 leaf 类型（PropConfig / ActionSchema / AssetMeta 等）。
+ * 节点结构（IBaseNode / __nodeId / __nodeOptions）由 assembox-core-next 定义，编辑器内 schema 类型为 any。
  */
 
 /** 节点 ID 类型 */
@@ -22,7 +23,7 @@ export type PropType
 
 /** 属性配置（驱动设置面板） */
 export interface PropConfig {
-  /** 属性名，对应 schema.props 的 key */
+  /** 属性名 */
   name: string;
   /** 标题 */
   title?: string;
@@ -44,33 +45,15 @@ export interface PropConfig {
 
 /** 事件配置 */
 export interface EventConfig {
-  /** 事件名，如 click / change */
+  /** 事件名，如 onClick / onChange */
   name: string;
   /** 事件标题 */
   title?: string;
   /** 描述 */
   description?: string;
-  /** 默认动作（声明式） */
-  defaultActions?: ActionSchema[];
 }
 
-/** 容器可投放区域配置 */
-export interface RegionConfig {
-  /** 对应 schema 中的子节点字段，默认 body */
-  key: string;
-  /** 区域标题 */
-  label?: string;
-  /** 占位提示 */
-  placeholder?: string;
-  /** 拖拽模式 */
-  dndMode?: "default" | "position-h" | "position-v" | "flex";
-  /** 子节点合法性校验 */
-  accept?: (child: PageNode, parent: PageNode) => boolean;
-  /** 是否可选 */
-  optional?: boolean;
-}
-
-/** 声明式动作（amis 风格） */
+/** 声明式动作 */
 export interface ActionSchema {
   /** 动作类型，如 setValue / ajax / toast */
   actionType: string;
@@ -94,43 +77,6 @@ export interface ActionSchema {
   children?: ActionSchema[];
   /** 其他扩展字段 */
   [key: string]: any;
-}
-
-/** 事件配置（运行时，存在 schema.onEvent） */
-export interface OnEventConfig {
-  [eventName: string]: {
-    /** 该事件的动作列表 */
-    actions: ActionSchema[];
-    /** 权重 */
-    weight?: number;
-  };
-}
-
-/** 页面节点（统一 schema 节点结构） */
-export interface PageNode {
-  /** 组件类型，对应 ComponentMeta.type */
-  type: string;
-  /** 节点唯一 ID */
-  $$id: NodeId;
-  /** 节点标题（大纲显示用） */
-  label?: string;
-  /** 属性 */
-  props?: Record<string, any>;
-  /** 样式 */
-  style?: Record<string, any>;
-  /** 事件 + 动作（声明式） */
-  onEvent?: OnEventConfig;
-  /** 子节点（容器） */
-  body?: PageNode[];
-  /** 额外的命名子区域（复杂容器） */
-  [region: string]: any;
-}
-
-/** 页面 schema（根节点） */
-export interface PageSchema extends PageNode {
-  type: "page";
-  $$id: NodeId;
-  body?: PageNode[];
 }
 
 /** 面板项（设置面板 Tab） */
@@ -167,17 +113,9 @@ export interface ContextMenuItem {
 /** Vue 组件类型（兼容函数式/定义式） */
 export type VueComponent = any;
 
-/** 组件元信息（组件注册表条目） */
-/** 拖入脚手架预设（一组件多套初始 schema） */
-export interface Scaffold {
-  id?: string;
-  title?: string;
-  schema: Partial<PageNode>;
-  screenshot?: string;
-}
-
+/** 组件元信息 */
 export interface ComponentMeta {
-  /** 组件类型，对应 schema.type */
+  /** 组件类型 */
   type: string;
   /** 显示名 */
   name: string;
@@ -189,19 +127,15 @@ export interface ComponentMeta {
   group?: string;
   /** 标签 */
   tags?: string[];
-  /** 拖入画布时的默认 schema 片段 */
-  scaffold?: Partial<PageNode>;
-  /** 多套拖入预设（createNode 按 snippetId 取，无则取首个或 scaffold） */
-  snippets?: Scaffold[];
+  /** 拖入画布时的默认配置片段 */
+  scaffold?: Record<string, any>;
   /** 属性 → setter 配置 */
   props?: PropConfig[];
   /** 可配置事件 */
   events?: EventConfig[];
-  /** 容器可投放区域 */
-  regions?: RegionConfig[];
   /** 是否容器 */
   isContainer?: boolean;
-  /** 父子约束（更细粒度，补充 regions.accept） */
+  /** 父子约束 */
   acceptParent?: string[];
   /** 实际渲染组件（可异步） */
   renderComponent?: VueComponent | (() => Promise<{ default: VueComponent }>);
@@ -209,13 +143,13 @@ export interface ComponentMeta {
   override?: boolean;
   /** 优先级（越大越优先） */
   weight?: number;
-  /** 是否在面板隐藏（如内部渲染器） */
+  /** 是否在面板隐藏 */
   hidden?: boolean;
   /** 是否禁用 */
   disabled?: boolean;
   /** 渲染描述 */
   description?: string;
-  /** 双击原地文本编辑配置（contenteditable） */
+  /** 双击原地文本编辑配置 */
   liveTextEditing?: LiveTextEditingConfig[];
 }
 

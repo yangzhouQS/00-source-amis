@@ -12,6 +12,7 @@ import {
  */
 import { defineComponent, PropType } from "vue";
 import { useAssemNamespace } from "../../hooks/use-assem-namespace";
+
 const ns = useAssemNamespace("toolbar");
 
 export const EditorToolbar = defineComponent({

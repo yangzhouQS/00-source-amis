@@ -74,10 +74,21 @@ async function main() {
     app.component(key, component as any);
   }
   app.use(ElementPlus);
-  console.log(window);
-  app.use(ElementPlusUi);
-  app.use(ElementPro);
-  app.use(TablePro);
+
+  // CDN 全局变量挂载（从 window 解析，由 index.html CDN script 注入）
+  const ElementPlusUi = (window as any).ElementPlusUi;
+  const ElementPro = (window as any).ElementPro;
+  const TablePro = (window as any).TablePro;
+  if (ElementPlusUi) {
+    app.use(ElementPlusUi);
+  }
+  if (ElementPro) {
+    app.use(ElementPro);
+  }
+  if (TablePro) {
+    app.use(TablePro);
+  }
+
   app.mount("#app");
 }
 
