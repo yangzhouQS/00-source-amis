@@ -60,6 +60,7 @@ export class IframeCanvasRenderer implements IframeRendererApi {
     this.designMode = designMode;
     (window as any).assemBoxIsEdit = true;
     (window as any).assemBoxDesignMode = designMode;
+    document.body.setAttribute("data-design-mode", designMode);
     // 推断初始场景名（取 uiSkeleton 第一个 key）
     const sceneKeys = Object.keys(this.schema);
     this.activeScene.name = this.activeScene.name || sceneKeys[0] || "";
@@ -129,6 +130,7 @@ export class IframeCanvasRenderer implements IframeRendererApi {
   setDesignMode(mode: "design" | "preview"): void {
     this.designMode = mode;
     (window as any).assemBoxDesignMode = mode;
+    document.body.setAttribute("data-design-mode", mode);
   }
 
   setDraggingState(active: boolean): void {

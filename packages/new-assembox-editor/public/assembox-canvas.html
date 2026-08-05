@@ -59,6 +59,32 @@
         flex: 1;
         overflow: auto;
       }
+
+      /* 设计态：空槽位占位（最小高度 + 虚线边框，便于拖拽定位） */
+      body[data-design-mode="design"] [data-slot-host]:empty {
+        min-height: 48px;
+        border: 1px dashed var(--assem-color-border, #dcdfe6);
+        border-radius: 2px;
+        background: repeating-linear-gradient(
+          45deg,
+          transparent,
+          transparent 6px,
+          rgba(0, 121, 242, 0.03) 6px,
+          rgba(0, 121, 242, 0.03) 12px
+        );
+        position: relative;
+      }
+      body[data-design-mode="design"] [data-slot-host]:empty::before {
+        content: "拖拽组件到此处";
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        font-size: 12px;
+        color: var(--assem-color-text-placeholder, #c0c4cc);
+        pointer-events: none;
+        white-space: nowrap;
+      }
     </style>
     <!-- 样式（CDN） -->
     <link rel="stylesheet" href="https://cdn.yearrow.com/fonts/cs-common/1.0.0/iconfont.css" />

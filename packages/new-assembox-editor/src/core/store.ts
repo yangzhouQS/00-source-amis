@@ -114,13 +114,14 @@ export class EditorStore {
 
   commit(label: string, mutator: (schema: any) => void): any {
     if (!this.suspendHistory) {
+      // pushHistory 克隆当前 schema 存为历史快照（变更前）
       this.pushHistory(label);
     }
-    const next = this.schemaOps.cloneSchema(this.state.schema);
-    mutator(next);
-    this.state.schema = next;
-    this.schemaRef.value = next;
-    return next;
+    // 直接原地修改 reactive schema（省一次 cloneSchema）
+    mutator(this.state.schema);
+    // 触发 schemaRef 响应式更新（浅引用赋值即可）
+    this.schemaRef.value = this.state.schema;
+    return this.state.schema;
   }
 
   batch(label: string, mutator: (schema: any) => void): void {

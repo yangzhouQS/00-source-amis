@@ -70,6 +70,7 @@ export class PcRenderer implements IRenderer {
 
     (window as any).assemBoxIsEdit = true;
     (window as any).assemBoxDesignMode = "design";
+    document.body.setAttribute("data-design-mode", "design");
 
     (window as any).assemVueRenderer = {
       onMountedInstance: (_instance: unknown) => {
@@ -212,6 +213,7 @@ export class PcRenderer implements IRenderer {
 
   setDesignMode(mode: "design" | "preview"): void {
     (window as any).assemBoxDesignMode = mode;
+    document.body.setAttribute("data-design-mode", mode);
   }
 
   getNodeElement(nodeId: string): HTMLElement | null {
