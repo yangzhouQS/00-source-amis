@@ -48,6 +48,13 @@ export interface EditorOptions {
   disableBuiltin?: boolean;
   /** 画布模式：inline（同 DOM 进程内） | iframe（资源隔离） */
   canvasMode?: "inline" | "iframe";
+  /** 草稿自动保存（sessionStorage，刷新恢复，关标签页自动清除） */
+  autoSave?: {
+    /** sessionStorage 键名，默认 'assem-editor:draft' */
+    key?: string;
+    /** 防抖延迟（ms），默认 800 */
+    debounce?: number;
+  };
 }
 
 export class Editor {
@@ -79,6 +86,11 @@ export class Editor {
   /** 剪贴板（复制/粘贴用） */
   clipboard: any | null = null;
 
+  /** 草稿配置 */
+  private draftKey: string | null = null;
+  private draftDebounce = 800;
+  private draftTimer: ReturnType<typeof setTimeout> | null = null;
+
   private destroyed = false;
 
   /** 便捷别名：schema 操作 */
@@ -100,9 +112,21 @@ export class Editor {
     // 1. 激活场景档案
     this.profile = scenarioRegistry.activate(options.scenario);
 
-    // 2. 初始化 store（场景驱动 schemaOps）
+    // 2. 草稿恢复（sessionStorage，在 store 初始化之前）
+    let initialSchema = options.schema ?? this.profile.emptySchema();
+    if (options.autoSave) {
+      const draftKey = options.autoSave.key ?? "assem-editor:draft";
+      const draft = this.readDraft(draftKey);
+      if (draft) {
+        initialSchema = draft;
+      }
+      this.draftKey = draftKey;
+      this.draftDebounce = options.autoSave.debounce ?? 800;
+    }
+
+    // 3. 初始化 store（场景驱动 schemaOps）
     this.store = new EditorStore(
-      options.schema ?? this.profile.emptySchema(),
+      initialSchema,
       this.profile.schemaOps,
     );
     this.store.state.platform = options.platform ?? "desktop";
@@ -322,6 +346,17 @@ export class Editor {
     this.store.setReady(true);
     this.bus.trigger(EVENT.EDITOR_READY, { editor: this });
     this.keyboard.attach();
+
+    // 草稿自动保存（sessionStorage）
+    if (this.draftKey) {
+      const { watch } = await import("vue");
+      watch(
+        () => this.store.schemaRef.value,
+        () => this.scheduleDraftSave(),
+        { deep: false },
+      );
+      window.addEventListener("beforeunload", () => this.saveDraft());
+    }
   }
 
   /** 注册内置右键菜单项 */
@@ -427,6 +462,10 @@ export class Editor {
     }
     this.destroyed = true;
     this.bus.trigger(EVENT.EDITOR_DESTROY, {});
+    if (this.draftTimer) {
+      clearTimeout(this.draftTimer);
+      this.saveDraft();
+    }
     this.dragon.destroy();
     this.keyboard.detach();
     this.liveEditing.dispose();
@@ -434,6 +473,58 @@ export class Editor {
     this.pluginManager.destroy();
     this.bus.destroy();
     this.di.clear();
+  }
+
+  // --------------------- 草稿（sessionStorage）---------------------
+
+  /** 读取草稿 */
+  private readDraft(key: string): any | null {
+    try {
+      const raw = sessionStorage.getItem(key);
+      if (!raw) {
+        return null;
+      }
+      const entry = JSON.parse(raw);
+      if (entry?.v === 1 && entry?.schema) {
+        return entry.schema;
+      }
+      return null;
+    } catch {
+      return null;
+    }
+  }
+
+  /** 防抖保存草稿 */
+  private scheduleDraftSave(): void {
+    if (this.draftTimer) {
+      clearTimeout(this.draftTimer);
+    }
+    this.draftTimer = setTimeout(() => this.saveDraft(), this.draftDebounce);
+  }
+
+  /** 立即保存草稿 */
+  private saveDraft(): void {
+    if (!this.draftKey) {
+      return;
+    }
+    try {
+      const entry = { v: 1, ts: Date.now(), schema: this.store.schema };
+      sessionStorage.setItem(this.draftKey, JSON.stringify(entry));
+    } catch (e) {
+      console.warn("[Editor] 草稿保存失败:", e);
+    }
+  }
+
+  /** 清除草稿（新建页面时调用） */
+  clearDraft(): void {
+    if (!this.draftKey) {
+      return;
+    }
+    try {
+      sessionStorage.removeItem(this.draftKey);
+    } catch {
+      /* ignore */
+    }
   }
 
   // --------------------- Schema 操作（高层 API） ---------------------
