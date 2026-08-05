@@ -17,15 +17,16 @@ const LEVEL_ORDER: Record<LogLevel, number> = {
   error: 4,
 };
 
+/** 各级别样式（用 CSS light-dark() 自动适配深/浅色主题） */
 const LEVEL_STYLES: Record<LogLevel, string> = {
-  debug: "color:#909399;font-weight:bold",
-  log: "color:#303133",
-  info: "color:#409eff;font-weight:bold",
-  warn: "color:#e6a23c;font-weight:bold",
-  error: "color:#f56c6c;font-weight:bold",
+  debug: "font-weight:bold;color:light-dark(#909399,#888f98)",
+  log: "color:light-dark(#303133,#d4d4d4)",
+  info: "font-weight:bold;color:light-dark(#409eff,#5aa9ff)",
+  warn: "font-weight:bold;color:light-dark(#e6a23c,#f0a93e)",
+  error: "font-weight:bold;color:light-dark(#f56c6c,#f87171)",
 };
 
-const BIZ_STYLE = "color:#67c23a;font-weight:bold";
+const BIZ_STYLE = "font-weight:bold;color:light-dark(#67c23a,#5bb86a)";
 
 /** 默认级别（生产） */
 const DEFAULT_LEVEL: LogLevel = "log";
@@ -85,7 +86,6 @@ export class Logger {
 
   /** 格式化输出 */
   private output(level: LogLevel, args: any[]): void {
-    console.log("this.shouldLog(level) = ", this.shouldLog(level), args);
     if (!this.shouldLog(level)) {
       return;
     }
