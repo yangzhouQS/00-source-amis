@@ -25,7 +25,6 @@ export const DocLibraryLink = defineComponent({
         class={ns.b()}
         title="组件文档库"
         onClick={openDoc}
-        style={{ cursor: "pointer" }}
       >
         <el-icon size={18}>
           <Link />

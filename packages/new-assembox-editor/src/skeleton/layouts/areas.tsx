@@ -4,11 +4,24 @@ import type { Area, Skeleton } from "../skeleton";
  * 读取 skeleton.<area>.container.items 响应式渲染
  * TopArea 支持 left/center/right 三槽；LeftFloatPane 接入 FocusTracker 失焦关闭
  */
-import { computed, defineComponent, inject, PropType, ref } from "vue";
+import { computed, defineComponent, h, inject, PropType, ref } from "vue";
 import { useAssemNamespace } from "../../hooks/use-assem-namespace";
 import { useFocusOut } from "../focus-tracker";
 
 const ns = useAssemNamespace("workbench");
+const dockNs = useAssemNamespace("dock");
+
+/**
+ * leftArea 中 Widget 类型（非 PanelDock）的 item 补 dock 包裹，
+ * 使其与 PanelDock 图标视觉一致（居中 + 尺寸 + hover 样式）。
+ * PanelDock 自带 .lc-assem-dock 包裹（widgets.ts），无需重复。
+ */
+function wrapDockContent(w: any): any {
+  if (w.type === "PanelDock" || w.type === "Dock") {
+    return w.content;
+  }
+  return h("div", { class: dockNs.b() }, [w.content]);
+}
 
 /** 顶部区域（left/center/right 三槽） */
 export const TopArea = defineComponent({
@@ -59,10 +72,11 @@ export const LeftArea = defineComponent({
       const top: any[] = [];
       const bottom: any[] = [];
       props.area.container.items.forEach((w) => {
+        const content = wrapDockContent(w);
         if ((w.config.props?.align ?? "top") === "top") {
-          top.push(w.content);
+          top.push(content);
         } else {
-          bottom.push(w.content);
+          bottom.push(content);
         }
       });
       return { top, bottom };
