@@ -28,7 +28,7 @@ const LEVEL_STYLES: Record<LogLevel, string> = {
 const BIZ_STYLE = "color:#67c23a;font-weight:bold";
 
 /** 默认级别（生产） */
-const DEFAULT_LEVEL: LogLevel = "warn";
+const DEFAULT_LEVEL: LogLevel = "log";
 
 /** 从 URL query 解析日志配置 */
 function parseLogConfig(): { level: LogLevel; bizMatch: string | null } {
@@ -85,6 +85,7 @@ export class Logger {
 
   /** 格式化输出 */
   private output(level: LogLevel, args: any[]): void {
+    console.log("this.shouldLog(level) = ", this.shouldLog(level), args);
     if (!this.shouldLog(level)) {
       return;
     }

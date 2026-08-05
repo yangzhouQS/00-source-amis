@@ -190,6 +190,8 @@ export class Editor {
     this.di.register(TOKENS.ACTION_REGISTRY, this.actionRegistry);
     this.di.register(TOKENS.SKELETON, this.skeleton);
     this.di.register(TOKENS.SELECTION, this.selection);
+
+    this.logger.log("hello");
   }
 
   /** 连接拖拽引擎：投放执行 + 拖拽态副作用 */
