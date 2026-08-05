@@ -5,9 +5,12 @@ import type { PropConfig } from "../../schema/types";
  * Renders child fields from config.items; child setters resolved via SetterRegistry
  */
 import { defineComponent, h } from "vue";
+import { useAssemNamespace } from "../../hooks/use-assem-namespace";
 import { useSetterCtx } from "../base";
 import { isFieldHidden, resolveSetter } from "../resolve";
-import "./../composite.less";
+import "./object-setter-style.less";
+
+const ns = useAssemNamespace("object-setter");
 
 export const ObjectSetter = defineComponent({
   name: "ObjectSetter",
@@ -30,7 +33,7 @@ export const ObjectSetter = defineComponent({
         return <el-empty description="No field config" imageSize={50} />;
       }
       return (
-        <div class="assem-object-setter">
+        <div class={ns.b()}>
           <el-form labelWidth="90px" size="small" disabled={props.disabled}>
             {items.map((prop) => {
               if (isFieldHidden(prop, value)) {
@@ -57,7 +60,7 @@ export const ObjectSetter = defineComponent({
                         })
                       )
                     : (
-                        <span class="assem-setter-missing">
+                        <span class="lc-assem-setter-missing">
                           no setter:
                           {" "}
                           {resolved?.setterName ?? "?"}

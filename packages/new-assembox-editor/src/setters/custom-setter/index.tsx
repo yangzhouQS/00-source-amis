@@ -4,6 +4,7 @@
 import { defineComponent, h } from "vue";
 
 import { useAssemNamespace } from "../../hooks/use-assem-namespace";
+import "./custom-setter-style.less";
 
 const ns = useAssemNamespace("custom-setter");
 

@@ -1,0 +1,152 @@
+/* 全局样式：CSS 变量、基础 reset、跨组件共享的原语（panel / dock / live-editing / setter-missing） */
+
+:root {
+  --font-family: "PingFang SC", "Microsoft YaHei", Helvetica, Arial, sans-serif;
+  --font-size-label: 14px;
+  --font-size-text: 12px;
+  --global-border-radius: 3px;
+  --left-area-width: 48px;
+  --right-area-width: 300px;
+  --top-area-height: 48px;
+  --dock-fixed-pane-width: 280px;
+  --color-brand: #0079f2;
+  --color-brand-light: rgba(0, 121, 242, 0.15);
+  --color-pane-background: #ffffff;
+  --color-text: #303133;
+  --color-border: #e4e7ed;
+  --color-hover: #f5f7fa;
+}
+
+html,
+body {
+  position: relative;
+  height: 100%;
+  padding: 0;
+  margin: 0;
+  overflow: hidden;
+  font-family: var(--font-family);
+  color: var(--color-text);
+  background-color: #edeff3;
+}
+
+#app {
+  height: 100%;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+.d-none,
+.is-hidden {
+  display: none !important;
+}
+
+/* Panel 容器原语（多处面板复用） */
+.lc-assem-panel {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  .lc-assem-panel__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    height: 40px;
+    padding: 0 12px;
+    border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0;
+
+    .lc-assem-panel__title {
+      font-size: var(--font-size-label);
+      font-weight: 600;
+    }
+
+    .lc-assem-panel__ops {
+      display: flex;
+      gap: 2px;
+    }
+
+    .lc-assem-panel__op {
+      padding: 2px 6px;
+      font-size: 12px;
+      line-height: 1;
+      cursor: pointer;
+      color: #909399;
+      background: transparent;
+      border: none;
+      border-radius: 3px;
+
+      &:hover {
+        color: var(--color-brand);
+        background: var(--color-hover);
+      }
+    }
+  }
+
+  .lc-assem-panel__body {
+    flex: 1;
+    overflow: auto;
+    min-height: 0;
+  }
+}
+
+/* 原地文本编辑态 */
+.lc-assem-live-editing {
+  cursor: text;
+  outline: none;
+  box-shadow: 0 0 0 2px rgb(102, 188, 92);
+  user-select: text;
+  border-radius: 2px;
+}
+
+/* Dock 图标按钮 */
+.lc-assem-dock {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--left-area-width);
+  height: var(--left-area-width);
+  cursor: pointer;
+  color: #606266;
+  transition: all 0.2s;
+
+  &:hover {
+    color: var(--color-brand);
+    background-color: var(--color-hover);
+  }
+
+  &.lc-assem-dock--active {
+    color: var(--color-brand);
+    background-color: var(--color-brand-light);
+  }
+
+  &.is-disabled {
+    opacity: 0.4;
+    cursor: not-allowed;
+  }
+
+  .lc-assem-dock__inner {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 2px;
+
+    .lc-assem-dock__label {
+      font-size: 10px;
+      line-height: 1;
+    }
+  }
+}
+
+/* Setter 缺失提示（跨 setter 共享） */
+.lc-assem-setter-missing {
+  font-size: 12px;
+  color: var(--el-color-danger, #f56c6c);
+}
+
+/* 兼容：部分历史组件使用无 lc- 前缀的写法 */
+.assem-setter-missing {
+  font-size: 12px;
+  color: var(--el-color-danger, #f56c6c);
+}

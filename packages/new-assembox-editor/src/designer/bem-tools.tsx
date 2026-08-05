@@ -23,7 +23,7 @@ import {
 } from "vue";
 import { useAssemNamespace } from "../hooks/use-assem-namespace";
 import { Tip } from "../skeleton/widgets/tip";
-import "./bem-tools.less";
+import "./bem-tools-style.less";
 
 const ns = useAssemNamespace("bem-tools");
 

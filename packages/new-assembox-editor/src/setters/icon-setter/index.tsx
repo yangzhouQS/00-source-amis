@@ -5,7 +5,7 @@ import * as ElementPlusIconsVue from "@element-plus/icons-vue";
  */
 import { computed, defineComponent, h, ref } from "vue";
 import { useAssemNamespace } from "../../hooks/use-assem-namespace";
-import "./style.less";
+import "./icon-setter-style.less";
 
 const ns = useAssemNamespace("icon-picker");
 
@@ -130,7 +130,7 @@ export const IconSetter = defineComponent({
         disabled={props.disabled}
         placeholder="Select icon"
         clearable
-        class="assem-icon-setter"
+        class={ns.b()}
         onUpdate:modelValue={(v: string) => props.onChange(v ?? "")}
       >
         {{

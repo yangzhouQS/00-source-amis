@@ -1,0 +1,43 @@
+/* ArraySetter */
+.lc-assem-array-setter {
+  width: 100%;
+
+  .lc-assem-array-setter__list {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  .lc-assem-array-setter__item {
+    display: flex;
+    align-items: flex-start;
+    gap: 6px;
+    padding: 6px;
+    background: var(--el-fill-color-light);
+    border: 1px solid var(--el-border-color-lighter);
+    border-radius: 4px;
+  }
+
+  .lc-assem-array-setter__item-handle {
+    display: flex;
+    flex-shrink: 0;
+    align-items: center;
+    align-self: stretch;
+    font-size: 14px;
+    color: #909399;
+    cursor: grab;
+  }
+
+  .lc-assem-array-setter__item-body {
+    flex: 1;
+    min-width: 0;
+  }
+
+  .lc-assem-array-setter__item-actions {
+    flex-shrink: 0;
+  }
+
+  .lc-assem-array-setter__add {
+    margin-top: 6px;
+  }
+}

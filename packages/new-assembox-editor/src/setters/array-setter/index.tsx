@@ -5,8 +5,11 @@ import { Delete, Plus, Rank } from "@element-plus/icons-vue";
  * ArraySetter - array editor (add/remove/sort items, itemSetter for children)
  */
 import { defineComponent, h, ref } from "vue";
+import { useAssemNamespace } from "../../hooks/use-assem-namespace";
 import { useSetterCtx } from "../base";
-import "./../composite.less";
+import "./array-setter-style.less";
+
+const ns = useAssemNamespace("array-setter");
 
 interface ListItemConfig {
   setter?: string;
@@ -100,23 +103,23 @@ export const ArraySetter = defineComponent({
         = props.itemMaxLength !== undefined && list.length >= props.itemMaxLength;
 
       return (
-        <div class="assem-array-setter">
+        <div class={ns.b()}>
           {list.length
             ? (
-                <div class="assem-array-list">
+                <div class={ns.e("list")}>
                   {list.map((item: any, index: number) => (
                     <div
                       key={index}
-                      class="assem-array-item"
+                      class={ns.e("item")}
                       draggable={!props.disabled}
                       onDragstart={() => onDragStart(index)}
                       onDragover={(e: DragEvent) => e.preventDefault()}
                       onDrop={() => onDrop(index)}
                     >
-                      <div class="assem-array-item-handle">
+                      <div class={ns.e("item-handle")}>
                         <Rank />
                       </div>
-                      <div class="assem-array-item-body">
+                      <div class={ns.e("item-body")}>
                         {ItemComp
                           ? (
                               h(ItemComp, {
@@ -127,14 +130,14 @@ export const ArraySetter = defineComponent({
                               })
                             )
                           : (
-                              <span class="assem-setter-missing">
+                              <span class="lc-assem-setter-missing">
                                 no setter:
                                 {" "}
                                 {setterName}
                               </span>
                             )}
                       </div>
-                      <div class="assem-array-item-actions">
+                      <div class={ns.e("item-actions")}>
                         <el-button
                           link
                           disabled={props.disabled}
@@ -155,7 +158,7 @@ export const ArraySetter = defineComponent({
               )}
           {!reachedMax && !props.disabled && (
             <el-button
-              class="assem-array-add"
+              class={ns.e("add")}
               type="primary"
               link
               onClick={addItem}

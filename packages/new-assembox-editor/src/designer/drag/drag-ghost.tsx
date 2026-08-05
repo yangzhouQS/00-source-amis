@@ -6,7 +6,7 @@ import type { DragObject } from "./types";
  */
 import { defineComponent, onBeforeUnmount, onMounted, PropType, ref } from "vue";
 import { useAssemNamespace } from "../../hooks/use-assem-namespace";
-import "./drag-ghost.less";
+import "./drag-ghost-style.less";
 
 const ns = useAssemNamespace("drag-ghost");
 

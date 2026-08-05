@@ -3,6 +3,11 @@
  */
 import { defineComponent } from "vue";
 
+import { useAssemNamespace } from "../../hooks/use-assem-namespace";
+import "./label-setter-style.less";
+
+const ns = useAssemNamespace("label-setter");
+
 export const LabelSetter = defineComponent({
   name: "LabelSetter",
   props: {
@@ -11,7 +16,7 @@ export const LabelSetter = defineComponent({
   },
   setup(props) {
     return () => (
-      <span class="assem-label-setter">{String(props.value ?? "")}</span>
+      <span class={ns.b()}>{String(props.value ?? "")}</span>
     );
   },
 });

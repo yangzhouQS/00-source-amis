@@ -5,7 +5,7 @@ import { computed, defineComponent } from "vue";
 
 import { useAssemNamespace } from "../../hooks/use-assem-namespace";
 import { useSetterCtx } from "../base";
-import "./style-setter.less";
+import "./style-setter-style.less";
 
 const ns = useAssemNamespace("style-setter");
 

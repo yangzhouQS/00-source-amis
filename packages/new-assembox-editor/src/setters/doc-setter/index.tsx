@@ -3,6 +3,11 @@
  */
 import { defineComponent } from "vue";
 
+import { useAssemNamespace } from "../../hooks/use-assem-namespace";
+import "./doc-setter-style.less";
+
+const ns = useAssemNamespace("doc-setter");
+
 interface DocItem {
   docTitle: string;
   docUrl: string;
@@ -15,12 +20,12 @@ export const DocSetter = defineComponent({
   },
   setup(props) {
     const renderDocItem = (item: DocItem) => (
-      <div class="assem-doc-item">
+      <div class={ns.e("item")}>
         <a
           href={item.docUrl}
           target="_blank"
           rel="noopener"
-          class="assem-doc-link"
+          class={ns.e("link")}
         >
           {item.docTitle}
         </a>
@@ -31,7 +36,7 @@ export const DocSetter = defineComponent({
         return null;
       }
       const list = Array.isArray(props.value) ? props.value : [props.value];
-      return <div class="assem-doc-setter">{list.map(renderDocItem)}</div>;
+      return <div class={ns.b()}>{list.map(renderDocItem)}</div>;
     };
   },
 });

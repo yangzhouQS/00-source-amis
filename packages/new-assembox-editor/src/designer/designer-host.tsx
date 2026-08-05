@@ -10,7 +10,7 @@ import { computed, defineComponent, onBeforeUnmount, onMounted, PropType, ref } 
 import { useAssemNamespace } from "../hooks/use-assem-namespace";
 import { BemTools } from "./bem-tools";
 import { CanvasSensor } from "./drag/canvas-sensor";
-import "./designer-host.less";
+import "./designer-host-style.less";
 
 const ns = useAssemNamespace("designer");
 

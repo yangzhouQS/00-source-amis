@@ -2,6 +2,8 @@
  * new-assembox-editor 包入口
  */
 
+import "./styles/global.less";
+
 export { registerBuiltinActions } from "./actions/builtin-actions";
 export { DIContainer, token } from "./core/di-container";
 export type { InjectionToken } from "./core/di-container";

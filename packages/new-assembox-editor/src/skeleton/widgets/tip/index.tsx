@@ -5,7 +5,10 @@ import type { PropType } from "vue";
  * 支持 top/right/bottom/left 四方向 + 淡入动画
  */
 import { defineComponent, ref, Teleport } from "vue";
-import "./tip.less";
+import { useAssemNamespace } from "../../../hooks/use-assem-namespace";
+import "./tip-style.less";
+
+const ns = useAssemNamespace("tip");
 
 export const Tip = defineComponent({
   name: "AssemTip",
@@ -83,7 +86,7 @@ export const Tip = defineComponent({
           ? (
               <Teleport to="body">
                 <div
-                  class={["assem-tip", `assem-tip--${props.placement}`]}
+                  class={[ns.b(), ns.m(props.placement)]}
                   style={pos.value}
                 >
                   {props.content}

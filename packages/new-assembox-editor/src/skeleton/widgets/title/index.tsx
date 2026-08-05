@@ -5,8 +5,11 @@ import type { PropType } from "vue";
  * 支持字符串 `{label}` 或对象 `{label, icon, tip, description, className}`
  */
 import { defineComponent } from "vue";
+import { useAssemNamespace } from "../../../hooks/use-assem-namespace";
 import { Tip } from "../tip";
-import "./title.less";
+import "./title-style.less";
+
+const ns = useAssemNamespace("title");
 
 export interface TitleConfig {
   label?: string;
@@ -41,9 +44,9 @@ export const Title = defineComponent({
       const tip = t.tip || t.description;
       const inner = (
         <span
-          class={["assem-title", t.className, { "assem-title--has-tip": !!tip }]}
+          class={[ns.b(), t.className, { [ns.m("has-tip")]: !!tip }]}
         >
-          {slots.default?.() ?? <span class="assem-title__txt">{t.label}</span>}
+          {slots.default?.() ?? <span class={ns.e("txt")}>{t.label}</span>}
         </span>
       );
 

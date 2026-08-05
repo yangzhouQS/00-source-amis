@@ -6,7 +6,7 @@ import { ElMessage } from "element-plus";
  */
 import { computed, defineComponent, ref } from "vue";
 import { useAssemNamespace } from "../../hooks/use-assem-namespace";
-import "./function-setter.less";
+import "./function-setter-style.less";
 
 const ns = useAssemNamespace("function-setter");
 

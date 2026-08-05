@@ -18,7 +18,7 @@ import { ElMessage } from "element-plus";
  */
 import { computed, defineComponent, ref, watch } from "vue";
 import { useAssemNamespace } from "../../hooks/use-assem-namespace";
-import "./js-function-setter.less";
+import "./js-function-setter-style.less";
 
 const ns = useAssemNamespace("js-function-setter");
 
@@ -203,11 +203,11 @@ export const JSFunctionSetter = defineComponent({
 
     const renderEditor = (fullHeight?: number) => (
       <div
-        class="assem-js-function-setter__editor"
+        class={ns.e("editor")}
         style={fullHeight ? { height: `${fullHeight}px` } : undefined}
       >
         <textarea
-          class="assem-js-function-setter__code-textarea"
+          class={ns.e("code-textarea")}
           disabled={props.disabled}
           value={body.value}
           onInput={(e: Event) =>
@@ -218,11 +218,11 @@ export const JSFunctionSetter = defineComponent({
     );
 
     const renderParams = () => (
-      <div class="assem-js-function-setter__params">
-        <div class="assem-js-function-setter__params-label">Params:</div>
-        <div class="assem-js-function-setter__params-list">
+      <div class={ns.e("params")}>
+        <div class={ns.e("params-label")}>Params:</div>
+        <div class={ns.e("params-list")}>
           {params.value.map((p, i) => (
-            <div class="assem-js-function-setter__param-item" key={i}>
+            <div class={ns.e("param-item")} key={i}>
               <el-input
                 modelValue={p}
                 size="small"
@@ -250,7 +250,7 @@ export const JSFunctionSetter = defineComponent({
     );
 
     const renderTestRun = () => (
-      <div class="assem-js-function-setter__test">
+      <div class={ns.e("test")}>
         <el-form-item label="Mock args">
           <el-input
             type="textarea"
@@ -262,7 +262,7 @@ export const JSFunctionSetter = defineComponent({
             class={ns.e("mock-input")}
           />
         </el-form-item>
-        <div class="assem-js-function-setter__test-actions">
+        <div class={ns.e("test-actions")}>
           <el-button
             size="small"
             type="primary"
@@ -284,18 +284,18 @@ export const JSFunctionSetter = defineComponent({
             }
             showIcon
             closable={false}
-            class="assem-js-function-setter__test-result"
+            class={ns.e("test-result")}
           />
         )}
       </div>
     );
 
     return () => (
-      <div class="assem-js-function-setter">
-        <div class="assem-js-function-setter__signature">{signature.value}</div>
+      <div class={ns.b()}>
+        <div class={ns.e("signature")}>{signature.value}</div>
         {renderParams()}
         {renderEditor(props.height)}
-        <div class="assem-js-function-setter__actions">
+        <div class={ns.e("actions")}>
           <el-button
             size="small"
             type="primary"
@@ -325,7 +325,7 @@ export const JSFunctionSetter = defineComponent({
             destroyOnClose
             appendToBody
           >
-            <div class="assem-js-function-setter__fullscreen-body">
+            <div class={ns.e("fullscreen-body")}>
               {renderParams()}
               {renderEditor(360)}
             </div>

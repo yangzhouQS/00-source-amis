@@ -3,8 +3,11 @@
  */
 import { defineComponent, h, ref, watch } from "vue";
 
+import { useAssemNamespace } from "../../hooks/use-assem-namespace";
 import { useSetterCtx } from "../base";
-import "./../composite.less";
+import "./mixed-setter-style.less";
+
+const ns = useAssemNamespace("mixed-setter");
 
 interface SetterOption {
   name: string;
@@ -79,8 +82,8 @@ export const MixedSetter = defineComponent({
       const SetterComp = cur ? ctx?.setterRegistry.get(cur.name) : undefined;
 
       return (
-        <div class="assem-mixed-setter">
-          <div class="assem-mixed-setter-body">
+        <div class={ns.b()}>
+          <div class={ns.e("body")}>
             {SetterComp && cur
               ? (
                   h(SetterComp, {
@@ -91,7 +94,7 @@ export const MixedSetter = defineComponent({
                   })
                 )
               : (
-                  <span class="assem-setter-missing">no setter available</span>
+                  <span class="lc-assem-setter-missing">no setter available</span>
                 )}
           </div>
           {list.length > 1 && (
@@ -106,7 +109,7 @@ export const MixedSetter = defineComponent({
               }}
             >
               {{
-                default: () => <span class="assem-mixed-trigger">&#8646;</span>,
+                default: () => <span class={ns.e("trigger")}>&#8646;</span>,
                 dropdown: () => (
                   <el-dropdown-menu>
                     {list.map(s => (

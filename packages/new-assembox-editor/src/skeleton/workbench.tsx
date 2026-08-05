@@ -17,7 +17,7 @@ import {
   RightArea,
   TopArea,
 } from "./layouts/areas";
-import "./styles/workbench.less";
+import "./workbench-style.less";
 
 export interface WorkbenchProps {
   skeleton: Skeleton;
