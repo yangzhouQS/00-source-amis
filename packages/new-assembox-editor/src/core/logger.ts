@@ -27,35 +27,6 @@ const LEVEL_STYLES: Record<LogLevel, string> = {
 };
 
 const BIZ_STYLE = "font-weight:bold;color:light-dark(#67c23a,#5bb86a)";
-const LOC_STYLE = "color:light-dark(#909399,#6b7280);font-size:11px";
-
-/**
- * 从调用栈提取真实调用方的 文件:行号。
- *
- * 栈帧顺序：Error → getCallerLocation → output → debug/log/... → 真实调用方
- * 跳过 logger.ts 自身的帧，取第一个外部帧。
- */
-function getCallerLocation(): string {
-  const stack = new Error("trace").stack ?? "";
-  const lines = stack.split("\n");
-  for (const line of lines) {
-    if (!line.includes(".ts") && !line.includes(".tsx")) {
-      continue;
-    }
-    // 跳过 logger.ts 自身
-    if (line.includes("logger.ts")) {
-      continue;
-    }
-    // 提取 最后一段 path:line:col（兼容 Chrome/Edge/Firefox 格式）
-    // Chrome:  "    at foo (http://host/src/xxx.ts:42:9)"
-    // Firefox: "foo@http://host/src/xxx.ts:42:9"
-    const match = line.match(/([\w.-]+\.(?:ts|tsx)):(\d+)/);
-    if (match) {
-      return `${match[1]}:${match[2]}`;
-    }
-  }
-  return "";
-}
 
 /** 默认级别（生产） */
 const DEFAULT_LEVEL: LogLevel = "log";
@@ -113,27 +84,14 @@ export class Logger {
     return LEVEL_ORDER[target] >= LEVEL_ORDER[this.level];
   }
 
-  /**
-   * 格式化并输出日志。
-   *
-   * 输出格式：[LEVEL] bizName (file.ts:42)  message...
-   * 前缀含三级样式：级别色 → bizName 色 → 位置灰色。
-   *
-   * 注意：DevTools 源码定位仍指向 logger.ts（浏览器限制），
-   * 但日志文本中的 (file.ts:42) 提供了真实调用方位置，
-   * 且 DevTools Call Stack 面板可直接跳到调用方。
-   */
+  /** 格式化输出 */
   private output(level: LogLevel, args: any[]): void {
     if (!this.shouldLog(level)) {
       return;
     }
-    const loc = getCallerLocation();
-    const locPart = loc ? `%c(${loc}) ` : "";
-    const locStyle = loc ? LOC_STYLE : "";
-    const prefix = `%c[${level.toUpperCase()}]%c ${this.bizName} ${locPart}`;
-    const fn = (console as any)[level] ?? console.log;
-    // 直接调用 console[level]（非 output 间接），缩短调用栈
-    fn(prefix, LEVEL_STYLES[level], BIZ_STYLE, locStyle, ...args);
+    const prefix = `%c[${level.toUpperCase()}]%c ${this.bizName}`;
+    const fn = console[level] ?? console.log;
+    fn.call(console, prefix, LEVEL_STYLES[level], BIZ_STYLE, ...args);
   }
 
   debug(...args: any[]): void {
