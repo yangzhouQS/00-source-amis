@@ -1,0 +1,3911 @@
+{
+  "uiSkeleton": {
+    "orderList": {
+      "viewsProps": {
+        "planeOptions": {
+          "__nodeName": "root",
+          "__nodeId": "FlexBox::root",
+          "__nodeType": "renderNode",
+          "__nodeEvent": {},
+          "__nodeOptions": {
+            "renderType": "FlexBox",
+            "isRow": false,
+            "itemNum": 4,
+            "width": "100%",
+            "height": "100%",
+            "itemConfig": [
+              {
+                "isFixed": true,
+                "size": "",
+                "paddingSize": "large",
+                "clearPadding": [
+                  "bottom"
+                ],
+                "isHidden": true,
+                "contentType": "container",
+                "defaultSlot": {
+                  "__nodeName": "navigation-bar2",
+                  "__nodeId": "NavigationBar::navigation-bar2",
+                  "__nodeType": "renderNode",
+                  "__nodeEvent": {},
+                  "__nodeOptions": {
+                    "renderType": "NavigationBar",
+                    "routers": [
+                      {
+                        "to": "",
+                        "title": "订单列表"
+                      }
+                    ]
+                  },
+                  "__nodeStyle": {}
+                }
+              },
+              {
+                "isFixed": true,
+                "size": "",
+                "paddingSize": "large",
+                "clearPadding": [
+                  "bottom"
+                ],
+                "isHidden": false,
+                "contentType": "container",
+                "defaultSlot": {
+                  "__nodeName": "filter-toolbar",
+                  "__nodeId": "Toolbar::filter-toolbar",
+                  "__nodeType": "renderNode",
+                  "__nodeEvent": {},
+                  "__nodeOptions": {
+                    "renderType": "Toolbar",
+                    "divider": false,
+                    "border": false,
+                    "paddingSize": "base",
+                    "filterGutter": 8,
+                    "toolSlot": [
+                      {
+                        "__nodeName": "btn-search",
+                        "__nodeId": "Button::btn-search",
+                        "__nodeType": "renderNode",
+                        "__nodeEvent": {
+                          "onClick": {
+                            "enabled": true,
+                            "fn": "function(ctx) {  ctx.$sharedFns.searchTable(ctx); }"
+                          }
+                        },
+                        "__nodeOptions": {
+                          "renderType": "Button",
+                          "content": "查询",
+                          "plain": true,
+                          "icon": "Search"
+                        }
+                      }
+                    ],
+                    "filterSlot": [
+                      {
+                        "__nodeName": "filter-organization",
+                        "__nodeId": "FilterItem::filter-organization",
+                        "__nodeType": "renderNode",
+                        "__nodeEvent": {},
+                        "__nodeOptions": {
+                          "renderType": "FilterItem",
+                          "label": "组织架构",
+                          "labelWidth": "80px",
+                          "layout": {
+                            "span": 4
+                          },
+                          "defaultSlot": {
+                            "__nodeName": "select-organization",
+                            "__nodeId": "Select::select-organization",
+                            "__nodeType": "renderNode",
+                            "__nodeEvent": {},
+                            "__nodeOptions": {
+                              "renderType": "Select",
+                              "modelName": "receiveFilter.singleTable.orgId",
+                              "placeholder": "请选择",
+                              "itemData": [
+                                {
+                                  "label": "测试项目部2-11",
+                                  "value": 4645996131024896
+                                },
+                                {
+                                  "label": "测试项目3",
+                                  "value": 5394338980037632
+                                }
+                              ],
+                              "defaultProps": {
+                                "label": "label",
+                                "value": "value"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "__nodeName": "filter-date",
+                        "__nodeId": "FilterItem::filter-date",
+                        "__nodeType": "renderNode",
+                        "__nodeEvent": {},
+                        "__nodeOptions": {
+                          "renderType": "FilterItem",
+                          "label": "选择账期",
+                          "labelWidth": "80px",
+                          "layout": {
+                            "span": 4
+                          },
+                          "defaultSlot": {
+                            "__nodeName": "date-picker",
+                            "__nodeId": "DatePicker::date-picker",
+                            "__nodeType": "renderNode",
+                            "__nodeEvent": {},
+                            "__nodeOptions": {
+                              "renderType": "DatePicker",
+                              "modelName": "receiveFilter.singleTable.orderDate",
+                              "disabled": false,
+                              "size": "default",
+                              "editable": true,
+                              "clearable": true,
+                              "type": "date",
+                              "prefixIcon": "Date",
+                              "clearIcon": "CircleClose",
+                              "placeholder": "请选择日期",
+                              "format": "YYYY-MM-DD",
+                              "valueFormat": "YYYY-MM-DD",
+                              "display": true,
+                              "permissionSetting": ""
+                            },
+                            "__nodeStyle": {
+                              "width": "100%"
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "__nodeName": "filter-settlement-unit",
+                        "__nodeId": "FilterItem::filter-settlement-unit",
+                        "__nodeType": "renderNode",
+                        "__nodeEvent": {},
+                        "__nodeOptions": {
+                          "renderType": "FilterItem",
+                          "label": "结算单位",
+                          "labelWidth": "80px",
+                          "layout": {
+                            "span": 4
+                          },
+                          "defaultSlot": {
+                            "__nodeName": "select-settlement-unit",
+                            "__nodeId": "Select::select-settlement-unit",
+                            "__nodeType": "renderNode",
+                            "__nodeEvent": {},
+                            "__nodeOptions": {
+                              "renderType": "Select",
+                              "modelName": "receiveFilter.singleTable.supplierName",
+                              "placeholder": "请选择",
+                              "clearable": true,
+                              "itemData": [
+                                {
+                                  "label": "中国商用飞机有限责任公司",
+                                  "value": "中国商用飞机有限责任公司"
+                                },
+                                {
+                                  "label": "青岛恩图科技股份有限公司",
+                                  "value": "青岛恩图科技股份有限公司"
+                                },
+                                {
+                                  "label": "上海四个么文化科技有限公司",
+                                  "value": "上海四个么文化科技有限公司"
+                                }
+                              ],
+                              "defaultProps": {
+                                "label": "label",
+                                "value": "value"
+                              }
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "__nodeName": "filter-doc-number",
+                        "__nodeId": "FilterItem::filter-doc-number",
+                        "__nodeType": "renderNode",
+                        "__nodeEvent": {},
+                        "__nodeOptions": {
+                          "renderType": "FilterItem",
+                          "label": "单据编号",
+                          "labelWidth": "80px",
+                          "layout": {
+                            "span": 4
+                          },
+                          "defaultSlot": {
+                            "__nodeName": "input-doc-number",
+                            "__nodeId": "Input::input-doc-number",
+                            "__nodeType": "renderNode",
+                            "__nodeEvent": {},
+                            "__nodeOptions": {
+                              "renderType": "Input",
+                              "modelName": "receiveFilter.singleTable.orderCode",
+                              "placeholder": "请输入"
+                            }
+                          }
+                        }
+                      }
+                    ],
+                    "defaultSlot": {
+                      "__nodeName": "filter-flexline",
+                      "__nodeId": "FlexLine::filter-flexline",
+                      "__nodeType": "renderNode",
+                      "__nodeEvent": {},
+                      "__nodeOptions": {
+                        "renderType": "FlexLine",
+                        "defaultSlot": [
+                          {
+                            "__nodeName": "btn-add",
+                            "__nodeId": "Button::btn-add",
+                            "__nodeType": "renderNode",
+                            "__nodeEvent": {
+                              "onClick": {
+                                "enabled": true,
+                                "fn": "function(ctx) { console.log('添加',ctx); if (ctx.$globalVars.$router) {   ctx.$dataModels.state.singleTable.isEdit = false; ctx.$globalVars.$router.push('/order-edit'); } }"
+                              }
+                            },
+                            "__nodeOptions": {
+                              "renderType": "Button",
+                              "content": "添加",
+                              "type": "primary",
+                              "plain": false,
+                              "disabled": false,
+                              "icon": "Plus"
+                            }
+                          },
+                          {
+                            "__nodeName": "btn-edit",
+                            "__nodeId": "Button::btn-edit",
+                            "__nodeType": "renderNode",
+                            "__nodeEvent": {
+                              "onClick": {
+                                "enabled": true,
+                                "fn": "function(ctx) { const selectedRow = ctx.$dataModels.state.singleTable.selectedRow; if (selectedRow) { ctx.$dataModels.state.singleTable.isEdit = true; if (ctx.$globalVars.$router) { ctx.$globalVars.$router.push(`/order-edit?id=${selectedRow.id}&orgId=${selectedRow.orgId}`); }} }"
+                              }
+                            },
+                            "__nodeOptions": {
+                              "renderType": "Button",
+                              "content": "修改",
+                              "plain": true,
+                              "disabled": false,
+                              "icon": "Edit"
+                            }
+                          },
+                          {
+                            "__nodeName": "btn-submit",
+                            "__nodeId": "Button::btn-submit",
+                            "__nodeType": "renderNode",
+                            "__nodeEvent": {
+                              "onClick": {
+                                "enabled": true,
+                                "fn": "async function(ctx) { var s = ctx.$dataModels.state.singleTable.selectedRow; if (!s || !s.id) { ctx.$vueGlobal.$message.warning('请先点击表格中的一行有效数据'); return; } ctx.$vueGlobal.$msgbox.confirm('确认提交订单吗？', '确认提交', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' }).then(async () => { await ctx.$requestFns.toggleStatus({ id: s.id,orgId:s.orgId,isAudit:1}); ctx.$sharedFns.searchTable(ctx); ctx.$vueGlobal.$message.success('提交成功'); }).catch(() => { ctx.$vueGlobal.$message.info('取消提交'); }); }"
+                              }
+                            },
+                            "__nodeOptions": {
+                              "renderType": "Button",
+                              "plain": true,
+                              "type": "success",
+                              "disabled": true,
+                              "icon": "Check",
+                              "content": "提交"
+                            }
+                          },
+                          {
+                            "__nodeId": "rawHtml_lntkjyq0",
+                            "__nodeName": "rawHtml",
+                            "__nodeType": "baseNode",
+                            "__nodeOptions": {
+                              "renderType": "RawHtml",
+                              "content": "<span></span>",
+                              "display": true,
+                              "permissionSetting": "",
+                              "modelName": ""
+                            },
+                            "__nodeEvent": {},
+                            "__nodeKey": "nodeKey_rawHtml_lntkjyq0",
+                            "__description": "",
+                            "__nodeStyle": {
+                              "width": "10px"
+                            }
+                          },
+                          {
+                            "__nodeName": "btn-cancel-submit",
+                            "__nodeId": "Button::btn-cancel-submit",
+                            "__nodeType": "renderNode",
+                            "__nodeEvent": {
+                              "onClick": {
+                                "enabled": true,
+                                "fn": "async function(ctx) { var s = ctx.$dataModels.state.singleTable.selectedRow; if (!s || !s.id) { ctx.$vueGlobal.$message.warning('请先点击表格中的一行有效数据'); return; } ctx.$vueGlobal.$msgbox.confirm('确认撤销提交订单吗？', '确认撤销', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' }).then(async () => { await ctx.$requestFns.toggleStatus({ id: s.id,orgId:s.orgId ,isAudit:O}); ctx.$sharedFns.searchTable(ctx); ctx.$vueGlobal.$message.success('撤销成功'); }).catch(() => { ctx.$vueGlobal.$message.info('取消撤销'); }); }"
+                              }
+                            },
+                            "__nodeOptions": {
+                              "renderType": "Button",
+                              "type": "warning",
+                              "plain": true,
+                              "disabled": true,
+                              "icon": "RefreshLeft",
+                              "content": "撤销提交"
+                            }
+                          },
+                          {
+                            "__nodeName": "btn-delete",
+                            "__nodeId": "Button::btn-delete",
+                            "__nodeType": "renderNode",
+                            "__nodeEvent": {
+                              "onClick": {
+                                "enabled": true,
+                                "fn": "async function(ctx) { var s = ctx.$dataModels.state.singleTable.selectedRow; if (!s || !s.id) { ctx.$vueGlobal.$message.warning('请先点击表格中的一行有效数据'); return; } ctx.$vueGlobal.$msgbox.confirm('确认删除订单吗？删除后无法恢复，请谨慎操作。', '确认删除', { confirmButtonText: '确定', cancelButtonText: '取消', type: 'warning' }).then(async () => { console.log('删除',ctx);  await ctx.$requestFns.deleteOrder({ id: s.id ,orgId:s.orgId});  ctx.$sharedFns.searchTable(ctx); ctx.$vueGlobal.$message.success('删除成功'); }).catch(() => { ctx.$vueGlobal.$message.info('取消删除'); }); }"
+                              }
+                            },
+                            "__nodeOptions": {
+                              "renderType": "Button",
+                              "content": "删除",
+                              "type": "danger",
+                              "plain": true,
+                              "disabled": true,
+                              "icon": "Delete"
+                            }
+                          }
+                        ]
+                      }
+                    }
+                  }
+                }
+              },
+              {
+                "isFixed": false,
+                "size": "",
+                "paddingSize": "large",
+                "clearPadding": [
+                  "bottom"
+                ],
+                "contentType": "container",
+                "defaultSlot": {
+                  "__nodeName": "order-tabs",
+                  "__nodeId": "TabPanel::order-tabs",
+                  "__nodeType": "renderNode",
+                  "__nodeEvent": {},
+                  "__nodeOptions": {
+                    "renderType": "TabPanel",
+                    "activeName": "point-receipt",
+                    "tabPosition": "top",
+                    "tabPane": [
+                      {
+                        "renderType": "TabPanelItem",
+                        "label": "点收单",
+                        "name": "point-receipt",
+                        "paddingSize": "base",
+                        "defaultSlot": {
+                          "__nodeName": "order-table",
+                          "__nodeId": "TableNext::order-table",
+                          "__nodeType": "renderNode",
+                          "__nodeEvent": {
+                            "onRowClick": {
+                              "enabled": true,
+                              "fn": "function(ctx, payload) {const selectedRow = payload.row; ctx.$dataModels.state.singleTable.selectedRow = selectedRow; const btnEdit = ctx.getNode('Button::btn-edit'); const btnSubmit = ctx.getNode('Button::btn-submit'); const btnCancelSubmit = ctx.getNode('Button::btn-cancel-submit'); const btnDelete = ctx.getNode('Button::btn-delete'); if (selectedRow) { const isSubmitted = selectedRow.submitStatus === 1; if (btnEdit?.updateProps) btnEdit.updateProps({ disabled: isSubmitted }); if (btnSubmit?.updateProps) btnSubmit.updateProps({ disabled: isSubmitted }); if (btnCancelSubmit?.updateProps) btnCancelSubmit.updateProps({ disabled: !isSubmitted }); if (btnDelete?.updateProps) btnDelete.updateProps({ disabled: isSubmitted }); } else { if (btnEdit?.updateProps) btnEdit.updateProps({ disabled: true }); if (btnSubmit?.updateProps) btnSubmit.updateProps({ disabled: true }); if (btnCancelSubmit?.updateProps) btnCancelSubmit.updateProps({ disabled: true }); if (btnDelete?.updateProps) btnDelete.updateProps({ disabled: true }); }  const materialTable = ctx.getNode('TableAsync::material-table'); if (materialTable) {  materialTable.exposed.reloadData({ params: { orderId: selectedRow?.id, orgId: selectedRow?.orgId } }); }}"
+                            }
+                          },
+                          "__nodeOptions": {
+                            "renderType": "TableNext",
+                            "requestFn": "loadData",
+                            "columnConfigs": [
+                              {
+                                "attr": {
+                                  "prop": "index",
+                                  "label": "序号",
+                                  "type": "index",
+                                  "width": 60,
+                                  "headerAlign": "left",
+                                  "align": "center"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "printExport",
+                                  "label": "打印导出",
+                                  "width": 100,
+                                  "align": "left",
+                                  "scopedSlot": "printExport"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "isAudit",
+                                  "label": "提交状态",
+                                  "width": 100,
+                                  "align": "left",
+                                  "scopedSlot": "isAudit"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "serviceType",
+                                  "label": "业务类型",
+                                  "width": 100,
+                                  "align": "left",
+                                  "scopedSlot": "serviceType"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "orderCode",
+                                  "label": "单据编号",
+                                  "width": 150,
+                                  "align": "center",
+                                  "scopedSlot": "orderCode"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "recordedDate",
+                                  "label": "入账时间",
+                                  "width": 150,
+                                  "align": "center"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "orgName",
+                                  "label": "组织机构",
+                                  "width": 150,
+                                  "align": "center"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "supplierName",
+                                  "label": "结算单位",
+                                  "width": 200,
+                                  "align": "center"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "totalAmount",
+                                  "label": "账面金额(元)",
+                                  "width": 120,
+                                  "align": "right"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "taxFreeSum",
+                                  "label": "不含税金额(元)",
+                                  "width": 120,
+                                  "align": "right"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "taxIncludedSum",
+                                  "label": "含税金额(元)",
+                                  "width": 120,
+                                  "align": "right"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "supplierName",
+                                  "label": "供应单位",
+                                  "width": "150",
+                                  "headerAlign": "left"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "totalAmount",
+                                  "label": "合计金额",
+                                  "width": 120,
+                                  "headerAlign": "left"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "contractCode",
+                                  "label": "合同编号",
+                                  "width": 120,
+                                  "headerAlign": "left"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "taxDeduction",
+                                  "label": "计税方式",
+                                  "width": 220,
+                                  "headerAlign": "left"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "purchaseMethod",
+                                  "label": "采购方式",
+                                  "width": 220,
+                                  "headerAlign": "left"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "settlementMethod",
+                                  "label": "结算方式",
+                                  "width": 220,
+                                  "headerAlign": "left"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "auditor",
+                                  "label": "提交人",
+                                  "width": 120,
+                                  "headerAlign": "left",
+                                  "scopedSlot": "auditor"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "auditDate",
+                                  "label": "提交时间",
+                                  "width": 230,
+                                  "headerAlign": "left"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "maker",
+                                  "label": "制单人",
+                                  "width": 120,
+                                  "headerAlign": "left"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "makerDate",
+                                  "label": "制单时间",
+                                  "width": 120,
+                                  "headerAlign": "left"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "remark",
+                                  "label": "备注",
+                                  "width": 230,
+                                  "headerAlign": "left"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "attachment",
+                                  "label": "附件管理",
+                                  "width": 120,
+                                  "align": "left",
+                                  "fixed": "right"
+                                }
+                              }
+                            ],
+                            "columnSlots": [
+                              {
+                                "code": "isAudit",
+                                "propName": "提交状态",
+                                "columRender": {
+                                  "__nodeName": "tag-status",
+                                  "__nodeId": "Tag::tag-status",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {
+                                    "onValueRender": {
+                                      "enabled": true,
+                                      "fn": "function(ctx, payload) {  var row = payload.value;  if (row && row.isAudit === 1) return { type: 'success', content: '已提交' }; return { type: 'danger', content: '未提交'}; }"
+                                    }
+                                  },
+                                  "__nodeOptions": {
+                                    "renderType": "Tag",
+                                    "content": "未提交",
+                                    "effect": "light"
+                                  },
+                                  "__nodeStyle": {},
+                                  "__nodeProps": null
+                                }
+                              },
+                              {
+                                "code": "orderCode",
+                                "propName": "单据编号",
+                                "columRender": {
+                                  "__nodeName": "button",
+                                  "__nodeId": "Button::button",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {
+                                    "onClick": {
+                                      "enabled": true,
+                                      "fn": "function(ctx, payload) { if (ctx.$globalVars.$router) { ctx.$globalVars.$router.push(`/order-detail?id=${payload.row.id}&orgId=${payload.row.orgId}`); } }"
+                                    },
+                                    "onValueRender": {
+                                      "enabled": true,
+                                      "fn": "function(ctx, payload) { return { content: payload.value.orderCode }; }"
+                                    }
+                                  },
+                                  "__nodeOptions": {
+                                    "renderType": "Button",
+                                    "size": "small",
+                                    "plain": false,
+                                    "content": "按钮",
+                                    "type": "primary",
+                                    "text": false,
+                                    "link": true,
+                                    "round": false,
+                                    "circle": false,
+                                    "loading": false,
+                                    "disabled": false,
+                                    "display": true,
+                                    "permissionSetting": ""
+                                  },
+                                  "__nodeStyle": {},
+                                  "__nodeProps": null
+                                }
+                              },
+                              {
+                                "code": "serviceType",
+                                "propName": "业务类型",
+                                "columRender": {
+                                  "__nodeName": "tag-service-type",
+                                  "__nodeId": "Tag::tag-service-type",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {
+                                    "onValueRender": {
+                                      "enabled": true,
+                                      "fn": "function(ctx, payload) { var row = payload.value; if (row && row.serviceType === 10) return { type: 'primary', content: '收料' }; if (row && row.serviceType === 20) return { type: 'warning', content: '退料' }; return { type: 'default', content: '未知' }; }"
+                                    }
+                                  },
+                                  "__nodeOptions": {
+                                    "renderType": "Tag",
+                                    "content": "未知",
+                                    "effect": "light"
+                                  },
+                                  "__nodeStyle": {},
+                                  "__nodeProps": null
+                                }
+                              },
+                              {
+                                "code": "printExport",
+                                "propName": "打印导出",
+                                "columRender": {
+                                  "__nodeName": "button-group",
+                                  "__nodeId": "ButtonGroup::button-group",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {},
+                                  "__nodeOptions": {
+                                    "renderType": "ButtonGroup",
+                                    "buttonGroupOptions": [
+                                      {
+                                        "tooltipOption": {
+                                          "effect": "dark",
+                                          "content": "打印数据",
+                                          "placement": "top"
+                                        },
+                                        "buttonOption": {
+                                          "__nodeId": "button_print",
+                                          "__nodeName": "button-print",
+                                          "__nodeType": "renderNode",
+                                          "__nodeOptions": {
+                                            "renderType": "Button",
+                                            "size": "small",
+                                            "type": "success",
+                                            "icon": "Printer",
+                                            "text": "打印",
+                                            "disabled": true,
+                                            "loading": false,
+                                            "plain": true,
+                                            "link": true
+                                          },
+                                          "__nodeEvent": {
+                                            "onClick": {
+                                              "enabled": true,
+                                              "fn": "async function(ctx, payload) { console.log('打印', payload); }"
+                                            },
+                                            "onValueRender": {
+                                              "enabled": true,
+                                              "fn": "function(ctx, payload) { const row = payload.value; const isAudit = row && row.isAudit === 1; return { disabled: !isAudit }; }"
+                                            }
+                                          },
+                                          "__nodeStyle": {},
+                                          "__nodeProps": null
+                                        }
+                                      },
+                                      {
+                                        "tooltipOption": {
+                                          "effect": "dark",
+                                          "content": "导出数据",
+                                          "placement": "top"
+                                        },
+                                        "buttonOption": {
+                                          "__nodeId": "button_export",
+                                          "__nodeName": "button-export",
+                                          "__nodeType": "renderNode",
+                                          "__nodeOptions": {
+                                            "renderType": "Button",
+                                            "size": "small",
+                                            "type": "primary",
+                                            "icon": "Download",
+                                            "text": "导出",
+                                            "disabled": false,
+                                            "loading": false,
+                                            "plain": true,
+                                            "link": true
+                                          },
+                                          "__nodeEvent": {
+                                            "onClick": {
+                                              "enabled": true,
+                                              "fn": "async function(ctx, payload) { console.log('导出', payload); }"
+                                            },
+                                            "onValueRender": {
+                                              "enabled": true,
+                                              "fn": "function(ctx, payload) { const row = payload.value; const isAudit = row && row.isAudit === 1; return { disabled: !isAudit }; }"
+                                            }
+                                          },
+                                          "__nodeStyle": {},
+                                          "__nodeProps": null
+                                        }
+                                      }
+                                    ]
+                                  },
+                                  "__nodeStyle": {},
+                                  "__nodeProps": null
+                                }
+                              }
+                            ],
+                            "sumRowConfig": {
+                              "sumText": "本页合计:",
+                              "sumProperty": "totalAmount,taxFreeSum,taxIncludedSum",
+                              "clientOrServer": "client",
+                              "items": {
+                                "totalAmount": {
+                                  "precision": 2
+                                },
+                                "taxFreeSum": {
+                                  "precision": 2
+                                },
+                                "taxIncludedSum": {
+                                  "precision": 2
+                                }
+                              }
+                            },
+                            "pagination": {
+                              "currentSize": 10,
+                              "pageSizes": [
+                                10,
+                                20,
+                                50,
+                                100
+                              ],
+                              "layout": "total, sizes, prev, pager, next, jumper"
+                            }
+                          }
+                        }
+                      },
+                      {
+                        "renderType": "TabPanelItem",
+                        "label": "列表展示",
+                        "name": "list",
+                        "paddingSize": "base",
+                        "defaultSlot": {
+                          "__nodeName": "order-table",
+                          "__nodeId": "TableNext::order-table",
+                          "__nodeType": "renderNode",
+                          "__nodeEvent": {},
+                          "__nodeOptions": {
+                            "renderType": "ListNext",
+                            "requestFn": "loadData",
+                            "height": "100%",
+                            "direction": "vertical",
+                            "wrap": false,
+                            "fill": true,
+                            "fillRatio": 100,
+                            "spaceSize": 6,
+                            "alignment": "center",
+                            "spaceStyle": "width: 100%",
+                            "contentType": "gridBox",
+                            "listItemProps": {
+                              "width": "100%",
+                              "border": true,
+                              "shadow": false,
+                              "background": false,
+                              "paddingSize": "0px"
+                            },
+                            "pagination": {
+                              "currentSize": 10,
+                              "pageSizes": [
+                                10,
+                                20,
+                                50
+                              ],
+                              "layout": "total, sizes, prev, pager, next, jumper"
+                            },
+                            "defaultSlot": {
+                              "__nodeName": "list-order",
+                              "__nodeId": "GridBox::list-order",
+                              "__nodeType": "renderNode",
+                              "__nodeEvent": {},
+                              "__nodeOptions": {
+                                "renderType": "GridBox",
+                                "gutter": 10,
+                                "justify": "start",
+                                "align": "top",
+                                "tag": "div",
+                                "defaultSlot": [
+                                  {
+                                    "__nodeName": "grid-item-orderCode",
+                                    "__nodeId": "GridItem::grid-item-orderCode",
+                                    "__nodeType": "renderNode",
+                                    "__nodeEvent": {},
+                                    "__nodeOptions": {
+                                      "renderType": "GridItem",
+                                      "span": 6,
+                                      "defaultSlot": {
+                                        "__nodeName": "order-code",
+                                        "__nodeId": "Label::order-code",
+                                        "__nodeType": "renderNode",
+                                        "__nodeEvent": {},
+                                        "__nodeOptions": {
+                                          "renderType": "Label",
+                                          "modelName": "orderCode",
+                                          "size": "default",
+                                          "type": ""
+                                        }
+                                      },
+                                      "__nodeStyle": {},
+                                      "__nodeProps": null
+                                    }
+                                  },
+                                  {
+                                    "__nodeName": "grid-item-supplierName",
+                                    "__nodeId": "GridItem::grid-item-supplierName",
+                                    "__nodeType": "renderNode",
+                                    "__nodeEvent": {},
+                                    "__nodeOptions": {
+                                      "renderType": "GridItem",
+                                      "span": 6,
+                                      "defaultSlot": {
+                                        "__nodeName": "supplier-name",
+                                        "__nodeId": "Label::supplier-name",
+                                        "__nodeType": "renderNode",
+                                        "__nodeEvent": {},
+                                        "__nodeOptions": {
+                                          "renderType": "Label",
+                                          "modelName": "supplierName",
+                                          "size": "default",
+                                          "type": ""
+                                        }
+                                      }
+                                    },
+                                    "__nodeStyle": {},
+                                    "__nodeProps": null
+                                  },
+                                  {
+                                    "__nodeName": "grid-item-orgName",
+                                    "__nodeId": "GridItem::grid-item-orgName",
+                                    "__nodeType": "renderNode",
+                                    "__nodeEvent": {},
+                                    "__nodeOptions": {
+                                      "renderType": "GridItem",
+                                      "span": 6,
+                                      "defaultSlot": {
+                                        "__nodeName": "org-name",
+                                        "__nodeId": "Label::org-name",
+                                        "__nodeType": "renderNode",
+                                        "__nodeEvent": {},
+                                        "__nodeOptions": {
+                                          "renderType": "Label",
+                                          "modelName": "orgName",
+                                          "size": "default",
+                                          "type": ""
+                                        }
+                                      }
+                                    },
+                                    "__nodeStyle": {},
+                                    "__nodeProps": null
+                                  },
+                                  {
+                                    "__nodeName": "grid-item-recordedDate",
+                                    "__nodeId": "GridItem::grid-item-recordedDate",
+                                    "__nodeType": "renderNode",
+                                    "__nodeEvent": {},
+                                    "__nodeOptions": {
+                                      "renderType": "GridItem",
+                                      "span": 6,
+                                      "defaultSlot": {
+                                        "__nodeName": "recorded-date",
+                                        "__nodeId": "Label::recorded-date",
+                                        "__nodeType": "renderNode",
+                                        "__nodeEvent": {},
+                                        "__nodeOptions": {
+                                          "renderType": "Label",
+                                          "modelName": "recordedDate",
+                                          "size": "default",
+                                          "type": ""
+                                        }
+                                      }
+                                    },
+                                    "__nodeStyle": {},
+                                    "__nodeProps": null
+                                  }
+                                ]
+                              },
+                              "__nodeStyle": {
+                                "height": "80px",
+                                "backgroundColor": "#FAFAFA",
+                                "border-bottom": "1px solid #ebebeb",
+                                "marginTop": "0px",
+                                "paddingTop": "5px"
+                              }
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "isFixed": false,
+                "size": "",
+                "paddingSize": "large",
+                "clearPadding": [],
+                "contentType": "container",
+                "defaultSlot": {
+                  "__nodeName": "material-box",
+                  "__nodeId": "Box::material-box",
+                  "__nodeType": "renderNode",
+                  "__nodeEvent": {},
+                  "__nodeOptions": {
+                    "renderType": "Box",
+                    "contentType": "element",
+                    "shadow": false,
+                    "border": false,
+                    "background": true,
+                    "paddingSize": "small",
+                    "clearPadding": [],
+                    "clearBorder": [],
+                    "height": "100%",
+                    "display": true,
+                    "permissionSetting": "",
+                    "defaultSlot": {
+                      "__nodeName": "material-table",
+                      "__nodeId": "TableAsync::material-table",
+                      "__nodeType": "renderNode",
+                      "__nodeEvent": {},
+                      "__nodeOptions": {
+                        "renderType": "TableAsync",
+                        "requestFn": "loadItemsData",
+                        "autoLoad": false,
+                        "columnConfigs": [
+                          {
+                            "attr": {
+                              "prop": "index",
+                              "label": "序号",
+                              "type": "index",
+                              "width": 60,
+                              "headerAlign": "left",
+                              "align": "center"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "materialName",
+                              "label": "物资名称",
+                              "width": 150,
+                              "headerAlign": "left",
+                              "align": "left"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "materialModel",
+                              "label": "规格型号",
+                              "width": 150,
+                              "headerAlign": "left",
+                              "align": "left"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "materialUnit",
+                              "label": "计量单位",
+                              "width": 100,
+                              "headerAlign": "left",
+                              "align": "center"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "storeRoomName",
+                              "label": "成本科目",
+                              "width": 120,
+                              "headerAlign": "left",
+                              "align": "center"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "quantity",
+                              "label": "数量",
+                              "width": 100,
+                              "headerAlign": "left",
+                              "align": "right"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "taxRate",
+                              "label": "税率",
+                              "width": 80,
+                              "headerAlign": "left",
+                              "align": "center"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "taxFreePrice",
+                              "label": "不含税单价(元)",
+                              "width": 120,
+                              "headerAlign": "left",
+                              "align": "right"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "taxFreeSum",
+                              "label": "不含税金额(元)",
+                              "width": 120,
+                              "headerAlign": "left",
+                              "align": "right"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "taxIncludedPrice",
+                              "label": "含税单价(元)",
+                              "width": 120,
+                              "headerAlign": "left",
+                              "align": "right"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "taxIncludedSum",
+                              "label": "含税金额(元)",
+                              "width": 120,
+                              "headerAlign": "left",
+                              "align": "right",
+                              "formatter": "function(row, column){  const value = row[column.property]; console.log('formatThousand', value); if (value === null || value === undefined || value === '') return '';  return Number(value).toLocaleString(undefined, {minimumFractionDigits: 2, maximumFractionDigits: 2}); }"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "taxAmount",
+                              "label": "税额(元)",
+                              "width": 100,
+                              "headerAlign": "left",
+                              "align": "right"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "bookPrice",
+                              "label": "账面价(元)",
+                              "width": 120,
+                              "headerAlign": "left",
+                              "align": "right"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "bookSum",
+                              "label": "账面金额(元)",
+                              "width": 120,
+                              "headerAlign": "left",
+                              "align": "right"
+                            }
+                          }
+                        ],
+                        "pagination": {
+                          "currentSize": 20,
+                          "pageSizes": [
+                            10,
+                            20,
+                            50,
+                            100
+                          ],
+                          "layout": "total, sizes, prev, pager, next, jumper"
+                        }
+                      }
+                    }
+                  },
+                  "__nodeStyle": {},
+                  "__nodeProps": null
+                }
+              }
+            ]
+          },
+          "__nodeStyle": {},
+          "__nodeProps": null
+        }
+      }
+    },
+    "orderDetail": {
+      "viewsProps": {
+        "planeOptions": {
+          "__nodeName": "root",
+          "__nodeId": "FlexBox::root",
+          "__nodeType": "renderNode",
+          "__nodeEvent": {},
+          "__nodeOptions": {
+            "renderType": "FlexBox",
+            "isRow": false,
+            "itemNum": 3,
+            "width": "100%",
+            "height": "100%",
+            "itemConfig": [
+              {
+                "isFixed": true,
+                "size": "",
+                "paddingSize": "large",
+                "clearPadding": [
+                  "bottom"
+                ],
+                "isHidden": true,
+                "contentType": "container",
+                "defaultSlot": {
+                  "__nodeName": "navigation-bar1",
+                  "__nodeId": "NavigationBar::navigation-bar1",
+                  "__nodeType": "renderNode",
+                  "__nodeEvent": {},
+                  "__nodeOptions": {
+                    "renderType": "NavigationBar",
+                    "routers": [
+                      {
+                        "to": "/",
+                        "title": "订单列表"
+                      },
+                      {
+                        "to": {
+                          "path": "/order-detail"
+                        },
+                        "title": "订单详情"
+                      }
+                    ],
+                    "defaultSlot": {
+                      "__nodeName": "back-button",
+                      "__nodeId": "Button::back-button",
+                      "__nodeType": "renderNode",
+                      "__nodeEvent": {
+                        "onClick": {
+                          "enabled": true,
+                          "fn": "function(ctx) { if (ctx.$globalVars.$router) { ctx.$globalVars.$router.back(); } }"
+                        }
+                      },
+                      "__nodeOptions": {
+                        "renderType": "Button",
+                        "type": "",
+                        "size": "default",
+                        "icon": "",
+                        "loading": false,
+                        "disabled": false,
+                        "plain": true,
+                        "round": false,
+                        "circle": false,
+                        "link": true,
+                        "content": "关闭"
+                      },
+                      "__nodeStyle": {},
+                      "__nodeProps": null
+                    }
+                  },
+                  "__nodeStyle": {}
+                }
+              },
+              {
+                "isFixed": true,
+                "size": "",
+                "paddingSize": "large",
+                "clearPadding": [
+                  "bottom"
+                ],
+                "isHidden": false,
+                "contentType": "container",
+                "defaultSlot": {
+                  "__nodeName": "detail-panel",
+                  "__nodeId": "Panel::detail-panel",
+                  "__nodeType": "renderNode",
+                  "__nodeEvent": {},
+                  "__nodeOptions": {
+                    "renderType": "Panel",
+                    "contentType": "gridBox",
+                    "showHeader": true,
+                    "title": "订单详情",
+                    "border": false,
+                    "paddingSize": "base",
+                    "clearPadding": [],
+                    "height": "100%",
+                    "display": true,
+                    "defaultSlot": [
+                      {
+                        "__nodeName": "detail-grid",
+                        "__nodeId": "GridBox::detail-grid",
+                        "__nodeType": "renderNode",
+                        "__nodeEvent": {},
+                        "__nodeOptions": {
+                          "renderType": "GridBox",
+                          "gutter": 10,
+                          "align": "middle",
+                          "justify": "start",
+                          "defaultSlot": [
+                            {
+                              "__nodeName": "business-type-grid",
+                              "__nodeId": "GridItem::business-type-grid",
+                              "__nodeType": "renderNode",
+                              "__nodeEvent": {},
+                              "__nodeOptions": {
+                                "renderType": "GridItem",
+                                "xs": 24,
+                                "sm": 12,
+                                "md": 8,
+                                "lg": 6,
+                                "xl": 4,
+                                "defaultSlot": {
+                                  "__nodeName": "business-type-label",
+                                  "__nodeId": "FilterItem::business-type-label",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {},
+                                  "__nodeOptions": {
+                                    "renderType": "FilterItem",
+                                    "label": "业务类型",
+                                    "defaultSlot": {
+                                      "__nodeName": "business-type-display",
+                                      "__nodeId": "Label::business-type-display",
+                                      "__nodeType": "renderNode",
+                                      "__nodeEvent": {
+                                        "onValueRender": {
+                                          "enabled": true,
+                                          "fn": "function(ctx, payload) { var value = payload.value; console.log('value', value); if (value === 10) return { content: '收料' }; if (value === 11) return { content: '调入' };   }"
+                                        }
+                                      },
+                                      "__nodeOptions": {
+                                        "renderType": "Label",
+                                        "modelName": "formModel.demoReceiveOrder.serviceType",
+                                        "content": "",
+                                        "size": "default",
+                                        "type": ""
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "__nodeName": "org-grid",
+                              "__nodeId": "GridItem::org-grid",
+                              "__nodeType": "renderNode",
+                              "__nodeEvent": {},
+                              "__nodeOptions": {
+                                "renderType": "GridItem",
+                                "xs": 24,
+                                "sm": 12,
+                                "md": 8,
+                                "lg": 6,
+                                "xl": 4,
+                                "defaultSlot": {
+                                  "__nodeName": "org-label",
+                                  "__nodeId": "FilterItem::org-label",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {},
+                                  "__nodeOptions": {
+                                    "renderType": "FilterItem",
+                                    "label": "组织机构",
+                                    "defaultSlot": {
+                                      "__nodeName": "org-display",
+                                      "__nodeId": "Label::org-display",
+                                      "__nodeType": "renderNode",
+                                      "__nodeEvent": {},
+                                      "__nodeOptions": {
+                                        "renderType": "Label",
+                                        "modelName": "formModel.demoReceiveOrder.orgName"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "__nodeName": "source-grid",
+                              "__nodeId": "GridItem::source-grid",
+                              "__nodeType": "renderNode",
+                              "__nodeEvent": {},
+                              "__nodeOptions": {
+                                "renderType": "GridItem",
+                                "xs": 24,
+                                "sm": 12,
+                                "md": 8,
+                                "lg": 6,
+                                "xl": 4,
+                                "defaultSlot": {
+                                  "__nodeName": "order-code-label",
+                                  "__nodeId": "FilterItem::order-code-label",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {},
+                                  "__nodeOptions": {
+                                    "renderType": "FilterItem",
+                                    "label": "单据编号",
+                                    "defaultSlot": {
+                                      "__nodeName": "order-code",
+                                      "__nodeId": "Label::order-code",
+                                      "__nodeType": "renderNode",
+                                      "__nodeEvent": {},
+                                      "__nodeOptions": {
+                                        "renderType": "Label",
+                                        "modelName": "formModel.demoReceiveOrder.orderCode",
+                                        "size": "default",
+                                        "type": ""
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "__nodeName": "period-grid",
+                              "__nodeId": "GridItem::period-grid",
+                              "__nodeType": "renderNode",
+                              "__nodeEvent": {},
+                              "__nodeOptions": {
+                                "renderType": "GridItem",
+                                "xs": 24,
+                                "sm": 12,
+                                "md": 8,
+                                "lg": 6,
+                                "xl": 4,
+                                "defaultSlot": {
+                                  "__nodeName": "period-label",
+                                  "__nodeId": "FilterItem::period-label",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {},
+                                  "__nodeOptions": {
+                                    "renderType": "FilterItem",
+                                    "label": "账期",
+                                    "defaultSlot": {
+                                      "__nodeName": "period-display",
+                                      "__nodeId": "Label::period-display",
+                                      "__nodeType": "renderNode",
+                                      "__nodeEvent": {},
+                                      "__nodeOptions": {
+                                        "renderType": "Label",
+                                        "modelName": "formModel.demoReceiveOrder.period",
+                                        "size": "default",
+                                        "type": ""
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "__nodeName": "book-time-grid",
+                              "__nodeId": "GridItem::book-time-grid",
+                              "__nodeType": "renderNode",
+                              "__nodeEvent": {},
+                              "__nodeOptions": {
+                                "renderType": "GridItem",
+                                "xs": 24,
+                                "sm": 12,
+                                "md": 8,
+                                "lg": 6,
+                                "xl": 4,
+                                "defaultSlot": {
+                                  "__nodeName": "book-time-label",
+                                  "__nodeId": "FilterItem::book-time-label",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {},
+                                  "__nodeOptions": {
+                                    "renderType": "FilterItem",
+                                    "label": "入账时间",
+                                    "defaultSlot": {
+                                      "__nodeName": "book-time-display",
+                                      "__nodeId": "Label::book-time-display",
+                                      "__nodeType": "renderNode",
+                                      "__nodeEvent": {},
+                                      "__nodeOptions": {
+                                        "renderType": "Label",
+                                        "modelName": "formModel.demoReceiveOrder.recordedDate",
+                                        "size": "default",
+                                        "type": ""
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "__nodeName": "supplier-unit-grid",
+                              "__nodeId": "GridItem::supplier-unit-grid",
+                              "__nodeType": "renderNode",
+                              "__nodeEvent": {},
+                              "__nodeOptions": {
+                                "renderType": "GridItem",
+                                "xs": 24,
+                                "sm": 12,
+                                "md": 8,
+                                "lg": 6,
+                                "xl": 4,
+                                "defaultSlot": {
+                                  "__nodeName": "supplier-unit-label",
+                                  "__nodeId": "FilterItem::supplier-unit-label",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {},
+                                  "__nodeOptions": {
+                                    "renderType": "FilterItem",
+                                    "label": "供应单位",
+                                    "defaultSlot": {
+                                      "__nodeName": "supplier-unit-display",
+                                      "__nodeId": "Label::supplier-unit-display",
+                                      "__nodeType": "renderNode",
+                                      "__nodeEvent": {},
+                                      "__nodeOptions": {
+                                        "renderType": "Label",
+                                        "modelName": "formModel.demoReceiveOrder.supplierName",
+                                        "size": "default",
+                                        "type": ""
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "__nodeName": "supply-method-grid",
+                              "__nodeId": "GridItem::supply-method-grid",
+                              "__nodeType": "renderNode",
+                              "__nodeEvent": {},
+                              "__nodeOptions": {
+                                "renderType": "GridItem",
+                                "xs": 24,
+                                "sm": 12,
+                                "md": 8,
+                                "lg": 6,
+                                "xl": 4,
+                                "defaultSlot": {
+                                  "__nodeName": "supply-method-label",
+                                  "__nodeId": "FilterItem::supply-method-label",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {},
+                                  "__nodeOptions": {
+                                    "renderType": "FilterItem",
+                                    "label": "供应方式",
+                                    "defaultSlot": {
+                                      "__nodeName": "supply-method-display",
+                                      "__nodeId": "Label::supply-method-display",
+                                      "__nodeType": "renderNode",
+                                      "__nodeEvent": {},
+                                      "__nodeOptions": {
+                                        "renderType": "Label",
+                                        "modelName": "formModel.demoReceiveOrder.supplyMethod",
+                                        "size": "default",
+                                        "type": ""
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "__nodeName": "settlement-method-grid",
+                              "__nodeId": "GridItem::settlement-method-grid",
+                              "__nodeType": "renderNode",
+                              "__nodeEvent": {},
+                              "__nodeOptions": {
+                                "renderType": "GridItem",
+                                "xs": 24,
+                                "sm": 12,
+                                "md": 8,
+                                "lg": 6,
+                                "xl": 4,
+                                "defaultSlot": {
+                                  "__nodeName": "settlement-method-label",
+                                  "__nodeId": "FilterItem::settlement-method-label",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {},
+                                  "__nodeOptions": {
+                                    "renderType": "FilterItem",
+                                    "label": "结算方式",
+                                    "defaultSlot": {
+                                      "__nodeName": "settlement-method-display",
+                                      "__nodeId": "Label::settlement-method-display",
+                                      "__nodeType": "renderNode",
+                                      "__nodeEvent": {},
+                                      "__nodeOptions": {
+                                        "renderType": "Label",
+                                        "modelName": "formModel.demoReceiveOrder.settlementMethod",
+                                        "size": "default",
+                                        "type": ""
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "__nodeName": "invoice-number-grid",
+                              "__nodeId": "GridItem::invoice-number-grid",
+                              "__nodeType": "renderNode",
+                              "__nodeEvent": {},
+                              "__nodeOptions": {
+                                "renderType": "GridItem",
+                                "xs": 24,
+                                "sm": 12,
+                                "md": 8,
+                                "lg": 6,
+                                "xl": 4,
+                                "defaultSlot": {
+                                  "__nodeName": "invoice-number-label",
+                                  "__nodeId": "FilterItem::invoice-number-label",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {},
+                                  "__nodeOptions": {
+                                    "renderType": "FilterItem",
+                                    "label": "发票号",
+                                    "defaultSlot": {
+                                      "__nodeName": "invoice-number-display",
+                                      "__nodeId": "Label::invoice-number-display",
+                                      "__nodeType": "renderNode",
+                                      "__nodeEvent": {},
+                                      "__nodeOptions": {
+                                        "renderType": "Label",
+                                        "modelName": "formModel.demoReceiveOrder.invoiceNumber",
+                                        "size": "default",
+                                        "type": ""
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            },
+                            {
+                              "__nodeName": "tax-method-grid",
+                              "__nodeId": "GridItem::tax-method-grid",
+                              "__nodeType": "renderNode",
+                              "__nodeEvent": {},
+                              "__nodeOptions": {
+                                "renderType": "GridItem",
+                                "xs": 24,
+                                "sm": 12,
+                                "md": 8,
+                                "lg": 6,
+                                "xl": 4,
+                                "defaultSlot": {
+                                  "__nodeName": "tax-method-label",
+                                  "__nodeId": "FilterItem::tax-method-label",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {},
+                                  "__nodeOptions": {
+                                    "renderType": "FilterItem",
+                                    "label": "计税方式",
+                                    "defaultSlot": {
+                                      "__nodeName": "tax-method-display",
+                                      "__nodeId": "Tag::tax-method-display",
+                                      "__nodeType": "renderNode",
+                                      "__nodeEvent": {
+                                        "onValueRender": {
+                                          "enabled": true,
+                                          "fn": "function(ctx, payload) { var taxDeduction = payload.value; if (taxDeduction === 1) return { type: 'primary', content: '一般计税' }; if (taxDeduction === 0) return { type: 'warning', content: '简易计税' }; return { type: 'default', content: '未知' }; }"
+                                        }
+                                      },
+                                      "__nodeOptions": {
+                                        "renderType": "Tag",
+                                        "modelName": "formModel.demoReceiveOrder.taxDeduction",
+                                        "content": "未知",
+                                        "effect": "light"
+                                      }
+                                    }
+                                  }
+                                }
+                              }
+                            }
+                          ]
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "isFixed": false,
+                "size": "",
+                "paddingSize": "large",
+                "clearPadding": [
+                  "bottom"
+                ],
+                "isHidden": false,
+                "contentType": "container",
+                "defaultSlot": {
+                  "__nodeName": "list-container",
+                  "__nodeId": "Box::list-container",
+                  "__nodeType": "renderNode",
+                  "__nodeEvent": {},
+                  "__nodeOptions": {
+                    "renderType": "Box",
+                    "contentType": "element",
+                    "shadow": false,
+                    "border": false,
+                    "background": true,
+                    "paddingSize": "base",
+                    "height": "100%",
+                    "defaultSlot": {
+                      "__nodeName": "item-list",
+                      "__nodeId": "ListOnly::item-list",
+                      "__nodeType": "renderNode",
+                      "__nodeEvent": {
+                        "onMounted": {
+                          "enabled": true,
+                          "fn": "async function onMountedFn(ctx){\n  const { currentRoute } = ctx.$globalVars.$router;\n   if (currentRoute.query) {   const result = await ctx.$requestFns.getReceives(currentRoute.query);   \n  ctx.setForm('formModel', result.data);} console.log('ctx==',ctx);\n}"
+                        }
+                      },
+                      "__nodeOptions": {
+                        "renderType": "ListOnly",
+                        "modelName": "formModel.demoReceiveOrderItems",
+                        "height": "100%",
+                        "direction": "vertical",
+                        "wrap": false,
+                        "fill": true,
+                        "fillRatio": 100,
+                        "spaceSize": 6,
+                        "alignment": "center",
+                        "spaceStyle": "width: 100%",
+                        "contentType": "gridBox",
+                        "listItemProps": {
+                          "width": "100%",
+                          "border": true,
+                          "shadow": false,
+                          "background": false,
+                          "paddingSize": "0px"
+                        },
+                        "defaultSlot": {
+                          "__nodeName": "list-item",
+                          "__nodeId": "GridBox::list-item",
+                          "__nodeType": "renderNode",
+                          "__nodeEvent": {},
+                          "__nodeOptions": {
+                            "renderType": "GridBox",
+                            "gutter": 10,
+                            "justify": "start",
+                            "align": "top",
+                            "tag": "div",
+                            "defaultSlot": [
+                              {
+                                "__nodeName": "grid-item-companyType",
+                                "__nodeId": "GridItem::grid-item-companyType",
+                                "__nodeType": "renderNode",
+                                "__nodeEvent": {},
+                                "__nodeOptions": {
+                                  "renderType": "GridItem",
+                                  "span": 6,
+                                  "defaultSlot": {
+                                    "__nodeName": "material-name",
+                                    "__nodeId": "Label::material-name",
+                                    "__nodeType": "renderNode",
+                                    "__nodeEvent": {},
+                                    "__nodeOptions": {
+                                      "renderType": "Label",
+                                      "modelName": "materialName",
+                                      "size": "default",
+                                      "type": ""
+                                    }
+                                  },
+                                  "__nodeStyle": {},
+                                  "__nodeProps": null
+                                }
+                              },
+                              {
+                                "__nodeName": "grid-item-materialModel",
+                                "__nodeId": "GridItem::grid-item-materialModel",
+                                "__nodeType": "renderNode",
+                                "__nodeEvent": {},
+                                "__nodeOptions": {
+                                  "renderType": "GridItem",
+                                  "span": 6,
+                                  "defaultSlot": {
+                                    "__nodeName": "material-model",
+                                    "__nodeId": "Label::material-model",
+                                    "__nodeType": "renderNode",
+                                    "__nodeEvent": {},
+                                    "__nodeOptions": {
+                                      "renderType": "Label",
+                                      "modelName": "materialModel",
+                                      "size": "default",
+                                      "type": ""
+                                    }
+                                  }
+                                },
+                                "__nodeStyle": {},
+                                "__nodeProps": null
+                              },
+                              {
+                                "__nodeName": "grid-item-quantity",
+                                "__nodeId": "GridItem::grid-item-quantity",
+                                "__nodeType": "renderNode",
+                                "__nodeEvent": {},
+                                "__nodeOptions": {
+                                  "renderType": "GridItem",
+                                  "span": 6,
+                                  "defaultSlot": {
+                                    "__nodeName": "quantity",
+                                    "__nodeId": "Label::quantity",
+                                    "__nodeType": "renderNode",
+                                    "__nodeEvent": {},
+                                    "__nodeOptions": {
+                                      "renderType": "Label",
+                                      "modelName": "quantity",
+                                      "size": "default",
+                                      "type": ""
+                                    }
+                                  }
+                                },
+                                "__nodeStyle": {},
+                                "__nodeProps": null
+                              },
+                              {
+                                "__nodeName": "grid-item-taxIncludedSum",
+                                "__nodeId": "GridItem::grid-item-taxIncludedSum",
+                                "__nodeType": "renderNode",
+                                "__nodeEvent": {},
+                                "__nodeOptions": {
+                                  "renderType": "GridItem",
+                                  "span": 6,
+                                  "defaultSlot": {
+                                    "__nodeName": "tax-included-sum",
+                                    "__nodeId": "Label::tax-included-sum",
+                                    "__nodeType": "renderNode",
+                                    "__nodeEvent": {},
+                                    "__nodeOptions": {
+                                      "renderType": "Label",
+                                      "modelName": "taxIncludedSum",
+                                      "size": "default",
+                                      "type": ""
+                                    }
+                                  }
+                                },
+                                "__nodeStyle": {},
+                                "__nodeProps": null
+                              }
+                            ]
+                          },
+                          "__nodeStyle": {
+                            "height": "80px",
+                            "backgroundColor": "#FAFAFA",
+                            "border-bottom": "1px solid #ebebeb",
+                            "marginTop": "0px",
+                            "paddingTop": "5px"
+                          }
+                        }
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    },
+    "orderEdit": {
+      "viewsProps": {
+        "planeOptions": {
+          "__nodeName": "root",
+          "__nodeId": "FlexBox::root",
+          "__nodeType": "renderNode",
+          "__nodeEvent": {},
+          "__nodeOptions": {
+            "renderType": "FlexBox",
+            "isRow": false,
+            "itemNum": 3,
+            "width": "100%",
+            "height": "100%",
+            "itemConfig": [
+              {
+                "isFixed": true,
+                "size": "",
+                "paddingSize": "large",
+                "clearPadding": [
+                  "bottom"
+                ],
+                "isHidden": false,
+                "contentType": "container",
+                "defaultSlot": {
+                  "__nodeName": "navigation-bar",
+                  "__nodeId": "NavigationBar::navigation-bar",
+                  "__nodeType": "renderNode",
+                  "__nodeEvent": {},
+                  "__nodeOptions": {
+                    "renderType": "NavigationBar",
+                    "routers": [
+                      {
+                        "to": "/",
+                        "title": "订单列表"
+                      },
+                      {
+                        "to": {
+                          "path": "/order-edit"
+                        },
+                        "title": "订单编辑"
+                      }
+                    ],
+                    "defaultSlot": {
+                      "__nodeName": "edit-back-button",
+                      "__nodeId": "Button::edit-back-button",
+                      "__nodeType": "renderNode",
+                      "__nodeEvent": {
+                        "onClick": {
+                          "enabled": true,
+                          "fn": "function(ctx) { if (ctx.$globalVars.$router) { ctx.$globalVars.$router.back(); } }"
+                        }
+                      },
+                      "__nodeOptions": {
+                        "renderType": "Button",
+                        "type": "",
+                        "size": "default",
+                        "icon": "",
+                        "loading": false,
+                        "disabled": false,
+                        "plain": true,
+                        "round": false,
+                        "circle": false,
+                        "link": true,
+                        "content": "关闭"
+                      },
+                      "__nodeStyle": {},
+                      "__nodeProps": null
+                    }
+                  },
+                  "__nodeStyle": {}
+                }
+              },
+              {
+                "isFixed": true,
+                "size": "",
+                "paddingSize": "large",
+                "clearPadding": [
+                  "bottom"
+                ],
+                "isHidden": false,
+                "contentType": "container",
+                "defaultSlot": {
+                  "__nodeName": "edit-panel",
+                  "__nodeId": "Panel::edit-panel",
+                  "__nodeType": "renderNode",
+                  "__nodeEvent": {},
+                  "__nodeOptions": {
+                    "renderType": "Panel",
+                    "showHeader": true,
+                    "title": "",
+                    "border": false,
+                    "paddingSize": "base",
+                    "clearPadding": [],
+                    "height": "100%",
+                    "display": true,
+                    "toolSlot": {
+                      "__nodeName": "button-line",
+                      "__nodeId": "FlexLine::button-line",
+                      "__nodeType": "renderNode",
+                      "__nodeEvent": {},
+                      "__nodeOptions": {
+                        "renderType": "FlexLine",
+                        "leftPadding": true,
+                        "leftClearPadding": [],
+                        "rightPadding": true,
+                        "rightClearPadding": [],
+                        "leftWidth": "50%",
+                        "defaultSlot": null,
+                        "rightSlot": [
+                          {
+                            "__nodeName": "add-button",
+                            "__nodeId": "Button::add-button",
+                            "__nodeType": "renderNode",
+                            "__nodeEvent": {
+                              "onClick": {
+                                "enabled": true,
+                                "fn": "function(ctx) { var editTable = ctx.getNode('TableEdit::edit-table'); if(editTable) { editTable.exposed.growData('dataSource1', [{\"id\":606706095157249,\"remark\":null,\"orgId\":736233131388928,\"materialCode\":\"0002\",\"materialName\":\"盘条\",\"materialModel\":\"HPB300Φ4.5mm\",\"materialUnit\":\"吨\",\"firstConversionRate\":1,\"firstAuxiliaryUnit\":\"吨\",\"secondConversionRate\":1,\"secondAuxiliaryUnit\":\"吨\",\"bidPrice\":0,\"costPrice\":0,\"purchasePrice\":0,\"isWeight\":false,\"isConfirm\":false,\"deductionRate\":0,\"lossRate\":0,\"oriMaterialId\":null,\"oriOrgId\":null,\"useCount\":75,\"storeRoomName\":null,\"storeRoomFullName\":null,\"storeRoomId\":null},{\"id\":606706095157248,\"remark\":null,\"orgId\":736233131388928,\"materialCode\":\"0001\",\"materialName\":\"盘条\",\"materialModel\":\"HPB300Φ14mm\",\"materialUnit\":\"AAA\",\"firstConversionRate\":1,\"firstAuxiliaryUnit\":\"AAA\",\"secondConversionRate\":1,\"secondAuxiliaryUnit\":\"AAA\",\"bidPrice\":0,\"costPrice\":0,\"purchasePrice\":0,\"isWeight\":false,\"isConfirm\":false,\"deductionRate\":0,\"lossRate\":0,\"oriMaterialId\":null,\"oriOrgId\":null,\"useCount\":55,\"storeRoomName\":null,\"storeRoomFullName\":null,\"storeRoomId\":null},{\"id\":606706095157255,\"remark\":null,\"orgId\":736233131388928,\"materialCode\":\"0008\",\"materialName\":\"非合金钢盘条\",\"materialModel\":\"热轧 H08A 6mm\",\"materialUnit\":\"吨\",\"firstConversionRate\":1,\"firstAuxiliaryUnit\":\"吨\",\"secondConversionRate\":1,\"secondAuxiliaryUnit\":\"吨\",\"bidPrice\":0,\"costPrice\":0,\"purchasePrice\":0,\"isWeight\":false,\"isConfirm\":false,\"deductionRate\":0,\"lossRate\":0,\"oriMaterialId\":null,\"oriOrgId\":null,\"useCount\":30,\"storeRoomName\":null,\"storeRoomFullName\":null,\"storeRoomId\":null},{\"id\":606706095171811,\"remark\":null,\"orgId\":736233131388928,\"materialCode\":\"0001\",\"materialName\":\"河砂\",\"materialModel\":\"粗 平均粒径不小于0.5 mm\",\"materialUnit\":\"吨\",\"firstConversionRate\":1,\"firstAuxiliaryUnit\":\"吨\",\"secondConversionRate\":1,\"secondAuxiliaryUnit\":\"吨\",\"bidPrice\":0,\"costPrice\":0,\"purchasePrice\":0,\"isWeight\":false,\"isConfirm\":false,\"deductionRate\":0,\"lossRate\":0,\"oriMaterialId\":null,\"oriOrgId\":null,\"useCount\":27,\"storeRoomName\":null,\"storeRoomFullName\":null,\"storeRoomId\":null}]); } }"
+                              }
+                            },
+                            "__nodeOptions": {
+                              "renderType": "Button",
+                              "type": "",
+                              "size": "default",
+                              "icon": "",
+                              "loading": false,
+                              "disabled": false,
+                              "plain": false,
+                              "round": false,
+                              "circle": false,
+                              "content": "加材料"
+                            },
+                            "__nodeStyle": {},
+                            "__nodeProps": null
+                          },
+                          {
+                            "__nodeName": "submit-button",
+                            "__nodeId": "Button::submit-button",
+                            "__nodeType": "renderNode",
+                            "__nodeEvent": {
+                              "onClick": {
+                                "enabled": true,
+                                "fn": "async function(ctx) {  const editForm = ctx.getNode('Form::edit-form'); if(editForm) { const isValidated = await editForm.exposed.validateForm(); if (isValidated) { let requestFn = ''; const models = ctx.$dataModels.formModel.demoReceiveOrder;  if (ctx.$globalVars.$router && ctx.$globalVars.$router.currentRoute && ctx.$globalVars.$router.currentRoute.query && ctx.$globalVars.$router.currentRoute.query.id) { requestFn = 'receiveOrderEdit'; } else { delete models.id; } const result = await editForm.exposed.saveFormData(requestFn);console.log('result', result);  if (!result.error) { ctx.$vueGlobal.$message({ type: 'success', message: '保存数据成功！' }); if (ctx.$globalVars.$router) { ctx.$globalVars.$router.push('/'); } } else { ctx.$vueGlobal.$message({ type: 'error', message: '保存数据失败！' }); } } } }"
+                              }
+                            },
+                            "__nodeOptions": {
+                              "renderType": "Button",
+                              "type": "primary",
+                              "size": "default",
+                              "icon": "",
+                              "loading": false,
+                              "disabled": false,
+                              "plain": false,
+                              "round": false,
+                              "circle": false,
+                              "content": "保存"
+                            },
+                            "__nodeStyle": {},
+                            "__nodeProps": null
+                          }
+                        ]
+                      },
+                      "__nodeStyle": {},
+                      "__nodeProps": null
+                    },
+                    "defaultSlot": [
+                      {
+                        "__nodeName": "edit-form",
+                        "__nodeId": "Form::edit-form",
+                        "__nodeType": "renderNode",
+                        "__nodeEvent": {},
+                        "__nodeOptions": {
+                          "renderType": "Form",
+                          "modelName": "formModel.demoReceiveOrder",
+                          "rules": {
+                            "recordedDate": [
+                              {
+                                "required": true,
+                                "message": "请输入日期",
+                                "trigger": "blur"
+                              }
+                            ]
+                          },
+                          "labelWidth": "80px",
+                          "size": "default",
+                          "labelPosition": "right",
+                          "showMessage": true,
+                          "permissionSetting": "",
+                          "requestFn": "receiveOrderAdd",
+                          "defaultSlot": {
+                            "__nodeName": "form-grid",
+                            "__nodeId": "GridBox::form-grid",
+                            "__nodeType": "renderNode",
+                            "__nodeEvent": {},
+                            "__nodeOptions": {
+                              "renderType": "GridBox",
+                              "gutter": 10,
+                              "align": "middle",
+                              "justify": "start",
+                              "defaultSlot": [
+                                {
+                                  "__nodeName": "business-type-grid",
+                                  "__nodeId": "GridItem::business-type-grid",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {},
+                                  "__nodeOptions": {
+                                    "renderType": "GridItem",
+                                    "xs": 24,
+                                    "sm": 12,
+                                    "md": 8,
+                                    "lg": 6,
+                                    "xl": 4,
+                                    "defaultSlot": {
+                                      "__nodeName": "business-type",
+                                      "__nodeId": "FormItem::business-type",
+                                      "__nodeType": "renderNode",
+                                      "__nodeEvent": {},
+                                      "__nodeOptions": {
+                                        "renderType": "FormItem",
+                                        "label": "业务类型",
+                                        "defaultSlot": {
+                                          "__nodeName": "business-type-tabs",
+                                          "__nodeId": "RadioGroup::business-type-tabs",
+                                          "__nodeType": "renderNode",
+                                          "__nodeEvent": {},
+                                          "__nodeOptions": {
+                                            "renderType": "RadioGroup",
+                                            "disabled": false,
+                                            "size": "default",
+                                            "type": "button",
+                                            "modelName": "formModel.demoReceiveOrder.serviceType",
+                                            "itemData": [
+                                              {
+                                                "label": "收料",
+                                                "value": 10
+                                              },
+                                              {
+                                                "label": "调入",
+                                                "value": 20
+                                              }
+                                            ],
+                                            "defaultProps": {
+                                              "label": "label",
+                                              "value": "value"
+                                            },
+                                            "display": true,
+                                            "permissionSetting": ""
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "__nodeName": "org-grid",
+                                  "__nodeId": "GridItem::org-grid",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {},
+                                  "__nodeOptions": {
+                                    "renderType": "GridItem",
+                                    "xs": 24,
+                                    "sm": 12,
+                                    "md": 8,
+                                    "lg": 6,
+                                    "xl": 4,
+                                    "defaultSlot": {
+                                      "__nodeName": "org",
+                                      "__nodeId": "FormItem::org",
+                                      "__nodeType": "renderNode",
+                                      "__nodeEvent": {},
+                                      "__nodeOptions": {
+                                        "renderType": "FormItem",
+                                        "label": "组织机构",
+                                        "defaultSlot": {
+                                          "__nodeName": "org-input",
+                                          "__nodeId": "Input::org-input",
+                                          "__nodeType": "renderNode",
+                                          "__nodeEvent": {},
+                                          "__nodeOptions": {
+                                            "renderType": "SearchTreeSelect",
+                                            "modelName": "formModel.demoReceiveOrder.org",
+                                            "requestFn": "",
+                                            "defaultText": "根节点",
+                                            "size": "default",
+                                            "disabled": false,
+                                            "placeholder": "请选择",
+                                            "searchPlaceholder": "请输入检索信息",
+                                            "defaultProps": {
+                                              "label": "label",
+                                              "value": "value"
+                                            },
+                                            "limit": 10,
+                                            "width": "100%",
+                                            "dropdownHeight": "300px",
+                                            "dropdownWidth": "300px",
+                                            "searchEnable": true,
+                                            "allowCreate": false,
+                                            "display": true,
+                                            "permissionSetting": ""
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "__nodeName": "period-grid",
+                                  "__nodeId": "GridItem::period-grid",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {},
+                                  "__nodeOptions": {
+                                    "renderType": "GridItem",
+                                    "xs": 24,
+                                    "sm": 12,
+                                    "md": 8,
+                                    "lg": 6,
+                                    "xl": 4,
+                                    "defaultSlot": {
+                                      "__nodeName": "period",
+                                      "__nodeId": "FormItem::period",
+                                      "__nodeType": "renderNode",
+                                      "__nodeEvent": {},
+                                      "__nodeOptions": {
+                                        "renderType": "FormItem",
+                                        "label": "账期",
+                                        "defaultSlot": {
+                                          "__nodeName": "period-input",
+                                          "__nodeId": "Input::period-input",
+                                          "__nodeType": "renderNode",
+                                          "__nodeEvent": {},
+                                          "__nodeOptions": {
+                                            "renderType": "Input",
+                                            "placeholder": "请输入账期",
+                                            "modelName": "formModel.demoReceiveOrder.period",
+                                            "propName": "period",
+                                            "defaultValue": "2026-04"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "__nodeName": "book-time-grid",
+                                  "__nodeId": "GridItem::book-time-grid",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {},
+                                  "__nodeOptions": {
+                                    "renderType": "GridItem",
+                                    "xs": 24,
+                                    "sm": 12,
+                                    "md": 8,
+                                    "lg": 6,
+                                    "xl": 4,
+                                    "defaultSlot": {
+                                      "__nodeName": "book-time",
+                                      "__nodeId": "FormItem::book-time",
+                                      "__nodeType": "renderNode",
+                                      "__nodeEvent": {},
+                                      "__nodeOptions": {
+                                        "renderType": "FormItem",
+                                        "label": "入账时间",
+                                        "defaultSlot": {
+                                          "__nodeName": "book-time-input",
+                                          "__nodeId": "Input::book-time-input",
+                                          "__nodeType": "renderNode",
+                                          "__nodeEvent": {},
+                                          "__nodeOptions": {
+                                            "renderType": "DatePicker",
+                                            "readonly": false,
+                                            "disabled": false,
+                                            "size": "default",
+                                            "editable": true,
+                                            "clearable": true,
+                                            "type": "date",
+                                            "prefixIcon": "Date",
+                                            "clearIcon": "CircleClose",
+                                            "placeholder": "请选择日期",
+                                            "modelName": "formModel.demoReceiveOrder.recordedDate",
+                                            "width": "100%",
+                                            "format": "YYYY-MM-DD",
+                                            "valueFormat": "YYYY-MM-DD",
+                                            "display": true,
+                                            "permissionSetting": ""
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "__nodeName": "settlement-unit-grid",
+                                  "__nodeId": "GridItem::settlement-unit-grid",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {},
+                                  "__nodeOptions": {
+                                    "renderType": "GridItem",
+                                    "xs": 24,
+                                    "sm": 12,
+                                    "md": 8,
+                                    "lg": 6,
+                                    "xl": 4,
+                                    "defaultSlot": {
+                                      "__nodeName": "settlement-unit",
+                                      "__nodeId": "FormItem::settlement-unit",
+                                      "__nodeType": "renderNode",
+                                      "__nodeEvent": {},
+                                      "__nodeOptions": {
+                                        "renderType": "FormItem",
+                                        "label": "结算单位",
+                                        "defaultSlot": {
+                                          "__nodeName": "settlement-unit-select",
+                                          "__nodeId": "Select::settlement-unit-select",
+                                          "__nodeType": "renderNode",
+                                          "__nodeEvent": {},
+                                          "__nodeOptions": {
+                                            "renderType": "Select",
+                                            "placeholder": "请选择",
+                                            "options": [],
+                                            "modelName": "formModel.demoReceiveOrder.settlementUnit",
+                                            "propName": "settlementUnit"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "__nodeName": "point-type-grid",
+                                  "__nodeId": "GridItem::point-type-grid",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {},
+                                  "__nodeOptions": {
+                                    "renderType": "GridItem",
+                                    "xs": 24,
+                                    "sm": 12,
+                                    "md": 8,
+                                    "lg": 6,
+                                    "xl": 4,
+                                    "defaultSlot": {
+                                      "__nodeName": "point-type",
+                                      "__nodeId": "FormItem::point-type",
+                                      "__nodeType": "renderNode",
+                                      "__nodeEvent": {},
+                                      "__nodeOptions": {
+                                        "renderType": "FormItem",
+                                        "label": "点收类型",
+                                        "defaultSlot": {
+                                          "__nodeName": "point-type-select",
+                                          "__nodeId": "Select::point-type-select",
+                                          "__nodeType": "renderNode",
+                                          "__nodeEvent": {},
+                                          "__nodeOptions": {
+                                            "renderType": "Select",
+                                            "placeholder": "请选择",
+                                            "itemData": [
+                                              {
+                                                "label": "无合同",
+                                                "value": "no_contract"
+                                              },
+                                              {
+                                                "label": "有合同",
+                                                "value": "with_contract"
+                                              }
+                                            ],
+                                            "modelName": "formModel.demoReceiveOrder.pointType",
+                                            "propName": "pointType",
+                                            "defaultValue": "no_contract"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "__nodeName": "supplier-unit-grid",
+                                  "__nodeId": "GridItem::supplier-unit-grid",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {},
+                                  "__nodeOptions": {
+                                    "renderType": "GridItem",
+                                    "xs": 24,
+                                    "sm": 12,
+                                    "md": 8,
+                                    "lg": 6,
+                                    "xl": 4,
+                                    "defaultSlot": {
+                                      "__nodeName": "supplier-unit",
+                                      "__nodeId": "FormItem::supplier-unit",
+                                      "__nodeType": "renderNode",
+                                      "__nodeEvent": {},
+                                      "__nodeOptions": {
+                                        "renderType": "FormItem",
+                                        "label": "供应单位",
+                                        "defaultSlot": {
+                                          "__nodeName": "supplier-unit-select",
+                                          "__nodeId": "Select::supplier-unit-select",
+                                          "__nodeType": "renderNode",
+                                          "__nodeEvent": {
+                                            "onChange": {
+                                              "enabled": true,
+                                              "fn": "function(ctx,payload) {console.log('SearchSelect',payload);  ctx.$dataModels.formModel.demoReceiveOrder.supplierName = payload.value.name || ''}"
+                                            },
+                                            "onMounted": {
+                                              "enabled": true,
+                                              "fn": "function(ctx) { const searchSelect = ctx.getNode('Select::supplier-unit-select'); console.log('searchSelect',searchSelect); if (searchSelect) { searchSelect.updateProps({ defaultText: ctx.$dataModels.formModel.demoReceiveOrder.supplierName }) }}"
+                                            }
+                                          },
+                                          "__nodeOptions": {
+                                            "renderType": "SearchSelect",
+                                            "modelName": "formModel.demoReceiveOrder.supplierId",
+                                            "filterName": "name",
+                                            "requestFn": "getSupplier",
+                                            "defaultText": "",
+                                            "size": "default",
+                                            "disabled": false,
+                                            "placeholder": "请选择",
+                                            "searchPlaceholder": "请输入检索信息",
+                                            "defaultProps": {
+                                              "label": "name",
+                                              "value": "id"
+                                            },
+                                            "limit": 10,
+                                            "width": "100%",
+                                            "dropdownHeight": "300px",
+                                            "dropdownWidth": "300px",
+                                            "searchEnable": true,
+                                            "allowCreate": false,
+                                            "display": true,
+                                            "permissionSetting": ""
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "__nodeName": "supply-method-grid",
+                                  "__nodeId": "GridItem::supply-method-grid",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {},
+                                  "__nodeOptions": {
+                                    "renderType": "GridItem",
+                                    "xs": 24,
+                                    "sm": 12,
+                                    "md": 8,
+                                    "lg": 6,
+                                    "xl": 4,
+                                    "defaultSlot": {
+                                      "__nodeName": "supply-method",
+                                      "__nodeId": "FormItem::supply-method",
+                                      "__nodeType": "renderNode",
+                                      "__nodeEvent": {},
+                                      "__nodeOptions": {
+                                        "renderType": "FormItem",
+                                        "label": "供应方式",
+                                        "defaultSlot": {
+                                          "__nodeName": "supply-method-select",
+                                          "__nodeId": "Select::supply-method-select",
+                                          "__nodeType": "renderNode",
+                                          "__nodeEvent": {},
+                                          "__nodeOptions": {
+                                            "renderType": "Select",
+                                            "placeholder": "请选择",
+                                            "options": [],
+                                            "modelName": "formModel.demoReceiveOrder.supplyMethod",
+                                            "propName": "supplyMethod"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "__nodeName": "settlement-method-grid",
+                                  "__nodeId": "GridItem::settlement-method-grid",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {},
+                                  "__nodeOptions": {
+                                    "renderType": "GridItem",
+                                    "xs": 24,
+                                    "sm": 12,
+                                    "md": 8,
+                                    "lg": 6,
+                                    "xl": 4,
+                                    "defaultSlot": {
+                                      "__nodeName": "settlement-method",
+                                      "__nodeId": "FormItem::settlement-method",
+                                      "__nodeType": "renderNode",
+                                      "__nodeEvent": {},
+                                      "__nodeOptions": {
+                                        "renderType": "FormItem",
+                                        "label": "结算方式",
+                                        "defaultSlot": {
+                                          "__nodeName": "settlement-method-select",
+                                          "__nodeId": "Select::settlement-method-select",
+                                          "__nodeType": "renderNode",
+                                          "__nodeEvent": {},
+                                          "__nodeOptions": {
+                                            "renderType": "Select",
+                                            "placeholder": "请选择",
+                                            "options": [
+                                              {
+                                                "label": "往来结算",
+                                                "value": "往来结算"
+                                              },
+                                              {
+                                                "label": "其他方式",
+                                                "value": "其他方式"
+                                              }
+                                            ],
+                                            "dataModelName": "form",
+                                            "propName": "settlementMethod",
+                                            "defaultValue": "往来结算"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "__nodeName": "invoice-number-grid",
+                                  "__nodeId": "GridItem::invoice-number-grid",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {},
+                                  "__nodeOptions": {
+                                    "renderType": "GridItem",
+                                    "xs": 24,
+                                    "sm": 12,
+                                    "md": 8,
+                                    "lg": 6,
+                                    "xl": 4,
+                                    "defaultSlot": {
+                                      "__nodeName": "invoice-number",
+                                      "__nodeId": "FormItem::invoice-number",
+                                      "__nodeType": "renderNode",
+                                      "__nodeEvent": {},
+                                      "__nodeOptions": {
+                                        "renderType": "FormItem",
+                                        "label": "发票号",
+                                        "defaultSlot": {
+                                          "__nodeName": "invoice-number-input",
+                                          "__nodeId": "Input::invoice-number-input",
+                                          "__nodeType": "renderNode",
+                                          "__nodeEvent": {},
+                                          "__nodeOptions": {
+                                            "renderType": "Input",
+                                            "placeholder": "请输入",
+                                            "modelName": "formModel.demoReceiveOrder.invoiceNumber",
+                                            "propName": "invoiceNumber"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "__nodeName": "tax-method-grid",
+                                  "__nodeId": "GridItem::tax-method-grid",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {},
+                                  "__nodeOptions": {
+                                    "renderType": "GridItem",
+                                    "xs": 24,
+                                    "sm": 12,
+                                    "md": 8,
+                                    "lg": 6,
+                                    "xl": 4,
+                                    "defaultSlot": {
+                                      "__nodeName": "tax-method",
+                                      "__nodeId": "FormItem::tax-method",
+                                      "__nodeType": "renderNode",
+                                      "__nodeEvent": {},
+                                      "__nodeOptions": {
+                                        "renderType": "FormItem",
+                                        "label": "计税方式",
+                                        "defaultSlot": {
+                                          "__nodeName": "tax-method-select",
+                                          "__nodeId": "Select::tax-method-select",
+                                          "__nodeType": "renderNode",
+                                          "__nodeEvent": {},
+                                          "__nodeOptions": {
+                                            "renderType": "Checkbox",
+                                            "placeholder": "请选择",
+                                            "size": "default",
+                                            "content": "否",
+                                            "border": false,
+                                            "disabled": false,
+                                            "modelName": "formModel.demoReceiveOrder.taxDeduction",
+                                            "display": true,
+                                            "permissionSetting": ""
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                },
+                                {
+                                  "__nodeName": "cost-account-grid",
+                                  "__nodeId": "GridItem::cost-account-grid",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {},
+                                  "__nodeOptions": {
+                                    "renderType": "GridItem",
+                                    "xs": 24,
+                                    "sm": 12,
+                                    "md": 8,
+                                    "lg": 6,
+                                    "xl": 4,
+                                    "defaultSlot": {
+                                      "__nodeName": "cost-account",
+                                      "__nodeId": "FormItem::cost-account",
+                                      "__nodeType": "renderNode",
+                                      "__nodeEvent": {},
+                                      "__nodeOptions": {
+                                        "renderType": "FormItem",
+                                        "label": "成本科目",
+                                        "defaultSlot": {
+                                          "__nodeName": "cost-account-select",
+                                          "__nodeId": "Select::cost-account-select",
+                                          "__nodeType": "renderNode",
+                                          "__nodeEvent": {},
+                                          "__nodeOptions": {
+                                            "renderType": "Select",
+                                            "placeholder": "请选择",
+                                            "options": [],
+                                            "modelName": "formModel.demoReceiveOrder.costAccount",
+                                            "propName": "costAccount"
+                                          }
+                                        }
+                                      }
+                                    }
+                                  }
+                                }
+                              ]
+                            }
+                          }
+                        }
+                      }
+                    ]
+                  }
+                }
+              },
+              {
+                "isFixed": false,
+                "size": "",
+                "paddingSize": "large",
+                "clearPadding": [
+                  "bottom"
+                ],
+                "isHidden": false,
+                "contentType": "container",
+                "defaultSlot": {
+                  "__nodeName": "table-box",
+                  "__nodeId": "Box::table-box",
+                  "__nodeType": "renderNode",
+                  "__nodeEvent": {},
+                  "__nodeOptions": {
+                    "renderType": "Box",
+                    "contentType": "element",
+                    "shadow": false,
+                    "border": false,
+                    "background": true,
+                    "paddingSize": "base",
+                    "height": "100%",
+                    "defaultSlot": {
+                      "__nodeName": "edit-table",
+                      "__nodeId": "TableEdit::edit-table",
+                      "__nodeType": "renderNode",
+                      "__nodeEvent": {
+                        "onMounted": {
+                          "enabled": true,
+                          "fn": "async function onMountedFn(ctx){\n  const { currentRoute } = ctx.$globalVars.$router;\n const isEdit = ctx.$dataModels.state.singleTable.isEdit;\n  if (isEdit) {   const result = await ctx.$requestFns.getReceives(currentRoute.query);   \n  ctx.setForm('formModel', result.data);  }\n}"
+                        }
+                      },
+                      "__nodeOptions": {
+                        "renderType": "TableEdit",
+                        "modelName": "formModel.demoReceiveOrderItems",
+                        "columnConfigs": [
+                          {
+                            "attr": {
+                              "prop": "code",
+                              "type": "index",
+                              "label": "序号",
+                              "width": 60,
+                              "headerAlign": "left",
+                              "align": "left",
+                              "fixed": "left"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "materialName",
+                              "label": "材料名称",
+                              "width": 150,
+                              "headerAlign": "left",
+                              "align": "left",
+                              "fixed": "left"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "materialModel",
+                              "label": "规格型号",
+                              "width": 150,
+                              "headerAlign": "left",
+                              "align": "left",
+                              "fixed": "left"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "materialUnit",
+                              "label": "单位",
+                              "width": 80,
+                              "headerAlign": "left",
+                              "align": "left",
+                              "fixed": "left"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "quantity",
+                              "label": "数量",
+                              "width": 150,
+                              "headerAlign": "left",
+                              "align": "left",
+                              "scopedSlot": "quantity"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "taxRate",
+                              "label": "税率",
+                              "width": 150,
+                              "headerAlign": "left",
+                              "align": "left",
+                              "scopedSlot": "taxRate"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "taxFreePrice",
+                              "label": "不含税单价",
+                              "width": 150,
+                              "headerAlign": "left",
+                              "align": "left",
+                              "scopedSlot": "taxFreePrice"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "taxFreeSum",
+                              "label": "不含税金额",
+                              "width": 150,
+                              "headerAlign": "left",
+                              "align": "left",
+                              "scopedSlot": "taxFreeSum"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "taxIncludedPrice",
+                              "label": "含税单价",
+                              "width": 150,
+                              "headerAlign": "left",
+                              "align": "left",
+                              "scopedSlot": "taxIncludedPrice"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "taxIncludedSum",
+                              "label": "含税金额",
+                              "width": 150,
+                              "headerAlign": "left",
+                              "align": "left",
+                              "scopedSlot": "taxIncludedSum"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "taxAmount",
+                              "label": "税额",
+                              "width": 150,
+                              "headerAlign": "left",
+                              "align": "left",
+                              "scopedSlot": "taxAmount"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "bookSum",
+                              "label": "账面金额",
+                              "width": 150,
+                              "headerAlign": "left",
+                              "align": "left",
+                              "scopedSlot": "bookSum"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "difference",
+                              "label": "差额",
+                              "width": 150,
+                              "headerAlign": "left",
+                              "align": "left",
+                              "scopedSlot": "difference"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "manufacturer",
+                              "label": "生产厂商",
+                              "width": 200,
+                              "headerAlign": "left",
+                              "align": "left",
+                              "scopedSlot": "manufacturer"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "batchNo",
+                              "label": "炉批号",
+                              "width": 150,
+                              "headerAlign": "left",
+                              "align": "left",
+                              "scopedSlot": "batchNo"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "storageRoom",
+                              "label": "存放地",
+                              "width": 150,
+                              "headerAlign": "left",
+                              "align": "left",
+                              "scopedSlot": "storageRoom"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "itemRemark",
+                              "label": "备注",
+                              "width": 300,
+                              "headerAlign": "left",
+                              "align": "left",
+                              "scopedSlot": "itemRemark"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "id",
+                              "label": "操作",
+                              "width": 60,
+                              "headerAlign": "left",
+                              "align": "left",
+                              "fixed": "right",
+                              "scopedSlot": "operation"
+                            }
+                          }
+                        ],
+                        "columnSlots": [
+                          {
+                            "code": "quantity",
+                            "columRender": {
+                              "__nodeId": "inputNumber_mnre4m4l",
+                              "__nodeName": "inputNumber",
+                              "__nodeType": "columnNode",
+                              "__nodeOptions": {
+                                "renderType": "InputNumber",
+                                "size": "small",
+                                "plain": false,
+                                "clearable": true,
+                                "readonly": false,
+                                "disabled": false,
+                                "type": "text",
+                                "placeholder": "请输入",
+                                "modelName": "quantity",
+                                "display": true,
+                                "permissionSetting": ""
+                              },
+                              "__nodeEvent": {
+                                "onBlur": {
+                                  "enabled": true,
+                                  "fn": "function(ctx,payload) {  ctx.$sharedFns.calculateRowAmount(ctx, payload.row); }"
+                                },
+                                "onValueRender": {
+                                  "enabled": true,
+                                  "fn": "function(ctx,payload) { const value = payload.value !== undefined ? Number(payload.value) : 0; if(value >15) { return { disabled: true }; } else { return  { disabled: false }; } }"
+                                }
+                              },
+                              "__nodeKey": "nodeKey_input_mnre4m4l",
+                              "__description": ""
+                            }
+                          },
+                          {
+                            "code": "taxRate",
+                            "columRender": {
+                              "__nodeId": "inputNumber_taxRate",
+                              "__nodeName": "inputNumber",
+                              "__nodeType": "columnNode",
+                              "__nodeOptions": {
+                                "renderType": "InputNumber",
+                                "size": "small",
+                                "plain": false,
+                                "clearable": true,
+                                "readonly": false,
+                                "disabled": false,
+                                "type": "text",
+                                "placeholder": "请输入",
+                                "modelName": "taxRate",
+                                "display": true,
+                                "permissionSetting": ""
+                              },
+                              "__nodeEvent": {},
+                              "__nodeKey": "nodeKey_input_taxRate",
+                              "__description": ""
+                            }
+                          },
+                          {
+                            "code": "taxFreePrice",
+                            "columRender": {
+                              "__nodeId": "inputNumber_taxFreePrice",
+                              "__nodeName": "inputNumber",
+                              "__nodeType": "columnNode",
+                              "__nodeOptions": {
+                                "renderType": "InputNumber",
+                                "size": "small",
+                                "plain": false,
+                                "clearable": true,
+                                "readonly": false,
+                                "disabled": false,
+                                "type": "text",
+                                "placeholder": "请输入",
+                                "modelName": "taxFreePrice",
+                                "display": true,
+                                "permissionSetting": ""
+                              },
+                              "__nodeEvent": {
+                                "__nodeEvent": {
+                                  "onBlur": {
+                                    "enabled": true,
+                                    "fn": "function(ctx,payload) { ctx.$sharedFns.calculateRowAmount(ctx, payload.row); }"
+                                  }
+                                }
+                              },
+                              "__nodeKey": "nodeKey_input_taxFreePrice",
+                              "__description": ""
+                            }
+                          },
+                          {
+                            "code": "taxFreeSum",
+                            "columRender": {
+                              "__nodeId": "inputNumber_taxFreeSum",
+                              "__nodeName": "inputNumber",
+                              "__nodeType": "columnNode",
+                              "__nodeOptions": {
+                                "renderType": "InputNumber",
+                                "size": "small",
+                                "plain": false,
+                                "clearable": true,
+                                "readonly": false,
+                                "disabled": false,
+                                "type": "text",
+                                "placeholder": "请输入",
+                                "modelName": "taxFreeSum",
+                                "display": true,
+                                "permissionSetting": ""
+                              },
+                              "__nodeEvent": {
+                                "onBlur": {
+                                  "enabled": true,
+                                  "fn": "function(ctx,payload) {  ctx.$sharedFns.calculateRowAmount(ctx, payload.row); }"
+                                }
+                              },
+                              "__nodeKey": "nodeKey_input_taxFreeSum",
+                              "__description": ""
+                            }
+                          },
+                          {
+                            "code": "taxIncludedPrice",
+                            "columRender": {
+                              "__nodeId": "inputNumber_taxIncludedPrice",
+                              "__nodeName": "inputNumber",
+                              "__nodeType": "columnNode",
+                              "__nodeOptions": {
+                                "renderType": "InputNumber",
+                                "size": "small",
+                                "plain": false,
+                                "clearable": true,
+                                "readonly": false,
+                                "disabled": false,
+                                "type": "text",
+                                "placeholder": "请输入",
+                                "modelName": "taxIncludedPrice",
+                                "display": true,
+                                "permissionSetting": ""
+                              },
+                              "__nodeEvent": {
+                                "onBlur": {
+                                  "enabled": true,
+                                  "fn": "function(ctx,payload) { ctx.$sharedFns.calculateRowAmount(ctx, payload.row); }"
+                                }
+                              },
+                              "__nodeKey": "nodeKey_input_taxIncludedPrice",
+                              "__description": ""
+                            }
+                          },
+                          {
+                            "code": "taxIncludedSum",
+                            "columRender": {
+                              "__nodeId": "inputNumber_taxIncludedSum",
+                              "__nodeName": "inputNumber",
+                              "__nodeType": "columnNode",
+                              "__nodeOptions": {
+                                "renderType": "InputNumber",
+                                "size": "small",
+                                "plain": false,
+                                "clearable": true,
+                                "readonly": false,
+                                "disabled": false,
+                                "type": "text",
+                                "placeholder": "请输入",
+                                "modelName": "taxIncludedSum",
+                                "display": true,
+                                "permissionSetting": ""
+                              },
+                              "__nodeEvent": {
+                                "onBlur": {
+                                  "enabled": true,
+                                  "fn": "function(ctx,payload) { console.log('ctx',ctx);  ctx.$sharedFns.calculateRowAmount(ctx, payload.row); }"
+                                }
+                              },
+                              "__nodeKey": "nodeKey_input_taxIncludedSum",
+                              "__description": ""
+                            }
+                          },
+                          {
+                            "code": "taxAmount",
+                            "columRender": {
+                              "__nodeId": "inputNumber_taxAmount",
+                              "__nodeName": "inputNumber",
+                              "__nodeType": "columnNode",
+                              "__nodeOptions": {
+                                "renderType": "InputNumber",
+                                "size": "small",
+                                "plain": false,
+                                "clearable": true,
+                                "readonly": false,
+                                "disabled": false,
+                                "type": "text",
+                                "placeholder": "请输入",
+                                "modelName": "taxAmount",
+                                "display": true,
+                                "permissionSetting": ""
+                              },
+                              "__nodeEvent": {},
+                              "__nodeKey": "nodeKey_input_taxAmount",
+                              "__description": ""
+                            }
+                          },
+                          {
+                            "code": "bookSum",
+                            "columRender": {
+                              "__nodeId": "inputNumber_bookSum",
+                              "__nodeName": "inputNumber",
+                              "__nodeType": "columnNode",
+                              "__nodeOptions": {
+                                "renderType": "InputNumber",
+                                "size": "small",
+                                "plain": false,
+                                "clearable": true,
+                                "readonly": false,
+                                "disabled": false,
+                                "type": "text",
+                                "placeholder": "请输入",
+                                "modelName": "bookSum",
+                                "display": true,
+                                "permissionSetting": ""
+                              },
+                              "__nodeEvent": {},
+                              "__nodeKey": "nodeKey_input_bookSum",
+                              "__description": ""
+                            }
+                          },
+                          {
+                            "code": "difference",
+                            "columRender": {
+                              "__nodeId": "inputNumber_difference",
+                              "__nodeName": "inputNumber",
+                              "__nodeType": "columnNode",
+                              "__nodeOptions": {
+                                "renderType": "InputNumber",
+                                "size": "small",
+                                "plain": false,
+                                "clearable": true,
+                                "readonly": false,
+                                "disabled": false,
+                                "type": "text",
+                                "placeholder": "请输入",
+                                "modelName": "difference",
+                                "display": true,
+                                "permissionSetting": ""
+                              },
+                              "__nodeEvent": {},
+                              "__nodeKey": "nodeKey_input_difference",
+                              "__description": ""
+                            }
+                          },
+                          {
+                            "code": "storageRoom",
+                            "columRender": {
+                              "__nodeId": "select_mnre4m5z",
+                              "__nodeName": "select",
+                              "__nodeType": "columnNode",
+                              "__nodeOptions": {
+                                "renderType": "Select",
+                                "multiple": false,
+                                "disabled": false,
+                                "size": "small",
+                                "clearable": false,
+                                "collapseTags": false,
+                                "collapseTagsTooltip": false,
+                                "multipleLimit": 0,
+                                "clearIcon": "CircleClose",
+                                "fitInputWidth": false,
+                                "filterable": false,
+                                "valueKey": "value",
+                                "placeholder": "请选择",
+                                "modelName": "storageRoom",
+                                "itemData": [
+                                  {
+                                    "value": "仓库1号",
+                                    "label": "仓库1号"
+                                  },
+                                  {
+                                    "value": "钢筋仓库1号",
+                                    "label": "钢筋仓库1号"
+                                  },
+                                  {
+                                    "value": "搅拌站1号",
+                                    "label": "搅拌站1号"
+                                  },
+                                  {
+                                    "value": "钢筋加工仓库001",
+                                    "label": "钢筋加工仓库001"
+                                  },
+                                  {
+                                    "value": "搅拌站仓库",
+                                    "label": "搅拌站仓库"
+                                  },
+                                  {
+                                    "value": "驱蚊器翁群",
+                                    "label": "驱蚊器翁群"
+                                  }
+                                ],
+                                "defaultProps": {
+                                  "label": "label",
+                                  "value": "value"
+                                },
+                                "display": true,
+                                "permissionSetting": ""
+                              },
+                              "__nodeEvent": {},
+                              "__nodeKey": "nodeKey_select_mnre4m5z",
+                              "__description": ""
+                            }
+                          },
+                          {
+                            "code": "manufacturer",
+                            "columRender": {
+                              "__nodeId": "input_mnre4m37",
+                              "__nodeName": "input",
+                              "__nodeType": "columnNode",
+                              "__nodeOptions": {
+                                "renderType": "Input",
+                                "size": "small",
+                                "plain": false,
+                                "clearable": true,
+                                "readonly": false,
+                                "disabled": false,
+                                "type": "text",
+                                "placeholder": "请输入",
+                                "modelName": "manufacturer",
+                                "display": true,
+                                "permissionSetting": ""
+                              },
+                              "__nodeEvent": {},
+                              "__nodeKey": "nodeKey_input_mnre4m37",
+                              "__description": ""
+                            }
+                          },
+                          {
+                            "code": "batchNo",
+                            "columRender": {
+                              "__nodeId": "input_batchNo",
+                              "__nodeName": "input",
+                              "__nodeType": "columnNode",
+                              "__nodeOptions": {
+                                "renderType": "Input",
+                                "size": "small",
+                                "plain": false,
+                                "clearable": true,
+                                "readonly": false,
+                                "disabled": false,
+                                "type": "text",
+                                "placeholder": "请输入炉批号",
+                                "modelName": "batchNo",
+                                "display": true,
+                                "permissionSetting": ""
+                              },
+                              "__nodeEvent": {},
+                              "__nodeKey": "nodeKey_input_batchNo",
+                              "__description": ""
+                            }
+                          },
+                          {
+                            "code": "itemRemark",
+                            "columRender": {
+                              "__nodeId": "input_itemRemark",
+                              "__nodeName": "input",
+                              "__nodeType": "columnNode",
+                              "__nodeOptions": {
+                                "renderType": "Input",
+                                "size": "small",
+                                "plain": false,
+                                "clearable": true,
+                                "readonly": false,
+                                "disabled": false,
+                                "type": "text",
+                                "placeholder": "请输入备注",
+                                "modelName": "itemRemark",
+                                "display": true,
+                                "permissionSetting": ""
+                              },
+                              "__nodeEvent": {},
+                              "__nodeKey": "nodeKey_input_itemRemark",
+                              "__description": ""
+                            }
+                          },
+                          {
+                            "code": "operation",
+                            "columRender": {
+                              "__nodeId": "button_mnre4m5z",
+                              "__nodeName": "button",
+                              "__nodeType": "columnNode",
+                              "__nodeOptions": {
+                                "renderType": "Button",
+                                "plain": true,
+                                "content": "删除",
+                                "type": "danger",
+                                "size": "small",
+                                "text": false,
+                                "link": true,
+                                "round": false,
+                                "circle": false,
+                                "loading": false,
+                                "disabled": false,
+                                "display": true,
+                                "permissionSetting": ""
+                              },
+                              "__nodeEvent": {
+                                "onClick": {
+                                  "enabled": true,
+                                  "fn": "function(ctx,payload) {console.log('payload',payload); var editTable = ctx.getNode('TableEdit::edit-table'); if(editTable) { editTable.exposed.deleteData(payload.row);} }"
+                                }
+                              },
+                              "__nodeKey": "nodeKey_select_mnre4m5z",
+                              "__description": ""
+                            }
+                          }
+                        ],
+                        "mapConfig": {
+                          "dataSource1": [
+                            {
+                              "prop": "materialId",
+                              "isReplace": true,
+                              "defaultVal": "",
+                              "selprop": "id"
+                            },
+                            {
+                              "prop": "materialName",
+                              "isReplace": true,
+                              "defaultVal": "",
+                              "selprop": "materialName"
+                            },
+                            {
+                              "prop": "materialModel",
+                              "isReplace": true,
+                              "defaultVal": "",
+                              "selprop": "materialModel"
+                            },
+                            {
+                              "prop": "materialUnit",
+                              "isReplace": true,
+                              "defaultVal": "",
+                              "selprop": "materialUnit",
+                              "defaultValType": "string"
+                            },
+                            {
+                              "prop": "quantity",
+                              "isReplace": false,
+                              "defaultVal": 0,
+                              "selprop": ""
+                            },
+                            {
+                              "prop": "taxRate",
+                              "isReplace": false,
+                              "defaultVal": 13,
+                              "selprop": "taxRate"
+                            },
+                            {
+                              "prop": "taxFreePrice",
+                              "isReplace": false,
+                              "defaultVal": 0,
+                              "selprop": "taxFreePrice"
+                            },
+                            {
+                              "prop": "taxFreeSum",
+                              "isReplace": false,
+                              "defaultVal": 0,
+                              "selprop": "taxFreeSum"
+                            },
+                            {
+                              "prop": "taxIncludedPrice",
+                              "isReplace": false,
+                              "defaultVal": 0,
+                              "selprop": "taxIncludedPrice"
+                            },
+                            {
+                              "prop": "taxIncludedSum",
+                              "isReplace": false,
+                              "defaultVal": 0,
+                              "selprop": "taxIncludedSum"
+                            },
+                            {
+                              "prop": "taxAmount",
+                              "isReplace": false,
+                              "defaultVal": 0,
+                              "selprop": "taxAmount"
+                            },
+                            {
+                              "prop": "bookPrice",
+                              "isReplace": false,
+                              "defaultVal": 0,
+                              "selprop": "bookPrice"
+                            },
+                            {
+                              "prop": "bookSum",
+                              "isReplace": false,
+                              "defaultVal": 0,
+                              "selprop": "bookSum"
+                            },
+                            {
+                              "prop": "difference",
+                              "isReplace": false,
+                              "defaultVal": 0,
+                              "selprop": "difference"
+                            },
+                            {
+                              "prop": "manufacturer",
+                              "isReplace": false,
+                              "defaultVal": "",
+                              "selprop": "manufacturer"
+                            },
+                            {
+                              "prop": "batchNo",
+                              "isReplace": false,
+                              "defaultVal": "",
+                              "selprop": "batchNo"
+                            },
+                            {
+                              "prop": "storageRoom",
+                              "isReplace": false,
+                              "defaultVal": "",
+                              "selprop": "storageRoom"
+                            },
+                            {
+                              "prop": "itemRemark",
+                              "isReplace": false,
+                              "defaultVal": "",
+                              "selprop": "itemRemark"
+                            }
+                          ]
+                        },
+                        "sumRowConfig": {
+                          "disabled": false,
+                          "sumText": "合计",
+                          "items": {
+                            "taxIncludedSum": {
+                              "text": "含税金额",
+                              "sumVal": 0,
+                              "precision": 2,
+                              "capitalCol": false
+                            },
+                            "bookSum": {
+                              "text": "账面金额",
+                              "sumVal": 0,
+                              "precision": 2,
+                              "capitalCol": true
+                            },
+                            "taxFreeSum": {
+                              "text": "不含税金额",
+                              "sumVal": 0,
+                              "precision": 2,
+                              "capitalCol": false
+                            }
+                          }
+                        },
+                        "notRepeatFiled": "materialId",
+                        "rowsLimit": 10000,
+                        "tableCode": "",
+                        "tableRemark": ""
+                      }
+                    }
+                  }
+                }
+              }
+            ]
+          }
+        }
+      }
+    }
+  },
+  "routerConfig": {
+    "orderList": {
+      "name": "orderList",
+      "path": "/order-table",
+      "meta": {
+        "title": "主模块"
+      }
+    },
+    "orderDetail": {
+      "name": "orderDetail",
+      "title": "详情界面",
+      "path": "/order-detail",
+      "description": "查看单据详情",
+      "meta": {
+        "title": "详情界面"
+      }
+    },
+    "orderEdit": {
+      "name": "orderEdit",
+      "title": "编辑界面",
+      "path": "/order-edit",
+      "description": "订单编辑界面",
+      "meta": {
+        "title": "编辑界面"
+      }
+    }
+  },
+  "dataSource": {
+    "api": {
+      "config": {
+        "baseURL": "http://192.168.5.41:3201",
+        "timeout": 10000
+      }
+    },
+    "requestConfig": {
+      "loadData": {
+        "paramsConfig": {
+          "dataModelName": "receiveFilter",
+          "paramsType": "paginationParams",
+          "paginationConfig": {
+            "paginationMode": "typeorm",
+            "tableName": "supplier",
+            "baseCondition": " is_removed=0",
+            "selectFields": [],
+            "orderBy": {
+              "created_at": "DESC"
+            }
+          },
+          "paramsModel": {
+            "singleTable": {
+              "orderDate": {
+                "op": "eq",
+                "valueType": "string"
+              },
+              "orderCode": {
+                "op": "like",
+                "valueType": "string"
+              },
+              "supplierName": {
+                "op": "like",
+                "valueType": "string"
+              },
+              "orgId": {
+                "op": "eq",
+                "valueType": "number"
+              }
+            }
+          }
+        },
+        "url": "/demo-system/receive-orders/getMany",
+        "method": "post",
+        "config": {},
+        "groupName": "默认分组",
+        "sort": 1,
+        "description": " paginationParams分页传参演示",
+        "afterReq": {
+          "isOn": true,
+          "fn": "async function afterReq(responseResult){\nconsole.log('qqqqq')\n return responseResult; \n}"
+        }
+      },
+      "loadItemsData": {
+        "paramsConfig": {
+          "dataModelName": "receiveItemsFilter",
+          "paramsType": "paginationParams",
+          "paginationConfig": {
+            "paginationMode": "typeorm",
+            "tableName": "receive_items",
+            "baseCondition": "is_removed=0",
+            "selectFields": [],
+            "orderBy": {
+              "created_at": "DESC"
+            }
+          },
+          "paramsModel": {
+            "singleTable": {
+              "orderId": {
+                "valueType": "string",
+                "op": "eq",
+                "defaultValue": "",
+                "isCache": true
+              },
+              "orgId": {
+                "op": "eq",
+                "valueType": "number",
+                "defaultValue": ""
+              }
+            }
+          }
+        },
+        "url": "/demo-system/receive-orders/items-list",
+        "method": "post",
+        "config": {},
+        "description": "单据详情查询接口",
+        "groupName": "默认分组",
+        "sort": 1
+      },
+      "deleteOrder": {
+        "paramsConfig": {
+          "paramsType": "routeParams",
+          "paramsModel": {
+            "singleTable": {
+              "id": {
+                "valueType": "number"
+              },
+              "orgId": {
+                "valueType": "number"
+              }
+            }
+          }
+        },
+        "url": "/demo-system/receive-orders/:id/:orgId",
+        "method": "DELETE",
+        "description": "删除单据数据",
+        "groupName": "默认分组",
+        "sort": 1
+      },
+      "toggleStatus": {
+        "paramsConfig": {
+          "paramsType": "formSaveParams",
+          "dataModelType": "single",
+          "paramsModel": {
+            "singleTable": {
+              "orgId": {
+                "valueType": "number",
+                "resolveType": "routeParams"
+              },
+              "id": {
+                "valueType": "number",
+                "resolveType": "routeParams"
+              },
+              "isAudit": {
+                "valueType": "number",
+                "resolveType": "bodyParams"
+              }
+            }
+          }
+        },
+        "url": "/demo-system/receive-orders/update-status/:id/:orgId",
+        "method": "put",
+        "config": {},
+        "description": "更新单据状态",
+        "groupName": "默认分组",
+        "sort": 1
+      },
+      "getReceives": {
+        "paramsConfig": {
+          "paramsType": "routeParams",
+          "paramsModel": {
+            "singleTable": {
+              "id": {
+                "valueType": "number"
+              },
+              "orgId": {
+                "valueType": "number"
+              }
+            }
+          }
+        },
+        "url": "/demo-system/receive-orders/:id/:orgId",
+        "method": "get",
+        "config": {},
+        "groupName": "默认分组",
+        "sort": 1
+      },
+      "receiveOrderAdd": {
+        "paramsConfig": {
+          "paramsType": "formSaveParams",
+          "dataModelName": "formModel",
+          "dataModelType": "orderItems",
+          "paramsModel": {
+            "demoReceiveOrder": {
+              "orgId": {
+                "valueType": "number",
+                "isSkipVal": false,
+                "resolveType": ""
+              },
+              "id": {
+                "valueType": "number",
+                "isSkipVal": false,
+                "resolveType": ""
+              },
+              "orderCode": {
+                "valueType": "string",
+                "defaultValue": "收2023030001",
+                "isSkipVal": false,
+                "resolveType": ""
+              },
+              "orderDate": {
+                "valueType": "string",
+                "isSkipVal": false,
+                "resolveType": "",
+                "defaultValue": ""
+              },
+              "recordedDate": {
+                "valueType": "string",
+                "isSkipVal": false,
+                "resolveType": "",
+                "defaultValue": ""
+              },
+              "serviceType": {
+                "valueType": "number",
+                "defaultValue": 10,
+                "isSkipVal": false,
+                "resolveType": ""
+              },
+              "isBack": {
+                "valueType": "boolean",
+                "defaultValue": false,
+                "isSkipVal": false,
+                "resolveType": ""
+              },
+              "isRepair": {
+                "valueType": "boolean",
+                "defaultValue": false,
+                "isSkipVal": false,
+                "resolveType": ""
+              },
+              "isRed": {
+                "valueType": "boolean",
+                "defaultValue": false,
+                "isSkipVal": false,
+                "resolveType": ""
+              },
+              "orgName": {
+                "valueType": "string",
+                "isSkipVal": false,
+                "resolveType": "",
+                "defaultValue": "测试项目部2-11"
+              },
+              "supplierId": {
+                "valueType": "string",
+                "isSkipVal": false,
+                "resolveType": "",
+                "defaultValue": ""
+              },
+              "supplierName": {
+                "valueType": "string",
+                "isSkipVal": false,
+                "resolveType": "",
+                "defaultValue": ""
+              },
+              "contractId": {
+                "valueType": "number",
+                "isSkipVal": false,
+                "resolveType": "",
+                "defaultValue": 0
+              },
+              "contractCode": {
+                "valueType": "string",
+                "isSkipVal": false,
+                "resolveType": "",
+                "defaultValue": ""
+              },
+              "purchaseMethod": {
+                "valueType": "string",
+                "isSkipVal": false,
+                "resolveType": "",
+                "defaultValue": ""
+              },
+              "settlementMethod": {
+                "valueType": "string",
+                "isSkipVal": false,
+                "resolveType": "",
+                "defaultValue": ""
+              },
+              "taxDeduction": {
+                "valueType": "number",
+                "isSkipVal": false,
+                "resolveType": "",
+                "defaultValue": 0
+              },
+              "remark": {
+                "valueType": "string",
+                "isSkipVal": false,
+                "resolveType": "",
+                "defaultValue": ""
+              }
+            },
+            "demoReceiveOrderItems": []
+          }
+        },
+        "url": "/demo-system/receive-orders",
+        "method": "post",
+        "config": {},
+        "description": "数据保存",
+        "groupName": "默认分组",
+        "sort": 1
+      },
+      "receiveOrderEdit": {
+        "paramsConfig": {
+          "paramsType": "formSaveParams",
+          "dataModelName": "formModel",
+          "dataModelType": "orderItems",
+          "paramsModel": {
+            "demoReceiveOrder": {
+              "orgId": {
+                "valueType": "number",
+                "resolveType": "routeParams,bodyParams",
+                "isSkipVal": false
+              },
+              "id": {
+                "valueType": "number",
+                "resolveType": "routeParams,bodyParams",
+                "isSkipVal": false
+              },
+              "orderCode": {
+                "valueType": "string",
+                "isSkipVal": false,
+                "resolveType": "",
+                "defaultValue": ""
+              },
+              "orderDate": {
+                "valueType": "string",
+                "isSkipVal": false,
+                "resolveType": "",
+                "defaultValue": ""
+              },
+              "recordedDate": {
+                "valueType": "string",
+                "isSkipVal": false,
+                "resolveType": "",
+                "defaultValue": ""
+              },
+              "serviceType": {
+                "valueType": "number",
+                "defaultValue": 10,
+                "isSkipVal": false,
+                "resolveType": ""
+              },
+              "isBack": {
+                "valueType": "boolean",
+                "defaultValue": false,
+                "isSkipVal": false,
+                "resolveType": ""
+              },
+              "isRepair": {
+                "valueType": "boolean",
+                "defaultValue": false,
+                "isSkipVal": false,
+                "resolveType": ""
+              },
+              "isRed": {
+                "valueType": "boolean",
+                "defaultValue": false,
+                "isSkipVal": false,
+                "resolveType": ""
+              },
+              "orgName": {
+                "valueType": "string",
+                "isSkipVal": false,
+                "resolveType": "",
+                "defaultValue": ""
+              },
+              "supplierId": {
+                "valueType": "string",
+                "isSkipVal": false,
+                "resolveType": "",
+                "defaultValue": ""
+              },
+              "supplierName": {
+                "valueType": "string",
+                "isSkipVal": false,
+                "resolveType": "",
+                "defaultValue": ""
+              },
+              "contractId": {
+                "valueType": "string",
+                "isSkipVal": false,
+                "resolveType": "",
+                "defaultValue": ""
+              },
+              "contractCode": {
+                "valueType": "string",
+                "isSkipVal": false,
+                "resolveType": "",
+                "defaultValue": ""
+              },
+              "purchaseMethod": {
+                "valueType": "string",
+                "isSkipVal": false,
+                "resolveType": "",
+                "defaultValue": ""
+              },
+              "settlementMethod": {
+                "valueType": "string",
+                "isSkipVal": false,
+                "resolveType": "",
+                "defaultValue": ""
+              },
+              "taxDeduction": {
+                "valueType": "string",
+                "isSkipVal": false,
+                "resolveType": "",
+                "defaultValue": ""
+              },
+              "remark": {
+                "valueType": "string",
+                "isSkipVal": false,
+                "resolveType": "",
+                "defaultValue": ""
+              }
+            },
+            "demoReceiveOrderItems": []
+          }
+        },
+        "url": "/demo-system/receive-orders/:id/:orgId",
+        "method": "put",
+        "config": {},
+        "description": "更新单据数据",
+        "groupName": "默认分组",
+        "sort": 1
+      },
+      "getSupplier": {
+        "paramsConfig": {
+          "paramsType": "paginationParams",
+          "paginationConfig": {
+            "paginationMode": "typeorm",
+            "tableName": "supplier",
+            "baseCondition": "is_removed=0",
+            "selectFields": [],
+            "orderBy": {
+              "created_at": "DESC"
+            }
+          }
+        },
+        "url": "/demo-system/supplier/getMany",
+        "method": "post",
+        "config": {},
+        "groupName": "默认分组",
+        "sort": 1
+      }
+    },
+    "dataModelConfig": {
+      "receiveFilter": {
+        "description": "查询过滤器",
+        "singleTable": {
+          "orgId": {
+            "valueType": "number",
+            "isSkipVal": false
+          },
+          "orderDate": {
+            "valueType": "string",
+            "defaultValue": null,
+            "isSkipVal": false
+          },
+          "orderCode": {
+            "valueType": "string",
+            "defaultValue": null,
+            "isSkipVal": false
+          },
+          "supplierName": {
+            "valueType": "string",
+            "defaultValue": null,
+            "isSkipVal": false
+          }
+        }
+      },
+      "formModel": {
+        "description": "模型描述",
+        "demoReceiveOrder": {
+          "orgId": {
+            "valueType": "number",
+            "isSkipVal": false
+          },
+          "id": {
+            "valueType": "number",
+            "isSkipVal": false
+          },
+          "orderCode": {
+            "valueType": "string",
+            "defaultValue": "收2023030001",
+            "isSkipVal": false
+          },
+          "orderDate": {
+            "valueType": "string",
+            "isSkipVal": true
+          },
+          "recordedDate": {
+            "valueType": "string",
+            "isSkipVal": false
+          },
+          "serviceType": {
+            "valueType": "number",
+            "defaultValue": 10,
+            "isSkipVal": false
+          },
+          "isBack": {
+            "valueType": "boolean",
+            "isSkipVal": false
+          },
+          "isRepair": {
+            "valueType": "boolean",
+            "isSkipVal": false
+          },
+          "isRed": {
+            "valueType": "boolean",
+            "isSkipVal": false
+          },
+          "orgName": {
+            "valueType": "string",
+            "isSkipVal": false
+          },
+          "supplierId": {
+            "valueType": "string",
+            "isSkipVal": false
+          },
+          "supplierName": {
+            "valueType": "string",
+            "isSkipVal": false
+          },
+          "contractId": {
+            "valueType": "string",
+            "isSkipVal": false
+          },
+          "contractCode": {
+            "valueType": "string",
+            "isSkipVal": false
+          },
+          "purchaseMethod": {
+            "valueType": "string",
+            "isSkipVal": false
+          },
+          "settlementMethod": {
+            "valueType": "string",
+            "isSkipVal": false
+          },
+          "taxDeduction": {
+            "valueType": "number",
+            "isSkipVal": false
+          },
+          "costAccount": {
+            "valueType": "string",
+            "isSkipVal": false
+          },
+          "invoiceNumber": {
+            "valueType": "string",
+            "isSkipVal": false
+          },
+          "remark": {
+            "valueType": "string",
+            "isSkipVal": false
+          }
+        },
+        "demoReceiveOrderItems": []
+      },
+      "state": {
+        "description": "应用状态",
+        "singleTable": {
+          "selectedRow": {
+            "valueType": "object",
+            "defaultValue": null
+          },
+          "isEdit": {
+            "valueType": "boolean",
+            "defaultValue": false
+          }
+        }
+      }
+    },
+    "sharedFns": {
+      "calculateRowAmount": {
+        "enabled": true,
+        "fn": "function(ctx, row) { var quantity = Number(row.quantity) || 0; var taxFreePrice = Number(row.taxFreePrice) || 0; var taxRate = Number(row.taxRate) || 0; row.taxFreeSum = Number((quantity * taxFreePrice).toFixed(2)); row.taxAmount = Number((quantity * taxFreePrice * taxRate * 0.01).toFixed(2)); row.taxIncludedSum = Number((row.taxFreeSum + row.taxAmount).toFixed(2)); row.bookSum = row.taxFreeSum; row.difference = Number((row.taxFreeSum - row.bookSum).toFixed(2)); var editTable = ctx.getNode('TableEdit::edit-table'); if(editTable){ editTable.exposed.sumRow(); } }"
+      },
+      "searchTable": {
+        "enabled": true,
+        "fn": "function(ctx, payload) { var t = ctx.getNode('TableNext::order-table'); if (t) t.exposed.reloadData({ isReset: payload?.isReset || false, params: {}, sort: payload?.sort || {} });  const materialTable = ctx.getNode('TableAsync::material-table'); if(materialTable){ ctx.$dataModels.state.singleTable.selectedRow = null; materialTable.exposed.clearData();  } }"
+      }
+    }
+  }
+}

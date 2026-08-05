@@ -12,6 +12,7 @@ import {
 } from "@cs/assembox-desktop-next";
 import ElementPlus from "element-plus";
 import { createApp, h } from "vue";
+import { DOCUMENT_ARRAYS, forEachChild } from "./slot-accessors";
 
 /**
  * PC 场景设计态渲染器
@@ -223,7 +224,6 @@ export class PcRenderer implements IRenderer {
   }
 
   private findNodeById(nodeId: string): any | undefined {
-    const SLOT_FIELDS = ["defaultSlot", "toolSlot", "filterSlot", "headerSlot", "rightSlot", "labelSlot", "bottomSlot", "columRender", "buttonOption"];
     const walk = (node: any): any => {
       if (!node || typeof node !== "object") {
         return undefined;
@@ -231,45 +231,34 @@ export class PcRenderer implements IRenderer {
       if (node.__nodeId === nodeId) {
         return node;
       }
-      const opts = node.__nodeOptions;
-      if (!opts) {
-        return undefined;
-      }
-      for (const field of SLOT_FIELDS) {
-        const val = opts[field];
-        if (Array.isArray(val)) {
-          for (const child of val) {
-            const f = walk(child);
-            if (f) {
-              return f;
-            }
-          }
-        } else if (val && typeof val === "object") {
-          const f = walk(val);
-          if (f) {
-            return f;
-          }
+      let found: any;
+      forEachChild(node, (child) => {
+        if (!found) {
+          found = walk(child);
         }
-      }
-      if (Array.isArray(opts.itemConfig)) {
-        for (const item of opts.itemConfig) {
-          if (item?.defaultSlot) {
-            const f = walk(item.defaultSlot);
-            if (f) {
-              return f;
-            }
-          }
-        }
-      }
-      return undefined;
+      });
+      return found;
     };
     const scenes = Object.values(this.schema || {});
     for (const scene of scenes) {
-      const root = (scene as any)?.viewsProps?.planeOptions;
-      if (root) {
-        const f = walk(root);
+      const vp = (scene as any)?.viewsProps;
+      if (!vp) {
+        continue;
+      }
+      if (vp.planeOptions) {
+        const f = walk(vp.planeOptions);
         if (f) {
           return f;
+        }
+      }
+      for (const docArr of DOCUMENT_ARRAYS) {
+        if (Array.isArray(vp[docArr])) {
+          for (const doc of vp[docArr]) {
+            const f = walk(doc);
+            if (f) {
+              return f;
+            }
+          }
         }
       }
     }
