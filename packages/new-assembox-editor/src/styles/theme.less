@@ -1,0 +1,154 @@
+/**
+ * 编辑器主题系统
+ *
+ * 统一管理所有 CSS 变量，分 6 个语义层：
+ * - color：品牌色/文本/边框/背景/状态色
+ * - size：布局尺寸/间距/圆角
+ * - font：字体族/字号/字重
+ * - z-index：层级
+ * - transition：动画
+ * - code-editor：代码编辑器专用暗色
+ *
+ * 命名规范：--assem-{category}-{name}
+ * 暗色主题：.assem-theme-dark 覆盖变量
+ */
+
+:root {
+  // ═════════ Color ═════════
+
+  // 品牌
+  --assem-color-brand: #0079f2;
+  --assem-color-brand-light: rgba(0, 121, 242, 0.1);
+  --assem-color-brand-bg: rgba(0, 121, 242, 0.15);
+
+  // 文本
+  --assem-color-text-primary: #303133;
+  --assem-color-text-regular: #606266;
+  --assem-color-text-secondary: #909399;
+  --assem-color-text-placeholder: #c0c4cc;
+  --assem-color-text-inverse: #ffffff;
+
+  // 背景
+  --assem-color-bg-page: #edeff3;
+  --assem-color-bg-pane: #ffffff;
+  --assem-color-bg-hover: #f5f7fa;
+  --assem-color-bg-fill: #f0f2f5;
+  --assem-color-bg-light: #fafafa;
+
+  // 边框
+  --assem-color-border: #e4e7ed;
+  --assem-color-border-light: #ebeef5;
+  --assem-color-border-lighter: #f2f6fc;
+
+  // 状态色
+  --assem-color-success: #67c23a;
+  --assem-color-warning: #e6a23c;
+  --assem-color-danger: #f56c6c;
+  --assem-color-danger-bg: rgba(245, 108, 108, 0.1);
+  --assem-color-danger-dark: #d4441a;
+  --assem-color-info: #909399;
+
+  // 画布覆盖层（BemTools）
+  --assem-color-hover-box-border: #00b3e8;
+  --assem-color-hover-box-bg: rgba(0, 179, 232, 0.06);
+  --assem-color-select-box-border: var(--assem-color-brand);
+  --assem-color-select-box-bg: rgba(0, 121, 242, 0.06);
+
+  // ═════════ Size ═════════
+
+  // 布局
+  --assem-size-left-area: 48px;
+  --assem-size-right-area: 300px;
+  --assem-size-top-area: 48px;
+  --assem-size-dock-pane: 280px;
+  --assem-size-panel-header: 40px;
+
+  // 圆角
+  --assem-radius-sm: 2px;
+  --assem-radius-md: 4px;
+  --assem-radius-lg: 8px;
+
+  // 间距
+  --assem-spacing-xs: 2px;
+  --assem-spacing-sm: 4px;
+  --assem-spacing-md: 8px;
+  --assem-spacing-lg: 12px;
+  --assem-spacing-xl: 16px;
+
+  // ═════════ Font ═════════
+
+  --assem-font-family: "PingFang SC", "Microsoft YaHei", Helvetica, Arial, sans-serif;
+  --assem-font-size-xs: 10px;
+  --assem-font-size-sm: 11px;
+  --assem-font-size-text: 12px;
+  --assem-font-size-label: 13px;
+  --assem-font-size-title: 14px;
+  --assem-font-weight-normal: 400;
+  --assem-font-weight-medium: 500;
+  --assem-font-weight-bold: 600;
+
+  // ═════════ Z-index ═════════
+
+  --assem-z-panel: 1;
+  --assem-z-dock: 10;
+  --assem-z-bem-tools: 99;
+  --assem-z-drag-ghost: 99999;
+  --assem-z-context-menu: 99999;
+  --assem-z-dialog: 2000;
+
+  // ═════════ Transition ═════════
+
+  --assem-transition-fast: 0.1s ease;
+  --assem-transition-base: 0.15s ease;
+  --assem-transition-slow: 0.3s ease;
+
+  // ═════════ Code editor ═════════
+
+  --assem-code-bg: #1e1e1e;
+  --assem-code-text: #d4d4d4;
+  --assem-code-signature: #5a9d6a;
+
+  // ═════════ 兼容旧变量（逐步迁移后删除） ═════════
+
+  --color-brand: var(--assem-color-brand);
+  --color-brand-light: var(--assem-color-brand-bg);
+  --color-pane-background: var(--assem-color-bg-pane);
+  --color-text: var(--assem-color-text-primary);
+  --color-border: var(--assem-color-border);
+  --color-hover: var(--assem-color-bg-hover);
+  --font-family: var(--assem-font-family);
+  --font-size-label: var(--assem-font-size-title);
+  --font-size-text: var(--assem-font-size-text);
+  --global-border-radius: var(--assem-radius-md);
+  --left-area-width: var(--assem-size-left-area);
+  --right-area-width: var(--assem-size-right-area);
+  --top-area-height: var(--assem-size-top-area);
+  --dock-fixed-pane-width: var(--assem-size-dock-pane);
+}
+
+/* ═════════ 暗色主题（可选，通过 .assem-theme-dark 切换） ═════════ */
+
+.assem-theme-dark {
+  --assem-color-brand: #409eff;
+  --assem-color-brand-light: rgba(64, 158, 255, 0.15);
+  --assem-color-brand-bg: rgba(64, 158, 255, 0.2);
+
+  --assem-color-text-primary: #e5eaf3;
+  --assem-color-text-regular: #cfd3dc;
+  --assem-color-text-secondary: #a3a6ad;
+  --assem-color-text-placeholder: #8d9095;
+  --assem-color-text-inverse: #303133;
+
+  --assem-color-bg-page: #141414;
+  --assem-color-bg-pane: #1d1e1f;
+  --assem-color-bg-hover: #262727;
+  --assem-color-bg-fill: #262727;
+  --assem-color-bg-light: #1d1e1f;
+
+  --assem-color-border: #414243;
+  --assem-color-border-light: #414243;
+  --assem-color-border-lighter: #414243;
+
+  --assem-color-hover-box-border: #00b3e8;
+  --assem-color-select-box-border: var(--assem-color-brand);
+}

@@ -1,21 +1,7 @@
-/* 全局样式：CSS 变量、基础 reset、跨组件共享的原语（panel / dock / live-editing / setter-missing） */
+/* 全局样式：基础 reset、跨组件共享的原语（panel / dock / live-editing / setter-missing） */
+/* CSS 变量统一在 theme.less 管理，此处只引用 */
 
-:root {
-  --font-family: "PingFang SC", "Microsoft YaHei", Helvetica, Arial, sans-serif;
-  --font-size-label: 14px;
-  --font-size-text: 12px;
-  --global-border-radius: 3px;
-  --left-area-width: 48px;
-  --right-area-width: 300px;
-  --top-area-height: 48px;
-  --dock-fixed-pane-width: 280px;
-  --color-brand: #0079f2;
-  --color-brand-light: rgba(0, 121, 242, 0.15);
-  --color-pane-background: #ffffff;
-  --color-text: #303133;
-  --color-border: #e4e7ed;
-  --color-hover: #f5f7fa;
-}
+@import "./theme.less";
 
 html,
 body {
@@ -24,9 +10,9 @@ body {
   padding: 0;
   margin: 0;
   overflow: hidden;
-  font-family: var(--font-family);
-  color: var(--color-text);
-  background-color: #edeff3;
+  font-family: var(--assem-font-family);
+  color: var(--assem-color-text-primary);
+  background-color: var(--assem-color-bg-page);
 }
 
 #app {
@@ -69,13 +55,13 @@ body {
 
     .lc-assem-panel__op {
       padding: 2px 6px;
-      font-size: 12px;
+      font-size: var(--assem-font-size-text);
       line-height: 1;
       cursor: pointer;
-      color: #909399;
+      color: var(--assem-color-text-secondary);
       background: transparent;
       border: none;
-      border-radius: 3px;
+      border-radius: var(--assem-radius-sm);
 
       &:hover {
         color: var(--color-brand);
@@ -95,9 +81,9 @@ body {
 .lc-assem-live-editing {
   cursor: text;
   outline: none;
-  box-shadow: 0 0 0 2px rgb(102, 188, 92);
+  box-shadow: 0 0 0 2px var(--assem-color-success);
   user-select: text;
-  border-radius: 2px;
+  border-radius: var(--assem-radius-sm);
 }
 
 /* Dock 图标按钮 */
@@ -108,8 +94,8 @@ body {
   width: var(--left-area-width);
   height: var(--left-area-width);
   cursor: pointer;
-  color: #606266;
-  transition: all 0.2s;
+  color: var(--assem-color-text-regular);
+  transition: all var(--assem-transition-base);
 
   &:hover {
     color: var(--color-brand);
@@ -133,7 +119,7 @@ body {
     gap: 2px;
 
     .lc-assem-dock__label {
-      font-size: 10px;
+      font-size: var(--assem-font-size-xs);
       line-height: 1;
     }
   }
