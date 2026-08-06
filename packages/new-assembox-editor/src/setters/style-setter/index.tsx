@@ -1,4 +1,5 @@
 import type { OnStyleChange, StyleData } from "./utils";
+import { VueMonacoEditor } from "@guolao/vue-monaco-editor";
 /**
  * StyleSetter — CSS 可视化样式编辑器（参考 lowcode-engine-ext style-setter v2）
  *
@@ -8,13 +9,12 @@ import type { OnStyleChange, StyleData } from "./utils";
  * 值契约：value = Record<camelCase, string>（如 { marginTop: "10px", color: "#f00" }）
  * 变更契约：onChange(wholeStyle) — 每次修改输出完整 style 对象
  */
-import { computed, defineComponent, ref } from "vue";
+import { computed, defineComponent, ref, watch } from "vue";
 import { BackgroundPanel } from "./pro/background";
 import { BorderPanel } from "./pro/border";
 import { FontPanel } from "./pro/font";
 import { LayoutPanel } from "./pro/layout";
 import { PositionPanel } from "./pro/position";
-import { styleToCss } from "./utils";
 import "./style-setter-style.less";
 
 const PANELS = [
@@ -35,8 +35,34 @@ export const StyleSetter = defineComponent({
   setup(props) {
     const sd = computed(() => (props.value && typeof props.value === "object" ? props.value : {}));
 
-    const showCssCode = ref(false);
-    const cssCode = computed(() => styleToCss(sd.value));
+    const showJsonEditor = ref(false);
+    const jsonText = ref("");
+
+    /** 同步 style → JSON 文本（面板操作后更新编辑器） */
+    watch(
+      () => sd.value,
+      (v) => {
+        jsonText.value = JSON.stringify(v, null, 2);
+      },
+      { immediate: true, deep: true },
+    );
+
+    /** JSON 编辑器输入 → 回写 style 对象 */
+    const onJsonInput = (val: string) => {
+      jsonText.value = val;
+      if (!val.trim()) {
+        props.onChange({});
+        return;
+      }
+      try {
+        const parsed = JSON.parse(val);
+        if (parsed && typeof parsed === "object") {
+          props.onChange(parsed);
+        }
+      } catch {
+        // JSON 不完整，忽略（Monaco 自带语法错误标记）
+      }
+    };
 
     const onStyleChange: OnStyleChange = (changes: StyleData[]) => {
       const next = { ...sd.value };
@@ -54,29 +80,39 @@ export const StyleSetter = defineComponent({
       <div class="style-setter">
         <div class="style-setter__topbar">
           <el-text size="small" type="info">样式配置</el-text>
-          <el-tooltip content="CSS 源码" placement="top">
+          <el-tooltip content="JSON 编辑" placement="top">
             <el-button
               text
               size="small"
-              type={showCssCode.value ? "primary" : "default"}
+              type={showJsonEditor.value ? "primary" : "default"}
               onClick={() => {
-                showCssCode.value = !showCssCode.value;
+                showJsonEditor.value = !showJsonEditor.value;
               }}
             >
-              CSS
+              JSON
             </el-button>
           </el-tooltip>
         </div>
 
-        {showCssCode.value && (
-          <el-input
-            type="textarea"
-            modelValue={cssCode.value}
-            rows={6}
-            size="small"
-            readonly
-            class="style-setter__css-code"
-          />
+        {showJsonEditor.value && (
+          <div class="style-setter__json-editor">
+            <VueMonacoEditor
+              value={jsonText.value}
+              onUpdate:value={onJsonInput}
+              language="json"
+              theme="vs"
+              options={{
+                minimap: { enabled: false },
+                fontSize: 12,
+                automaticLayout: true,
+                readOnly: props.disabled,
+                scrollBeyondLastLine: false,
+                lineNumbers: "off",
+                lineDecorationsWidth: 6,
+                padding: { top: 4 },
+              }}
+            />
+          </div>
         )}
 
         <el-collapse modelValue={PANELS.map(p => p.name)}>
