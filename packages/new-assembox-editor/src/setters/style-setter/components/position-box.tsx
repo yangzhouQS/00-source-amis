@@ -4,10 +4,11 @@ import type { OnStyleChange } from "../utils";
  * PositionBox — 可视化定位盒子（top/right/bottom/left）
  * 深度复刻 lowcode style-setter pro/position/positionBox.tsx
  *
- * 150px 高的 CSS 三角形盒子，4 个方向三角形叠加输入框。
- * position=absolute 时额外支持快速模板（四角定位）。
+ * 输入策略：非受控 input + blur 提交（避免每次按键触发 commit → re-render 干扰输入）
  */
-import { defineComponent } from "vue";
+import { defineComponent, reactive } from "vue";
+
+const POS_KEYS = ["top", "right", "bottom", "left"] as const;
 
 export const PositionBox = defineComponent({
   name: "StylePositionBox",
@@ -17,30 +18,52 @@ export const PositionBox = defineComponent({
     unit: { type: String, default: "px" },
   },
   setup(props) {
-    const emit = (styleKey: string, raw: string) => {
-      if (!raw) {
-        props.onStyleChange([{ styleKey, value: null }]);
-        return;
-      }
-      props.onStyleChange([{ styleKey, value: /^-?\d+(\.\d+)?$/.test(raw) ? `${raw}${props.unit}` : raw }]);
-    };
+    /** 本地文本（非受控，blur 时提交） */
+    const local = reactive<Record<string, string>>({});
 
     const stripUnit = (v: any): string => (v ? String(v).replace(/px$/, "") : "");
+
+    const syncLocal = () => {
+      for (const k of POS_KEYS) {
+        local[k] = stripUnit(props.styleData[k]);
+      }
+    };
+    syncLocal();
+
+    const commit = (key: string) => {
+      const raw = (local[key] ?? "").trim();
+      if (!raw) {
+        props.onStyleChange([{ styleKey: key, value: null }]);
+        return;
+      }
+      const v = /^-?\d+(\.\d+)?$/.test(raw) ? `${raw}${props.unit}` : raw;
+      props.onStyleChange([{ styleKey: key, value: v }]);
+    };
 
     const input = (key: string, cls: string) => (
       <input
         class={`position-box__input ${cls}`}
-        value={stripUnit(props.styleData[key])}
+        value={local[key] ?? ""}
         placeholder="auto"
         maxlength={6}
-        onInput={(e: Event) => emit(key, (e.target as HTMLInputElement).value)}
+        onFocus={() => {
+          local[key] = stripUnit(props.styleData[key]);
+        }}
+        onInput={(e: Event) => {
+          local[key] = (e.target as HTMLInputElement).value;
+        }}
+        onBlur={() => commit(key)}
+        onKeyup={(e: KeyboardEvent) => {
+          if (e.key === "Enter") {
+            (e.target as HTMLInputElement).blur();
+          }
+        }}
       />
     );
 
     const applyTemplate = (template: string) => {
       const changes: Array<{ styleKey: string; value: any }> = [];
       const s = (k: string, v: string) => changes.push({ styleKey: k, value: v });
-      // 重置全部
       s("top", "");
       s("right", "");
       s("bottom", "");
@@ -63,31 +86,34 @@ export const PositionBox = defineComponent({
 
     const isAbsolute = props.styleData.position === "absolute";
 
-    return () => (
-      <div class="position-box">
-        {isAbsolute && (
-          <div class="position-box__templates">
-            <el-button text size="small" onClick={() => applyTemplate("topLeft")}>↖ 左上</el-button>
-            <el-button text size="small" onClick={() => applyTemplate("topRight")}>↗ 右上</el-button>
-            <el-button text size="small" onClick={() => applyTemplate("bottomLeft")}>↙ 左下</el-button>
-            <el-button text size="small" onClick={() => applyTemplate("bottomRight")}>↘ 右下</el-button>
-          </div>
-        )}
-        <div class="position-box__visual">
-          <div class="position-box__top">
-            {input("top", "")}
-          </div>
-          <div class="position-box__right">
-            {input("right", "position-box__input--vertical")}
-          </div>
-          <div class="position-box__bottom">
-            {input("bottom", "")}
-          </div>
-          <div class="position-box__left">
-            {input("left", "position-box__input--vertical")}
+    return () => {
+      syncLocal();
+      return (
+        <div class="position-box">
+          {isAbsolute && (
+            <div class="position-box__templates">
+              <el-button text size="small" onClick={() => applyTemplate("topLeft")}>↖ 左上</el-button>
+              <el-button text size="small" onClick={() => applyTemplate("topRight")}>↗ 右上</el-button>
+              <el-button text size="small" onClick={() => applyTemplate("bottomLeft")}>↙ 左下</el-button>
+              <el-button text size="small" onClick={() => applyTemplate("bottomRight")}>↘ 右下</el-button>
+            </div>
+          )}
+          <div class="position-box__visual">
+            <div class="position-box__top">
+              {input("top", "")}
+            </div>
+            <div class="position-box__right">
+              {input("right", "position-box__input--vertical")}
+            </div>
+            <div class="position-box__bottom">
+              {input("bottom", "")}
+            </div>
+            <div class="position-box__left">
+              {input("left", "position-box__input--vertical")}
+            </div>
           </div>
         </div>
-      </div>
-    );
+      );
+    };
   },
 });

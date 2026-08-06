@@ -4,14 +4,21 @@ import type { OnStyleChange } from "../utils";
  * LayoutBox — 可视化 margin/padding 盒子模型
  * 深度复刻 lowcode style-setter pro/layout/layoutBox.tsx
  *
- * 一个 150px 高的 CSS 三角形盒子：
- * - 外层 4 个三角形 = margin（top/right/bottom/left）
- * - 内层 4 个三角形 = padding（top/right/bottom/left）
- * - 每个三角形上叠加一个透明背景输入框
- * - 三角形 hover 变色，有值时蓝框
+ * 输入策略：非受控 input + blur 提交（避免每次按键触发 commit → re-render 干扰输入）
  */
-import { defineComponent } from "vue";
+import { defineComponent, reactive } from "vue";
 import { isCssVarBind } from "../utils";
+
+const KEYS = [
+  "marginTop",
+  "marginRight",
+  "marginBottom",
+  "marginLeft",
+  "paddingTop",
+  "paddingRight",
+  "paddingBottom",
+  "paddingLeft",
+] as const;
 
 export const LayoutBox = defineComponent({
   name: "StyleLayoutBox",
@@ -23,74 +30,103 @@ export const LayoutBox = defineComponent({
     isShowPadding: { type: Boolean, default: true },
   },
   setup(props) {
-    const emit = (styleKey: string, raw: string) => {
-      if (!raw) {
-        props.onStyleChange([{ styleKey, value: null }]);
-        return;
-      }
-      props.onStyleChange([{ styleKey, value: /^-?\d+(\.\d+)?$/.test(raw) ? `${raw}${props.unit}` : raw }]);
-    };
+    /** 各输入框的本地文本（非受控，输入过程中不触发外部更新） */
+    const local = reactive<Record<string, string>>({});
 
     const stripUnit = (v: any): string => {
       if (!v) {
         return "";
       }
-      const s = String(v);
-      return s.replace(/px$/, "");
+      return String(v).replace(/px$/, "");
     };
 
-    const renderInput = (key: string, cls: string, val: any) => {
+    /** 初始化 / 外部值变化时同步本地 */
+    const syncLocal = () => {
+      for (const k of KEYS) {
+        local[k] = stripUnit(props.styleData[k]);
+      }
+    };
+    syncLocal();
+
+    /** blur 时提交值 */
+    const commit = (key: string) => {
+      const raw = (local[key] ?? "").trim();
+      if (!raw) {
+        props.onStyleChange([{ styleKey: key, value: null }]);
+        return;
+      }
+      const v = /^-?\d+(\.\d+)?$/.test(raw) ? `${raw}${props.unit}` : raw;
+      props.onStyleChange([{ styleKey: key, value: v }]);
+    };
+
+    const renderInput = (key: string, cls: string) => {
+      const val = props.styleData[key];
       if (isCssVarBind(val)) {
         return <span class="layout-box__var-bind">{String(val).slice(0, 6)}</span>;
       }
       return (
         <input
           class={`layout-box__input ${cls}`}
-          value={stripUnit(val)}
+          value={local[key] ?? ""}
           placeholder="auto"
-          onInput={(e: Event) => emit(key, (e.target as HTMLInputElement).value)}
+          onFocus={() => {
+            local[key] = stripUnit(val);
+          }}
+          onInput={(e: Event) => {
+            local[key] = (e.target as HTMLInputElement).value;
+          }}
+          onBlur={() => commit(key)}
+          onKeyup={(e: KeyboardEvent) => {
+            if (e.key === "Enter") {
+              (e.target as HTMLInputElement).blur();
+            }
+          }}
         />
       );
     };
 
-    return () => (
-      <div class="layout-box">
-        {props.isShowMargin && (
-          <>
-            <div class={`layout-box__margin-top ${isCssVarBind(props.styleData.marginTop) ? "is-var" : ""}`}>
-              {renderInput("marginTop", "", props.styleData.marginTop)}
-              <span class="layout-box__label">M</span>
-            </div>
-            <div class={`layout-box__margin-right ${isCssVarBind(props.styleData.marginRight) ? "is-var" : ""}`}>
-              {renderInput("marginRight", "layout-box__input--vertical", props.styleData.marginRight)}
-            </div>
-            <div class={`layout-box__margin-bottom ${isCssVarBind(props.styleData.marginBottom) ? "is-var" : ""}`}>
-              {renderInput("marginBottom", "", props.styleData.marginBottom)}
-            </div>
-            <div class={`layout-box__margin-left ${isCssVarBind(props.styleData.marginLeft) ? "is-var" : ""}`}>
-              {renderInput("marginLeft", "layout-box__input--vertical", props.styleData.marginLeft)}
-            </div>
-          </>
-        )}
-        {props.isShowPadding && (
-          <>
-            <div class={`layout-box__padding-top ${isCssVarBind(props.styleData.paddingTop) ? "is-var" : ""}`}>
-              {renderInput("paddingTop", "", props.styleData.paddingTop)}
-              <span class="layout-box__label">P</span>
-            </div>
-            <div class={`layout-box__padding-right ${isCssVarBind(props.styleData.paddingRight) ? "is-var" : ""}`}>
-              {renderInput("paddingRight", "layout-box__input--vertical", props.styleData.paddingRight)}
-            </div>
-            <div class={`layout-box__padding-bottom ${isCssVarBind(props.styleData.paddingBottom) ? "is-var" : ""}`}>
-              {renderInput("paddingBottom", "", props.styleData.paddingBottom)}
-            </div>
-            <div class={`layout-box__padding-left ${isCssVarBind(props.styleData.paddingLeft) ? "is-var" : ""}`}>
-              {renderInput("paddingLeft", "layout-box__input--vertical", props.styleData.paddingLeft)}
-            </div>
-          </>
-        )}
-        <div class="layout-box__center" />
-      </div>
-    );
+    return () => {
+      // 每次渲染同步外部值到本地（非聚焦时）
+      syncLocal();
+      return (
+        <div class="layout-box">
+          {props.isShowMargin && (
+            <>
+              <div class={`layout-box__margin-top ${isCssVarBind(props.styleData.marginTop) ? "is-var" : ""}`}>
+                {renderInput("marginTop", "")}
+                <span class="layout-box__label">M</span>
+              </div>
+              <div class={`layout-box__margin-right ${isCssVarBind(props.styleData.marginRight) ? "is-var" : ""}`}>
+                {renderInput("marginRight", "layout-box__input--vertical")}
+              </div>
+              <div class={`layout-box__margin-bottom ${isCssVarBind(props.styleData.marginBottom) ? "is-var" : ""}`}>
+                {renderInput("marginBottom", "")}
+              </div>
+              <div class={`layout-box__margin-left ${isCssVarBind(props.styleData.marginLeft) ? "is-var" : ""}`}>
+                {renderInput("marginLeft", "layout-box__input--vertical")}
+              </div>
+            </>
+          )}
+          {props.isShowPadding && (
+            <>
+              <div class={`layout-box__padding-top ${isCssVarBind(props.styleData.paddingTop) ? "is-var" : ""}`}>
+                {renderInput("paddingTop", "")}
+                <span class="layout-box__label">P</span>
+              </div>
+              <div class={`layout-box__padding-right ${isCssVarBind(props.styleData.paddingRight) ? "is-var" : ""}`}>
+                {renderInput("paddingRight", "layout-box__input--vertical")}
+              </div>
+              <div class={`layout-box__padding-bottom ${isCssVarBind(props.styleData.paddingBottom) ? "is-var" : ""}`}>
+                {renderInput("paddingBottom", "")}
+              </div>
+              <div class={`layout-box__padding-left ${isCssVarBind(props.styleData.paddingLeft) ? "is-var" : ""}`}>
+                {renderInput("paddingLeft", "layout-box__input--vertical")}
+              </div>
+            </>
+          )}
+          <div class="layout-box__center" />
+        </div>
+      );
+    };
   },
 });

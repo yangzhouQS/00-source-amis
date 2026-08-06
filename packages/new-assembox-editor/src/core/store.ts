@@ -3,7 +3,7 @@ import type { ISchemaOps } from "../scenario/types";
  * 响应式 Store（基于 Vue reactive）
  * v2: 去除 amis 依赖，schema 类型为 any，操作委托给 schemaOps
  */
-import { reactive, shallowRef } from "vue";
+import { reactive, shallowRef, triggerRef } from "vue";
 
 const HISTORY_LIMIT = 50;
 
@@ -119,8 +119,8 @@ export class EditorStore {
     }
     // 直接原地修改 reactive schema（省一次 cloneSchema）
     mutator(this.state.schema);
-    // 触发 schemaRef 响应式更新（浅引用赋值即可）
-    this.schemaRef.value = this.state.schema;
+    // 强制触发 schemaRef 响应式更新（原地修改后引用未变，shallowRef 不自动通知）
+    triggerRef(this.schemaRef);
     return this.state.schema;
   }
 
