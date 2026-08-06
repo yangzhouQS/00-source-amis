@@ -1,9 +1,9 @@
 import type { PropType } from "vue";
 /**
  * NumberInput — 数值输入 + 单位选择
- * 参考 lowcode Number：支持 px / % 单位切换，Arrow 上下增减
+ * 用 el-input 替代 el-input-number（避免 blur 时 update:modelValue 重触发导致值被清空）
  */
-import { computed, defineComponent } from "vue";
+import { computed, defineComponent, ref, watch } from "vue";
 import { getUnit, isCssVarBind, removeUnit } from "../utils";
 
 export const StyleNumberInput = defineComponent({
@@ -15,8 +15,6 @@ export const StyleNumberInput = defineComponent({
     min: { type: Number, default: undefined },
     /** 最大值 */
     max: { type: Number, default: undefined },
-    /** 步进 */
-    step: { type: Number, default: 1 },
     /** 支持的单位列表（如 ['px','%']）；单元素或空数组=固定单位不显示选择器 */
     units: { type: Array as PropType<string[]>, default: () => ["px"] },
     /** placeholder */
@@ -26,29 +24,77 @@ export const StyleNumberInput = defineComponent({
   },
   emits: ["update:modelValue", "change"],
   setup(props, { emit }) {
+    /** 内部文本值（输入过程中保持原始文本，blur 时才提交） */
+    const textValue = ref("");
+    const focused = ref(false);
+
+    /** 从 modelValue 解析数值部分 */
     const numericValue = computed(() => removeUnit(String(props.modelValue ?? "")));
     const currentUnit = computed(() => {
       const u = getUnit(String(props.modelValue ?? ""));
-      if (u && props.units.includes(u)) {
-        return u;
-      }
-      return props.units[0] ?? "";
+      return u && props.units.includes(u) ? u : (props.units[0] ?? "");
     });
 
-    const onNumber = (val: number | undefined) => {
-      if (val == null || (val === 0 && !String(props.modelValue))) {
+    /** 外部 modelValue 变化时同步到 textValue（非聚焦态） */
+    watch(
+      () => props.modelValue,
+      (v) => {
+        if (!focused.value) {
+          textValue.value = v != null ? String(v).replace(/px$/, "") : "";
+        }
+      },
+      { immediate: true },
+    );
+
+    const onFocus = () => {
+      focused.value = true;
+      textValue.value = numericValue.value != null ? String(numericValue.value) : "";
+    };
+
+    const onInput = (val: string) => {
+      textValue.value = val;
+    };
+
+    /** blur 时提交值（数值 + 当前单位） */
+    const onBlur = () => {
+      focused.value = false;
+      const raw = textValue.value.trim();
+      if (raw === "") {
         emit("update:modelValue", "");
         emit("change", "");
         return;
       }
-      const v = `${val}${currentUnit.value}`;
+      const n = Number.parseFloat(raw);
+      if (Number.isNaN(n)) {
+        textValue.value = numericValue.value != null ? String(numericValue.value) : "";
+        return;
+      }
+      let clamped = n;
+      if (props.min != null && clamped < props.min) {
+        clamped = props.min;
+      }
+      if (props.max != null && clamped > props.max) {
+        clamped = props.max;
+      }
+      const v = `${clamped}${currentUnit.value}`;
       emit("update:modelValue", v);
       emit("change", v);
+      textValue.value = String(clamped);
+    };
+
+    /** 键盘 Enter 提前提交 */
+    const onKeyup = (e: KeyboardEvent) => {
+      if (e.key === "Enter") {
+        (e.target as HTMLInputElement).blur();
+      }
     };
 
     const onUnit = (unit: string) => {
       const n = numericValue.value;
-      const v = n != null ? `${n}${unit}` : "";
+      if (n == null) {
+        return;
+      }
+      const v = `${n}${unit}`;
       emit("update:modelValue", v);
       emit("change", v);
     };
@@ -60,17 +106,16 @@ export const StyleNumberInput = defineComponent({
       }
       return (
         <div class="style-number-input">
-          <el-input-number
-            modelValue={numericValue.value ?? undefined}
+          <el-input
+            modelValue={focused.value ? textValue.value : (numericValue.value != null ? String(numericValue.value) : "")}
             size="small"
-            controls={false}
-            min={props.min}
-            max={props.max}
-            step={props.step}
             placeholder={props.placeholder}
             disabled={props.disabled}
-            style="width: 100%"
-            onUpdate:modelValue={onNumber}
+            onFocus={onFocus}
+            onBlur={onBlur}
+            onInput={onInput}
+            onKeyup={onKeyup}
+            style="flex: 1; min-width: 0"
           />
           {props.units.length > 1 && (
             <el-select
