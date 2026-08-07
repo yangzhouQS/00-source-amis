@@ -208,6 +208,8 @@ export class EditorStore {
   }
 
   get activeNode(): any | undefined {
+    // 读取 schemaRef.value 建立响应式依赖（triggerRef 由此通知重算）
+    void this.schemaRef.value;
     return this.state.activeId ? this.schemaOps.getNodeById(this.state.schema, this.state.activeId) : undefined;
   }
 
