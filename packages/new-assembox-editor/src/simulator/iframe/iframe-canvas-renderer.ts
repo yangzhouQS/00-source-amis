@@ -5,20 +5,30 @@ import type {
   IframeHostCallbacks,
   IframeRendererApi,
 } from "./protocol";
-import { adaptNodeTree } from "@cs/assembox-core-next";
-import {
-  AssemPlugin,
-  AssemViews,
-  registerDefaults,
-  registerExternal,
-} from "@cs/assembox-desktop-next";
+import * as AssemCoreNextEsm from "@cs/assembox-core-next";
+import * as AssemDesktopNextEsm from "@cs/assembox-desktop-next";
 import zhCn from "element-plus/es/locale/lang/zh-cn";
 /**
  * iframe 内侧渲染器（运行于 canvas.html 内部）
  * 包装 assembox-desktop-next 的 AssemViews，渲染 PC schema 并标记 DOM。
  * 与 PcRenderer 同构，但 schema 来自 host 下发，事件通过 hostApi 回报。
+ *
+ * assembox 库解析：优先依赖清单加载的本地 UMD 全局（public/@cs，单实例，
+ * 与构建 external.globals 一致）；UMD 未加载时回退 Vite 解析的 ESM（dev）。
  */
 import { computed, createApp, h, nextTick, reactive } from "vue";
+
+/** assembox-desktop-next：window.AssemBoxDesktopNext（UMD）优先，ESM 兜底 */
+function desktopNext(): typeof AssemDesktopNextEsm {
+  const umd = (window as any).AssemBoxDesktopNext;
+  return (umd && umd.AssemPlugin) ? umd : AssemDesktopNextEsm;
+}
+
+/** assembox-core-next：window.AssemboxPackage（UMD）优先，ESM 兜底 */
+function coreNext(): typeof AssemCoreNextEsm {
+  const umd = (window as any).AssemboxPackage;
+  return (umd && umd.adaptNodeTree) ? umd : AssemCoreNextEsm;
+}
 
 /** 按点分路径从 window 取全局值（如 'ElementPlusUi.ToggleChip'） */
 function resolveGlobalPath(root: any, path: string): unknown {
@@ -169,7 +179,7 @@ export class IframeCanvasRenderer implements IframeRendererApi {
 
   /** 同步 schema 到响应式对象（in-place 替换 key；adaptNodeTree 编译事件 handler） */
   private syncSchema(schema: any): void {
-    const adapted = adaptNodeTree(schema ?? {}) as Record<string, any>;
+    const adapted = coreNext().adaptNodeTree(schema ?? {}) as Record<string, any>;
     const src = adapted ?? {};
     for (const key of Object.keys(this.schema)) {
       delete this.schema[key];
@@ -226,7 +236,7 @@ export class IframeCanvasRenderer implements IframeRendererApi {
           if (!vp) {
             return h("div", "空场景");
           }
-          return h(AssemViews, { viewsProps: vp });
+          return h(desktopNext().AssemViews, { viewsProps: vp });
         };
       },
     });
@@ -306,8 +316,8 @@ export class IframeCanvasRenderer implements IframeRendererApi {
       this.app.use(this.router);
     }
 
-    this.app.use(AssemPlugin, config);
-    registerDefaults();
+    this.app.use(desktopNext().AssemPlugin, config);
+    desktopNext().registerDefaults();
 
     // 注册外部组件（registerExternal，补全内置 manifest 未含的组件，如 ToggleChip）
     for (const ext of this.assets.externals ?? []) {
@@ -317,7 +327,7 @@ export class IframeCanvasRenderer implements IframeRendererApi {
         continue;
       }
       try {
-        registerExternal({
+        desktopNext().registerExternal({
           name: ext.renderType,
           component: comp,
           category: ext.category as any,

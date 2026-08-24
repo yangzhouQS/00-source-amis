@@ -30,6 +30,9 @@ export default defineConfig({
         "element-plus",
         "@element-plus/icons-vue",
         "@cs/vue3-biz-components-library",
+        // 本地 UMD 包（public/@cs，index.html 头部引入）：构建产物按 globals 读取 window 全局
+        "@cs/assembox-core-next",
+        "@cs/assembox-desktop-next",
       ],
       output: {
         globals: {
@@ -38,6 +41,8 @@ export default defineConfig({
           "element-plus": "ElementPlus",
           "@element-plus/icons-vue": "ElementPlusIconsVue",
           "@cs/vue3-biz-components-library": "Vue3BizComponentsLibrary",
+          "@cs/assembox-core-next": "AssemboxPackage",
+          "@cs/assembox-desktop-next": "AssemBoxDesktopNext",
         },
       },
     },

@@ -63,6 +63,20 @@ describe("normalizeRenderDependencies（服务端扁平依赖 → iframe 资产�
     expect(manifest.css).toHaveLength(3);
     expect(manifest.css!.some(h => h.includes("cs-common"))).toBe(true);
   });
+
+  it("本地 UMD 包（public/@cs）：显式 global 直通，位于依赖序可行位（element 家族之后）", () => {
+    const localDeps: RenderDependencyItem[] = [
+      { fileType: "script", packageName: "@cs/assembox-core-next", fileUrl: "/@cs/assembox-core-next/dist/index.umd.cjs", global: "AssemboxPackage" },
+      { fileType: "script", packageName: "@cs/assembox-desktop-next", fileUrl: "/@cs/assembox-desktop-next/dist/index.umd.cjs", global: "AssemBoxDesktopNext" },
+      { fileType: "style", packageName: "@cs/assembox-desktop-next-css", fileUrl: "/@cs/assembox-desktop-next/dist/index.css" },
+    ];
+    const m = normalizeRenderDependencies(localDeps)!;
+    expect(m.js).toHaveLength(2);
+    expect(m.js!.find(a => a.src.includes("desktop-next"))).toMatchObject({ global: "AssemBoxDesktopNext" });
+    expect(m.css).toEqual(["/@cs/assembox-desktop-next/dist/index.css"]);
+    // core 在 desktop 之前（desktop 工厂不依赖 core 全局，但保持声明顺序）
+    expect(m.js![0].src).toContain("core-next");
+  });
 });
 
 describe("mergeAssets（宿主下发 + 场景内置兜底）", () => {

@@ -18,6 +18,11 @@
     <script src="https://cdn.yearrow.com/files/@cs/table-pro/1.0.13/table-pro.iife.js"></script>
     <script src="https://cdn.yearrow.com/files/@cs/js-web-framework/1.2.0/js-web-framework.umd.js"></script>
     <script src="https://cdn.yearrow.com/files/@cs/vue3-biz-components-library/test-2026-8-18/vue3-biz-components-library.umd.js"></script>
+    <!-- 本地打包产物（public/@cs，拷贝自 assembox-packages-project 构建）：
+         build.rollupOptions.external 按下述全局名读取，dev 走 node_modules 解析 -->
+    <script src="/@cs/assembox-core-next/dist/index.umd.cjs"></script>
+    <script src="/@cs/assembox-desktop-next/dist/index.umd.cjs"></script>
+    <link rel="stylesheet" href="/@cs/assembox-desktop-next/dist/index.css" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>new-assembox-editor</title>
     <style>

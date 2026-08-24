@@ -281,7 +281,12 @@ export function normalizeRenderDependencies(
     if (isBlockedHostScript(item)) {
       continue;
     }
-    manifest.js!.push({ src: item.fileUrl, ...matchHostScriptAsset(item) });
+    // 显式 global 优先（如本地 UMD 包 @cs/assembox-desktop-next），缺省按映射表推断
+    manifest.js!.push({
+      src: item.fileUrl,
+      ...matchHostScriptAsset(item),
+      ...(item.global ? { global: item.global } : {}),
+    });
   }
   return manifest;
 }
