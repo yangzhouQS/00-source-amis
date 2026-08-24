@@ -23,7 +23,7 @@
     "@cs/assembox-desktop-next": "workspace:*",
     "@element-plus/icons-vue": "^2.3.2",
     "@guolao/vue-monaco-editor": "^1.6.0",
-    "@cs/vue3-biz-components-library": "^0.1.7",
+    "@cs/vue3-biz-components-library": "0.2.0",
     "@cs/js-web-framework": "^1.2.0",
     "element-plus": "^2.13.7",
     "monaco-editor": "^0.56.0",

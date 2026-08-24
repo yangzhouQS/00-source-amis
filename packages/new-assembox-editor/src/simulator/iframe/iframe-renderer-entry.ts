@@ -13,7 +13,7 @@ import type { IframeAssetsManifest, IframeHostPayload } from "./protocol";
 import * as Vue from "vue";
 import { IframeCanvasRenderer } from "./iframe-canvas-renderer";
 import { HOST_GLOBAL_KEY, RENDERER_GLOBAL_KEY } from "./protocol";
-import "element-plus/dist/index.css";
+// import "element-plus/dist/index.css";
 
 const win = window as any;
 

@@ -52,7 +52,7 @@ export const moduleDependenciesSample: RenderDependencyItem[] = [
   { fileType: "style", scope: "public", packageName: "@cs/table-pro-css", fileUrl: "https://cdn.yearrow.com/files/@cs/table-pro/3.0.3/theme/yun-que.css" },
   { fileType: "script", scope: "public", packageName: "@cs/table-pro-js", fileUrl: "https://cdn.yearrow.com/files/@cs/table-pro/3.0.3/table-pro.iife.js" },
   { fileType: "script", scope: "public", packageName: "js-web-framework", fileUrl: "https://cdn.yearrow.com/files/@cs/js-web-framework/1.2.0/js-web-framework.umd.js" },
-  { fileType: "script", scope: "public", packageName: "vue3-biz-components-library", fileUrl: "https://cdn.yearrow.com/files/@cs/vue3-biz-components-library/test-2026-8-18/vue3-biz-components-library.umd.js" },
+  { fileType: "script", scope: "public", packageName: "vue3-biz-components-library", fileUrl: "https://cdn.yearrow.com/files/@cs/vue3-biz-components-library/0.2.0/vue3-biz-components-library.umd.js" },
   // 本地 UMD 包在此插入（依赖序最前可行位：element 家族 + framework + biz-lib 已就绪）
   ...localUmdDependencies,
   { fileType: "script", scope: "public", packageName: "@cs/better-print", fileUrl: "https://cdn.yearrow.com/files/@cs/better-print/1.2.16/better-print.iife.js" },
