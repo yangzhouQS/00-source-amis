@@ -97,21 +97,32 @@ export interface IRenderer {
 export interface ComponentPropConfig {
   name: string;
   title?: string;
-  propType: string;
+  propType: import("../schema/types").PropType;
   defaultValue?: any;
   setter?: string;
   setterProps?: Record<string, any>;
 }
 
+/** 组件导出方法配置（defineExpose 暴露，供事件脚本/编排调用） */
+export interface ComponentMethodConfig {
+  name: string;
+  title?: string;
+  /** 方法签名（TypeScript 形式，如 "(options?: { isReset?: boolean }) => Promise<void>"） */
+  signature?: string;
+  description?: string;
+}
+
 export interface ComponentCatalogItem {
   renderType: string;
   name: string;
-  icon?: string;
+  /** 图标：组件（优先，拷贝自旧版编辑器）或外链 URL */
+  icon?: import("../schema/types").VueComponent | string;
   group?: string;
   category?: string;
   scaffold: Record<string, any>;
   props?: ComponentPropConfig[];
   events?: { name: string; title?: string }[];
+  methods?: ComponentMethodConfig[];
 }
 
 export interface IComponentCatalog {

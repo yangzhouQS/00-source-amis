@@ -23,7 +23,10 @@ function detectMainAxis(rects: DOMRect[]): boolean {
   if (rects.length === 0) {
     return false;
   } // 空容器默认纵向
-  let minTop = Infinity; let maxBottom = -Infinity; let minLeft = Infinity; let maxRight = -Infinity;
+  let minTop = Infinity;
+  let maxBottom = -Infinity;
+  let minLeft = Infinity;
+  let maxRight = -Infinity;
   for (const r of rects) {
     if (r.top < minTop) {
       minTop = r.top;

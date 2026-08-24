@@ -4,12 +4,24 @@ import type { ComponentCatalogItem } from "../../scenario/types";
  * 组件库面板（拖拽源）
  * 从场景 catalog（IComponentCatalog）读取，按 group/category 分组
  * 支持搜索过滤 + 拖入画布（DnD）与点击插入；BEM 类名（component-pane block）
+ * 图标：catalog.icon 为组件时直接渲染（拷贝自旧版编辑器），字符串按外链 img 处理
  */
-import { computed, defineComponent, PropType, ref } from "vue";
+import { computed, defineComponent, h, PropType, ref } from "vue";
 import { useAssemNamespace } from "../../hooks/use-assem-namespace";
 import "./component-pane-style.less";
 
 const ns = useAssemNamespace("component-pane");
+
+/** 渲染组件图标：组件 → 直接 h 渲染；字符串 → img；空 → 占位点 */
+function renderIcon(icon: ComponentCatalogItem["icon"]) {
+  if (icon && typeof icon === "object") {
+    return h(icon as any);
+  }
+  if (typeof icon === "string" && icon) {
+    return h("img", { src: icon, class: ns.e("icon-img"), alt: "" });
+  }
+  return h("span", "·");
+}
 
 export const ComponentsPane = defineComponent({
   name: "ComponentsPane",
@@ -158,7 +170,7 @@ function renderCategories(
             title={item.name}
           >
             <el-icon class={ns.e("icon")}>
-              <span>·</span>
+              {renderIcon(item.icon)}
             </el-icon>
             <span class={ns.e("name")}>{item.name}</span>
           </div>
