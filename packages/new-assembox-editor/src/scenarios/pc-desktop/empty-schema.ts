@@ -16,11 +16,11 @@ export function createPcEmptySchema(sceneName = "main"): any {
       viewsProps: {
         planeOptions: {
           __nodeName: "root",
-          __nodeId: `FlexBox::root-${shortId()}`,
+          __nodeId: `YqFlexBox::root-${shortId()}`,
           __nodeType: "renderNode",
           __nodeEvent: {},
           __nodeOptions: {
-            renderType: "FlexBox",
+            renderType: "YqFlexBox",
             isRow: false,
             itemNum: 1,
             width: "100%",

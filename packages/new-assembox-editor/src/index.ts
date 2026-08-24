@@ -63,6 +63,7 @@ export {
 } from "./scenario";
 export type {
   ComponentCatalogItem,
+  ComponentMethodConfig,
   ComponentPropConfig,
   IComponentCatalog,
   INestingRules,
