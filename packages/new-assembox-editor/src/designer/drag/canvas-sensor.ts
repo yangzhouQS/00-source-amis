@@ -180,6 +180,8 @@ export class CanvasSensor implements DragSensor {
     slotKey: string | null;
   } {
     const renderer = this.editor.renderer;
+    // 悬停时槽位几何解析（场景规则表，见 scenarios/*/slot-dom-rules.ts）
+    const resolveSlot = this.editor.profile?.resolveSlotKeyFromDom;
     let cur: Element | null = el;
     while (cur) {
       const id = cur.getAttribute && cur.getAttribute(ATTR_EDITOR_ID);
@@ -189,10 +191,15 @@ export class CanvasSensor implements DragSensor {
           id,
         );
         if (node && this.editor.schemaOps.isContainer?.(node)) {
-          return { id, el: cur, slotKey: "defaultSlot" };
+          // 多槽位组件：按命中元素几何解析具体槽位（左/右、内容/工具等），
+          // 未登记规则或区域外回退 defaultSlot
+          const slotKey = resolveSlot
+            ? resolveSlot(node?.__nodeOptions?.renderType, cur, el)
+            : null;
+          return { id, el: cur, slotKey: slotKey ?? "defaultSlot" };
         }
       }
-      // 检测槽位宿主标记（data-slot-host / data-slot-key）
+      // 检测槽位宿主标记（data-slot-host / data-slot-key，兼容外置标记方案）
       const slotHost = cur.getAttribute && cur.getAttribute("data-slot-host");
       const slotKey = cur.getAttribute && cur.getAttribute("data-slot-key");
       if (slotHost && slotKey) {
@@ -213,7 +220,16 @@ export class CanvasSensor implements DragSensor {
             resolved.nodeId,
           );
           if (node && this.editor.schemaOps.isContainer?.(node)) {
-            return { id: resolved.nodeId, el: cur, slotKey: resolved.slotKey };
+            // 多槽位容器：几何解析优先（resolved.slotKey 无标记时恒为 defaultSlot
+            // 兜底值，会吞掉左右槽区分；显式 data-slot-key 标记已由上方命中②处理）。
+            // cur 可能是容器根的任意后代（槽位元素等），先 closest 回容器根再查规则
+            const containerRoot = cur.closest(
+              `[${ATTR_EDITOR_ID}="${resolved.nodeId}"]`,
+            );
+            const slotKey2 = resolveSlot && containerRoot
+              ? resolveSlot(node?.__nodeOptions?.renderType, containerRoot, el)
+              : null;
+            return { id: resolved.nodeId, el: cur, slotKey: slotKey2 ?? resolved.slotKey };
           }
         }
       }

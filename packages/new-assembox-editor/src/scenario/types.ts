@@ -166,6 +166,18 @@ export interface ScenarioProfile {
    * 合并策略见 simulator/iframe/protocol.ts 的 mergeAssets：宿主项优先，内置兜底
    */
   readonly defaultRenderAssets?: import("../simulator/iframe/protocol").IframeAssetsManifest;
+  /**
+   * 悬停时槽位几何解析（多槽位组件的插槽识别，编辑器侧实现、渲染库零侵入）。
+   * canvas-sensor 命中容器（data-editor-id + isContainer）后调用：
+   * 按场景规则表定位槽位区域 DOM，判断命中元素 contained 于哪个区域 → slotKey。
+   * 未实现/未登记/区域外返回 null → 传感器回退 defaultSlot。
+   * 见 scenarios/pc-desktop/slot-dom-rules.ts
+   */
+  readonly resolveSlotKeyFromDom?: (
+    renderType: string | undefined,
+    containerEl: Element,
+    hitEl: Element | null,
+  ) => string | null;
   /** iframe 隔离渲染器工厂（可选，未提供时 iframe 模式降级为同 DOM）；入参为合并后的最终清单，缺省用渲染器内置默认 */
   readonly createIframeRenderer?: (assets?: import("../simulator/iframe/protocol").IframeAssetsManifest) => IRenderer;
 

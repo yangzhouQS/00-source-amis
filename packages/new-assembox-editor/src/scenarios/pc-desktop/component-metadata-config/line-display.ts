@@ -10,7 +10,7 @@ export const lineDisplayComponents: ComponentCatalogItem[] = [
     name: "按钮",
     group: "basic",
     category: "button",
-    scaffold: { renderType: "Button", content: "按钮", type: "primary", size: "", plain: false, text: false, round: false, circle: false, disabled: false, loading: false, link: false, icon: "", iconFont: "" },
+    scaffold: { renderType: "Button", content: "按钮", type: "primary", size: "", plain: true, text: false, round: false, circle: false, disabled: false, loading: false, link: false, icon: "", iconFont: "" },
     props: [
       { name: "content", title: "按钮文字", propType: "string", defaultValue: "按钮" },
       {
