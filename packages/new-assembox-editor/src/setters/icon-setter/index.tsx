@@ -65,7 +65,6 @@ export const IconSetter = defineComponent({
           v-model={elSearch.value}
           placeholder="Search Element icon"
           clearable
-          size="small"
           style="margin:8px 0"
         />
         <ul class={ns.e("grid")}>
@@ -94,7 +93,6 @@ export const IconSetter = defineComponent({
           v-model={fontSearch.value}
           placeholder="Search iconFont"
           clearable
-          size="small"
           style="margin:8px 0"
         />
         {fontIcons.value.length

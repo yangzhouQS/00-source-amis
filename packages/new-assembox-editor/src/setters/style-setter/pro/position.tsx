@@ -40,7 +40,6 @@ export const PositionPanel = defineComponent({
         <StyleRow title="层级" hasValue={sd.value.zIndex != null}>
           <el-input-number
             modelValue={sd.value.zIndex != null ? Number(sd.value.zIndex) : undefined}
-            size="small"
             controls={false}
             min={0}
             placeholder="z-index"

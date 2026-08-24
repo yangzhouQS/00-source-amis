@@ -33,7 +33,6 @@ export const StyleColorInput = defineComponent({
       <div class="style-color-input">
         <el-color-picker
           modelValue={props.modelValue || undefined}
-          size="small"
           predefine={PRESET_COLORS}
           showAlpha
           disabled={props.disabled}
@@ -41,10 +40,9 @@ export const StyleColorInput = defineComponent({
         />
         <el-input
           modelValue={props.modelValue}
-          size="small"
           placeholder="#000000"
           disabled={props.disabled}
-          style="flex: 1; min-width: 0;"
+          style={{ flex: 1, minWidth: 0 }}
           onUpdate:modelValue={(v: string) => onInput(v)}
         />
       </div>

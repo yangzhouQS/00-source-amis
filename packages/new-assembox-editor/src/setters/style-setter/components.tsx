@@ -56,7 +56,6 @@ export const StyleRadioGroup = defineComponent({
     return () => (
       <el-radio-group
         modelValue={props.modelValue}
-        size="small"
         onUpdate:modelValue={(v: string) => emit("update:modelValue", v)}
       >
         {props.dataList.map(item => (

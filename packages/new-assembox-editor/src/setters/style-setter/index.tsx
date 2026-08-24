@@ -79,11 +79,10 @@ export const StyleSetter = defineComponent({
     return () => (
       <div class="style-setter">
         <div class="style-setter__topbar">
-          <el-text size="small" type="info">样式配置</el-text>
+          <el-text  type="info">样式配置</el-text>
           <el-tooltip content="JSON 编辑" placement="top">
             <el-button
               text
-              size="small"
               type={showJsonEditor.value ? "primary" : "default"}
               onClick={() => {
                 showJsonEditor.value = !showJsonEditor.value;

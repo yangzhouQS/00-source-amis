@@ -225,14 +225,12 @@ export const JSFunctionSetter = defineComponent({
             <div class={ns.e("param-item")} key={i}>
               <el-input
                 modelValue={p}
-                size="small"
                 disabled={props.disabled}
                 onUpdate:modelValue={(v: string) => (params.value[i] = v)}
                 style="width:120px"
               />
               {!props.disabled && (
                 <el-button
-                  size="small"
                   link
                   icon={Close}
                   onClick={() => removeParam(i)}
@@ -241,7 +239,7 @@ export const JSFunctionSetter = defineComponent({
             </div>
           ))}
           {!props.disabled && (
-            <el-button size="small" link icon={Plus} onClick={addParam}>
+            <el-button link icon={Plus} onClick={addParam}>
               param
             </el-button>
           )}
@@ -264,7 +262,6 @@ export const JSFunctionSetter = defineComponent({
         </el-form-item>
         <div class={ns.e("test-actions")}>
           <el-button
-            size="small"
             type="primary"
             icon={VideoPlay}
             disabled={props.disabled}
@@ -297,7 +294,6 @@ export const JSFunctionSetter = defineComponent({
         {renderEditor(props.height)}
         <div class={ns.e("actions")}>
           <el-button
-            size="small"
             type="primary"
             icon={Check}
             disabled={props.disabled}
@@ -307,7 +303,6 @@ export const JSFunctionSetter = defineComponent({
           </el-button>
           {props.supportFullScreen && (
             <el-button
-              size="small"
               icon={FullScreen}
               disabled={props.disabled}
               onClick={() => (fullscreen.value = true)}

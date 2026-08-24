@@ -60,7 +60,6 @@ export const BackgroundPanel = defineComponent({
         <StyleRow title="类型" hasValue={!!bgType.value}>
           <el-radio-group
             modelValue={bgType.value}
-            size="small"
             onChange={(v: string) => {
               bgType.value = v as any;
             }}
@@ -81,13 +80,12 @@ export const BackgroundPanel = defineComponent({
             <StyleRow title="图片地址" hasValue={!!sd.value.backgroundImage}>
               <el-input
                 modelValue={extractImgUrl(sd.value.backgroundImage)}
-                size="small"
                 placeholder="https://..."
                 onUpdate:modelValue={onBgImage}
               />
             </StyleRow>
             <StyleRow title="填充方式" hasValue={!!sd.value.backgroundSize}>
-              <el-select modelValue={sizePreset.value} size="small" style="width:100%" onChange={(v: string) => emit("backgroundSize", v === "default" ? "" : v)}>
+              <el-select modelValue={sizePreset.value} style="width:100%" onChange={(v: string) => emit("backgroundSize", v === "default" ? "" : v)}>
                 <el-option value="default" label="默认" />
                 <el-option value="contain" label="contain（完整显示）" />
                 <el-option value="cover" label="cover（铺满）" />

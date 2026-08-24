@@ -53,16 +53,6 @@ export const DEFAULT_PC_ASSETS: IframeAssetsManifest = {
     { src: `${CDN_BASE}/@element-plus/icons-vue/2.3.1/global.iife.min.js`, global: "ElementPlusIconsVue", asIcons: true },
     { src: `${CDN_BASE}/vue-router/4.2.5/vue-router.global.prod.js`, global: "VueRouter" },
     { src: `${CDN_BASE}/axios/1.7.0/axios.min.js`, global: "axios" },
-    {
-      src: `${CDN_BASE}/@cs/element-pro/1.7.6/element-pro.iife.js`,
-      global: "ElementPro",
-      asPlugin: true,
-      // 旧版兼容：Box 组件同时注册为 box / Box 全局组件
-      components: [
-        { name: "box", path: "Box" },
-        { name: "Box", path: "Box" },
-      ],
-    },
     { src: `${CDN_BASE}/@cs/element-plus-ui/1.1.0/element-plus-ui.iife.js`, global: "ElementPlusUi", asPlugin: true },
     { src: `${CDN_BASE}/@cs/table-pro/1.0.13/table-pro.iife.js`, global: "TablePro", asPlugin: true },
     // 宿主框架：提供 portalPinia/portalStore/$http（portalPinia 为静态导出，加载即就绪，无需 new WebFramework）
@@ -72,7 +62,6 @@ export const DEFAULT_PC_ASSETS: IframeAssetsManifest = {
     { src: `${CDN_BASE}/@cs/vue3-biz-components-library/test-2026-8-18/vue3-biz-components-library.umd.js`, global: "Vue3BizComponentsLibrary", asPlugin: true },
   ],
   css: [
-    `${CDN_BASE}/@cs/element-pro/1.7.6/theme/index.css`,
     `${CDN_BASE}/@cs/element-plus-ui/1.0.8/theme/yun-que.css`,
     `${CDN_BASE}/@cs/table-pro/1.0.13/theme/index.css`,
   ],

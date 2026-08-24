@@ -18,6 +18,7 @@ export const lineInputComponents: ComponentCatalogItem[] = [
     category: "input",
     scaffold: { renderType: "Input", type: "text", placeholder: "请输入", maxlength: "", minlength: 0, clearable: true, disabled: false, readonly: false, size: "", rows: 2, modelName: "" },
     props: [
+      modelNameProp(),
       {
         name: "type",
         title: "类型",
@@ -32,7 +33,6 @@ export const lineInputComponents: ComponentCatalogItem[] = [
       { name: "readonly", title: "只读", propType: "boolean", defaultValue: false },
       { name: "size", title: "尺寸", propType: SIZE_ENUM, defaultValue: "" },
       { name: "rows", title: "行数(textarea)", propType: "number", defaultValue: 2 },
-      modelNameProp(),
     ],
     events: inputEvents(true),
   },

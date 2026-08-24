@@ -34,7 +34,7 @@ export const ObjectSetter = defineComponent({
       }
       return (
         <div class={ns.b()}>
-          <el-form labelWidth="90px" size="small" disabled={props.disabled}>
+          <el-form labelWidth="90px"  disabled={props.disabled}>
             {items.map((prop) => {
               if (isFieldHidden(prop, value)) {
                 return null;

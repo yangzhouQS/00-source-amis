@@ -102,13 +102,12 @@ export const StyleNumberInput = defineComponent({
     return () => {
       const raw = String(props.modelValue ?? "");
       if (isCssVarBind(raw)) {
-        return <el-input modelValue={raw} size="small" disabled title="CSS 变量绑定" />;
+        return <el-input modelValue={raw} disabled title="CSS 变量绑定" />;
       }
       return (
         <div class="style-number-input">
           <el-input
             modelValue={focused.value ? textValue.value : (numericValue.value != null ? String(numericValue.value) : "")}
-            size="small"
             placeholder={props.placeholder}
             disabled={props.disabled}
             onFocus={onFocus}
@@ -120,7 +119,6 @@ export const StyleNumberInput = defineComponent({
           {props.units.length > 1 && (
             <el-select
               modelValue={currentUnit.value}
-              size="small"
               style="width: 56px; flex-shrink: 0;"
               onUpdate:modelValue={onUnit}
             >

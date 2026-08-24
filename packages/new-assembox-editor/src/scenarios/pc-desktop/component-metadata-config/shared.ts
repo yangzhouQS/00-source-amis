@@ -141,7 +141,7 @@ export function remoteOptionsProps(
 export function modelNameProp(defaultValue = ""): ComponentPropConfig {
   return {
     name: "modelName",
-    title: "绑定数据模型",
+    title: "数据模型",
     propType: "string",
     defaultValue,
     setter: "ModelNameSetter",

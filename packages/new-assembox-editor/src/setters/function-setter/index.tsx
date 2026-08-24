@@ -59,7 +59,6 @@ export const FunctionSetter = defineComponent({
         </div>
         <div class={ns.e("actions")}>
           <el-button
-            size="small"
             type="primary"
             icon={Check}
             disabled={props.disabled}
@@ -69,7 +68,6 @@ export const FunctionSetter = defineComponent({
           </el-button>
           {props.supportFullScreen && (
             <el-button
-              size="small"
               icon={FullScreen}
               disabled={props.disabled}
               onClick={() => {

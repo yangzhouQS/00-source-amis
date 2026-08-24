@@ -58,7 +58,7 @@ export const ModelNameSetter = defineComponent({
     return () => (
       <el-popover
         v-model:visible={visible.value}
-        placement="bottom"
+        placement="bottom-end"
         width={320}
         trigger="click"
       >
@@ -78,7 +78,6 @@ export const ModelNameSetter = defineComponent({
                 v-model={filterText.value}
                 placeholder="Search field"
                 clearable
-                size="small"
                 style="margin-bottom:8px"
               />
               <el-scrollbar max-height={300}>
