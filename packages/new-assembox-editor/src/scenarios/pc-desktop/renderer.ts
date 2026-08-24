@@ -14,6 +14,7 @@ import {
 import ElementPlus from "element-plus";
 import { computed, createApp, h, reactive } from "vue";
 import { buildSceneRouter } from "../../core/router/build-router";
+import { usePortalContext } from "./hooks/use-portal-context";
 import { DOCUMENT_ARRAYS, forEachChild } from "./slot-accessors";
 
 /**
@@ -115,8 +116,9 @@ export class PcRenderer implements IRenderer {
 
     // 安装宿主框架 pinia（对齐真实宿主 new WebFramework() 内部的 app.use(createPinia())）。
     // portalPinia.defineStore 依赖 activePinia，不安装则渲染含 tableCode 的表格时抛
-    // "Cannot read properties of undefined (reading '_s')"（宿主全局由 index.html CDN 脚本提供）
-    const portalPinia = (window as any).JsWebFramework?.portalPinia;
+    // "Cannot read properties of undefined (reading '_s')"。
+    // 桥接 Hook 双环境兜底：JsWebFramework（门户宿主） / JsKanbanFramework（看板宿主）
+    const portalPinia = usePortalContext().getPortalPinia();
     if (portalPinia?.createPinia) {
       this.app.use(portalPinia.createPinia());
     }

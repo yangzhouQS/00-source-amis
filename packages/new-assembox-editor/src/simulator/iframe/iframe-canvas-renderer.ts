@@ -17,6 +17,7 @@ import zhCn from "element-plus/es/locale/lang/zh-cn";
  * 与构建 external.globals 一致）；UMD 未加载时回退 Vite 解析的 ESM（dev）。
  */
 import { computed, createApp, h, nextTick, reactive } from "vue";
+import { usePortalContext } from "../../scenarios/pc-desktop/hooks/use-portal-context";
 
 /** assembox-desktop-next：window.AssemBoxDesktopNext（UMD）优先，ESM 兜底 */
 function desktopNext(): typeof AssemDesktopNextEsm {
@@ -242,15 +243,17 @@ export class IframeCanvasRenderer implements IframeRendererApi {
     });
     // 安装宿主框架 pinia（对齐真实宿主 new WebFramework() 内部的 app.use(createPinia())）。
     // portalPinia.defineStore 是未绑实例的原始 pinia API，依赖 activePinia；
-    // 不安装则渲染含 tableCode 的表格时抛 "Cannot read properties of undefined (reading '_s')"
-    const w = window as any;
-    const portalPinia = w.JsWebFramework?.portalPinia;
+    // 不安装则渲染含 tableCode 的表格时抛 "Cannot read properties of undefined (reading '_s')"。
+    // 桥接 Hook 双环境兜底：iframe 内加载的是画布清单注入的框架全局
+    // （JsWebFramework / JsKanbanFramework，取决于宿主下发依赖）
+    const portalPinia = usePortalContext().getPortalPinia();
     if (portalPinia?.createPinia) {
       this.app.use(portalPinia.createPinia());
     }
 
     // 遍历 assets.js 清单，按标记注册（对应旧版 registerPlugin 的全部能力）。
     // 这些 CDN 全局包均基于 window.Vue（= 本 ESM Vue 实例），与 assembox-desktop-next 共用同一 Vue
+    const w = window as any;
     for (const a of this.assets.js ?? []) {
       if (!a.global) {
         continue;

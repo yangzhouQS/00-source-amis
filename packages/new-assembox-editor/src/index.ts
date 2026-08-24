@@ -74,6 +74,16 @@ export type {
   ScenarioProfile,
   SlotMarker,
 } from "./scenario/types";
+// 内置 PC 桌面场景档案（宿主集成时注册：registerScenario(pcDesktopProfile)）
+export { pcDesktopProfile } from "./scenarios/pc-desktop";
+// Portal 上下文桥接 Hook（编辑器/渲染器双运行环境：
+// JsWebFramework（门户宿主）/ JsKanbanFramework（看板宿主）window 运行时查找，
+// 宿主模块取 portalStore/$http/portalPinia 统一走这里，禁止静态 import 框架包）
+export { usePortalContext } from "./scenarios/pc-desktop/hooks/use-portal-context";
+export type {
+  PortalPiniaUtils,
+  UsePortalContextReturn,
+} from "./scenarios/pc-desktop/hooks/use-portal-context";
 // Schema 类型（通用类型定义，供 setter / 插件使用）
 export type {
   ActionMeta,

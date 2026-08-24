@@ -96,9 +96,16 @@ describe("mergeAssets（宿主下发 + 场景内置兜底）", () => {
     expect(merged.js!.filter(a => a.global === "Vue3BizComponentsLibrary")).toHaveLength(1);
   });
 
-  it("宿主缺失的内置项兜底保留（element-pro 及其主题）", () => {
-    expect(merged.js!.some(a => a.global === "ElementPro" && a.asPlugin)).toBe(true);
-    expect(merged.css!.some(h => h.includes("element-pro"))).toBe(true);
+  it("宿主缺失的内置项兜底保留（自定义 builtin 验证契约，不依赖内置清单内容）", () => {
+    // 内置 element-pro 已移除（e98776528），兜底语义改用自定义清单验证：
+    // 宿主未提供的 builtin 项原样保留在合并结果尾部
+    const customBuiltin: IframeAssetsManifest = {
+      js: [{ src: "https://cdn.example.com/extra-lib.iife.js", global: "ExtraLib", asPlugin: true }],
+      css: ["https://cdn.example.com/extra-lib/theme/index.css"],
+    };
+    const m = mergeAssets(host, customBuiltin)!;
+    expect(m.js!.some(a => a.global === "ExtraLib" && a.asPlugin)).toBe(true);
+    expect(m.css!.some(h => h.includes("extra-lib"))).toBe(true);
   });
 
   it("css 按库家族去重（宿主 yun-que 1.1.0 生效，内置 1.0.8 不再加载）", () => {
@@ -107,11 +114,15 @@ describe("mergeAssets（宿主下发 + 场景内置兜底）", () => {
     expect(merged.css!.some(h => h.includes("1.1.0"))).toBe(true);
   });
 
-  it("宿主项整体先于内置兜底项（element-plus 先于 element-pro 求值）", () => {
-    const epIdx = merged.js!.findIndex(a => a.global === "ElementPlus");
-    const proIdx = merged.js!.findIndex(a => a.global === "ElementPro");
+  it("宿主项整体先于内置兜底项（求值顺序契约）", () => {
+    const customBuiltin: IframeAssetsManifest = {
+      js: [{ src: "https://cdn.example.com/extra-lib.iife.js", global: "ExtraLib" }],
+    };
+    const m = mergeAssets(host, customBuiltin)!;
+    const epIdx = m.js!.findIndex(a => a.global === "ElementPlus");
+    const extraIdx = m.js!.findIndex(a => a.global === "ExtraLib");
     expect(epIdx).toBeGreaterThan(-1);
-    expect(proIdx).toBeGreaterThan(epIdx);
+    expect(extraIdx).toBeGreaterThan(epIdx);
   });
 
   it("无宿主下发时回退内置默认", () => {

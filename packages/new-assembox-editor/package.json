@@ -1,5 +1,5 @@
 {
-  "name": "@cs/new-assembox-editor",
+  "name": "@cs/assembox-editor-next",
   "version": "0.1.0",
   "description": "新版 assembox 可视化编辑器（声明式插件系统 / 响应式 Store / 标准化画布）",
   "type": "module",
