@@ -23,23 +23,25 @@
     "@cs/assembox-desktop-next": "workspace:*",
     "@element-plus/icons-vue": "^2.3.2",
     "@guolao/vue-monaco-editor": "^1.6.0",
+    "@cs/vue3-biz-components-library": "^0.1.7",
+    "@cs/js-web-framework": "^1.2.0",
     "element-plus": "^2.13.7",
     "monaco-editor": "^0.56.0",
-    "vue": "^3.5.34",
-    "vue-router": "^4.4.5"
+    "vue": "^3.5.41",
+    "vue-router": "^5.2.0"
   },
   "devDependencies": {
     "@cs/js-eslint-config-library": "0.2.7",
-    "@playwright/test": "1.57.0",
-    "@vitejs/plugin-vue": "^6.0.7",
-    "@vitejs/plugin-vue-jsx": "^4.1.1",
-    "eslint": "^10.8.0",
-    "jsdom": "^25.0.1",
-    "less": "^4.6.4",
+    "@playwright/test": "1.62.1",
+    "@vitejs/plugin-vue": "^6.0.8",
+    "@vitejs/plugin-vue-jsx": "^5.1.6",
+    "eslint": "^10.9.0",
+    "jsdom": "^30.0.1",
+    "less": "^4.9.0",
     "typescript": "^5.9.3",
     "vite": "^6.2.0",
-    "vitest": "^2.1.9",
-    "vue-tsc": "^3.3.2"
+    "vitest": "^4.1.11",
+    "vue-tsc": "^3.3.11"
   },
   "peerDependencies": {
     "@element-plus/icons-vue": "^2.3.0",

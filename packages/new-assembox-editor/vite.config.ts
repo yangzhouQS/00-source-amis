@@ -24,6 +24,22 @@ export default defineConfig({
         main: resolve(__dirname, "index.html"),
         canvas: resolve(__dirname, "canvas.html"),
       },
+      external: [
+        "vue",
+        "axios",
+        "element-plus",
+        "@element-plus/icons-vue",
+        "@cs/vue3-biz-components-library",
+      ],
+      output: {
+        globals: {
+          "vue": "Vue",
+          "axios": "axios",
+          "element-plus": "ElementPlus",
+          "@element-plus/icons-vue": "ElementPlusIconsVue",
+          "@cs/vue3-biz-components-library": "Vue3BizComponentsLibrary",
+        },
+      },
     },
   },
   server: {

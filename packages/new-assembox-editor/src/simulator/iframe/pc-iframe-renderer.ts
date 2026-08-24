@@ -41,6 +41,10 @@ const CDN_BASE = "https://cdn.yearrow.com/files";
  * PC 桌面端默认依赖清单（基础 UI 库栈，按依赖顺序加载）。
  * - element-plus / element-pro / element-plus-ui / table-pro 标 asPlugin（自动 app.use）
  * - icons-vue / vue-router / axios 仅挂全局（供组件运行时取用）
+ * - js-web-framework 提供 window.JsWebFramework.portalPinia（table-setting store 依赖）
+ * - vue3-biz-components-library 注册 yq-table-setting 等全局业务组件（UMD 读取 window.Vue 副作用注册）
+ *   两者必须在渲染含 tableCode 的 YqTable* 节点前就绪，否则 useTableSetting 抛
+ *   "[table-setting] 未找到宿主框架 portalPinia.defineStore"
  * 换场景或换库时，构造 PcIframeRenderer 传入不同清单即可。
  */
 export const DEFAULT_PC_ASSETS: IframeAssetsManifest = {
@@ -59,13 +63,16 @@ export const DEFAULT_PC_ASSETS: IframeAssetsManifest = {
         { name: "Box", path: "Box" },
       ],
     },
-    { src: `${CDN_BASE}/@cs/element-plus-ui/1.0.1/element-plus-ui.iife.js`, global: "ElementPlusUi", asPlugin: true },
+    { src: `${CDN_BASE}/@cs/element-plus-ui/1.1.0/element-plus-ui.iife.js`, global: "ElementPlusUi", asPlugin: true },
     { src: `${CDN_BASE}/@cs/table-pro/1.0.13/table-pro.iife.js`, global: "TablePro", asPlugin: true },
+    // 宿主框架：提供 portalPinia/portalStore/$http（portalPinia 为静态导出，加载即就绪，无需 new WebFramework）
+    { src: `${CDN_BASE}/@cs/js-web-framework/1.2.0/js-web-framework.umd.js`, global: "JsWebFramework" },
+    // 业务组件库：注册 yq-table-setting / yq-table-async 等全局组件（须在 js-web-framework 之后）
+    { src: `${CDN_BASE}/@cs/vue3-biz-components-library/test-2026-8-18/vue3-biz-components-library.umd.js`, global: "Vue3BizComponentsLibrary" },
   ],
   css: [
     `${CDN_BASE}/@cs/element-pro/1.7.6/theme/index.css`,
-    `${CDN_BASE}/@cs/element-plus-ui/1.0.1/theme/yun-que.css`,
-    `${CDN_BASE}/fonts/material-cloud/1.0.0/iconfont.css`,
+    `${CDN_BASE}/@cs/element-plus-ui/1.0.8/theme/yun-que.css`,
     `${CDN_BASE}/@cs/table-pro/1.0.13/theme/index.css`,
   ],
 };

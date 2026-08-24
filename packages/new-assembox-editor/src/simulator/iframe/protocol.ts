@@ -99,6 +99,193 @@ export interface IframeAssetsManifest {
   externals?: ExternalComponentDef[];
 }
 
+// ═══════════════════════════════════════════════
+// 宿主外置依赖下发（对齐旧版 ASSEM_RENDER_DEPENDENCIES_KEY 契约）
+// ═══════════════════════════════════════════════
+
+/**
+ * 旧版依赖描述格式（宿主从服务端解析后下发，如 node-mp-assem-editor-website 的
+ * parserDependenciesVersion → setDesktopRenderDependencies 链路）。
+ * fileType=script 的项加载后仅挂全局，style 加载 css；global/注册标记由
+ * HOST_SCRIPT_ASSET_MAP 按 packageName/url 自动补全（服务端数据不含这些字段）。
+ */
+export interface RenderDependencyItem {
+  fileType: "script" | "style";
+  /** 包名（服务端原始值，如 'element-plus-js'、'js-web-frameworky'——存在拼写容错） */
+  packageName: string;
+  /** 脚本/样式地址 */
+  fileUrl: string;
+  /** scope 标记（public/private 均直接按 fileUrl 加载，仅影响旧版合并逻辑，此处保留兼容） */
+  scope?: "public" | "private";
+  /** script 加载后挂载的全局变量名（可选，缺省按映射表推断） */
+  global?: string;
+  [key: string]: any;
+}
+
+/**
+ * 宿主脚本 packageName → iframe 资产注册配置映射。
+ * 渲染器注册循环依赖 global/asPlugin/asIcons 标记执行 app.use / 图标注册，
+ * 服务端依赖数据只有 packageName + fileUrl，据此补全。
+ * url 匹配作为兜底（容忍 packageName 拼写差异，如 'js-web-frameworky'）。
+ */
+const HOST_SCRIPT_ASSET_MAP: Array<{
+  packageNames: string[];
+  urlIncludes?: string[];
+  asset: Omit<JsAsset, "src">;
+}> = [
+  {
+    packageNames: ["vue-router"],
+    asset: { global: "VueRouter" },
+  },
+  {
+    packageNames: ["axios"],
+    asset: { global: "axios" },
+  },
+  {
+    packageNames: ["element-plus-js", "element-plus"],
+    urlIncludes: ["element-plus/"],
+    asset: { global: "ElementPlus", asPlugin: true },
+  },
+  {
+    packageNames: ["@element-plus/icons-vue"],
+    urlIncludes: ["icons-vue"],
+    asset: { global: "ElementPlusIconsVue", asIcons: true },
+  },
+  {
+    packageNames: ["@cs/element-pro-js", "element-pro-js"],
+    urlIncludes: ["element-pro"],
+    asset: { global: "ElementPro", asPlugin: true },
+  },
+  {
+    packageNames: ["@cs/element-plus-ui-js", "element-plus-ui-js"],
+    urlIncludes: ["element-plus-ui"],
+    asset: { global: "ElementPlusUi", asPlugin: true },
+  },
+  {
+    packageNames: ["@cs/table-pro-js", "table-pro-js"],
+    urlIncludes: ["table-pro"],
+    asset: { global: "TablePro", asPlugin: true },
+  },
+  {
+    packageNames: ["js-web-framework", "js-web-frameworky", "vue3-web-framework-library"],
+    urlIncludes: ["js-web-framework", "vue3-web-framework"],
+    asset: { global: "JsWebFramework" },
+  },
+  {
+    packageNames: ["vue3-biz-components-library", "vue3-com-components-library"],
+    urlIncludes: ["vue3-biz-components", "vue3-com-components"],
+    asset: { global: "Vue3BizComponentsLibrary" },
+  },
+];
+
+/** iframe 内禁止加载的宿主脚本（按 packageName/url 匹配）：
+ *  vue.global 会覆盖 entry 预置的 win.Vue（ESM 单实例），导致渲染器与 CDN 包分裂为两个 Vue 实例 */
+function isBlockedHostScript(item: RenderDependencyItem): boolean {
+  const name = (item.packageName ?? "").toLowerCase();
+  const url = item.fileUrl ?? "";
+  return name === "vue3" || name === "vue"
+    || /\/vue\/[\d.]+\/vue\.global/.test(url);
+}
+
+/** 按 packageName 精确 + url 子串兜底，推断宿主脚本的资产注册配置 */
+function matchHostScriptAsset(item: RenderDependencyItem): Partial<JsAsset> {
+  const name = (item.packageName ?? "").toLowerCase();
+  for (const entry of HOST_SCRIPT_ASSET_MAP) {
+    if (entry.packageNames.some(n => n.toLowerCase() === name)) {
+      return entry.asset;
+    }
+  }
+  for (const entry of HOST_SCRIPT_ASSET_MAP) {
+    if (entry.urlIncludes?.some(u => item.fileUrl.includes(u))) {
+      return entry.asset;
+    }
+  }
+  return {};
+}
+
+/** css 按「库家族」提取去重键（element-pro/element-plus-ui/table-pro/material-cloud/cs-common） */
+function cssFamilyKey(href: string): string {
+  const m = href.match(/(element-pro|element-plus-ui|table-pro|material-cloud|cs-common)/);
+  return m ? m[1] : href;
+}
+
+/**
+ * 合并宿主下发依赖与场景内置默认清单（对齐旧版 thirdPartyDeps 合并语义）。
+ * - 宿主项在前（先加载，可覆盖内置版本）、内置默认在后兜底
+ * - js 按 src 去重 + 按 global 去重（宿主换版本如 table-pro 3.0.3 后，内置 1.0.13 不再加载）
+ * - css 按 url 去重 + 按库家族去重（避免双版本主题互相覆盖）
+ * - plugins/externals 取并集（宿主优先）
+ */
+export function mergeAssets(
+  host?: IframeAssetsManifest,
+  builtin?: IframeAssetsManifest,
+): IframeAssetsManifest | undefined {
+  if (!host) {
+    return builtin;
+  }
+  if (!builtin) {
+    return host;
+  }
+  const hostJs = host.js ?? [];
+  const hostCss = host.css ?? [];
+  const srcSet = new Set(hostJs.map(a => a.src));
+  const globalSet = new Set(hostJs.map(a => a.global).filter(Boolean));
+  const cssFamilies = new Set(hostCss.map(cssFamilyKey));
+
+  const js = [
+    ...hostJs,
+    ...(builtin.js ?? []).filter(a => !srcSet.has(a.src) && !(a.global && globalSet.has(a.global))),
+  ];
+  const css = [
+    ...hostCss,
+    ...(builtin.css ?? []).filter(href => cssFamilyKey(href) === href || !cssFamilies.has(cssFamilyKey(href))),
+  ];
+
+  return {
+    ...builtin,
+    ...host,
+    js,
+    css,
+    plugins: [...new Set([...(host.plugins ?? []), ...(builtin.plugins ?? [])])],
+    externals: [...(host.externals ?? []), ...(builtin.externals ?? [])],
+  };
+}
+
+/**
+ * 旧版扁平依赖列表归一化为 iframe 资产清单。
+ * - 过滤 vue/vue.global（iframe 持有 ESM Vue 单实例，禁止覆盖）
+ * - 按 HOST_SCRIPT_ASSET_MAP 补全 global/asPlugin/asIcons（packageName 精确 + url 兜底）
+ * - 保持宿主下发顺序（加载顺序敏感：element-plus 先于 element-pro，framework 先于 biz-lib）
+ * - fileUrl 精确去重（同名包不同 URL 的 private 渲染器 UMD 共存）
+ */
+export function normalizeRenderDependencies(
+  deps?: IframeAssetsManifest | RenderDependencyItem[],
+): IframeAssetsManifest | undefined {
+  if (!deps) {
+    return undefined;
+  }
+  if (!Array.isArray(deps)) {
+    return deps as IframeAssetsManifest;
+  }
+  const manifest: IframeAssetsManifest = { js: [], css: [] };
+  const seenUrl = new Set<string>();
+  for (const item of deps) {
+    if (!item?.fileUrl || seenUrl.has(item.fileUrl)) {
+      continue;
+    }
+    seenUrl.add(item.fileUrl);
+    if (item.fileType === "style") {
+      manifest.css!.push(item.fileUrl);
+      continue;
+    }
+    if (isBlockedHostScript(item)) {
+      continue;
+    }
+    manifest.js!.push({ src: item.fileUrl, ...matchHostScriptAsset(item) });
+  }
+  return manifest;
+}
+
 /**
  * Host 注入到 iframe window 的载荷：回调 + 依赖清单。
  * win.__ASSEM_HOST__ 的类型。

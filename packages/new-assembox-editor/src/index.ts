@@ -89,6 +89,14 @@ export type {
 } from "./schema/types";
 // 内置 setter / action
 export { registerBuiltinSetters } from "./setters";
+// 宿主外置渲染依赖（对齐旧版 ASSEM_RENDER_DEPENDENCIES_KEY 契约）
+export type {
+  ExternalComponentDef,
+  IframeAssetsManifest,
+  JsAsset,
+  RenderDependencyItem,
+} from "./simulator/iframe/protocol";
+export { mergeAssets, normalizeRenderDependencies } from "./simulator/iframe/protocol";
 // 骨架层
 export { Skeleton } from "./skeleton/skeleton";
 export type { Area } from "./skeleton/skeleton";

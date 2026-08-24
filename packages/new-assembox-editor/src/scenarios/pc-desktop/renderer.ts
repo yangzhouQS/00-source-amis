@@ -5,7 +5,7 @@ import type {
   IRenderer,
   RendererMountOptions,
   SlotMarker,
-} from "../../scenario/types";
+} from "../../scenario";
 import {
   AssemPlugin,
   AssemViews,
@@ -112,6 +112,14 @@ export class PcRenderer implements IRenderer {
         };
       },
     });
+
+    // 安装宿主框架 pinia（对齐真实宿主 new WebFramework() 内部的 app.use(createPinia())）。
+    // portalPinia.defineStore 依赖 activePinia，不安装则渲染含 tableCode 的表格时抛
+    // "Cannot read properties of undefined (reading '_s')"（宿主全局由 index.html CDN 脚本提供）
+    const portalPinia = (window as any).JsWebFramework?.portalPinia;
+    if (portalPinia?.createPinia) {
+      this.app.use(portalPinia.createPinia());
+    }
 
     this.app.use(router);
     this.app.use(AssemPlugin, config);

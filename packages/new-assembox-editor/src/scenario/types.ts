@@ -72,6 +72,12 @@ export interface IRenderer {
   setDesignMode: (mode: "design" | "preview") => void;
   dispose: () => void;
 
+  /**
+   * 更新画布依赖清单（仅 iframe 隔离渲染器支持；须在 mount 前调用，
+   * mount 后改动需重建 iframe 才能生效）
+   */
+  setAssets?: (assets: import("../simulator/iframe/protocol").IframeAssetsManifest) => void;
+
   getNodeElement: (nodeId: string) => HTMLElement | null;
   getRect: (nodeId: string) => DOMRect | null;
   nodeIdFromElement: (el: HTMLElement | null) => string | null;
@@ -144,8 +150,13 @@ export interface ScenarioProfile {
   readonly componentCatalog: IComponentCatalog;
   readonly nestingRules: INestingRules;
   readonly emptySchema: () => any;
-  /** iframe 隔离渲染器工厂（可选，未提供时 iframe 模式降级为同 DOM） */
-  readonly createIframeRenderer?: () => IRenderer;
+  /**
+   * 场景内置默认依赖清单（iframe 模式）。与宿主下发依赖（EditorOptions.renderDependencies）
+   * 合并策略见 simulator/iframe/protocol.ts 的 mergeAssets：宿主项优先，内置兜底
+   */
+  readonly defaultRenderAssets?: import("../simulator/iframe/protocol").IframeAssetsManifest;
+  /** iframe 隔离渲染器工厂（可选，未提供时 iframe 模式降级为同 DOM）；入参为合并后的最终清单，缺省用渲染器内置默认 */
+  readonly createIframeRenderer?: (assets?: import("../simulator/iframe/protocol").IframeAssetsManifest) => IRenderer;
 
   init?: (ctx: ScenarioContext) => void;
   destroy?: () => void;

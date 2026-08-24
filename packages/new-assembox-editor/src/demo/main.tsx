@@ -16,6 +16,8 @@ import { createEditor, Workbench } from "../index";
 
 import { registerScenario } from "../scenario";
 import { pcDesktopProfile } from "../scenarios/pc-desktop";
+// 宿主下发渲染依赖样例（模拟服务端 parserDependenciesVersion 返回，iframe 画布按此加载）
+import { moduleDependenciesSample } from "./module-dependencies-sample";
 // 默认测试 schema（供应商单表场景，取 uiSkeleton 作为编辑器 schema）
 import schemaJson from "./single-table-scene.json";
 import "element-plus/dist/index.css";
@@ -47,6 +49,8 @@ async function main() {
     schema: config.uiSkeleton,
     routerConfig: config.routerConfig,
     dataSource: config.dataSource,
+    // 宿主外置依赖（服务端下发）：归一化后与场景内置默认合并（宿主优先，内置兜底）
+    renderDependencies: moduleDependenciesSample,
     // autoSave: { key: "assem-editor:draft:demo" },
   });
 

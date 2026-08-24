@@ -1,5 +1,5 @@
 import type { ScenarioProfile } from "../../scenario/types";
-import { PcIframeRenderer } from "../../simulator/iframe/pc-iframe-renderer";
+import { DEFAULT_PC_ASSETS, PcIframeRenderer } from "../../simulator/iframe/pc-iframe-renderer";
 import { PcComponentCatalog } from "./component-catalog";
 import { PcNestingRules } from "./nesting-rules";
 import { PcRenderer } from "./renderer";
@@ -14,7 +14,9 @@ export const pcDesktopProfile: ScenarioProfile = {
 
   schemaOps: new PcSchemaOps(),
   createRenderer: () => new PcRenderer(),
-  createIframeRenderer: () => new PcIframeRenderer(),
+  createIframeRenderer: assets => new PcIframeRenderer(assets),
+  // 内置默认依赖（与宿主 renderDependencies 合并：宿主项优先，内置兜底）
+  defaultRenderAssets: DEFAULT_PC_ASSETS,
   componentCatalog: new PcComponentCatalog(),
   nestingRules: new PcNestingRules(),
   emptySchema: () => new PcSchemaOps().emptySchema(),

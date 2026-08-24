@@ -19,6 +19,7 @@ import { AssetRegistry } from "../registry/asset-registry";
 import { SetterRegistry } from "../registry/setter-registry";
 import * as TOKENS from "../registry/tokens";
 import { scenarioRegistry } from "../scenario/registry";
+import { mergeAssets, normalizeRenderDependencies } from "../simulator/iframe/protocol";
 import { Skeleton } from "../skeleton/skeleton";
 /**
  * Editor 门面
@@ -55,6 +56,15 @@ export interface EditorOptions {
   disableBuiltin?: boolean;
   /** 画布模式：inline（同 DOM 进程内） | iframe（资源隔离） */
   canvasMode?: "inline" | "iframe";
+  /**
+   * 画布渲染依赖（外置可配，iframe 模式生效；对齐旧版 ASSEM_RENDER_DEPENDENCIES_KEY 契约）。
+   * - 支持旧版扁平格式 [{ fileType, packageName, fileUrl, global? }]（宿主服务端解析后下发）
+   * - 或直接传 iframe 资产清单 { js: JsAsset[], css: string[] }（可带 asPlugin/components 标记）
+   * 宿主项先于内置默认加载，按 src/global 去重（宿主可覆盖内置版本）。
+   * 事后更新用 editor.setRenderDependencies()（须在 DesignerHost mount 前）。
+   */
+  renderDependencies?: import("../simulator/iframe/protocol").IframeAssetsManifest
+    | import("../simulator/iframe/protocol").RenderDependencyItem[];
   /** 草稿自动保存（sessionStorage，刷新恢复，关标签页自动清除） */
   autoSave?: {
     /** sessionStorage 键名，默认 'assem-editor:draft' */
@@ -178,9 +188,14 @@ export class Editor {
 
     // 3. 创建渲染器并绑定回调（DesignerHost 负责 mount）
     // iframe 模式优先用场景的 iframe 渲染器（资源/样式隔离），否则降级 inline
+    // 依赖合并策略（宿主下发优先 + 场景内置兜底）统一在此：mergeAssets(host, profile.defaultRenderAssets)
+    const mergedAssets = mergeAssets(
+      normalizeRenderDependencies(options.renderDependencies),
+      this.profile.defaultRenderAssets,
+    );
     this.renderer
       = options.canvasMode === "iframe" && this.profile.createIframeRenderer
-        ? this.profile.createIframeRenderer()
+        ? this.profile.createIframeRenderer(mergedAssets)
         : this.profile.createRenderer();
     this.renderer.onClick?.((nodeId, _e) => this.handleClick(nodeId));
     this.renderer.onHover?.(id => this.handleHover(id));
@@ -220,9 +235,26 @@ export class Editor {
     this.logger.log("hello");
   }
 
+  /**
+   * 事后下发画布渲染依赖（对齐旧版 editor.set(ASSEM_RENDER_DEPENDENCIES_KEY) 异步场景：
+   * 宿主从服务端解析依赖后延迟下发）。
+   * 与场景内置默认重新合并（宿主项优先）；仅 iframe 模式生效，须在 DesignerHost mount 前调用。
+   */
+  setRenderDependencies(
+    deps: import("../simulator/iframe/protocol").IframeAssetsManifest
+      | import("../simulator/iframe/protocol").RenderDependencyItem[],
+  ): void {
+    const manifest = mergeAssets(
+      normalizeRenderDependencies(deps),
+      this.profile.defaultRenderAssets,
+    );
+    if (manifest && this.renderer?.setAssets) {
+      this.renderer.setAssets(manifest);
+    }
+  }
+
   /** 连接拖拽引擎：投放执行 + 拖拽态副作用 */
-  private wireDragon(): void {
-    // 投放执行
+  private wireDragon(): void { // 投放执行
     this.dragon.on({
       onDrop: (dragObject: DragObject, location: DropLocation) => {
         // 嵌套校验（最终拦截，兜底防漏）
