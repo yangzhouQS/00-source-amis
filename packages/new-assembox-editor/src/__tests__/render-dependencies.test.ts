@@ -42,7 +42,7 @@ describe("normalizeRenderDependencies（服务端扁平依赖 → iframe 资产�
     expect(bySrc("element-plus-ui")).toMatchObject({ global: "ElementPlusUi", asPlugin: true });
     expect(bySrc("table-pro/3.0.3")).toMatchObject({ global: "TablePro", asPlugin: true });
     expect(bySrc("js-web-framework")).toMatchObject({ global: "JsWebFramework" });
-    expect(bySrc("vue3-biz-components")).toMatchObject({ global: "Vue3BizComponentsLibrary" });
+    expect(bySrc("vue3-biz-components")).toMatchObject({ global: "Vue3BizComponentsLibrary", asPlugin: true });
     expect(bySrc("vue-router")).toMatchObject({ global: "VueRouter" });
   });
 

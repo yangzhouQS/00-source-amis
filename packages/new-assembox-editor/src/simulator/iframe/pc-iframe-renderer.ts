@@ -67,8 +67,9 @@ export const DEFAULT_PC_ASSETS: IframeAssetsManifest = {
     { src: `${CDN_BASE}/@cs/table-pro/1.0.13/table-pro.iife.js`, global: "TablePro", asPlugin: true },
     // 宿主框架：提供 portalPinia/portalStore/$http（portalPinia 为静态导出，加载即就绪，无需 new WebFramework）
     { src: `${CDN_BASE}/@cs/js-web-framework/1.2.0/js-web-framework.umd.js`, global: "JsWebFramework" },
-    // 业务组件库：注册 yq-table-setting / yq-table-async 等全局组件（须在 js-web-framework 之后）
-    { src: `${CDN_BASE}/@cs/vue3-biz-components-library/test-2026-8-18/vue3-biz-components-library.umd.js`, global: "Vue3BizComponentsLibrary" },
+    // 业务组件库：注册 yq-table-setting / yq-table-async / yq-advanced-filter 等全局组件
+    // （UMD 导出 install，asPlugin 触发 app.use → 批量注册；须在 js-web-framework 之后）
+    { src: `${CDN_BASE}/@cs/vue3-biz-components-library/test-2026-8-18/vue3-biz-components-library.umd.js`, global: "Vue3BizComponentsLibrary", asPlugin: true },
   ],
   css: [
     `${CDN_BASE}/@cs/element-pro/1.7.6/theme/index.css`,

@@ -174,7 +174,8 @@ const HOST_SCRIPT_ASSET_MAP: Array<{
   {
     packageNames: ["vue3-biz-components-library", "vue3-com-components-library"],
     urlIncludes: ["vue3-biz-components", "vue3-com-components"],
-    asset: { global: "Vue3BizComponentsLibrary" },
+    // UMD 导出 install（批量注册 yq-table-setting / yq-advanced-filter 等全局组件）
+    asset: { global: "Vue3BizComponentsLibrary", asPlugin: true },
   },
 ];
 

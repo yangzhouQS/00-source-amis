@@ -90,6 +90,8 @@ async function main() {
     app.use(TablePro);
   }
 
+  app.use(window.Vue3BizComponentsLibrary);
+
   app.mount("#app");
 }
 
