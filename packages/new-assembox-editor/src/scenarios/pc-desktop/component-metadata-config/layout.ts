@@ -31,22 +31,57 @@ export const layoutComponents: ComponentCatalogItem[] = [
     name: "弹性行",
     group: "layout",
     category: "layout-item",
+    // scaffold 与 lib 运行时默认值（assem-yq-flex-line.vue useNodeOptions）严格对齐：
+    // padding=false（无内边距，由外层容器控制）、spaceSize=8（el-space 数值间距）
     scaffold: {
       renderType: "YqFlexLine",
       leftWidth: "50%",
       leftPadding: true,
+      leftClearPadding: [],
       rightPadding: true,
+      rightClearPadding: [],
+      leftSpaceSize: 8,
+      rightSpaceSize: 8,
       defaultSlot: [],
       rightSlot: [],
     },
     props: [
       { name: "leftWidth", title: "左侧宽度", propType: "string", defaultValue: "50%" },
       { name: "leftPadding", title: "左侧内边距", propType: "boolean", defaultValue: true },
-      { name: "leftClearPadding", title: "左侧清除边距方向", propType: "json", defaultValue: [] },
+      {
+        name: "leftClearPadding",
+        title: "左侧清除内边距方向",
+        // 方向枚举（UI 库映射 padding-clear-${dir} 类，flex-line.vue:39/49）
+        propType: { type: "arrayOf", value: "string" },
+        setter: "ArrayOfMultiSetter",
+        setterProps: {
+          options: [
+            { label: "左", value: "left" },
+            { label: "上", value: "top" },
+            { label: "右", value: "right" },
+            { label: "下", value: "bottom" },
+          ],
+        },
+        defaultValue: [],
+      },
       { name: "rightPadding", title: "右侧内边距", propType: "boolean", defaultValue: true },
-      { name: "rightClearPadding", title: "右侧清除边距方向", propType: "json", defaultValue: [] },
-      { name: "leftSpaceSize", title: "左侧间距", propType: "string", defaultValue: "" },
-      { name: "rightSpaceSize", title: "右侧间距", propType: "string", defaultValue: "" },
+      {
+        name: "rightClearPadding",
+        title: "右侧清除边距方向",
+        propType: { type: "arrayOf", value: "string" },
+        setter: "ArrayOfMultiSetter",
+        setterProps: {
+          options: [
+            { label: "左", value: "left" },
+            { label: "上", value: "top" },
+            { label: "右", value: "right" },
+            { label: "下", value: "bottom" },
+          ],
+        },
+        defaultValue: [],
+      },
+      { name: "leftSpaceSize", title: "左子项间距", propType: "number", defaultValue: 8 },
+      { name: "rightSpaceSize", title: "右子项间距", propType: "number", defaultValue: 8 },
     ],
     events: baseEvents(),
   },

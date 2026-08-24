@@ -6,6 +6,7 @@ import type { PropType } from "vue";
  * 支持新增页面 / 删除页面（多路由页面管理）。
  */
 import type { Editor } from "../../core/editor";
+import { Delete, Plus } from "@element-plus/icons-vue";
 import { ElMessage, ElMessageBox } from "element-plus";
 import { computed, defineComponent } from "vue";
 import { useAssemNamespace } from "../../hooks/use-assem-namespace";
@@ -85,8 +86,7 @@ export const SceneSwitcher = defineComponent({
         <div class={ns.b()} style="display: flex; align-items: center; gap: 4px; flex-shrink: 0; white-space: nowrap;">
           <el-select
             modelValue={props.editor.activeScene}
-            size="small"
-            style="width: 120px; flex-shrink: 0;"
+            style={{ width: "120px", flexShrink: 0 }}
             onChange={handleSceneChange}
           >
             {options.map(opt => (
@@ -94,16 +94,12 @@ export const SceneSwitcher = defineComponent({
             ))}
           </el-select>
           <el-button
-            size="small"
-            icon="Plus"
-            title="新建页面"
+            icon={Plus}
             onClick={handleAddScene}
           />
           {options.length > 1 && (
             <el-button
-              size="small"
-              icon="Delete"
-              title="删除当前页面"
+              icon={Delete}
               onClick={handleRemoveScene}
             />
           )}

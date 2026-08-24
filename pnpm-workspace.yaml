@@ -2,6 +2,7 @@ packages:
   - 'packages/new-assembox-editor'
   - 'vue3-examples'
   - 'packages-vue'
+  - 'vue-mb-output-design-website'
   - 'examples-yq/node-mb-portal-system'
   - 'assembox-packages-project/libs/assembox-core-next'
   - 'assembox-packages-project/libs/assembox-desktop-next'

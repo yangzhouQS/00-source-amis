@@ -1,0 +1,48 @@
+{
+  "name": "@cs/js-kanban-framework",
+  "version": "0.0.2",
+  "description": "云阙平台产品开发统一portal",
+  "module": "dist/js-kanban-framework.esm.js",
+  "typings": "dist/types/index.d.ts",
+  "main": "dist/js-kanban-framework.umd.js",
+  "exports": {
+    ".": {
+      "types": "./dist/types/index.d.ts",
+      "import": "./dist/js-kanban-framework.esm.js",
+      "require": "./dist/js-kanban-framework.umd.js"
+    }
+  },
+  "author": "平台开发组",
+  "license": "ISC",
+  "files": [
+    "dist",
+    "package.json",
+    "CHANGELOG.MD",
+    "README.md"
+  ],
+  "repository": {
+    "type": "git",
+    "url": "git+https://gitea.yearrow.com/yearrow/yunque-web-project/src/branch/dev/packages/js-web-framework"
+  },
+  "scripts": {
+    "publish:beta": "npm publish --tag=beta",
+    "publish:latest": "npm publish",
+    "build:check": "vue-tsc --noEmit"
+  },
+  "dependencies": {
+    "dayjs": "^1.11.21",
+    "eventemitter2": "^6.4.9",
+    "pinia": "^3.0.4"
+  },
+  "devDependencies": {
+    "@element-plus/icons-vue": "^2.3.2",
+    "lodash-es": "^4.18.1",
+    "element-plus": "2.13.7",
+    "@cs/element-plus-ui": "^0.1.2",
+    "@cs/table-pro": "^1.0.12",
+    "axios": "^1.18.0",
+    "vue": "^3.5.38",
+    "vue-router": "^5.1.0",
+    "vue-tsc": "^3.3.5"
+  }
+}
