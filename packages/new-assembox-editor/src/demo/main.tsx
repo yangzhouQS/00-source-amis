@@ -20,7 +20,6 @@ import { pcDesktopProfile } from "../scenarios/pc-desktop";
 import { moduleDependenciesSample } from "./module-dependencies-sample";
 // 默认测试 schema（供应商单表场景，取 uiSkeleton 作为编辑器 schema）
 import schemaJson from "./single-table-scene.json";
-import "element-plus/dist/index.css";
 
 (globalThis as any).MonacoEnvironment = {
   getWorker(_workerId: string, label: string) {
@@ -77,22 +76,15 @@ async function main() {
 
   // 注册 Element Plus 图标
   for (const [key, component] of Object.entries(ElementPlusIconsVue)) {
-    if (["Box", "box"].includes(key)) {
-      continue;
-    }
     app.component(key, component as any);
   }
   app.use(ElementPlus);
 
   // CDN 全局变量挂载（从 window 解析，由 index.html CDN script 注入）
   const ElementPlusUi = (window as any).ElementPlusUi;
-  const ElementPro = (window as any).ElementPro;
   const TablePro = (window as any).TablePro;
   if (ElementPlusUi) {
     app.use(ElementPlusUi);
-  }
-  if (ElementPro) {
-    app.use(ElementPro);
   }
   if (TablePro) {
     app.use(TablePro);
