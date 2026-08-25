@@ -4,7 +4,7 @@ import { PcComponentCatalog } from "./component-catalog";
 import { PcNestingRules } from "./nesting-rules";
 import { PcRenderer } from "./renderer";
 import { PcSchemaOps } from "./schema-ops";
-import { resolveSlotKeyFromDom } from "./slot-dom-rules";
+import { resolveSlotKeyFromDom } from "./slot-dom";
 
 /**
  * PC 桌面端场景档案

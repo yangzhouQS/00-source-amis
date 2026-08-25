@@ -171,7 +171,7 @@ export interface ScenarioProfile {
    * canvas-sensor 命中容器（data-editor-id + isContainer）后调用：
    * 按场景规则表定位槽位区域 DOM，判断命中元素 contained 于哪个区域 → slotKey。
    * 未实现/未登记/区域外返回 null → 传感器回退 defaultSlot。
-   * 见 scenarios/pc-desktop/slot-dom-rules.ts
+   * 见 scenarios/pc-desktop/slot-dom/（按组件拆分的 resolver 注册表）
    */
   readonly resolveSlotKeyFromDom?: (
     renderType: string | undefined,

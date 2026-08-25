@@ -180,7 +180,7 @@ export class CanvasSensor implements DragSensor {
     slotKey: string | null;
   } {
     const renderer = this.editor.renderer;
-    // 悬停时槽位几何解析（场景规则表，见 scenarios/*/slot-dom-rules.ts）
+    // 悬停时槽位几何解析（场景组件 resolver 注册表，见 scenarios/*/slot-dom/）
     const resolveSlot = this.editor.profile?.resolveSlotKeyFromDom;
     let cur: Element | null = el;
     while (cur) {
