@@ -174,6 +174,51 @@ describe('transformForPrint：chart-table-scene 实测（图表 + 长表）', ()
   });
 });
 
+describe('transformForPrint：weekly-report-scene 实测（封皮+复杂表单+图表+300行表）', () => {
+  const fixture = fileURLToPath(new URL('../../json-config/weekly-report-scene.json', import.meta.url));
+  const scene = JSON.parse(readFileSync(fixture, 'utf-8')).uiSkeleton;
+  const { scene: out, stats } = transformForPrint(scene, { rowLimit: 2000 });
+
+  it('周报封皮（RawHtml 含 page-break-after）原样保留', () => {
+    const cover = findFirst(out, 'RawHtml');
+    expect(cover.__nodeOptions.content).toContain('page-break-after:always');
+    expect(cover.__nodeOptions.content).toContain('智慧产业园一期项目周报');
+  });
+
+  it('复杂表单完整保留：Input/Select/RadioGroup/CheckboxGroup/DatePicker 全在', () => {
+    expect(countNodes(out, 'Form')).toBe(1);
+    expect(countNodes(out, 'FormItem')).toBe(9);
+    for (const t of ['Input', 'Select', 'RadioGroup', 'CheckboxGroup', 'DatePicker']) {
+      expect(countNodes(out, t)).toBeGreaterThan(0);
+    }
+  });
+
+  it('4 个图表改写：animation:false 且静态 data 保留', () => {
+    expect(stats.chartRewrites).toBe(4);
+    for (const name of ['Column', 'Pie', 'Line', 'Area']) {
+      const chart = findByG2PlotName(out, name);
+      expect(chart.__nodeOptions.options.animation).toBe(false);
+      expect(chart.__nodeOptions.width).toBe('100%');
+      expect(chart.__nodeOptions.data.length).toBeGreaterThan(0);
+    }
+  });
+
+  it('300 行日志表改写为全量且列/插槽保留', () => {
+    const table = findFirst(out, 'YqTableAsync');
+    expect(table.__nodeOptions.requestFn).toBe('queryWeeklyItems');
+    expect(table.__nodeOptions.pagination).toEqual({ currentSize: 2000, pageSizes: [2000], layout: 'total' });
+    expect(table.__nodeOptions.columnConfigs.length).toBe(12);
+    expect(countNodes(out, 'Tag')).toBe(1);
+  });
+
+  it('幂等 + 纯函数', () => {
+    const before = JSON.stringify(scene);
+    const once = transformForPrint(scene).scene;
+    expect(JSON.stringify(transformForPrint(once).scene)).toBe(JSON.stringify(transformForPrint(once).scene));
+    expect(JSON.stringify(scene)).toBe(before);
+  });
+});
+
 function findFirst(value: unknown, renderType: string): Record<string, any> {
   let found: Record<string, any> | undefined;
   const walk = (v: unknown): void => {

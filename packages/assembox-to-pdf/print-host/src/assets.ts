@@ -43,11 +43,16 @@ export function loadScript(src: string): Promise<void> {
   });
 }
 
-export function loadStyle(href: string): void {
-  const link = document.createElement('link');
-  link.rel = 'stylesheet';
-  link.href = href;
-  document.head.appendChild(link);
+export function loadStyle(href: string): Promise<void> {
+  return new Promise((resolve) => {
+    const link = document.createElement('link');
+    link.rel = 'stylesheet';
+    link.href = href;
+    // 样式表加载完成前放行会产出无样式布局（表格矮行高/错分页），必须等 load
+    link.onload = () => resolve();
+    link.onerror = () => resolve(); // 404 也放行，由内容层面暴露问题
+    document.head.appendChild(link);
+  });
 }
 
 /** 按清单顺序加载全部 vendor 资产 */
@@ -55,9 +60,7 @@ export async function loadVendorAssets(): Promise<void> {
   for (const a of VENDOR_JS) {
     await loadScript(V(a.file));
   }
-  for (const css of VENDOR_CSS) {
-    loadStyle(V(css));
-  }
+  await Promise.all(VENDOR_CSS.map((css) => loadStyle(V(css))));
 }
 
 /**

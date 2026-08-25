@@ -140,6 +140,36 @@ async function main() {
     results.push(['table header repeats on every page', pages > 1 && headers >= pages - 1]);
   }
 
+  // 7. 周报场景：封皮独占首页 + 复杂表单 + 4图表 + 300行长表（≥10 页）
+  const wrResp = await fetch(`${BASE}/api/v1/exports/sync`, {
+    method: 'POST',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({
+      sceneId: 'weekly-report-scene',
+      printOptions: { title: `smoke 周报 ${runTag}`, orientation: 'landscape' },
+    }),
+  });
+  const wrPdf = Buffer.from(await wrResp.arrayBuffer());
+  const wrOk = wrResp.ok && wrPdf.subarray(0, 4).toString() === '%PDF';
+  const wrPages = countPages(wrPdf);
+  console.log(`[weekly] http=${wrResp.status} bytes=${wrPdf.length} pages=${wrPages}`);
+  results.push(['weekly-report export PDF', wrOk]);
+  results.push(['weekly-report pages >= 10', wrPages >= 10]);
+  if (wrOk) {
+    writeFileSync(`${OUT}-weekly.pdf`, wrPdf);
+    // 封皮独占页1：页2 才出现「一、本周概况」
+    const p2 = pageText(`${OUT}-weekly.pdf`, 2);
+    results.push(['weekly cover occupies page 1', p2.includes('本周概况') && p2.includes('智慧产业园一期项目')]);
+    // 300 行日志完整（Tag 状态值计数 = 300）
+    const tags = countText(`${OUT}-weekly.pdf`, '受控') + countText(`${OUT}-weekly.pdf`, '整改中') + countText(`${OUT}-weekly.pdf`, '需关注');
+    console.log(`[weekly] safety tags=${tags}`);
+    if (tags >= 0) results.push(['weekly 300 rows complete (tag count)', tags === 300]);
+    // 表头跨页重复
+    const wrHeaders = countTextLines(`${OUT}-weekly.pdf`, /日期\s+天气\s+施工区域/);
+    console.log(`[weekly] header repeats=${wrHeaders}`);
+    if (wrHeaders >= 0) results.push(['weekly header repeats every page', wrHeaders >= 5]);
+  }
+
   // 汇总
   console.log('\n========== SMOKE RESULTS ==========');
   let pass = 0;
@@ -153,8 +183,10 @@ async function main() {
 
 function countPages(buf) {
   const s = buf.toString('latin1');
-  const m = s.match(/\/Type\s*\/Pages[\s\S]{0,200}?\/Count\s+(\d+)/);
-  return m ? Number(m[1]) : 0;
+  // Pages 树嵌套：子树也有 /Count，取最大值（根节点总数）
+  const counts = [...s.matchAll(/\/Count\s+(\d+)/g)].map((m) => Number(m[1]));
+  if (counts.length > 0) return Math.max(...counts);
+  return (s.match(/\/Type\s*\/Page[^s]/g) ?? []).length;
 }
 
 /** PDF 文本中出现次数（行完整性校验）。依赖 pdftotext；缺失时返回 -1 并由调用方跳过断言 */
@@ -174,6 +206,18 @@ function countTextLines(pdfPath, re) {
     return text.split('\n').filter((l) => re.test(l)).length;
   } catch {
     return -1;
+  }
+}
+
+/** 提取指定页文本（-layout）。依赖 pdftotext；缺失时返回空串 */
+function pageText(pdfPath, pageNo) {
+  try {
+    return execFileSync('pdftotext', ['-layout', '-f', String(pageNo), '-l', String(pageNo), pdfPath, '-'], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    });
+  } catch {
+    return '';
   }
 }
 

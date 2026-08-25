@@ -127,6 +127,59 @@ function reparentTablesForPrint(root: HTMLElement): number {
   return merged;
 }
 
+/** 等待全部样式表解析完成（link 晚到会让布局按无样式计算，行高/分页全错） */
+async function waitForStyleSheets(): Promise<void> {
+  const links = Array.from(document.querySelectorAll<HTMLLinkElement>('link[rel="stylesheet"]'));
+  await Promise.all(
+    links.map((l) =>
+      l.sheet
+        ? Promise.resolve()
+        : new Promise<void>((resolve) => {
+            l.onload = () => resolve();
+            l.onerror = () => resolve();
+          }),
+    ),
+  );
+}
+
+/**
+ * 表格行数稳定检测：biz 底表（table-pro）虚拟滚动**分批渲染**行，
+ * 批次间隙文档高度不变（表格在裁剪容器内），高度稳定 ≠ 渲染完成。
+ * 必须以「行数连续多帧不变」为放行条件，否则长表被截断（实测 300 行截在 153）。
+ */
+async function waitForTableRowsStable(maxFrames = 60): Promise<void> {
+  const countRows = (): number =>
+    document.querySelectorAll('.el-table__body-wrapper tbody tr, .el-table tbody tr').length;
+  let stableFrames = 0;
+  let last = -1;
+  for (let i = 0; i < maxFrames; i++) {
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+    const n = countRows();
+    if (n === last && n > 0) {
+      stableFrames++;
+      // 连续 5 帧行数不变（~80ms）才认为分批渲染平息；行数仍在增长则重置
+      if (stableFrames >= 5) return;
+    } else {
+      stableFrames = 0;
+    }
+    last = n;
+  }
+}
+
+/**
+ * 布局稳定检测：连续两帧文档高度一致（字体/样式晚到会触发重排改变行高，
+ * 逐帧比对可挡住「样式未应用即打印」的竞态）
+ */
+async function waitForLayoutStable(maxFrames = 30): Promise<void> {
+  let last = -1;
+  for (let i = 0; i < maxFrames; i++) {
+    await new Promise<void>((resolve) => requestAnimationFrame(() => resolve()));
+    const h = document.body.scrollHeight;
+    if (h === last && h > 0) return;
+    last = h;
+  }
+}
+
 /**
  * 打印布局规整：剥离 biz 组件（table-pro 等）以 JS 内联方式写入的 height:100%。
  * 打印布局按纸高解析百分比高度 → 表格被截断在首屏；改为 auto 后表格按自然高度
@@ -169,11 +222,14 @@ export function installReadiness(options: { tolerant?: boolean } = {}): Readines
     settled = true;
     try {
       await doubleRaf();
+      await waitForStyleSheets(); // 样式表解析完成（行高/边框布局的前提）
       if (document.fonts?.ready) await document.fonts.ready;
       await waitForImages();
       await waitForCharts(); // 图表 canvas 落墨（无图表场景宽限后直接放行）
+      await waitForTableRowsStable(); // 虚拟滚动分批渲染平息（行数多帧不变）
       normalizePrintLayout(); // 剥离内联百分比高度后再等两帧，让重排完成
       await doubleRaf();
+      await waitForLayoutStable(); // 字体/样式重排平息后才允许截图
     } finally {
       if (!win.__ASSEM_PDF_ERROR__) {
         win.__ASSEM_PDF_READY__ = true;

@@ -49,11 +49,14 @@ export function pdfParamsOf(printOptions: Record<string, any> = {}): PdfParams {
   };
 }
 
-/** 从 PDF 字节流粗略解析页数（Chromium 产物含未压缩的 /Type /Pages /Count N） */
+/**
+ * 从 PDF 字节流解析页数（Chromium 产物含未压缩的 /Type /Pages /Count N）。
+ * Pages 树是嵌套结构：子树也有 /Count，且可能排在根节点之前 —— 取最大值（= 根节点总数）。
+ */
 export function countPdfPages(buf: Buffer): number {
   const s = buf.toString('latin1');
-  const m = s.match(/\/Type\s*\/Pages[\s\S]{0,200}?\/Count\s+(\d+)/);
-  if (m) return Number(m[1]);
+  const counts = [...s.matchAll(/\/Count\s+(\d+)/g)].map((m) => Number(m[1]));
+  if (counts.length > 0) return Math.max(...counts);
   const pages = s.match(/\/Type\s*\/Page[^s]/g);
   return pages ? pages.length : 0;
 }

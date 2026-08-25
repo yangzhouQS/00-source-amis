@@ -72,6 +72,16 @@ export class RenderService {
         ]);
         if (winner instanceof RenderError) throw winner;
 
+        // 布局诊断：表格行高（无样式竞态时会跌到 ~16px，正常 ~32-40px）
+        const rowH = await page
+          .evaluate(
+            `(() => {
+              const tr = document.querySelector('.el-table__body-wrapper tbody tr, table tbody tr');
+              return tr ? Math.round(tr.getBoundingClientRect().height) : -1;
+            })()`,
+          )
+          .catch(() => -1);
+        this.logger.log(`task=${task.id} layout: firstRowHeight=${rowH}px`);
         const pdfBuf: Buffer = await page.pdf(this.pdf.paramsFor(task.printOptions) as any);
         const pages = countPdfPages(pdfBuf);
         const renderMs = Date.now() - started;

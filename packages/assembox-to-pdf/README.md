@@ -12,7 +12,7 @@ assembox 低代码页面服务端 PDF 导出（方案 A：Playwright 无头浏�
 | `print-transform/` | 场景打印变换（纯函数，零 DOM 依赖）：剔除交互件、表格全量分页、解除视口约束、Chart 注入 `animation:false`。15 个单测 |
 | `print-host/` | 打印宿主页（Vite + Vue 3）：复用 `@cs/assembox-desktop-next` 渲染场景，实现就绪信号协议（请求计数 + 字体/图片 + 图表 canvas 落墨探测 + 打印布局规整） |
 | `server/` | 导出服务（NestJS 10 + playwright-core）：任务队列、浏览器池、一次性票据、mock 业务 API（42 行 / 200 行长表） |
-| `json-config/` | 测试场景：`single-table-scene`（单表 42 行）、`chart-table-scene`（G2Plot 三图表 + 200 行长表） |
+| `json-config/` | 测试场景：`single-table-scene`（单表 42 行）、`chart-table-scene`（G2Plot 三图表 + 200 行长表）、`weekly-report-scene`（周报封皮 + 复杂表单 + 四图表 + 300 行日志） |
 
 ## 快速开始
 
@@ -33,13 +33,14 @@ pnpm --filter @cs/assembox-pdf-server build
 # 4. 启动导出服务（默认 127.0.0.1:9100）
 cd packages/assembox-to-pdf/server && node dist/main.js
 
-# 5. 冒烟（16 项断言：同步/异步导出、分页、行完整性、图表光栅化、幂等、票据、指标）
+# 5. 冒烟（22 项断言：同步/异步导出、分页、行完整性、图表光栅化、周报封皮/≥10页/300行、表头跨页重复、幂等、票据、指标）
 cd packages/assembox-to-pdf/server && node scripts/smoke.mjs
 ```
 
 产物示例：`/tmp/kilo/assembox-pdf-smoke-sync.pdf`（3 页 A4 横向，42 行全量，表头跨页重复）、
 `/tmp/kilo/assembox-pdf-smoke-chart-table.pdf`（8 页 A4 横向：页 1 含 Column/Pie 并排 + Area 通栏三图表，
-其后 200 行长表跨页）。
+其后 200 行长表跨页）、`/tmp/kilo/assembox-pdf-smoke-weekly.pdf`（13 页周报：页 1 封皮独占，
+页 2 复杂表单 + 图表，页 3-13 为 300 行施工日志，表头每页重复）。
 
 ## 图表支持（G2Plot）
 
@@ -51,6 +52,26 @@ cd packages/assembox-to-pdf/server && node scripts/smoke.mjs
 - 打印变换：自动向 `options` 注入 `animation: false` 消除动画期截取风险，宽度改 `100%`
 - 嵌套约束：Chart 类别为 `element`，只能放进 `YqBox`/`YqFlexBox` 槽位（`YqFlexLine` 仅收
   `lineElement`，放错会被嵌套门禁静默拒绝——`NEST_CATEGORY_NOT_ALLOWED`）
+
+## 复杂表单与封皮（weekly-report-scene）
+
+- 表单静态值：`dataSource.dataModelConfig` 的「模型 → 表 → 字段 → defaultValue」提供初值，
+  组件经 `modelName: "<模型>.<表>.<字段>"` 绑定（层级少一层会渲染出 `[object Object]`），
+  打印态置 `readonly/disabled` 呈现——见 `weekly-report-scene.json` 与 server `SCENE_CONFIGS`
+- 封皮：`RawHtml` 节点内联 HTML（inline style + `page-break-after: always` 实现独占首页），
+  支持品牌色、栅格信息卡、页眉页脚等自由排版
+
+## 就绪协议防截断（实证记录）
+
+settle 阶段依次等待：样式表解析（`link[rel=stylesheet]` load）→ 字体（`fonts.ready`）→ 图片 →
+图表 canvas 落墨 → **表格行数多帧稳定**（虚拟滚动分批渲染，批次间隙文档高度不变，按高度判定
+会在 300 行截在 153 行时放行）→ 打印布局规整 → 布局高度稳定。任一环节缺失都会产出「看起来
+成功」的残缺 PDF。
+
+## PDF 页数解析注意
+
+Chromium 产物的 `/Count` 分布在嵌套 Pages 子树中且子树可能靠前——解析页数必须取全部
+`/Count` 的**最大值**（首次匹配曾把 13 页文档误判为 8 页，引发一轮误诊）。
 
 ## API
 

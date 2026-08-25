@@ -87,6 +87,48 @@ export class MockController {
     });
     return envelope(large);
   }
+
+  /** 周报施工日志（300 行）：验证 ≥10 页长文档导出 */
+  @Get('weekly-items')
+  weeklyItems(): Record<string, unknown> {
+    const AREAS = ['A区桩基', 'B区桩基', '地下室底板', '地下室侧墙', '1#主体结构', '2#主体结构', '机电管廊', '装饰样板间'];
+    const CONTENTS = [
+      '旋挖钻成孔作业，完成桩身混凝土灌注',
+      '钢筋笼制作与吊装，隐蔽工程验收合格',
+      '底板防水卷材铺设，搭接缝检查',
+      '侧墙模板支设与加固，预埋件定位复核',
+      '主体结构柱钢筋绑扎，直螺纹接头送检',
+      '梁板模板支设，高支模专项方案巡查',
+      '机电管廊支架安装，桥架敷设',
+      '装饰样板间轻钢龙骨隔墙施工',
+    ];
+    const TEAMS = ['桩基一队', '桩基二队', '钢筋班', '木工班', '架子班', '机电班', '装饰班'];
+    const MACHINES = ['旋挖机 ZR220', '汽车吊 25t', '塔吊 QTZ63', '挖掘机 PC60', '混凝土泵车', '高空作业车'];
+    const WEATHER = ['晴', '晴', '多云', '阴', '小雨', '大雨', '高温'];
+    const SAFETY = ['受控', '受控', '受控', '受控', '整改中', '受控', '需关注'];
+    const INSPECTORS = ['张桂芳', '李明远', '王一舟', '赵清源'];
+
+    const rows = Array.from({ length: 300 }, (_, i) => {
+      // 日期循环分布于 8/24–8/30 一周内
+      const day = 24 + (i % 7);
+      const logDate = `2026-08-${String(day).padStart(2, '0')}`;
+      return {
+        id: 5000 + i,
+        logDate,
+        weather: WEATHER[i % WEATHER.length],
+        workArea: AREAS[i % AREAS.length],
+        workContent: CONTENTS[i % CONTENTS.length],
+        team: TEAMS[i % TEAMS.length],
+        headcount: 18 + (i % 9) * 4,
+        machine: MACHINES[i % MACHINES.length],
+        progressPct: Math.round((35 + (i % 50) * 1.3) * 10) / 10,
+        safety: SAFETY[i % SAFETY.length],
+        inspector: INSPECTORS[i % INSPECTORS.length],
+        remark: i % 4 === 0 ? '夜间连续施工，加强照明与安全监护' : i % 4 === 1 ? '材料进场复验合格' : '',
+      };
+    });
+    return envelope(rows);
+  }
 }
 
 function envelope(rows: Record<string, unknown>[]): Record<string, unknown> {

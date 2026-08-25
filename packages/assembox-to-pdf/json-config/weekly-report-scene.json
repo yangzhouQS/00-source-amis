@@ -1,0 +1,1034 @@
+{
+  "uiSkeleton": {
+    "weeklyReport": {
+      "viewsProps": {
+        "planeOptions": {
+          "__nodeName": "root",
+          "__nodeId": "YqFlexBox::root",
+          "__nodeType": "renderNode",
+          "__nodeEvent": {},
+          "__nodeOptions": {
+            "renderType": "YqFlexBox",
+            "isRow": false,
+            "itemNum": 4,
+            "width": "100%",
+            "height": "100%",
+            "itemConfig": [
+              {
+                "isFixed": false,
+                "size": "",
+                "paddingSize": "large",
+                "clearPadding": ["top"],
+                "isHidden": false,
+                "contentType": "container",
+                "defaultSlot": {
+                  "__nodeName": "cover-box",
+                  "__nodeId": "YqBox::cover-box",
+                  "__nodeType": "renderNode",
+                  "__nodeEvent": {},
+                  "__nodeOptions": {
+                    "renderType": "YqBox",
+                    "contentType": "element",
+                    "shadow": false,
+                    "border": false,
+                    "background": true,
+                    "paddingSize": "base",
+                    "height": "auto",
+                    "defaultSlot": {
+                      "__nodeName": "weekly-cover",
+                      "__nodeId": "RawHtml::weekly-cover",
+                      "__nodeType": "renderNode",
+                      "__nodeEvent": {},
+                      "__nodeOptions": {
+                        "renderType": "RawHtml",
+                        "content": "<div style='page-break-after:always;height:655px;box-sizing:border-box;position:relative;font-family:\"Noto Sans CJK SC\",\"Microsoft YaHei\",sans-serif;color:#1f2937;display:flex;flex-direction:column;'><div style='height:10px;background:linear-gradient(90deg,#0f3b66 0%,#1668a7 45%,#28a08c 100%);border-radius:2px;'></div><div style='display:flex;justify-content:space-between;align-items:center;padding:26px 8px 0 8px;'><div style='display:flex;align-items:center;gap:10px;'><div style='width:34px;height:34px;border-radius:8px;background:linear-gradient(135deg,#0f3b66,#28a08c);display:flex;align-items:center;justify-content:center;color:#ffffff;font-weight:700;font-size:15px;'>云</div><div><div style='font-size:15px;font-weight:600;letter-spacing:2px;color:#0f172a;'>云川工程建设有限公司</div><div style='font-size:9px;color:#94a3b8;letter-spacing:2px;margin-top:2px;'>YUNCHUAN ENGINEERING CO., LTD.</div></div></div><div style='font-size:12px;color:#475569;border:1px solid #cbd5e1;border-radius:999px;padding:4px 14px;background:#f8fafc;'>内部资料 · 第 35 期</div></div><div style='flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;text-align:center;'><div style='font-size:13px;letter-spacing:8px;color:#64748b;margin-bottom:16px;'>工 程 项 目 周 报</div><div style='font-size:42px;font-weight:800;letter-spacing:8px;color:#0f3b66;line-height:1.3;'>智慧产业园一期项目周报</div><div style='display:flex;align-items:center;gap:14px;margin:20px 0 16px;'><div style='width:120px;height:1px;background:linear-gradient(90deg,transparent,#1668a7);'></div><div style='width:8px;height:8px;background:#28a08c;transform:rotate(45deg);'></div><div style='width:120px;height:1px;background:linear-gradient(270deg,transparent,#1668a7);'></div></div><div style='font-size:14px;color:#475569;letter-spacing:2px;'>2026 年第 35 周（8 月 24 日 — 8 月 30 日）</div><div style='width:640px;background:#f8fafc;border:1px solid #e2e8f0;border-left:4px solid #1668a7;border-radius:8px;padding:22px 28px;display:grid;grid-template-columns:1fr 1fr;gap:14px 36px;text-align:left;margin-top:30px;'><div><div style='font-size:11px;color:#64748b;letter-spacing:1px;'>项目名称</div><div style='font-size:14px;font-weight:600;color:#0f172a;margin-top:3px;'>智慧产业园一期项目</div></div><div><div style='font-size:11px;color:#64748b;letter-spacing:1px;'>报告周期</div><div style='font-size:14px;font-weight:600;color:#0f172a;margin-top:3px;'>2026-08-24 至 2026-08-30</div></div><div><div style='font-size:11px;color:#64748b;letter-spacing:1px;'>编制单位</div><div style='font-size:14px;font-weight:600;color:#0f172a;margin-top:3px;'>工程管理部</div></div><div><div style='font-size:11px;color:#64748b;letter-spacing:1px;'>编 制 人</div><div style='font-size:14px;font-weight:600;color:#0f172a;margin-top:3px;'>张桂芳</div></div><div><div style='font-size:11px;color:#64748b;letter-spacing:1px;'>审 核 人</div><div style='font-size:14px;font-weight:600;color:#0f172a;margin-top:3px;'>李明远</div></div><div><div style='font-size:11px;color:#64748b;letter-spacing:1px;'>报告日期</div><div style='font-size:14px;font-weight:600;color:#0f172a;margin-top:3px;'>2026-08-30</div></div><div><div style='font-size:11px;color:#64748b;letter-spacing:1px;'>文档版本</div><div style='font-size:14px;font-weight:600;color:#0f172a;margin-top:3px;'>V1.0</div></div><div><div style='font-size:11px;color:#64748b;letter-spacing:1px;'>密级</div><div style='font-size:14px;font-weight:600;color:#0f172a;margin-top:3px;'>内部公开</div></div></div></div><div style='border-top:1px solid #e2e8f0;margin-top:auto;padding:14px 8px 0 8px;display:flex;justify-content:space-between;font-size:10px;color:#94a3b8;'><span>云川工程建设有限公司 · 工程管理部</span><span>本报告含本周概况、数据可视化与施工日志明细</span></div></div>"
+                      },
+                      "__nodeStyle": {},
+                      "__nodeProps": null
+                    }
+                  },
+                  "__nodeStyle": {},
+                  "__nodeProps": null
+                }
+              },
+              {
+                "isFixed": false,
+                "size": "",
+                "paddingSize": "large",
+                "clearPadding": [],
+                "isHidden": false,
+                "contentType": "container",
+                "defaultSlot": {
+                  "__nodeName": "form-box",
+                  "__nodeId": "YqBox::form-box",
+                  "__nodeType": "renderNode",
+                  "__nodeEvent": {},
+                  "__nodeOptions": {
+                    "renderType": "YqBox",
+                    "contentType": "element",
+                    "shadow": false,
+                    "border": false,
+                    "background": true,
+                    "paddingSize": "base",
+                    "height": "auto",
+                    "defaultSlot": {
+                      "__nodeName": "form-section",
+                      "__nodeId": "YqFlexBox::form-section",
+                      "__nodeType": "renderNode",
+                      "__nodeEvent": {},
+                      "__nodeOptions": {
+                        "renderType": "YqFlexBox",
+                        "isRow": false,
+                        "itemNum": 2,
+                        "width": "100%",
+                        "height": "auto",
+                        "itemConfig": [
+                          {
+                            "isFixed": false,
+                            "contentType": "container",
+                            "defaultSlot": {
+                              "__nodeName": "form-heading",
+                              "__nodeId": "RawHtml::form-heading",
+                              "__nodeType": "renderNode",
+                              "__nodeEvent": {},
+                              "__nodeOptions": {
+                                "renderType": "RawHtml",
+                                "content": "<div style='border-left:4px solid #1668a7;padding-left:10px;font-size:16px;font-weight:700;color:#0f3b66;margin-bottom:14px;'>一、本周概况</div>"
+                              },
+                              "__nodeStyle": {},
+                              "__nodeProps": null
+                            }
+                          },
+                          {
+                            "isFixed": false,
+                            "contentType": "container",
+                            "defaultSlot": {
+                              "__nodeName": "weekly-form",
+                              "__nodeId": "Form::weekly-form",
+                              "__nodeType": "renderNode",
+                              "__nodeEvent": {},
+                              "__nodeOptions": {
+                                "renderType": "Form",
+                                "modelName": "weeklyForm",
+                                "labelWidth": "96px",
+                                "labelPosition": "right",
+                                "showMessage": false,
+                                "defaultSlot": [
+                                  {
+                                    "__nodeName": "form-grid",
+                                    "__nodeId": "GridBox::form-grid",
+                                    "__nodeType": "renderNode",
+                                    "__nodeEvent": {},
+                                    "__nodeOptions": {
+                                      "renderType": "GridBox",
+                                      "gutter": 16,
+                                      "defaultSlot": [
+                                        {
+                                          "__nodeName": "gi-project",
+                                          "__nodeId": "GridItem::gi-project",
+                                          "__nodeType": "renderNode",
+                                          "__nodeEvent": {},
+                                          "__nodeOptions": {
+                                            "renderType": "GridItem",
+                                            "span": 12,
+                                            "defaultSlot": {
+                                              "__nodeName": "fi-project",
+                                              "__nodeId": "FormItem::fi-project",
+                                              "__nodeType": "renderNode",
+                                              "__nodeEvent": {},
+                                              "__nodeOptions": {
+                                                "renderType": "FormItem",
+                                                "prop": "projectName",
+                                                "label": "项目名称",
+                                                "defaultSlot": {
+                                                  "__nodeName": "in-project",
+                                                  "__nodeId": "Input::in-project",
+                                                  "__nodeType": "renderNode",
+                                                  "__nodeEvent": {},
+                                                  "__nodeOptions": {
+                                                    "renderType": "Input",
+                                                    "modelName": "weeklyForm.base.projectName",
+                                                    "readonly": true,
+                                                    "placeholder": ""
+                                                  },
+                                                  "__nodeStyle": {},
+                                                  "__nodeProps": null
+                                                }
+                                              },
+                                              "__nodeStyle": {},
+                                              "__nodeProps": null
+                                            }
+                                          },
+                                          "__nodeStyle": {},
+                                          "__nodeProps": null
+                                        },
+                                        {
+                                          "__nodeName": "gi-period",
+                                          "__nodeId": "GridItem::gi-period",
+                                          "__nodeType": "renderNode",
+                                          "__nodeEvent": {},
+                                          "__nodeOptions": {
+                                            "renderType": "GridItem",
+                                            "span": 12,
+                                            "defaultSlot": {
+                                              "__nodeName": "fi-period",
+                                              "__nodeId": "FormItem::fi-period",
+                                              "__nodeType": "renderNode",
+                                              "__nodeEvent": {},
+                                              "__nodeOptions": {
+                                                "renderType": "FormItem",
+                                                "prop": "period",
+                                                "label": "报告周期",
+                                                "defaultSlot": {
+                                                  "__nodeName": "in-period",
+                                                  "__nodeId": "Input::in-period",
+                                                  "__nodeType": "renderNode",
+                                                  "__nodeEvent": {},
+                                                  "__nodeOptions": {
+                                                    "renderType": "Input",
+                                                    "modelName": "weeklyForm.base.period",
+                                                    "readonly": true
+                                                  },
+                                                  "__nodeStyle": {},
+                                                  "__nodeProps": null
+                                                }
+                                              },
+                                              "__nodeStyle": {},
+                                              "__nodeProps": null
+                                            }
+                                          },
+                                          "__nodeStyle": {},
+                                          "__nodeProps": null
+                                        },
+                                        {
+                                          "__nodeName": "gi-dept",
+                                          "__nodeId": "GridItem::gi-dept",
+                                          "__nodeType": "renderNode",
+                                          "__nodeEvent": {},
+                                          "__nodeOptions": {
+                                            "renderType": "GridItem",
+                                            "span": 12,
+                                            "defaultSlot": {
+                                              "__nodeName": "fi-dept",
+                                              "__nodeId": "FormItem::fi-dept",
+                                              "__nodeType": "renderNode",
+                                              "__nodeEvent": {},
+                                              "__nodeOptions": {
+                                                "renderType": "FormItem",
+                                                "prop": "dept",
+                                                "label": "编制单位",
+                                                "defaultSlot": {
+                                                  "__nodeName": "in-dept",
+                                                  "__nodeId": "Input::in-dept",
+                                                  "__nodeType": "renderNode",
+                                                  "__nodeEvent": {},
+                                                  "__nodeOptions": {
+                                                    "renderType": "Input",
+                                                    "modelName": "weeklyForm.base.dept",
+                                                    "readonly": true
+                                                  },
+                                                  "__nodeStyle": {},
+                                                  "__nodeProps": null
+                                                }
+                                              },
+                                              "__nodeStyle": {},
+                                              "__nodeProps": null
+                                            }
+                                          },
+                                          "__nodeStyle": {},
+                                          "__nodeProps": null
+                                        },
+                                        {
+                                          "__nodeName": "gi-author",
+                                          "__nodeId": "GridItem::gi-author",
+                                          "__nodeType": "renderNode",
+                                          "__nodeEvent": {},
+                                          "__nodeOptions": {
+                                            "renderType": "GridItem",
+                                            "span": 12,
+                                            "defaultSlot": {
+                                              "__nodeName": "fi-author",
+                                              "__nodeId": "FormItem::fi-author",
+                                              "__nodeType": "renderNode",
+                                              "__nodeEvent": {},
+                                              "__nodeOptions": {
+                                                "renderType": "FormItem",
+                                                "prop": "author",
+                                                "label": "编制人",
+                                                "defaultSlot": {
+                                                  "__nodeName": "in-author",
+                                                  "__nodeId": "Input::in-author",
+                                                  "__nodeType": "renderNode",
+                                                  "__nodeEvent": {},
+                                                  "__nodeOptions": {
+                                                    "renderType": "Input",
+                                                    "modelName": "weeklyForm.base.author",
+                                                    "readonly": true
+                                                  },
+                                                  "__nodeStyle": {},
+                                                  "__nodeProps": null
+                                                }
+                                              },
+                                              "__nodeStyle": {},
+                                              "__nodeProps": null
+                                            }
+                                          },
+                                          "__nodeStyle": {},
+                                          "__nodeProps": null
+                                        },
+                                        {
+                                          "__nodeName": "gi-weather",
+                                          "__nodeId": "GridItem::gi-weather",
+                                          "__nodeType": "renderNode",
+                                          "__nodeEvent": {},
+                                          "__nodeOptions": {
+                                            "renderType": "GridItem",
+                                            "span": 8,
+                                            "defaultSlot": {
+                                              "__nodeName": "fi-weather",
+                                              "__nodeId": "FormItem::fi-weather",
+                                              "__nodeType": "renderNode",
+                                              "__nodeEvent": {},
+                                              "__nodeOptions": {
+                                                "renderType": "FormItem",
+                                                "prop": "weather",
+                                                "label": "天气影响",
+                                                "defaultSlot": {
+                                                  "__nodeName": "sel-weather",
+                                                  "__nodeId": "Select::sel-weather",
+                                                  "__nodeType": "renderNode",
+                                                  "__nodeEvent": {},
+                                                  "__nodeOptions": {
+                                                    "renderType": "Select",
+                                                    "modelName": "weeklyForm.base.weather",
+                                                    "disabled": true,
+                                                    "itemData": [
+                                                      { "value": "normal", "label": "正常" },
+                                                      { "value": "rain", "label": "降雨影响" },
+                                                      { "value": "heat", "label": "高温影响" }
+                                                    ],
+                                                    "defaultProps": { "label": "label", "value": "value" }
+                                                  },
+                                                  "__nodeStyle": {},
+                                                  "__nodeProps": null
+                                                }
+                                              },
+                                              "__nodeStyle": {},
+                                              "__nodeProps": null
+                                            }
+                                          },
+                                          "__nodeStyle": {},
+                                          "__nodeProps": null
+                                        },
+                                        {
+                                          "__nodeName": "gi-status",
+                                          "__nodeId": "GridItem::gi-status",
+                                          "__nodeType": "renderNode",
+                                          "__nodeEvent": {},
+                                          "__nodeOptions": {
+                                            "renderType": "GridItem",
+                                            "span": 8,
+                                            "defaultSlot": {
+                                              "__nodeName": "fi-status",
+                                              "__nodeId": "FormItem::fi-status",
+                                              "__nodeType": "renderNode",
+                                              "__nodeEvent": {},
+                                              "__nodeOptions": {
+                                                "renderType": "FormItem",
+                                                "prop": "overallStatus",
+                                                "label": "总体状态",
+                                                "defaultSlot": {
+                                                  "__nodeName": "radio-status",
+                                                  "__nodeId": "RadioGroup::radio-status",
+                                                  "__nodeType": "renderNode",
+                                                  "__nodeEvent": {},
+                                                  "__nodeOptions": {
+                                                    "renderType": "RadioGroup",
+                                                    "modelName": "weeklyForm.base.overallStatus",
+                                                    "itemData": [
+                                                      { "value": "ahead", "label": "超前" },
+                                                      { "value": "normal", "label": "正常推进" },
+                                                      { "value": "delayed", "label": "滞后" }
+                                                    ],
+                                                    "defaultProps": { "label": "label", "value": "value" }
+                                                  },
+                                                  "__nodeStyle": {},
+                                                  "__nodeProps": null
+                                                }
+                                              },
+                                              "__nodeStyle": {},
+                                              "__nodeProps": null
+                                            }
+                                          },
+                                          "__nodeStyle": {},
+                                          "__nodeProps": null
+                                        },
+                                        {
+                                          "__nodeName": "gi-enddate",
+                                          "__nodeId": "GridItem::gi-enddate",
+                                          "__nodeType": "renderNode",
+                                          "__nodeEvent": {},
+                                          "__nodeOptions": {
+                                            "renderType": "GridItem",
+                                            "span": 8,
+                                            "defaultSlot": {
+                                              "__nodeName": "fi-enddate",
+                                              "__nodeId": "FormItem::fi-enddate",
+                                              "__nodeType": "renderNode",
+                                              "__nodeEvent": {},
+                                              "__nodeOptions": {
+                                                "renderType": "FormItem",
+                                                "prop": "endDate",
+                                                "label": "计划竣工",
+                                                "defaultSlot": {
+                                                  "__nodeName": "dp-enddate",
+                                                  "__nodeId": "DatePicker::dp-enddate",
+                                                  "__nodeType": "renderNode",
+                                                  "__nodeEvent": {},
+                                                  "__nodeOptions": {
+                                                    "renderType": "DatePicker",
+                                                    "modelName": "weeklyForm.base.endDate",
+                                                    "type": "date",
+                                                    "readonly": true,
+                                                    "clearable": false,
+                                                    "placeholder": ""
+                                                  },
+                                                  "__nodeStyle": {},
+                                                  "__nodeProps": null
+                                                }
+                                              },
+                                              "__nodeStyle": {},
+                                              "__nodeProps": null
+                                            }
+                                          },
+                                          "__nodeStyle": {},
+                                          "__nodeProps": null
+                                        },
+                                        {
+                                          "__nodeName": "gi-checkitems",
+                                          "__nodeId": "GridItem::gi-checkitems",
+                                          "__nodeType": "renderNode",
+                                          "__nodeEvent": {},
+                                          "__nodeOptions": {
+                                            "renderType": "GridItem",
+                                            "span": 24,
+                                            "defaultSlot": {
+                                              "__nodeName": "fi-checkitems",
+                                              "__nodeId": "FormItem::fi-checkitems",
+                                              "__nodeType": "renderNode",
+                                              "__nodeEvent": {},
+                                              "__nodeOptions": {
+                                                "renderType": "FormItem",
+                                                "prop": "checkItems",
+                                                "label": "检查事项",
+                                                "defaultSlot": {
+                                                  "__nodeName": "chk-checkitems",
+                                                  "__nodeId": "CheckboxGroup::chk-checkitems",
+                                                  "__nodeType": "renderNode",
+                                                  "__nodeEvent": {},
+                                                  "__nodeOptions": {
+                                                    "renderType": "CheckboxGroup",
+                                                    "modelName": "weeklyForm.base.checkItems",
+                                                    "itemData": [
+                                                      { "value": "质量", "label": "质量" },
+                                                      { "value": "安全", "label": "安全" },
+                                                      { "value": "进度", "label": "进度" },
+                                                      { "value": "成本", "label": "成本" },
+                                                      { "value": "环保", "label": "环保" }
+                                                    ],
+                                                    "defaultProps": { "label": "label", "value": "value" }
+                                                  },
+                                                  "__nodeStyle": {},
+                                                  "__nodeProps": null
+                                                }
+                                              },
+                                              "__nodeStyle": {},
+                                              "__nodeProps": null
+                                            }
+                                          },
+                                          "__nodeStyle": {},
+                                          "__nodeProps": null
+                                        },
+                                        {
+                                          "__nodeName": "gi-plan",
+                                          "__nodeId": "GridItem::gi-plan",
+                                          "__nodeType": "renderNode",
+                                          "__nodeEvent": {},
+                                          "__nodeOptions": {
+                                            "renderType": "GridItem",
+                                            "span": 24,
+                                            "defaultSlot": {
+                                              "__nodeName": "fi-plan",
+                                              "__nodeId": "FormItem::fi-plan",
+                                              "__nodeType": "renderNode",
+                                              "__nodeEvent": {},
+                                              "__nodeOptions": {
+                                                "renderType": "FormItem",
+                                                "prop": "nextWeekPlan",
+                                                "label": "下周要点",
+                                                "defaultSlot": {
+                                                  "__nodeName": "in-plan",
+                                                  "__nodeId": "Input::in-plan",
+                                                  "__nodeType": "renderNode",
+                                                  "__nodeEvent": {},
+                                                  "__nodeOptions": {
+                                                    "renderType": "Input",
+                                                    "modelName": "weeklyForm.base.nextWeekPlan",
+                                                    "type": "textarea",
+                                                    "rows": 2,
+                                                    "readonly": true,
+                                                    "autosize": false
+                                                  },
+                                                  "__nodeStyle": {},
+                                                  "__nodeProps": null
+                                                }
+                                              },
+                                              "__nodeStyle": {},
+                                              "__nodeProps": null
+                                            }
+                                          },
+                                          "__nodeStyle": {},
+                                          "__nodeProps": null
+                                        }
+                                      ]
+                                    },
+                                    "__nodeStyle": {},
+                                    "__nodeProps": null
+                                  }
+                                ]
+                              },
+                              "__nodeStyle": {},
+                              "__nodeProps": null
+                            }
+                          }
+                        ]
+                      },
+                      "__nodeStyle": {},
+                      "__nodeProps": null
+                    }
+                  },
+                  "__nodeStyle": {},
+                  "__nodeProps": null
+                }
+              },
+              {
+                "isFixed": false,
+                "size": "",
+                "paddingSize": "large",
+                "clearPadding": [],
+                "isHidden": false,
+                "contentType": "container",
+                "defaultSlot": {
+                  "__nodeName": "chart-box",
+                  "__nodeId": "YqBox::chart-box",
+                  "__nodeType": "renderNode",
+                  "__nodeEvent": {},
+                  "__nodeOptions": {
+                    "renderType": "YqBox",
+                    "contentType": "element",
+                    "shadow": false,
+                    "border": false,
+                    "background": true,
+                    "paddingSize": "base",
+                    "height": "auto",
+                    "defaultSlot": {
+                      "__nodeName": "chart-section",
+                      "__nodeId": "YqFlexBox::chart-section",
+                      "__nodeType": "renderNode",
+                      "__nodeEvent": {},
+                      "__nodeOptions": {
+                        "renderType": "YqFlexBox",
+                        "isRow": false,
+                        "itemNum": 3,
+                        "width": "100%",
+                        "height": "auto",
+                        "itemConfig": [
+                          {
+                            "isFixed": false,
+                            "contentType": "container",
+                            "defaultSlot": {
+                              "__nodeName": "chart-heading",
+                              "__nodeId": "RawHtml::chart-heading",
+                              "__nodeType": "renderNode",
+                              "__nodeEvent": {},
+                              "__nodeOptions": {
+                                "renderType": "RawHtml",
+                                "content": "<div style='border-left:4px solid #1668a7;padding-left:10px;font-size:16px;font-weight:700;color:#0f3b66;margin-bottom:14px;'>二、本周数据可视化</div>"
+                              },
+                              "__nodeStyle": {},
+                              "__nodeProps": null
+                            }
+                          },
+                          {
+                            "isFixed": false,
+                            "contentType": "container",
+                            "defaultSlot": {
+                              "__nodeName": "chart-row-1",
+                              "__nodeId": "YqFlexBox::chart-row-1",
+                              "__nodeType": "renderNode",
+                              "__nodeEvent": {},
+                              "__nodeOptions": {
+                                "renderType": "YqFlexBox",
+                                "isRow": true,
+                                "itemNum": 2,
+                                "width": "100%",
+                                "height": "auto",
+                                "itemConfig": [
+                                  {
+                                    "isFixed": false,
+                                    "contentType": "container",
+                                    "defaultSlot": {
+                                      "__nodeName": "chart-plan-actual",
+                                      "__nodeId": "Chart::chart-plan-actual",
+                                      "__nodeType": "renderNode",
+                                      "__nodeEvent": {},
+                                      "__nodeOptions": {
+                                        "renderType": "Chart",
+                                        "g2PlotName": "Column",
+                                        "width": "100%",
+                                        "height": "280px",
+                                        "loading": false,
+                                        "options": {
+                                          "xField": "section",
+                                          "yField": "value",
+                                          "seriesField": "kind",
+                                          "isGroup": true,
+                                          "columnStyle": { "radius": [3, 3, 0, 0] },
+                                          "label": { "visible": false },
+                                          "legend": { "position": "top-left" },
+                                          "meta": {
+                                            "section": { "alias": "分部工程" },
+                                            "value": { "alias": "工作量(万元)" },
+                                            "kind": { "alias": "类型" }
+                                          }
+                                        },
+                                        "data": [
+                                          { "section": "桩基工程", "kind": "计划", "value": 86 },
+                                          { "section": "桩基工程", "kind": "完成", "value": 92 },
+                                          { "section": "地下室结构", "kind": "计划", "value": 120 },
+                                          { "section": "地下室结构", "kind": "完成", "value": 105 },
+                                          { "section": "主体结构", "kind": "计划", "value": 140 },
+                                          { "section": "主体结构", "kind": "完成", "value": 148 },
+                                          { "section": "机电安装", "kind": "计划", "value": 60 },
+                                          { "section": "机电安装", "kind": "完成", "value": 52 },
+                                          { "section": "装饰装修", "kind": "计划", "value": 30 },
+                                          { "section": "装饰装修", "kind": "完成", "value": 18 }
+                                        ]
+                                      },
+                                      "__nodeStyle": {},
+                                      "__nodeProps": null
+                                    }
+                                  },
+                                  {
+                                    "isFixed": false,
+                                    "contentType": "container",
+                                    "defaultSlot": {
+                                      "__nodeName": "chart-workload-pie",
+                                      "__nodeId": "Chart::chart-workload-pie",
+                                      "__nodeType": "renderNode",
+                                      "__nodeEvent": {},
+                                      "__nodeOptions": {
+                                        "renderType": "Chart",
+                                        "g2PlotName": "Pie",
+                                        "width": "100%",
+                                        "height": "280px",
+                                        "loading": false,
+                                        "options": {
+                                          "angleField": "value",
+                                          "colorField": "section",
+                                          "radius": 0.8,
+                                          "label": { "type": "spider", "content": "{name} {percentage}" },
+                                          "meta": {
+                                            "value": { "alias": "完成工作量(万元)" },
+                                            "section": { "alias": "分部工程" }
+                                          }
+                                        },
+                                        "data": [
+                                          { "section": "桩基工程", "value": 92 },
+                                          { "section": "地下室结构", "value": 105 },
+                                          { "section": "主体结构", "value": 148 },
+                                          { "section": "机电安装", "value": 52 },
+                                          { "section": "装饰装修", "value": 18 }
+                                        ]
+                                      },
+                                      "__nodeStyle": {},
+                                      "__nodeProps": null
+                                    }
+                                  }
+                                ]
+                              },
+                              "__nodeStyle": {},
+                              "__nodeProps": null
+                            }
+                          },
+                          {
+                            "isFixed": false,
+                            "contentType": "container",
+                            "defaultSlot": {
+                              "__nodeName": "chart-row-2",
+                              "__nodeId": "YqFlexBox::chart-row-2",
+                              "__nodeType": "renderNode",
+                              "__nodeEvent": {},
+                              "__nodeOptions": {
+                                "renderType": "YqFlexBox",
+                                "isRow": true,
+                                "itemNum": 2,
+                                "width": "100%",
+                                "height": "auto",
+                                "itemConfig": [
+                                  {
+                                    "isFixed": false,
+                                    "contentType": "container",
+                                    "defaultSlot": {
+                                      "__nodeName": "chart-scurve",
+                                      "__nodeId": "Chart::chart-scurve",
+                                      "__nodeType": "renderNode",
+                                      "__nodeEvent": {},
+                                      "__nodeOptions": {
+                                        "renderType": "Chart",
+                                        "g2PlotName": "Line",
+                                        "width": "100%",
+                                        "height": "260px",
+                                        "loading": false,
+                                        "options": {
+                                          "xField": "week",
+                                          "yField": "pct",
+                                          "seriesField": "kind",
+                                          "smooth": true,
+                                          "lineStyle": { "lineWidth": 2 },
+                                          "point": { "size": 3 },
+                                          "legend": { "position": "top-left" },
+                                          "meta": {
+                                            "week": { "alias": "周次" },
+                                            "pct": { "alias": "累计进度(%)" },
+                                            "kind": { "alias": "曲线" }
+                                          }
+                                        },
+                                        "data": [
+                                          { "week": "W28", "kind": "计划", "pct": 42 },
+                                          { "week": "W28", "kind": "实际", "pct": 40 },
+                                          { "week": "W29", "kind": "计划", "pct": 48 },
+                                          { "week": "W29", "kind": "实际", "pct": 46 },
+                                          { "week": "W30", "kind": "计划", "pct": 54 },
+                                          { "week": "W30", "kind": "实际", "pct": 53 },
+                                          { "week": "W31", "kind": "计划", "pct": 59 },
+                                          { "week": "W31", "kind": "实际", "pct": 58 },
+                                          { "week": "W32", "kind": "计划", "pct": 64 },
+                                          { "week": "W32", "kind": "实际", "pct": 63 },
+                                          { "week": "W33", "kind": "计划", "pct": 68 },
+                                          { "week": "W33", "kind": "实际", "pct": 67.5 },
+                                          { "week": "W34", "kind": "计划", "pct": 72 },
+                                          { "week": "W34", "kind": "实际", "pct": 71 },
+                                          { "week": "W35", "kind": "计划", "pct": 76 },
+                                          { "week": "W35", "kind": "实际", "pct": 74.8 }
+                                        ]
+                                      },
+                                      "__nodeStyle": {},
+                                      "__nodeProps": null
+                                    }
+                                  },
+                                  {
+                                    "isFixed": false,
+                                    "contentType": "container",
+                                    "defaultSlot": {
+                                      "__nodeName": "chart-labor",
+                                      "__nodeId": "Chart::chart-labor",
+                                      "__nodeType": "renderNode",
+                                      "__nodeEvent": {},
+                                      "__nodeOptions": {
+                                        "renderType": "Chart",
+                                        "g2PlotName": "Area",
+                                        "width": "100%",
+                                        "height": "260px",
+                                        "loading": false,
+                                        "options": {
+                                          "xField": "day",
+                                          "yField": "workers",
+                                          "smooth": true,
+                                          "areaStyle": { "fillOpacity": 0.55 },
+                                          "line": { "size": 2 },
+                                          "meta": {
+                                            "day": { "alias": "日期" },
+                                            "workers": { "alias": "现场人数" }
+                                          }
+                                        },
+                                        "data": [
+                                          { "day": "08-24", "workers": 186 },
+                                          { "day": "08-25", "workers": 202 },
+                                          { "day": "08-26", "workers": 215 },
+                                          { "day": "08-27", "workers": 198 },
+                                          { "day": "08-28", "workers": 226 },
+                                          { "day": "08-29", "workers": 172 },
+                                          { "day": "08-30", "workers": 140 }
+                                        ]
+                                      },
+                                      "__nodeStyle": {},
+                                      "__nodeProps": null
+                                    }
+                                  }
+                                ]
+                              },
+                              "__nodeStyle": {},
+                              "__nodeProps": null
+                            }
+                          }
+                        ]
+                      },
+                      "__nodeStyle": {},
+                      "__nodeProps": null
+                    }
+                  },
+                  "__nodeStyle": {},
+                  "__nodeProps": null
+                }
+              },
+              {
+                "isFixed": false,
+                "size": "",
+                "paddingSize": "large",
+                "clearPadding": [],
+                "isHidden": false,
+                "contentType": "container",
+                "defaultSlot": {
+                  "__nodeName": "table-box",
+                  "__nodeId": "YqBox::table-box",
+                  "__nodeType": "renderNode",
+                  "__nodeEvent": {},
+                  "__nodeOptions": {
+                    "renderType": "YqBox",
+                    "contentType": "element",
+                    "shadow": false,
+                    "border": false,
+                    "background": true,
+                    "paddingSize": "small",
+                    "height": "100%",
+                "defaultSlot": {
+                  "__nodeName": "table-section",
+                  "__nodeId": "YqFlexBox::table-section",
+                  "__nodeType": "renderNode",
+                  "__nodeEvent": {},
+                  "__nodeOptions": {
+                    "renderType": "YqFlexBox",
+                    "isRow": false,
+                    "itemNum": 2,
+                    "width": "100%",
+                    "height": "auto",
+                    "itemConfig": [
+                      {
+                        "isFixed": false,
+                        "contentType": "container",
+                        "defaultSlot": {
+                          "__nodeName": "table-heading",
+                          "__nodeId": "RawHtml::table-heading",
+                          "__nodeType": "renderNode",
+                          "__nodeEvent": {},
+                          "__nodeOptions": {
+                            "renderType": "RawHtml",
+                            "content": "<div style='border-left:4px solid #1668a7;padding-left:10px;font-size:16px;font-weight:700;color:#0f3b66;margin:6px 0 14px 0;'>三、本周施工日志明细（300 条）</div>"
+                          },
+                          "__nodeStyle": {},
+                          "__nodeProps": null
+                        }
+                      },
+                      {
+                        "isFixed": false,
+                        "contentType": "container",
+                        "defaultSlot": {
+                          "__nodeName": "weeklyTable",
+                          "__nodeId": "YqTableAsync::weeklyTable",
+                          "__nodeType": "renderNode",
+                          "__nodeEvent": {},
+                          "__nodeOptions": {
+                            "renderType": "YqTableAsync",
+                            "requestFn": "queryWeeklyItems",
+                            "tableCode": "weekly-log-table",
+                            "columnConfigs": [
+                              {
+                                "attr": {
+                                  "prop": "id",
+                                  "type": "index",
+                                  "label": "序号",
+                                  "width": 60,
+                                  "headerAlign": "left",
+                                  "align": "left",
+                                  "resizable": false
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "logDate",
+                                  "label": "日期",
+                                  "width": 100,
+                                  "headerAlign": "left",
+                                  "align": "left",
+                                  "sortable": true,
+                                  "scopedSlot": "logDate"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "weather",
+                                  "label": "天气",
+                                  "width": 80,
+                                  "headerAlign": "left",
+                                  "align": "left"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "workArea",
+                                  "label": "施工区域",
+                                  "width": 130,
+                                  "headerAlign": "left",
+                                  "align": "left"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "workContent",
+                                  "label": "工作内容",
+                                  "width": 260,
+                                  "headerAlign": "left",
+                                  "align": "left"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "team",
+                                  "label": "班组",
+                                  "width": 110,
+                                  "headerAlign": "left",
+                                  "align": "left"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "headcount",
+                                  "label": "人数",
+                                  "width": 70,
+                                  "headerAlign": "left",
+                                  "align": "right"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "machine",
+                                  "label": "主要机械",
+                                  "width": 120,
+                                  "headerAlign": "left",
+                                  "align": "left"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "progressPct",
+                                  "label": "完成(%)",
+                                  "width": 85,
+                                  "headerAlign": "left",
+                                  "align": "right"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "safety",
+                                  "label": "安全状态",
+                                  "width": 95,
+                                  "headerAlign": "left",
+                                  "align": "left",
+                                  "scopedSlot": "safety"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "inspector",
+                                  "label": "检查人",
+                                  "width": 90,
+                                  "headerAlign": "left",
+                                  "align": "left"
+                                }
+                              },
+                              {
+                                "attr": {
+                                  "prop": "remark",
+                                  "label": "备注",
+                                  "headerAlign": "left",
+                                  "align": "left"
+                                }
+                              }
+                            ],
+                            "columnSlots": [
+                              {
+                                "code": "safety",
+                                "propName": "安全状态",
+                                "columRender": {
+                                  "__nodeName": "tag-safety",
+                                  "__nodeId": "Tag::tag-safety",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {
+                                    "onValueRender": {
+                                      "enabled": true,
+                                      "fn": "function(ctx, payload) { var row = payload.value; if (row && row.safety === '受控') return { type: 'success', content: '受控' }; if (row && row.safety === '整改中') return { type: 'warning', content: '整改中' }; return { type: 'danger', content: '需关注' }; }"
+                                    }
+                                  },
+                                  "__nodeOptions": {
+                                    "renderType": "Tag",
+                                    "content": "受控",
+                                    "effect": "light"
+                                  },
+                                  "__nodeStyle": {},
+                                  "__nodeProps": null
+                                }
+                              },
+                              {
+                                "code": "logDate",
+                                "propName": "日期",
+                                "columRender": {
+                                  "__nodeName": "cell-logdate",
+                                  "__nodeId": "RawHtml::cell-logdate",
+                                  "__nodeType": "renderNode",
+                                  "__nodeEvent": {
+                                    "onValueRender": {
+                                      "enabled": true,
+                                      "fn": "function(ctx, payload) { var row = payload.value; if (row) return { content: ctx.$utils.formatDate('YYYY-MM-DD', row.logDate) }; }"
+                                    }
+                                  },
+                                  "__nodeOptions": {
+                                    "renderType": "RawHtml",
+                                    "content": "--"
+                                  },
+                                  "__nodeStyle": {},
+                                  "__nodeProps": null
+                                }
+                              }
+                            ],
+                            "pagination": {
+                              "currentSize": 20,
+                              "pageSizes": [10, 20, 50, 100],
+                              "layout": "sizes,prev,pager,next,total"
+                            }
+                          },
+                          "__nodeStyle": {},
+                          "__nodeProps": null
+                        }
+                      }
+                    ]
+                  },
+                  "__nodeStyle": {},
+                  "__nodeProps": null
+                }
+                  },
+                  "__nodeStyle": {},
+                  "__nodeProps": null
+                }
+              }
+            ]
+          },
+          "__nodeStyle": {},
+          "__nodeProps": null
+        },
+        "dialogOptions": [],
+        "drawerOptions": []
+      }
+    }
+  }
+}
