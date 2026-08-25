@@ -62,5 +62,17 @@ body[data-design-mode="design"] {
     .yq-tool-bar-tool:empty {
       .assem-slot-placeholder();
     }
+
+    /* 筛选区空槽占位（#filter）：filterSlot 清空后 .yq-filter-content 下
+       残留空的 .el-row（有子元素，:empty 挂它身上）。
+       el-row 带行内负 margin（gutter -4px），:after 内缩 4px 对齐内容区 */
+    .yq-filter-content > .el-row:empty {
+      .assem-slot-placeholder();
+
+      &::after {
+        right: 4px;
+        left: 4px;
+      }
+    }
   }
 }
