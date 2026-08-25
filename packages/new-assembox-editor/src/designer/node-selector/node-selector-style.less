@@ -1,0 +1,74 @@
+/* 选中节点信息选择器（BemTools 工具栏视觉最左侧）
+   弹层由 el-popover（trigger=hover）实现，teleport 至 body：
+   - 触发器胶囊样式在下方（工具栏内）
+   - 弹层内容样式（popperClass + list/item）作用于 teleport 后的 popper */
+
+/* ── 触发器胶囊（工具栏内） ── */
+.lc-assem-bem-tools__node-selector {
+  position: relative;
+  flex-grow: 0;
+  flex-shrink: 0;
+  margin-right: 4px; // 与右侧动作按钮组留隙
+
+  &-current {
+    display: inline-flex;
+    gap: 4px;
+    align-items: center;
+    height: 20px;
+    padding: 0 6px;
+    color: #fff;
+    cursor: pointer;
+    background: var(--assem-color-brand, #0079f2);
+    border-radius: 3px;
+
+    &:hover {
+      opacity: 0.88;
+    }
+  }
+
+  &-caret {
+    font-size: 10px;
+    line-height: 1;
+    opacity: 0.9;
+  }
+}
+
+/* ── el-popover 弹层（popperClass 挂在 teleport 后的 popper 上）：
+   压缩 el-popover 默认 12px 内边距与最小宽度，贴合菜单形态 ── */
+.lc-assem-bem-tools__node-selector-popper {
+  min-width: auto !important;
+  padding: 4px !important;
+}
+
+/* ── 弹层内容：父级链列表 ── */
+.lc-assem-bem-tools__node-selector-list {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.lc-assem-bem-tools__node-selector-item {
+  display: inline-flex;
+  gap: 4px;
+  align-items: center;
+  height: 20px;
+  padding: 0 6px;
+  color: #fff;
+  cursor: pointer;
+  background: var(--assem-color-text-secondary, #78869a);
+  border-radius: 3px;
+  white-space: nowrap;
+
+  &:hover {
+    opacity: 0.85;
+  }
+}
+
+.lc-assem-bem-tools__node-selector-title {
+  max-width: 8em;
+  overflow: hidden;
+  font-size: var(--assem-font-size-text, 12px);
+  line-height: 1;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

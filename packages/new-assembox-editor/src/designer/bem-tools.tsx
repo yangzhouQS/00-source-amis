@@ -23,6 +23,7 @@ import {
 } from "vue";
 import { useAssemNamespace } from "../hooks/use-assem-namespace";
 import { Tip } from "../skeleton/widgets/tip";
+import { NodeSelector } from "./node-selector";
 import "./bem-tools-style.less";
 
 const ns = useAssemNamespace("bem-tools");
@@ -159,7 +160,10 @@ export const BemTools = defineComponent({
         const pos = computePos(hoverId);
         if (pos) {
           boxes.push(
-            <div class={ns.e("hover-box")} style={posStyle(pos)}>
+            // key 稳定：boxes 是无 key 数组时，hover-box 的插入/移除会让
+            // select-box 按位置错位重建（整个工具栏/NodeSelector 重挂载，
+            // 弹层被替换为关闭态的新实例）——见 node-selector 弹层闪收 bug
+            <div key="hover-box" class={ns.e("hover-box")} style={posStyle(pos)}>
               <span class={ns.e("box-label")}>
                 {nodeRenderType(hoverId)}
               </span>
@@ -218,7 +222,7 @@ export const BemTools = defineComponent({
           const toolbarStyle = { ...hAlign, ...vAlign };
 
           boxes.push(
-            <div class={ns.e("select-box")} style={posStyle(pos)}>
+            <div key="select-box" class={ns.e("select-box")} style={posStyle(pos)}>
               <div class={ns.e("toolbar")} style={toolbarStyle}>
                 {actions.map((action) => {
                   const disabled = props.editor
@@ -254,6 +258,9 @@ export const BemTools = defineComponent({
                   }
                   return btn;
                 })}
+                {/* 选中节点信息胶囊（toolbar 为 row-reverse：DOM 尾部 = 视觉最左）。
+                    hover 展开父级链（面包屑向上选容器），见 node-selector/ */}
+                <NodeSelector store={props.store} editor={props.editor} />
               </div>
             </div>,
           );
