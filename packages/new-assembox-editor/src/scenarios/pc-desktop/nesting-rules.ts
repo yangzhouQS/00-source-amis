@@ -1,7 +1,7 @@
 import type { SlotField, SlotHost } from "@cs/assembox-desktop-next";
 import type { INestingRules } from "../../scenario/types";
-import { RENDER_TYPE_CATEGORIES } from "./nesting-categories";
 import { isCategoryAllowed, lookupMeta, lookupSlotGate } from "@cs/assembox-desktop-next";
+import { RENDER_TYPE_CATEGORIES } from "./nesting-categories";
 
 /**
  * 编辑器侧槽位门禁覆盖表（渲染库未登记、仅编辑器拖拽校验需要的槽位）
@@ -16,8 +16,11 @@ const SLOT_GATE_OVERRIDES: Record<string, Record<string, string[]>> = {
   YqToolBar: { defaultSlot: ["layout"] },
 };
 
-/** 取槽位门禁：编辑器覆盖表优先，渲染库 SLOTS 表兜底 */
-function slotGate(parentRenderType: string, slotKey: string): string[] | "any" | undefined {
+/** 取槽位门禁：编辑器覆盖表优先，渲染库 SLOTS 表兜底。
+ *  导出供 schema-ops.isContainer 共用（判定容器必须与 canNest 同源，
+ *  否则覆盖表收紧的槽位宿主会因渲染库表无此槽而不被判为容器，
+ *  拖拽命中穿透到根节点）。 */
+export function slotGate(parentRenderType: string, slotKey: string): string[] | "any" | undefined {
   const override = SLOT_GATE_OVERRIDES[parentRenderType]?.[slotKey];
   if (override) {
     return override;

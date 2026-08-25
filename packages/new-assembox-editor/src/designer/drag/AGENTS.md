@@ -100,6 +100,9 @@ drag/
    `SLOT_GATE_OVERRIDES`（nesting-rules.ts，纯编辑器语义的槽位如
    YqToolBar.defaultSlot——它由 wrapper 直渲不经 NodeRenderer，渲染库表
    登记无意义）。改门禁先判断语义归属再选边。
+   **所有门禁查询必须走 `slotGate()`（nesting-rules.ts 导出，覆盖表优先）**：
+   isContainer（schema-ops.ts）曾直查渲染库 lookupSlotGate，覆盖表槽位宿主
+   被误判非容器 → 拖拽命中穿透到根节点（region 恒 defaultSlot）。
 5. **单节点槽**（slot-accessors SINGLE_NODE_SLOTS，宿主维度）：wrapper 硬编码
    单节点渲染的槽位，插入走"空→赋值 / 占用→拒绝"分支；moveNode 有预检
    （先 remove 后 insert 的顺序下不预检会丢节点，含拖动者即占用者的原地豁免）。

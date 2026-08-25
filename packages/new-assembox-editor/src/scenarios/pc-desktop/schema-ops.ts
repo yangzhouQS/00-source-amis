@@ -1,10 +1,9 @@
-import type { SlotField, SlotHost } from "@cs/assembox-desktop-next";
 import type { ISchemaOps } from "../../scenario/types";
-import { lookupSlotGate } from "@cs/assembox-desktop-next";
 import { createPcEmptySchema } from "./empty-schema";
+import { slotGate } from "./nesting-rules";
 import {
-  DOCUMENT_ARRAYS,
   canInsertIntoSlot,
+  DOCUMENT_ARRAYS,
   forEachChild,
   getNodeSlots,
   getSlotChildrenList,
@@ -180,14 +179,16 @@ export class PcSchemaOps implements ISchemaOps {
     return createPcEmptySchema();
   }
 
-  /** 判断节点是否为容器（有槽位可投放子节点） */
+  /** 判断节点是否为容器（有槽位可投放子节点）。
+   *  门禁查询走编辑器 slotGate（覆盖表优先）——与 canNest 同源；
+   *  纯查渲染库表会把仅编辑器侧收紧的槽位宿主（如 YqToolBar.defaultSlot）
+   *  误判为非容器，拖拽命中穿透到根节点。 */
   isContainer(node: any): boolean {
     const renderType = node?.__nodeOptions?.renderType;
     if (!renderType) {
       return false;
     }
-    const gate = lookupSlotGate(renderType as SlotHost, "defaultSlot" as SlotField);
-    return gate !== undefined;
+    return slotGate(renderType, "defaultSlot") !== undefined;
   }
 
   /** 宿主槽位是否为单节点语义（见 slot-accessors SINGLE_NODE_SLOTS） */
