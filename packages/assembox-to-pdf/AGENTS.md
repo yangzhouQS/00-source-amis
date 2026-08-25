@@ -8,6 +8,7 @@ assembox 低代码页面**服务端 PDF 导出**的实现（方案 A：Playwrigh
 
 - 技术调研：`docs/01-服务端PDF导出技术调研报告.md`
 - 详细设计（含章节号引用）：`docs/02-方案A详细设计-Playwright无头浏览器PDF导出.md`
+- SaaS 鉴权/上下文接入参考：`docs/03-SaaS鉴权与上下文的服务端运行时处理参考.md`
 - 快速开始：`README.md`
 
 ## 2. 目录与职责
