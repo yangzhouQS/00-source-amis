@@ -145,6 +145,29 @@ export class CanvasSensor implements DragSensor {
       }
     }
 
+    // 1.7 单节点槽占用拦截：宿主 wrapper 硬编码单节点渲染（如 YqToolBar.defaultSlot
+    //      固定单 FlexLine），已占用时再插入会被数组化导致渲染崩溃。
+    //      拖动者自身即占用者时放行（原地松手语义，moveNode 预检同款豁免）。
+    if (finalContainerId) {
+      const parentNode = this.editor.schemaOps.getNodeById(
+        this.editor.store.schema,
+        finalContainerId,
+      );
+      const parentRenderType = parentNode?.__nodeOptions?.renderType;
+      if (this.editor.schemaOps.isSingleNodeSlot?.(parentRenderType, finalSlotKey)) {
+        const occupied
+          = (this.editor.schemaOps.getSlotChildren(parentNode, finalSlotKey) ?? []).length > 0;
+        const isSelfOccupant
+          = dragNode?.type === "node"
+            && (this.editor.schemaOps.getSlotChildren(parentNode, finalSlotKey) ?? [])[0]
+              ?.__nodeId === dragNode.nodeId;
+        if (occupied && !isSelfOccupant) {
+          this.clearIndicator();
+          return null;
+        }
+      }
+    }
+
     // 2. 计算插入索引（用 DOM 实时元素测几何）
     const index = this.computeInsertIndex(
       finalContainerId,

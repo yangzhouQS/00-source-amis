@@ -105,6 +105,46 @@ export const INDIRECT_CONTAINERS: IndirectContainer[] = [
 /** 独立文档数组（viewsProps 下与 planeOptions 平行的文档树） */
 export const DOCUMENT_ARRAYS = ["dialogOptions", "drawerOptions", "tabOptions"];
 
+// ═══════════════════════════════════════════════
+// 单节点槽（宿主维度）
+// ═══════════════════════════════════════════════
+
+/**
+ * 单节点槽规则：宿主 renderType → 期望**单节点**（非数组）的槽位键。
+ *
+ * 语义来源：渲染层 wrapper 硬编码单节点渲染——如 assem-yq-tool-bar.vue 的
+ * defaultSlot 固定以单个 AssemYqFlexLine 渲染（"toolbar 默认区只放一条弹性行"）。
+ * 若按通用数组槽归一（insertChildIntoOpts 会把值数组化），wrapper 取
+ * `options.defaultSlot.__nodeOptions` 得 undefined → 子组件 useNodeOptions
+ * 解构崩溃（"Cannot destructure property 'renderType'"）。
+ *
+ * 同一 slotKey 在不同宿主下语义不同（Panel/Box 的 defaultSlot 是数组槽），
+ * 故必须按 (宿主 renderType, slotKey) 二元组判定。
+ */
+const SINGLE_NODE_SLOTS: Record<string, string[]> = {
+  YqToolBar: ["defaultSlot"],
+};
+
+/** 指定宿主的槽位是否为单节点语义 */
+export function isSingleNodeSlot(renderType: string | undefined, slotKey: string): boolean {
+  return !!renderType && (SINGLE_NODE_SLOTS[renderType] ?? []).includes(slotKey);
+}
+
+/**
+ * 该槽位当前是否可插入节点。
+ * 单节点槽已占用 → false（防数组化崩溃）；数组槽 / 间接容器恒 true。
+ */
+export function canInsertIntoSlot(opts: any, slotKey: string): boolean {
+  const direct = DIRECT_SLOTS.find(s => s.slotKey === slotKey);
+  if (!direct) {
+    return true;
+  }
+  if (!isSingleNodeSlot(opts?.renderType, slotKey)) {
+    return true;
+  }
+  return opts[direct.field] == null;
+}
+
 /** 所有已知 slotKey 集合（直接 + 间接） */
 export const ALL_SLOT_KEYS: string[] = [
   ...DIRECT_SLOTS.map(s => s.slotKey),
@@ -269,6 +309,15 @@ export function insertChildIntoOpts(
 ): any | undefined {
   const direct = DIRECT_SLOTS.find(s => s.slotKey === slotKey);
   if (direct) {
+    // 单节点槽（宿主 wrapper 期望单节点）：空 → 直接赋值；已占用 → 拒绝
+    // （数组化会让 wrapper 取 .__nodeOptions 得 undefined 而崩溃）
+    if (isSingleNodeSlot(opts.renderType, direct.slotKey)) {
+      if (opts[direct.field] != null) {
+        return undefined;
+      }
+      opts[direct.field] = node;
+      return node;
+    }
     if (!opts[direct.field]) {
       opts[direct.field] = [];
     }

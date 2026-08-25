@@ -4,11 +4,13 @@ import { lookupSlotGate } from "@cs/assembox-desktop-next";
 import { createPcEmptySchema } from "./empty-schema";
 import {
   DOCUMENT_ARRAYS,
+  canInsertIntoSlot,
   forEachChild,
   getNodeSlots,
   getSlotChildrenList,
   insertChildIntoOpts,
   isNode,
+  isSingleNodeSlot,
   locateChild,
   removeChildFromOpts,
 } from "./slot-accessors";
@@ -115,6 +117,17 @@ export class PcSchemaOps implements ISchemaOps {
   }
 
   moveNode(schema: any, nodeId: string, toParentId: string, slotKey: string, index?: number): boolean {
+    // 预检目标槽位可插入性（单节点槽已占用则拒绝）——moveNode 是先 remove 后
+    // insert，不预检会把节点删了又插不进（丢节点）。原地放行：节点本身即
+    // 该单节点槽的占用者时（拖动后松手回原位语义）允许。
+    const target = this.getNodeById(schema, toParentId);
+    if (target?.__nodeOptions && !canInsertIntoSlot(target.__nodeOptions, slotKey)) {
+      const cur = getSlotChildrenList(target.__nodeOptions, slotKey);
+      const isSelf = cur.length === 1 && cur[0]?.__nodeId === nodeId;
+      if (!isSelf) {
+        return false;
+      }
+    }
     const removed = this.removeNode(schema, nodeId);
     if (!removed) {
       return false;
@@ -175,6 +188,11 @@ export class PcSchemaOps implements ISchemaOps {
     }
     const gate = lookupSlotGate(renderType as SlotHost, "defaultSlot" as SlotField);
     return gate !== undefined;
+  }
+
+  /** 宿主槽位是否为单节点语义（见 slot-accessors SINGLE_NODE_SLOTS） */
+  isSingleNodeSlot(renderType: string | undefined, slotKey: string): boolean {
+    return isSingleNodeSlot(renderType, slotKey);
   }
 
   /** 找到 nodeId 所在的父节点 + 槽位键 + 索引（供 paste/duplicate/moveUp/moveDown） */

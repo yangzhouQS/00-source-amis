@@ -77,8 +77,8 @@ describe("yqPanel resolver（内容/工具槽识别）", () => {
   });
 });
 
-describe("yqToolBar resolver（筛选/工具槽识别）", () => {
-  it(".yq-filter-content → filterSlot；.yq-tool-slot → toolSlot", () => {
+describe("yqToolBar resolver（筛选/工具/默认槽识别）", () => {
+  it(".yq-filter-content → filterSlot；.yq-tool-slot → toolSlot；.yq-tool-bar-tool → defaultSlot", () => {
     const root = document.createElement("div");
     root.className = "yq-tool-bar";
     const area = document.createElement("div");
@@ -93,11 +93,23 @@ describe("yqToolBar resolver（筛选/工具槽识别）", () => {
     toolSlot.className = "yq-tool-slot";
     func.appendChild(toolSlot);
     area.append(filterContent, func);
-    root.appendChild(area);
+    const toolDefault = document.createElement("div");
+    toolDefault.className = "yq-tool-bar-tool yq-border-clear-top";
+    root.append(area, toolDefault);
 
     expect(resolveToolBarSlot(root, filterItem)).toBe("filterSlot");
     expect(resolveToolBarSlot(root, toolSlot)).toBe("toolSlot");
+    expect(resolveToolBarSlot(root, toolDefault)).toBe("defaultSlot");
     expect(resolveToolBarSlot(root, area)).toBeNull(); // 区域间隙不误判
+  });
+
+  it("默认区不存在时（v-if=false，defaultSlot 为空）其余槽位不受影响", () => {
+    const root = document.createElement("div");
+    root.className = "yq-tool-bar";
+    const filterContent = document.createElement("div");
+    filterContent.className = "yq-filter-content";
+    root.appendChild(filterContent);
+    expect(resolveToolBarSlot(root, filterContent)).toBe("filterSlot");
   });
 });
 

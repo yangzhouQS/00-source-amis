@@ -31,6 +31,9 @@ export interface ISchemaOps {
 
   // ── 辅助（供 Editor 的 paste/duplicate/moveUp/moveDown）──
   isContainer?: (node: any) => boolean;
+  /** 指定宿主槽位是否为单节点语义（wrapper 硬编码单节点渲染，如 YqToolBar.defaultSlot
+   *  固定单 FlexLine）——供拖拽传感器提前拦截"单节点槽已占用"的投放 */
+  isSingleNodeSlot?: (renderType: string | undefined, slotKey: string) => boolean;
   findSlotOf?: (schema: any, nodeId: string) => { parentId: string; slotKey: string; index: number } | undefined;
   moveNodeUp?: (schema: any, nodeId: string) => boolean;
   moveNodeDown?: (schema: any, nodeId: string) => boolean;
