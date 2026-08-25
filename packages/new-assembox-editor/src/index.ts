@@ -65,6 +65,7 @@ export type {
   ComponentCatalogItem,
   ComponentMethodConfig,
   ComponentPropConfig,
+  ComponentSlotConfig,
   IComponentCatalog,
   INestingRules,
   IRenderer,

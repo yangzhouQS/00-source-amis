@@ -7,7 +7,11 @@
  *
  * 历史问题：旧 SLOT_FIELDS 扁平列表无法表达间接路径，
  * 导致 tabPane / buttonGroupOptions / columnSlots / dialogOptions 子节点遍历缺失。
+ *
+ * 单节点槽语义（slotType: "object"）权威来源为 component-metadata-config 的
+ * slots 声明，经 slot-semantics 注入（docs/19 设计方案）。
  */
+import { findSingleNodeSlot } from "./slot-semantics";
 
 /** 判断值是否为节点对象（含 __nodeType） */
 export function isNode(val: any): boolean {
@@ -110,24 +114,20 @@ export const DOCUMENT_ARRAYS = ["dialogOptions", "drawerOptions", "tabOptions"];
 // ═══════════════════════════════════════════════
 
 /**
- * 单节点槽规则：宿主 renderType → 期望**单节点**（非数组）的槽位键。
+ * 单节点槽语义：宿主以 `:node="options.xxxSlot"` 直渲单个节点（无 v-for）。
  *
- * 语义来源：渲染层 wrapper 硬编码单节点渲染——如 assem-yq-tool-bar.vue 的
- * defaultSlot 固定以单个 AssemYqFlexLine 渲染（"toolbar 默认区只放一条弹性行"）。
- * 若按通用数组槽归一（insertChildIntoOpts 会把值数组化），wrapper 取
- * `options.defaultSlot.__nodeOptions` 得 undefined → 子组件 useNodeOptions
- * 解构崩溃（"Cannot destructure property 'renderType'"）。
+ * 权威来源：component-metadata-config 的 slots 声明（slotType: "object"），
+ * 经 slot-semantics 注入（docs/19 设计方案）。历史硬编码表已删除（P3 完成）。
  *
- * 同一 slotKey 在不同宿主下语义不同（Panel/Box 的 defaultSlot 是数组槽），
- * 故必须按 (宿主 renderType, slotKey) 二元组判定。
+ * 语义风险：若按通用数组槽归一（insertChildIntoOpts 会把值数组化），
+ * wrapper 把数组交给 NodeRenderer → 子组件 useNodeOptions 解构
+ * `props.__nodeOptions.renderType` 崩溃（"Cannot destructure property"）。
+ * 新增单节点宿主 = 元数据声明 slotType: "object"（声明前逐条对照 wrapper
+ * 源码确认消费方式，历史核对清单见 git 历史本注释）。
  */
-const SINGLE_NODE_SLOTS: Record<string, string[]> = {
-  YqToolBar: ["defaultSlot"],
-};
-
-/** 指定宿主的槽位是否为单节点语义 */
+/** 指定宿主的槽位是否为单节点语义（仅声明驱动；未声明视为数组槽） */
 export function isSingleNodeSlot(renderType: string | undefined, slotKey: string): boolean {
-  return !!renderType && (SINGLE_NODE_SLOTS[renderType] ?? []).includes(slotKey);
+  return findSingleNodeSlot(renderType, slotKey) === true;
 }
 
 /**

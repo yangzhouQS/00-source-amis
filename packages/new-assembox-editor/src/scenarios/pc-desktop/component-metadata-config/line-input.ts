@@ -353,6 +353,8 @@ export const lineInputComponents: ComponentCatalogItem[] = [
       { name: "size", title: "尺寸", propType: SIZE_ENUM, defaultValue: "" },
     ],
     events: [],
+    // 单节点槽（wrapper assem-form-item.vue:9 直渲单个控件）
+    slots: [{ name: "defaultSlot", slotType: "object", description: "表单控件" }],
   },
   {
     renderType: "YqFilterItem",
@@ -383,5 +385,7 @@ export const lineInputComponents: ComponentCatalogItem[] = [
       { name: "onChange", title: "值变化" },
       { name: "onValueRender", title: "值渲染" },
     ],
+    // 单节点槽（wrapper assem-yq-filter-item.vue:12 直渲单个输入控件）
+    slots: [{ name: "defaultSlot", slotType: "object", description: "筛选控件" }],
   },
 ];

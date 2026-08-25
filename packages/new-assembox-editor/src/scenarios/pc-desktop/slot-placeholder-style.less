@@ -75,4 +75,13 @@ body[data-design-mode="design"] {
       }
     }
   }
+
+  /* ── YqFilterItem：内容区空槽占位（#default，标签右侧挂输入控件；
+     清空后 .yq-filter_item_right 残留为空 div，:empty 直接命中；
+     高度对齐有内容时的输入框行高 ~30px） ── */
+  .yq-filter-item {
+    .yq-filter_item_right:empty {
+      .assem-slot-placeholder();
+    }
+  }
 }

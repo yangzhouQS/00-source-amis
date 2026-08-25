@@ -96,16 +96,18 @@ drag/
    `lookupMeta` 是运行时注册表，iframe 模式下 host 侧库副本未 registerDefaults
    恒 undefined → canNest 全拒绝。渲染库加组件必须同步静态表
    （`__tests__/nesting-categories.test.ts` 守护，漂移即红）。
-4. **槽位门禁双源**：渲染库 SLOTS 表（渲染期+编辑器共用）+ 编辑器
-   `SLOT_GATE_OVERRIDES`（nesting-rules.ts，纯编辑器语义的槽位如
-   YqToolBar.defaultSlot——它由 wrapper 直渲不经 NodeRenderer，渲染库表
-   登记无意义）。改门禁先判断语义归属再选边。
-   **所有门禁查询必须走 `slotGate()`（nesting-rules.ts 导出，覆盖表优先）**：
+4. **槽位门禁三级优先**（docs/19 已实施声明式）：① 组件级白名单
+   （component-metadata-config slots.slotRender，经 slot-semantics 注入，
+   如 YqToolBar.defaultSlot 只认 YqFlexLine）→ ② 渲染库 SLOTS 表（category 级）
+   → ③ 子组件 category（编辑器静态表 + 渲染库运行时兜底）。
+   **所有门禁/容器查询必须走 `slotGate()`（nesting-rules.ts 导出，白名单优先）**：
    isContainer（schema-ops.ts）曾直查渲染库 lookupSlotGate，覆盖表槽位宿主
    被误判非容器 → 拖拽命中穿透到根节点（region 恒 defaultSlot）。
-5. **单节点槽**（slot-accessors SINGLE_NODE_SLOTS，宿主维度）：wrapper 硬编码
-   单节点渲染的槽位，插入走"空→赋值 / 占用→拒绝"分支；moveNode 有预检
-   （先 remove 后 insert 的顺序下不预检会丢节点，含拖动者即占用者的原地豁免）。
+5. **单节点槽**（slots 声明 slotType:"object"，宿主维度；经 slot-semantics 注入）：
+   wrapper 硬编码单节点渲染的槽位，插入走"空→赋值 / 占用→拒绝"分支；
+   moveNode 有预检（先 remove 后 insert 的顺序下不预检会丢节点，
+   含拖动者即占用者的原地豁免）。新增单节点宿主 = 元数据声明一处，
+   声明前对照 wrapper 消费方式（:node 直渲 vs v-for）。
 6. **指示线与索引共用主轴判定**：改其中一个必须同步另一个的轴来源。
 7. **子节点 DOM rect 用 freshEl**：渲染器 re-render 会替换元素引用，缓存 rect
    会算出错误 index——每次 locate 重新取元素。

@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
-import { describe, expect, it } from "vitest";
+import { beforeAll, describe, expect, it } from "vitest";
+import { PC_COMPONENTS_ALL } from "../scenarios/pc-desktop/component-metadata-config";
 import {
   canInsertIntoSlot,
   getSlotChildrenList,
@@ -7,16 +8,22 @@ import {
   isSingleNodeSlot,
   removeChildFromOpts,
 } from "../scenarios/pc-desktop/slot-accessors";
+import { buildSlotSemantics, setSlotSemantics } from "../scenarios/pc-desktop/slot-semantics";
 
 /**
  * 单节点槽语义（宿主维度）守护测试。
  *
- * 背景：YqToolBar.defaultSlot 的渲染层 wrapper（assem-yq-tool-bar.vue）硬编码
- * 以单个 AssemYqFlexLine 渲染。通用数组槽归一会把值数组化，wrapper 取
- * `options.defaultSlot.__nodeOptions` 得 undefined → 子组件 useNodeOptions
- * 解构崩溃（"Cannot destructure property 'renderType'"）。
- * slot-accessors 以 (宿主 renderType, slotKey) 表达单节点语义。
+ * 背景：YqToolBar.defaultSlot 等渲染层 wrapper 硬编码以单个节点直渲
+ * （`:node="options.defaultSlot"`，无 v-for）。通用数组槽归一会把值数组化，
+ * wrapper 取 `options.defaultSlot.__nodeOptions` 得 undefined → 子组件
+ * useNodeOptions 解构崩溃（"Cannot destructure property 'renderType'"）。
+ *
+ * 语义唯一来源：component-metadata-config 的 slots 声明（slotType: "object"），
+ * 经 slot-semantics 注入（docs/19）。单测显式注入，不依赖时序。
  */
+beforeAll(() => {
+  setSlotSemantics(buildSlotSemantics(PC_COMPONENTS_ALL));
+});
 const genId = (() => {
   let n = 0;
   return () => `id-${++n}`;
@@ -27,17 +34,31 @@ function node(id: string, renderType = "Button"): any {
 }
 
 describe("isSingleNodeSlot / canInsertIntoSlot", () => {
-  it("YqToolBar.defaultSlot 是单节点槽；其他宿主 defaultSlot 不是", () => {
+  it("已知单节点宿主（wrapper :node 直渲）全部登记", () => {
     expect(isSingleNodeSlot("YqToolBar", "defaultSlot")).toBe(true);
+    expect(isSingleNodeSlot("YqFilterItem", "defaultSlot")).toBe(true);
+    expect(isSingleNodeSlot("FormItem", "defaultSlot")).toBe(true);
+    expect(isSingleNodeSlot("GridItem", "defaultSlot")).toBe(true);
+    expect(isSingleNodeSlot("Dialog", "defaultSlot")).toBe(true);
+    expect(isSingleNodeSlot("Drawer", "defaultSlot")).toBe(true);
+    expect(isSingleNodeSlot("YqNavigationBar", "defaultSlot")).toBe(true);
+  });
+
+  it("数组槽宿主（v-for 消费）不登记", () => {
     expect(isSingleNodeSlot("YqPanel", "defaultSlot")).toBe(false);
+    expect(isSingleNodeSlot("YqBox", "defaultSlot")).toBe(false);
+    expect(isSingleNodeSlot("Form", "defaultSlot")).toBe(false);
+    expect(isSingleNodeSlot("GridBox", "defaultSlot")).toBe(false);
+    expect(isSingleNodeSlot("YqFlexLine", "defaultSlot")).toBe(false);
+    expect(isSingleNodeSlot("YqFlexLine", "rightSlot")).toBe(false);
     expect(isSingleNodeSlot("YqToolBar", "toolSlot")).toBe(false);
     expect(isSingleNodeSlot(undefined, "defaultSlot")).toBe(false);
   });
 
   it("单节点槽空 → 可插入；已占用 → 不可插入", () => {
-    const opts = { renderType: "YqToolBar", defaultSlot: null };
+    const opts = { renderType: "YqFilterItem", defaultSlot: null };
     expect(canInsertIntoSlot(opts, "defaultSlot")).toBe(true);
-    opts.defaultSlot = node("f1", "YqFlexLine");
+    opts.defaultSlot = node("s1", "Select");
     expect(canInsertIntoSlot(opts, "defaultSlot")).toBe(false);
   });
 
@@ -49,22 +70,22 @@ describe("isSingleNodeSlot / canInsertIntoSlot", () => {
 
 describe("insertChildIntoOpts 单节点槽分支", () => {
   it("空槽插入 → 存为单节点（非数组），渲染层 wrapper 契约", () => {
-    const opts = { renderType: "YqToolBar", defaultSlot: null };
-    const n = node("f1", "YqFlexLine");
+    const opts = { renderType: "YqFilterItem", defaultSlot: null };
+    const n = node("s1", "Select");
     const r = insertChildIntoOpts(opts, "defaultSlot", n, undefined, genId);
     expect(r).toBe(n);
     expect(opts.defaultSlot).toBe(n); // 关键：不是 [n]
   });
 
   it("已占用 → 拒绝插入且不改动原值（防数组化崩溃）", () => {
-    const occupied = node("f1", "YqFlexLine");
-    const opts = { renderType: "YqToolBar", defaultSlot: occupied };
-    const r = insertChildIntoOpts(opts, "defaultSlot", node("f2", "YqFlexLine"), undefined, genId);
+    const occupied = node("s1", "Select");
+    const opts = { renderType: "YqFilterItem", defaultSlot: occupied };
+    const r = insertChildIntoOpts(opts, "defaultSlot", node("i1", "Input"), undefined, genId);
     expect(r).toBeUndefined();
     expect(opts.defaultSlot).toBe(occupied);
   });
 
-  it("其他宿主 defaultSlot 仍按数组槽归一（不影响 Panel/Box）", () => {
+  it("其他宿主 defaultSlot 仍按数组槽归一（不影响 Panel/Box/Form）", () => {
     const opts = { renderType: "YqPanel", defaultSlot: null };
     insertChildIntoOpts(opts, "defaultSlot", node("a"), undefined, genId);
     insertChildIntoOpts(opts, "defaultSlot", node("b"), undefined, genId);
@@ -75,11 +96,11 @@ describe("insertChildIntoOpts 单节点槽分支", () => {
 
 describe("getSlotChildrenList / removeChildFromOpts 单节点槽兼容", () => {
   it("单节点值读作 [node]；移除后置 null", () => {
-    const f1 = node("f1", "YqFlexLine");
-    const opts = { renderType: "YqToolBar", defaultSlot: f1 };
-    expect(getSlotChildrenList(opts, "defaultSlot")).toEqual([f1]);
-    const removed = removeChildFromOpts(opts, "f1", n => n.__nodeId);
-    expect(removed).toBe(f1);
+    const s1 = node("s1", "Select");
+    const opts = { renderType: "YqFilterItem", defaultSlot: s1 };
+    expect(getSlotChildrenList(opts, "defaultSlot")).toEqual([s1]);
+    const removed = removeChildFromOpts(opts, "s1", n => n.__nodeId);
+    expect(removed).toBe(s1);
     expect(opts.defaultSlot).toBeNull();
   });
 });

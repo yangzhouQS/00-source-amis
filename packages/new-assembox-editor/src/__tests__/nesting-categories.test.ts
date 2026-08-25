@@ -1,8 +1,10 @@
 // @vitest-environment jsdom
-import { getComponentMap, lookupMeta, lookupSlotGate, registerDefaults } from "@cs/assembox-desktop-next";
-import { PcNestingRules } from "../scenarios/pc-desktop/nesting-rules";
-import { describe, expect, it } from "vitest";
+import { getComponentMap, lookupMeta, registerDefaults } from "@cs/assembox-desktop-next";
+import { beforeAll, describe, expect, it } from "vitest";
+import { PC_COMPONENTS_ALL } from "../scenarios/pc-desktop/component-metadata-config";
 import { RENDER_TYPE_CATEGORIES } from "../scenarios/pc-desktop/nesting-categories";
+import { PcNestingRules } from "../scenarios/pc-desktop/nesting-rules";
+import { buildSlotSemantics, setSlotSemantics } from "../scenarios/pc-desktop/slot-semantics";
 
 /**
  * 编辑器静态 category 表 与 渲染库运行时注册表 的对齐守护测试。
@@ -53,20 +55,29 @@ describe("rENDER_TYPE_CATEGORIES 与渲染库对齐", () => {
   });
 });
 
-describe("编辑器侧槽位门禁覆盖（nesting-rules PcNestingRules）", () => {
-  it("YqToolBar.defaultSlot 收紧为 layout（覆盖表），toolSlot/filterSlot 走渲染库表", () => {
+describe("编辑器侧槽位门禁（nesting-rules PcNestingRules，slots 声明驱动）", () => {
+  // 白名单查询依赖注入的 slots 声明（docs/19：单测显式注入，不依赖时序）
+  beforeAll(() => {
+    setSlotSemantics(buildSlotSemantics(PC_COMPONENTS_ALL));
+  });
+
+  it("YqToolBar.defaultSlot 组件级白名单：仅 YqFlexLine（GridBox/FlexBox 亦拒，修复 category 粒度缺口）", () => {
     const rules = new PcNestingRules();
-    // 覆盖表：defaultSlot 仅 layout
     expect(rules.canNest("YqToolBar", "defaultSlot", "YqFlexLine")).toBe(true);
+    expect(rules.canNest("YqToolBar", "defaultSlot", "GridBox")).toBe(false);
+    expect(rules.canNest("YqToolBar", "defaultSlot", "YqFlexBox")).toBe(false);
     expect(rules.canNest("YqToolBar", "defaultSlot", "Button")).toBe(false);
     expect(rules.canNest("YqToolBar", "defaultSlot", "YqTableAsync")).toBe(false);
-    // 渲染库表：toolSlot/filterSlot 仍收 lineElement
+  });
+
+  it("toolSlot/filterSlot 未声明白名单，走渲染库 category 表", () => {
+    const rules = new PcNestingRules();
     expect(rules.canNest("YqToolBar", "toolSlot", "Button")).toBe(true);
     expect(rules.canNest("YqToolBar", "toolSlot", "YqFlexLine")).toBe(false);
     expect(rules.canNest("YqToolBar", "filterSlot", "YqFilterItem")).toBe(true);
   });
 
-  it("未覆盖宿主走渲染库 SLOTS 表（Panel.defaultSlot 不受限收口不变）", () => {
+  it("未声明宿主走渲染库 SLOTS 表（Panel.defaultSlot 不受限收口不变）", () => {
     const rules = new PcNestingRules();
     expect(rules.canNest("YqPanel", "defaultSlot", "Button")).toBe(true);
     expect(rules.canNest("YqPanel", "defaultSlot", "YqTableAsync")).toBe(true);

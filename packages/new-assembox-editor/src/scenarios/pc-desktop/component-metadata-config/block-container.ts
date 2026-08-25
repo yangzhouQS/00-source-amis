@@ -27,6 +27,8 @@ export const blockContainerComponents: ComponentCatalogItem[] = [
       { name: "clearBorder", title: "清除边框方向", propType: "json", defaultValue: [] },
     ],
     events: baseEvents(),
+    // 数组槽（v-for 消费）
+    slots: [{ name: "defaultSlot", slotType: "array", description: "内容区" }],
   },
   {
     renderType: "YqPanel",
@@ -54,6 +56,11 @@ export const blockContainerComponents: ComponentCatalogItem[] = [
       { name: "height", title: "高度", propType: "string", defaultValue: "" },
     ],
     events: baseEvents(),
+    // 数组槽（v-for 消费）
+    slots: [
+      { name: "defaultSlot", slotType: "array", description: "内容区" },
+      { name: "toolSlot", slotType: "array", description: "头部工具区" },
+    ],
   },
   {
     renderType: "YqToolBar",
@@ -76,6 +83,15 @@ export const blockContainerComponents: ComponentCatalogItem[] = [
       { name: "toolMaxWidth", title: "工具区最大宽度", propType: "string", defaultValue: "" },
     ],
     events: baseEvents(),
+    // 槽位语义声明（docs/19）：defaultSlot 单节点（wrapper assem-yq-tool-bar.vue:31
+    // 直渲单个 AssemYqFlexLine）+ 组件级白名单（精确到 YqFlexLine，修复 category
+    // 门禁放行 GridBox/FlexBox 的粒度缺口）；toolSlot/filterSlot 数组（v-for，
+    // 未声明 slotRender 走 category 门禁，先宽后收）
+    slots: [
+      { name: "defaultSlot", slotType: "object", slotRender: ["YqFlexLine"], description: "默认插槽" },
+      { name: "toolSlot", slotType: "array", description: "工具栏插槽" },
+      { name: "filterSlot", slotType: "array", description: "过滤器插槽" },
+    ],
   },
   {
     renderType: "TabPanel",
@@ -106,6 +122,11 @@ export const blockContainerComponents: ComponentCatalogItem[] = [
       { name: "onBeforeTabLeave", title: "切换页签前" },
       { name: "onValueRender", title: "值渲染" },
     ],
+    // 数组槽（tabPane 间接容器 + 页签标签槽）
+    slots: [
+      { name: "defaultSlot", slotType: "array", description: "页签内容" },
+      { name: "labelSlot", slotType: "array", description: "页签标签" },
+    ],
   },
   {
     renderType: "YqNavigationBar",
@@ -122,5 +143,7 @@ export const blockContainerComponents: ComponentCatalogItem[] = [
       { name: "onRouteChange", title: "路由变化" },
       { name: "onValueRender", title: "值渲染" },
     ],
+    // 单节点槽（wrapper assem-yq-navigation.vue:10 直渲进 #tool）
+    slots: [{ name: "defaultSlot", slotType: "object", description: "工具区" }],
   },
 ];

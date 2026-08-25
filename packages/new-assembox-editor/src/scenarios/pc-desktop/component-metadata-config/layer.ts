@@ -39,6 +39,8 @@ export const layerComponents: ComponentCatalogItem[] = [
       { name: "fullscreen", title: "全屏", propType: "boolean", defaultValue: false },
       { name: "appendToBody", title: "挂载到 body", propType: "boolean", defaultValue: false },
     ],
+    // 单节点槽（wrapper assem-dialog-page.vue:28 直渲，对话框文档树）
+    slots: [{ name: "defaultSlot", slotType: "object", description: "内容区" }],
   },
   {
     renderType: "Drawer",
@@ -66,5 +68,7 @@ export const layerComponents: ComponentCatalogItem[] = [
       { name: "zIndex", title: "层级", propType: "number", defaultValue: undefined },
       { name: "withHeader", title: "带头部", propType: "boolean", defaultValue: true },
     ],
+    // 单节点槽（wrapper assem-drawer-page.vue:28 直渲，抽屉文档树）
+    slots: [{ name: "defaultSlot", slotType: "object", description: "内容区" }],
   },
 ];

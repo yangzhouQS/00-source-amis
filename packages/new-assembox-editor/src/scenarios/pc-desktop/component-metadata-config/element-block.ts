@@ -31,6 +31,8 @@ export const elementBlockComponents: ComponentCatalogItem[] = [
       modelNameProp(),
     ],
     events: baseEvents(),
+    // 数组槽（assem-form.vue v-for 消费）
+    slots: [{ name: "defaultSlot", slotType: "array", description: "表单内容" }],
     methods: [
       { name: "validateForm", title: "触发表单校验", signature: "function validateForm()" },
       { name: "resetFields", title: "重置表单", signature: "function resetFields()" },

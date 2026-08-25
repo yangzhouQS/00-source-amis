@@ -115,6 +115,28 @@ export interface ComponentMethodConfig {
   description?: string;
 }
 
+/**
+ * 槽位语义声明（借鉴旧版 components-config-pc 的 slotConfig，数据驱动）。
+ *
+ * - slotType: object = 单节点（渲染层 wrapper `:node="options.xxxSlot"` 直渲，
+ *   无 v-for——数组化会崩）；array = 数组（v-for 消费）
+ * - slotRender: 组件级白名单（精确 renderType），缺省回落 category 门禁
+ *   （渲染库 nesting.ts SLOTS / 编辑器 nesting-rules 链）
+ * - 声明位置：component-metadata-config/ 各组件分类文件（宿主槽位语义唯一真相源）
+ * - 消费链：buildSlotSemantics 编译 → setSlotSemantics 注入 slot-accessors/
+ *   nesting-rules（见 scenarios/pc-desktop/slot-semantics.ts）
+ */
+export interface ComponentSlotConfig {
+  /** 槽位键（slot-accessors DIRECT_SLOTS 键：defaultSlot/toolSlot/...） */
+  name: string;
+  /** object = 单节点（wrapper 直渲）；array = 数组（v-for 消费） */
+  slotType: "object" | "array";
+  /** 组件级白名单（renderType 精确匹配）；缺省回落 category 门禁 */
+  slotRender?: string[];
+  /** 槽位显示名（大纲树/占位文案单一来源） */
+  description?: string;
+}
+
 export interface ComponentCatalogItem {
   renderType: string;
   name: string;
@@ -126,6 +148,8 @@ export interface ComponentCatalogItem {
   props?: ComponentPropConfig[];
   events?: { name: string; title?: string }[];
   methods?: ComponentMethodConfig[];
+  /** 槽位语义声明（宿主维度；单节点/白名单/显示名） */
+  slots?: ComponentSlotConfig[];
 }
 
 export interface IComponentCatalog {

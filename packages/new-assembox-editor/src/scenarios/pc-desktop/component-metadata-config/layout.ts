@@ -84,6 +84,11 @@ export const layoutComponents: ComponentCatalogItem[] = [
       { name: "rightSpaceSize", title: "右子项间距", propType: "number", defaultValue: 8 },
     ],
     events: baseEvents(),
+    // 数组槽（左右区 v-for 消费）
+    slots: [
+      { name: "defaultSlot", slotType: "array", description: "左侧内容区" },
+      { name: "rightSlot", slotType: "array", description: "右侧内容区" },
+    ],
   },
   {
     renderType: "GridBox",
@@ -117,6 +122,8 @@ export const layoutComponents: ComponentCatalogItem[] = [
       { name: "defaultExpand", title: "默认展开", propType: "boolean", defaultValue: true },
     ],
     events: baseEvents(),
+    // 数组槽（v-for 消费；子项应为 GridItem——category 门禁 ['layout'] 收口）
+    slots: [{ name: "defaultSlot", slotType: "array", description: "内容区" }],
   },
   {
     renderType: "GridItem",
@@ -136,5 +143,7 @@ export const layoutComponents: ComponentCatalogItem[] = [
       { name: "xl", title: "≥1920px 列数", propType: "number", defaultValue: undefined },
     ],
     events: baseEvents(),
+    // 单节点槽（wrapper assem-grid-item.vue:17 直渲单个子项）
+    slots: [{ name: "defaultSlot", slotType: "object", description: "内容区" }],
   },
 ];
