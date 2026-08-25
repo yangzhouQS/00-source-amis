@@ -13,6 +13,8 @@ import type { IframeAssetsManifest, IframeHostPayload } from "./protocol";
 import * as Vue from "vue";
 import { IframeCanvasRenderer } from "./iframe-canvas-renderer";
 import { HOST_GLOBAL_KEY, RENDERER_GLOBAL_KEY } from "./protocol";
+// 设计态空槽位占位提示（body[data-design-mode] 门控，仅画布文档内生效）
+import "../../scenarios/pc-desktop/slot-placeholder-style.less";
 // import "element-plus/dist/index.css";
 
 const win = window as any;

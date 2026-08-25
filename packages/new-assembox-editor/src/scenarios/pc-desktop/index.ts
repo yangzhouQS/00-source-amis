@@ -5,6 +5,8 @@ import { PcNestingRules } from "./nesting-rules";
 import { PcRenderer } from "./renderer";
 import { PcSchemaOps } from "./schema-ops";
 import { resolveSlotKeyFromDom } from "./slot-dom";
+// 设计态空槽位占位提示（inline 模式画布在主文档；lib 构建时随包输出 CSS）
+import "./slot-placeholder-style.less";
 
 /**
  * PC 桌面端场景档案

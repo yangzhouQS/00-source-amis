@@ -1,0 +1,53 @@
+/**
+ * 设计态空槽位占位提示（借鉴旧版 style-override.less 的 lc-container-placeholder）
+ *
+ * 机制：多槽位组件的空槽区域在画布 DOM 中只含 Vue 注释节点（<!---->），
+ * CSS :empty 对注释节点判定为空 → :after 伪元素渲染"拖拽组件到这里"提示，
+ * 并给区域撑出最小高度（空槽原本高度 0，无法作为拖放目标）。
+ *
+ * 作用域：body[data-design-mode="design"]——inline/iframe 两种渲染器都会在
+ * 画布 body 上设置该属性（renderer.ts / iframe-canvas-renderer.ts），
+ * 预览模式自动失效（生产渲染零污染）。
+ *
+ * 颜色：var(--xxx, fallback) 带显式回退——iframe 画布文档没有编辑器
+ * theme.less 变量，回退值保证两文档视觉一致。
+ *
+ * 新组件空槽占位：在下方按组件补充规则（类名取自 element-plus-ui 源码，
+ * 与 slot-dom/ 解析器的选择器保持同源）。
+ */
+
+body[data-design-mode="design"] {
+  /* ── YqFlexLine：左（defaultSlot）/ 右（rightSlot）空槽占位 ── */
+  .yq-flex-line {
+    min-height: 30px;
+
+    .yq-flex_line_left:empty,
+    .yq-flex_line_right:empty {
+      position: relative;
+      min-height: 30px;
+
+      &::after {
+        position: absolute;
+        inset: 0;
+        box-sizing: border-box;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        font-size: var(--assem-font-size-text, 12px);
+        color: var(--assem-color-text-placeholder, #b9c2cd);
+        text-overflow: ellipsis;
+        white-space: nowrap;
+        content: "拖拽组件到这里";
+        background-color: var(--assem-color-bg-fill, #f0f2f5);
+        border: 1px dotted var(--assem-color-border, #e4e7ed);
+        transition: border-color var(--assem-transition-fast, 0.1s ease);
+      }
+
+      &:hover::after {
+        border-color: var(--assem-color-brand, #0079f2);
+        background-color: rgba(217, 215, 215, 0.66);
+      }
+    }
+  }
+}
