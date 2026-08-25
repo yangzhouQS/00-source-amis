@@ -102,8 +102,8 @@ export class Editor {
   readonly componentActions: ComponentActionManager;
   /** 路由管理（vue-router 封装，管理场景切换路由状态） */
   readonly router: EditorRouter;
-  /** 数据源配置（透传给渲染器） */
-  readonly dataSource: any;
+  /** 页面数据源配置（uiSkeleton 之外的运行时配置；由数据源面板 flush 整体替换引用） */
+  dataSource: any;
   /** 全局变量注入（透传给渲染器 $globalVars） */
   readonly globalVars: Record<string, any>;
   /** 剪贴板（复制/粘贴用） */

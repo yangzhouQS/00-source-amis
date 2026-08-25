@@ -15,6 +15,7 @@ import { registerBuiltinActions } from "../actions/builtin-actions";
 import { DesignerHost } from "../designer/designer-host";
 import { registerBuiltinSetters } from "../setters";
 import { ComponentsPane } from "./components-pane/components-pane";
+import { dataSourcePanePlugin } from "./data-source-pane";
 import { DocLibraryLink } from "./doc-library/doc-library-link";
 import { EditorToolbar } from "./editor-toolbar/editor-toolbar";
 import { HistoryPane } from "./history-pane/history-pane";
@@ -286,6 +287,7 @@ export const builtinPlugins: EditorPluginObject[] = [
   sceneSwitcherPlugin,
   designerPlugin,
   componentsPanePlugin,
+  dataSourcePanePlugin,
   outlinePanePlugin,
   schemaPanePlugin,
   historyPanePlugin,

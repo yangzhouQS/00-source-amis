@@ -1,0 +1,97 @@
+import type { DsDocHandle } from "../doc/use-data-source-doc";
+import { VueMonacoEditor } from "@guolao/vue-monaco-editor";
+import { ElMessage } from "element-plus";
+/**
+ * api.config 全局配置编辑器（Dialog + Monaco JSON）
+ * 全局 axios 基底：baseURL/headers/timeout 等，每请求合并的第一层
+ */
+import { defineComponent, PropType, ref, watch } from "vue";
+import { useAssemNamespace } from "../../../hooks/use-assem-namespace";
+import "../data-source-pane-style.less";
+
+const ns = useAssemNamespace("ds-editor");
+
+export const GlobalConfigEditor = defineComponent({
+  name: "DsGlobalConfigEditor",
+  props: {
+    doc: { type: Object as PropType<DsDocHandle>, required: true },
+  },
+  setup(props) {
+    const visible = ref(false);
+    const text = ref("{}");
+    let lastApplied = "";
+
+    watch(visible, (v) => {
+      if (v) {
+        text.value = JSON.stringify(props.doc.state.api.config ?? {}, null, 2);
+        lastApplied = text.value;
+      }
+    });
+
+    const save = () => {
+      let parsed: Record<string, any>;
+      try {
+        parsed = JSON.parse(text.value || "{}");
+      }
+      catch {
+        ElMessage.error("JSON 格式错误");
+        return;
+      }
+      if (typeof parsed !== "object" || parsed === null || Array.isArray(parsed)) {
+        ElMessage.error("全局配置必须是 JSON 对象");
+        return;
+      }
+      props.doc.commit("更新全局请求配置", (doc) => {
+        doc.api.config = parsed;
+      });
+      lastApplied = text.value;
+      ElMessage.success("全局配置已保存");
+      visible.value = false;
+    };
+
+    return () => (
+      <>
+        <el-button size="small" onClick={() => (visible.value = true)}>全局配置</el-button>
+        <el-dialog
+          v-model={visible.value}
+          title="全局请求配置（dataSource.api.config）"
+          width="640px"
+          appendToBody
+          destroyOnClose
+        >
+          {{
+            default: () => (
+              <div class={[ns.b(), ns.e("global-config")]}>
+                <div class={ns.e("editor")} style={{ height: "360px" }}>
+                  <VueMonacoEditor
+                    value={text.value}
+                    onUpdate:value={(v: string) => (text.value = v)}
+                    language="json"
+                    theme="vs"
+                    options={{
+                      minimap: { enabled: false },
+                      fontSize: 12,
+                      automaticLayout: true,
+                      scrollBeyondLastLine: false,
+                    }}
+                  />
+                </div>
+                <div class={ns.e("section-hint")}>
+                  每个请求的最终 axios 配置 = api.config（基底）→ 服务项 config 覆盖 → url/method。常用：baseURL / timeout / headers。
+                </div>
+              </div>
+            ),
+            footer: () => (
+              <>
+                <el-button size="small" onClick={() => (visible.value = false)}>取消</el-button>
+                <el-button size="small" type="primary" disabled={text.value === lastApplied} onClick={save}>
+                  保存
+                </el-button>
+              </>
+            ),
+          }}
+        </el-dialog>
+      </>
+    );
+  },
+});

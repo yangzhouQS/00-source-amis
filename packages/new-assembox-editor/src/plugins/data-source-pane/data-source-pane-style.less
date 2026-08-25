@@ -1,0 +1,508 @@
+/* 数据源面板（BEM：lc-assem-data-source-pane） */
+.lc-assem-data-source-pane {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 8px 10px;
+    flex-shrink: 0;
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  &__header-title {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-primary, #303133);
+  }
+
+  &__tabs {
+    flex: 1;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+
+    /* 非 scoped less：直接以全局类选择器穿透组件库内部结构 */
+    .el-tabs__header {
+      margin: 0;
+      padding: 0 10px;
+      flex-shrink: 0;
+    }
+
+    .el-tabs__content {
+      flex: 1;
+      min-height: 0;
+    }
+
+    .el-tab-pane {
+      height: 100%;
+    }
+  }
+
+  &__tab {
+    display: flex;
+    flex-direction: column;
+    height: 100%;
+  }
+
+  &__toolbar {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    padding: 8px 10px;
+    flex-shrink: 0;
+  }
+
+  &__search {
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__list {
+    flex: 1;
+    min-height: 0;
+    overflow: auto;
+    padding: 0 10px 10px;
+  }
+
+  /* ---- 卡片（服务/模型/方法共用） ---- */
+  &__card {
+    display: flex;
+    align-items: stretch;
+    gap: 8px;
+    padding: 8px 10px;
+    margin-bottom: 8px;
+    background: var(--el-bg-color-page, #f5f7fa);
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    transition: border-color 0.15s;
+
+    &:hover {
+      border-color: var(--el-color-primary-light-5, #a0cfff);
+    }
+  }
+
+  &__card-main {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 3px;
+  }
+
+  &__card-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    min-width: 0;
+  }
+
+  &__card-name {
+    font-size: 13px;
+    font-weight: 600;
+    color: var(--color-text-primary, #303133);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__card-top-icon {
+    font-size: 12px;
+    color: var(--el-color-warning, #e6a23c);
+  }
+
+  &__card-url {
+    font-family: var(--font-mono, Menlo, Consolas, monospace);
+    font-size: 11px;
+    color: var(--el-color-primary, #409eff);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__card-desc {
+    font-size: 12px;
+    color: #909399;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__card-badge {
+    margin-left: 8px;
+    padding: 0 6px;
+    font-size: 10px;
+    color: #67c23a;
+    background: rgba(103, 194, 58, 0.1);
+    border-radius: 8px;
+  }
+
+  &__card-ops {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    flex-shrink: 0;
+  }
+}
+
+/* ---- 分组列表（lc-assem-ds-group-list） ---- */
+.lc-assem-ds-group-list {
+  &__group {
+    margin-bottom: 8px;
+  }
+
+  &__group-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    padding: 4px 0;
+    font-size: 12px;
+    font-weight: 600;
+    color: #606266;
+    border-bottom: 1px dashed var(--color-border);
+  }
+
+  &__group-count {
+    font-size: 10px;
+    color: #909399;
+    background: var(--el-bg-color-page, #f5f7fa);
+    border-radius: 8px;
+    padding: 0 6px;
+  }
+
+  &__group-body {
+    padding-top: 8px;
+  }
+}
+
+/* ---- HTTP 方法徽标（lc-assem-ds-method-badge） ---- */
+.lc-assem-ds-method-badge {
+  flex-shrink: 0;
+  padding: 0 5px;
+  font-family: var(--font-mono, Menlo, Consolas, monospace);
+  font-size: 10px;
+  font-weight: 700;
+  line-height: 16px;
+  border-radius: 3px;
+}
+
+/* ---- 类型感知默认值输入（lc-assem-ds-value-input） ---- */
+.lc-assem-ds-value-input {
+  textarea {
+    font-family: var(--font-mono, Menlo, Consolas, monospace);
+    font-size: 11px;
+  }
+}
+
+/* ---- 编辑器 Drawer 公共布局（lc-assem-ds-editor） ---- */
+.lc-assem-ds-editor {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  padding-bottom: 12px;
+
+  &__form {
+    .el-form-item {
+      margin-bottom: 10px;
+    }
+  }
+
+  &__row-2 {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    column-gap: 12px;
+  }
+
+  &__url-item {
+    .el-input__inner {
+      font-family: var(--font-mono, Menlo, Consolas, monospace);
+    }
+  }
+
+  &__item-config {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+  }
+
+  &__section {
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    padding: 10px;
+  }
+
+  &__section-title {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 8px;
+    font-size: 12px;
+    font-weight: 600;
+    color: #606266;
+
+    &--with-op {
+      .el-button + .el-button,
+      .el-button {
+        margin-left: 8px;
+      }
+    }
+  }
+
+  &__section-hint {
+    margin-top: 8px;
+    font-size: 11px;
+    line-height: 1.6;
+    color: #909399;
+
+    code {
+      padding: 0 3px;
+      font-family: var(--font-mono, Menlo, Consolas, monospace);
+      color: var(--el-color-primary, #409eff);
+    }
+  }
+
+  &__editor {
+    height: 300px;
+    border: 1px solid var(--color-border);
+    border-radius: 4px;
+    overflow: hidden;
+  }
+
+  &__editor-loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 12px;
+    color: #909399;
+  }
+
+  &__global-config {
+    gap: 0;
+  }
+
+  &__footer {
+    display: flex;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+
+  &__issues {
+    border: 1px solid var(--el-color-danger-light-7, #fbc4c4);
+    background: var(--el-color-danger-light-9, #fef0f0);
+    border-radius: 6px;
+    padding: 8px 10px;
+  }
+
+  &__issue-error {
+    font-size: 12px;
+    color: var(--el-color-danger, #f56c6c);
+    line-height: 1.8;
+  }
+
+  &__issue-warn {
+    font-size: 12px;
+    color: var(--el-color-warning, #e6a23c);
+    line-height: 1.8;
+  }
+
+  &__interceptors {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__interceptor {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__interceptor-name {
+    font-size: 12px;
+    font-weight: 600;
+    color: #606266;
+  }
+
+  &__interceptor-head {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 8px;
+    font-size: 12px;
+    color: #606266;
+  }
+
+  /* fn 编辑器速查/试运行 */
+  &__cheatsheet {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__cheatsheet-item {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    font-size: 11px;
+
+    code {
+      flex-shrink: 0;
+      font-family: var(--font-mono, Menlo, Consolas, monospace);
+      color: var(--el-color-primary, #409eff);
+    }
+
+    span {
+      color: #909399;
+    }
+  }
+
+  &__run-output {
+    max-height: 180px;
+    overflow: auto;
+    padding: 8px;
+    background: #1e1e1e;
+    border-radius: 4px;
+    font-family: var(--font-mono, Menlo, Consolas, monospace);
+    font-size: 11px;
+    color: #d4d4d4;
+  }
+
+  &__run-error {
+    color: #f56c6c;
+    white-space: pre-wrap;
+  }
+
+  &__run-log {
+    color: #9cdcfe;
+    white-space: pre-wrap;
+    line-height: 1.6;
+  }
+
+  &__run-result {
+    margin-top: 6px;
+    color: #b5d89d;
+    white-space: pre-wrap;
+  }
+
+  &__run-placeholder {
+    font-size: 11px;
+    color: #909399;
+  }
+}
+
+/* ---- 双栏编辑器（paramsModel / 模型表结构，lc-assem-ds-params、lc-assem-ds-tables） ---- */
+.lc-assem-ds-params,
+.lc-assem-ds-tables {
+  display: flex;
+  gap: 8px;
+  min-height: 240px;
+
+  &__pane {
+    flex-shrink: 0;
+    width: 168px;
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--color-border);
+    border-radius: 6px;
+    overflow: hidden;
+  }
+
+  &__pane-actions {
+    display: flex;
+    justify-content: space-around;
+    padding: 4px;
+    border-bottom: 1px solid var(--color-border);
+    flex-shrink: 0;
+  }
+
+  &__list {
+    flex: 1;
+    min-height: 0;
+  }
+
+  &__item {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 4px 8px;
+    font-size: 12px;
+    color: #606266;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--color-hover, #f5f7fa);
+    }
+
+    &.is-active {
+      background: var(--el-color-primary-light-9, #ecf5ff);
+      color: var(--el-color-primary, #409eff);
+    }
+  }
+
+  &__item-name {
+    flex: 1;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-family: var(--font-mono, Menlo, Consolas, monospace);
+  }
+
+  &__item--array,
+  &__item--object {
+    flex-shrink: 0;
+    font-family: var(--font-mono, Menlo, Consolas, monospace);
+    font-size: 10px;
+    color: #909399;
+  }
+
+  &__fields {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  &__fields-actions {
+    display: flex;
+    gap: 8px;
+  }
+
+  &__array-hint {
+    padding: 16px 12px;
+    font-size: 12px;
+    line-height: 1.8;
+    color: #909399;
+    background: var(--el-bg-color-page, #f5f7fa);
+    border-radius: 6px;
+
+    code {
+      font-family: var(--font-mono, Menlo, Consolas, monospace);
+      color: var(--el-color-primary, #409eff);
+    }
+  }
+}
+
+/* ---- 后端模型导入（lc-assem-ds-import） ---- */
+.lc-assem-ds-import {
+  &__tables {
+    margin-top: 12px;
+    max-height: 260px;
+    overflow: auto;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+  }
+
+  &__field-count {
+    margin-left: 6px;
+    font-size: 10px;
+    color: #909399;
+  }
+}

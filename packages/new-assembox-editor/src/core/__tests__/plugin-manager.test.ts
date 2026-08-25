@@ -274,7 +274,10 @@ describe("pluginManager 广播收集", () => {
     await pm.activate(fakeCtx, "desktop");
     const panels: any[] = [];
     pm.buildPanels(null, panels);
-    expect(panels).toEqual([{ title: "A" }, { title: "C" }]);
+    expect(panels).toEqual([
+      { key: "a", title: "A" },
+      { key: "c", title: "C" },
+    ]);
   });
 });
 
