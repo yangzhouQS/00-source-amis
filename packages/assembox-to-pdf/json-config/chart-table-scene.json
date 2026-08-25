@@ -1,0 +1,413 @@
+{
+  "uiSkeleton": {
+    "chartTable": {
+      "viewsProps": {
+        "planeOptions": {
+          "__nodeName": "root",
+          "__nodeId": "YqFlexBox::root",
+          "__nodeType": "renderNode",
+          "__nodeEvent": {},
+          "__nodeOptions": {
+            "renderType": "YqFlexBox",
+            "isRow": false,
+            "itemNum": 3,
+            "width": "100%",
+            "height": "100%",
+            "itemConfig": [
+              {
+                "isFixed": true,
+                "size": "",
+                "paddingSize": "large",
+                "clearPadding": ["top", "bottom"],
+                "isHidden": false,
+                "contentType": "container",
+                "defaultSlot": {
+                  "__nodeName": "chart-row",
+                  "__nodeId": "YqFlexBox::chart-row",
+                  "__nodeType": "renderNode",
+                  "__nodeEvent": {},
+                  "__nodeOptions": {
+                    "renderType": "YqFlexBox",
+                    "isRow": true,
+                    "itemNum": 2,
+                    "width": "100%",
+                    "height": "auto",
+                    "itemConfig": [
+                      {
+                        "isFixed": false,
+                        "size": "",
+                        "paddingSize": "base",
+                        "clearPadding": [],
+                        "isHidden": false,
+                        "contentType": "container",
+                        "defaultSlot": {
+                          "__nodeName": "chart-monthly-column",
+                          "__nodeId": "Chart::chart-monthly-column",
+                          "__nodeType": "renderNode",
+                          "__nodeEvent": {},
+                          "__nodeOptions": {
+                            "renderType": "Chart",
+                            "g2PlotName": "Column",
+                            "width": "100%",
+                            "height": "300px",
+                            "loading": false,
+                            "skeletonRows": 3,
+                            "options": {
+                              "xField": "month",
+                              "yField": "value",
+                              "seriesField": "orgName",
+                              "isGroup": true,
+                              "columnStyle": { "radius": [2, 2, 0, 0] },
+                              "label": { "visible": false },
+                              "legend": { "position": "top-left" },
+                              "meta": {
+                                "month": { "alias": "月份" },
+                                "value": { "alias": "付款金额(万元)" },
+                                "orgName": { "alias": "机构" }
+                              }
+                            },
+                            "data": [
+                              { "month": "2026-01", "orgName": "华东指挥部", "value": 412.5 },
+                              { "month": "2026-01", "orgName": "华南指挥部", "value": 308.2 },
+                              { "month": "2026-02", "orgName": "华东指挥部", "value": 367.8 },
+                              { "month": "2026-02", "orgName": "华南指挥部", "value": 331.4 },
+                              { "month": "2026-03", "orgName": "华东指挥部", "value": 502.6 },
+                              { "month": "2026-03", "orgName": "华南指挥部", "value": 389.9 },
+                              { "month": "2026-04", "orgName": "华东指挥部", "value": 455.1 },
+                              { "month": "2026-04", "orgName": "华南指挥部", "value": 421.7 },
+                              { "month": "2026-05", "orgName": "华东指挥部", "value": 528.3 },
+                              { "month": "2026-05", "orgName": "华南指挥部", "value": 402.5 },
+                              { "month": "2026-06", "orgName": "华东指挥部", "value": 611.9 },
+                              { "month": "2026-06", "orgName": "华南指挥部", "value": 476.8 }
+                            ]
+                          },
+                          "__nodeStyle": {},
+                          "__nodeProps": null
+                        }
+                      },
+                      {
+                        "isFixed": false,
+                        "size": "",
+                        "paddingSize": "base",
+                        "clearPadding": [],
+                        "isHidden": false,
+                        "contentType": "container",
+                        "defaultSlot": {
+                          "__nodeName": "chart-nature-pie",
+                          "__nodeId": "Chart::chart-nature-pie",
+                          "__nodeType": "renderNode",
+                          "__nodeEvent": {},
+                          "__nodeOptions": {
+                            "renderType": "Chart",
+                            "g2PlotName": "Pie",
+                            "width": "100%",
+                            "height": "300px",
+                            "loading": false,
+                            "skeletonRows": 3,
+                            "options": {
+                              "angleField": "value",
+                              "colorField": "nature",
+                              "radius": 0.8,
+                              "label": { "type": "spider", "content": "{name} {percentage}" },
+                              "meta": {
+                                "value": { "alias": "金额(万元)" },
+                                "nature": { "alias": "付款性质" }
+                              }
+                            },
+                            "data": [
+                              { "nature": "进度款", "value": 1286.4 },
+                              { "nature": "结算款", "value": 942.7 },
+                              { "nature": "预付款", "value": 518.2 },
+                              { "nature": "质保金", "value": 203.9 }
+                            ]
+                          },
+                          "__nodeStyle": {},
+                          "__nodeProps": null
+                        }
+                      }
+                    ]
+                  },
+                  "__nodeStyle": {},
+                  "__nodeProps": null
+                }
+              },
+              {
+                "isFixed": true,
+                "size": "",
+                "paddingSize": "large",
+                "clearPadding": ["top", "bottom"],
+                "isHidden": false,
+                "contentType": "container",
+                "defaultSlot": {
+                  "__nodeName": "chart-trend-line",
+                  "__nodeId": "Chart::chart-trend-line",
+                  "__nodeType": "renderNode",
+                  "__nodeEvent": {},
+                  "__nodeOptions": {
+                    "renderType": "Chart",
+                    "g2PlotName": "Area",
+                    "width": "100%",
+                    "height": "260px",
+                    "loading": false,
+                    "skeletonRows": 3,
+                    "options": {
+                      "xField": "date",
+                      "yField": "cumulative",
+                      "smooth": true,
+                      "areaStyle": { "fillOpacity": 0.6 },
+                      "line": { "size": 2 },
+                      "meta": {
+                        "date": { "alias": "月份" },
+                        "cumulative": { "alias": "累计付款(万元)" }
+                      }
+                    },
+                    "data": [
+                      { "date": "2026-01", "cumulative": 720.7 },
+                      { "date": "2026-02", "cumulative": 1419.9 },
+                      { "date": "2026-03", "cumulative": 2312.4 },
+                      { "date": "2026-04", "cumulative": 3189.2 },
+                      { "date": "2026-05", "cumulative": 4120.0 },
+                      { "date": "2026-06", "cumulative": 5208.7 }
+                    ]
+                  },
+                  "__nodeStyle": {},
+                  "__nodeProps": null
+                }
+              },
+              {
+                "isFixed": false,
+                "size": "",
+                "paddingSize": "large",
+                "clearPadding": [],
+                "contentType": "container",
+                "isHidden": false,
+                "defaultSlot": {
+                  "__nodeName": "tableBox",
+                  "__nodeId": "YqBox::tableBox",
+                  "__nodeType": "renderNode",
+                  "__nodeEvent": {},
+                  "__nodeOptions": {
+                    "renderType": "YqBox",
+                    "contentType": "element",
+                    "shadow": false,
+                    "border": false,
+                    "background": true,
+                    "paddingSize": "small",
+                    "clearPadding": [],
+                    "clearBorder": [],
+                    "height": "100%",
+                    "display": true,
+                    "permissionSetting": "",
+                    "defaultSlot": {
+                      "__nodeName": "paymentLongTable",
+                      "__nodeId": "YqTableAsync::paymentLongTable",
+                      "__nodeType": "renderNode",
+                      "__nodeEvent": {
+                        "onCurrentChange": {
+                          "enabled": true,
+                          "fn": "function(ctx, payload) { const row = payload.currentRow; const btnEdit = ctx.getNode('Button::btn-edit'); if (btnEdit?.updateProps) btnEdit.updateProps({ disabled: !row }); }"
+                        }
+                      },
+                      "__nodeOptions": {
+                        "renderType": "YqTableAsync",
+                        "requestFn": "queryPaymentsLarge",
+                        "tableCode": "payment-long-table",
+                        "columnConfigs": [
+                          {
+                            "attr": {
+                              "prop": "id",
+                              "type": "index",
+                              "label": "序号",
+                              "width": 60,
+                              "headerAlign": "left",
+                              "align": "left",
+                              "resizable": false
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "isAudit",
+                              "label": "提交状态",
+                              "width": 90,
+                              "headerAlign": "left",
+                              "scopedSlot": "status",
+                              "align": "left"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "orgName",
+                              "width": 160,
+                              "label": "组织机构",
+                              "headerAlign": "left",
+                              "align": "left",
+                              "cannotHide": true
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "supplierName",
+                              "label": "收款单位",
+                              "width": 200,
+                              "headerAlign": "left",
+                              "align": "left",
+                              "cannotHide": true
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "paymentSum",
+                              "label": "付款金额(元)",
+                              "width": 110,
+                              "headerAlign": "left",
+                              "align": "right",
+                              "decimalCode": "amountDecimalDigit",
+                              "cannotHide": true
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "paymentDate",
+                              "label": "付款日期",
+                              "width": 100,
+                              "headerAlign": "left",
+                              "align": "left",
+                              "sortable": true
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "paymentCode",
+                              "label": "付款单号",
+                              "width": 150,
+                              "headerAlign": "left",
+                              "align": "left",
+                              "sortable": true
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "contractCode",
+                              "label": "合同编号",
+                              "width": 120,
+                              "headerAlign": "left",
+                              "align": "left",
+                              "sortable": true
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "paymentType",
+                              "label": "付款方式",
+                              "width": 90,
+                              "headerAlign": "left",
+                              "align": "left"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "paymentNature",
+                              "label": "付款性质",
+                              "width": 90,
+                              "headerAlign": "left",
+                              "align": "left"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "auditor",
+                              "label": "提交人",
+                              "width": 90,
+                              "headerAlign": "left",
+                              "align": "left"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "createdAt",
+                              "label": "创建时间",
+                              "width": 150,
+                              "headerAlign": "left",
+                              "align": "left",
+                              "scopedSlot": "createdAt"
+                            }
+                          },
+                          {
+                            "attr": {
+                              "prop": "remark",
+                              "label": "备注",
+                              "headerAlign": "left",
+                              "align": "left"
+                            }
+                          }
+                        ],
+                        "columnSlots": [
+                          {
+                            "code": "status",
+                            "propName": "状态",
+                            "columRender": {
+                              "__nodeName": "tag-status",
+                              "__nodeId": "Tag::tag-status",
+                              "__nodeType": "renderNode",
+                              "__nodeEvent": {
+                                "onValueRender": {
+                                  "enabled": true,
+                                  "fn": "function(ctx, payload) { var row = payload.value; if (row && row.isAudit===false) return { type: 'danger', content: ' 未提交' }; return { type: 'success', content: '已提交'}; }"
+                                }
+                              },
+                              "__nodeOptions": {
+                                "renderType": "Tag",
+                                "content": "启用",
+                                "effect": "light"
+                              },
+                              "__nodeStyle": {},
+                              "__nodeProps": null
+                            }
+                          },
+                          {
+                            "code": "createdAt",
+                            "propName": "创建时间",
+                            "columRender": {
+                              "__nodeName": "cell-date",
+                              "__nodeId": "RawHtml::cell-date",
+                              "__nodeType": "renderNode",
+                              "__nodeEvent": {
+                                "onValueRender": {
+                                  "enabled": true,
+                                  "fn": "function(ctx, payload) { var row = payload.value; if (row) return { content: ctx.$utils.formatDate('YYYY-MM-DD HH:mm:ss',row.createdAt) }; }"
+                                }
+                              },
+                              "__nodeOptions": {
+                                "renderType": "RawHtml",
+                                "content": "--"
+                              },
+                              "__nodeStyle": {},
+                              "__nodeProps": null
+                            }
+                          }
+                        ],
+                        "pagination": {
+                          "currentSize": 20,
+                          "pageSizes": [10, 20, 50, 100],
+                          "layout": "sizes,prev,pager,next,total"
+                        }
+                      },
+                      "__nodeStyle": {},
+                      "__nodeProps": null
+                    }
+                  },
+                  "__nodeStyle": {},
+                  "__nodeProps": null
+                }
+              }
+            ]
+          },
+          "__nodeStyle": {},
+          "__nodeProps": null
+        },
+        "dialogOptions": [],
+        "drawerOptions": []
+      }
+    }
+  }
+}

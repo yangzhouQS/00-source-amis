@@ -1,0 +1,97 @@
+/* 打印 CSS 与分页规范（方案 A §8） */
+
+@media print {
+  html,
+  body {
+    margin: 0;
+    background: #fff;
+    /* vendored 主题含 html/body 全高规则（height:100%），打印布局下会把文档钉死在一页纸高，
+       后续内容溢出而不分页 —— 必须显式归零 */
+    height: auto !important;
+    min-height: 0 !important;
+    overflow: visible !important;
+  }
+
+  /* ① 解除视口约束：屏幕态 YqFlexBox/YqBox 是 height:100% + overflow:hidden 的视口布局 */
+  [data-print-root],
+  [data-print-root] * {
+    overflow: visible !important;
+    max-height: none !important;
+  }
+  [data-print-root] {
+    min-height: 0 !important;
+    height: auto !important;
+  }
+
+  /* ①-c 重挂后的打印表槽：组件壳类名已继承（斑马纹/边框），但须保持块级自然流 */
+  [data-print-root] .assem-print-table {
+    display: block;
+    width: 100%;
+    height: auto !important;
+    overflow: visible !important;
+    position: static !important;
+  }
+  [data-print-root] .assem-print-table table {
+    width: 100% !important;
+  }
+
+  /* ①-b Element Plus / table-pro 表格族：解除固定高度与内滚，让全部行流入文档流分页 */
+  [data-print-root] .el-table,
+  [data-print-root] .el-table__body-wrapper,
+  [data-print-root] .el-scrollbar,
+  [data-print-root] .el-scrollbar__wrap,
+  [data-print-root] .el-scrollbar__view {
+    height: auto !important;
+    max-height: none !important;
+    overflow: visible !important;
+  }
+  [data-print-root] .el-table {
+    overflow: visible !important;
+  }
+  [data-print-root] .el-table--fluid-height .el-table__body,
+  [data-print-root] .el-table__body {
+    width: 100% !important;
+  }
+
+  /* ② 背景色/边框必须打印（Element Plus 表头底色、斑马纹、Tag 配色） */
+  * {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* ③ 表格断页 */
+  table {
+    page-break-inside: auto;
+  }
+  tr {
+    page-break-inside: avoid;
+  }
+  thead {
+    display: table-header-group;
+  }
+  tfoot {
+    display: table-footer-group;
+  }
+
+  /* ④ 布局盒约束：禁止横向溢出 */
+  [data-print-root] {
+    max-width: 100%;
+  }
+  img,
+  canvas,
+  svg {
+    max-width: 100%;
+    height: auto;
+  }
+}
+
+/* 屏幕态（渲染等待期）也按纸宽布局，避免打印媒体切换时 reflow 抖动：
+   A4@96dpi = 794px / landscape = 1123px */
+body[data-print-host] {
+  width: 794px;
+  margin: 0 auto;
+  background: #fff;
+}
+body[data-print-host][data-orientation='landscape'] {
+  width: 1123px;
+}

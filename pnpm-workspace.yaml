@@ -3,6 +3,14 @@ packages:
   - 'vue3-examples'
   - 'packages-vue'
   - '!vue-mb-output-design-website'
-  - 'examples-yq/node-mb-portal-system'
   - 'assembox-packages-project/libs/assembox-core-next'
   - 'assembox-packages-project/libs/assembox-desktop-next'
+  - 'packages/assembox-to-pdf/print-transform'
+  - 'packages/assembox-to-pdf/print-host'
+  - 'packages/assembox-to-pdf/server'
+  # 私有 @cs/* 包本地占位（registry 不可达时保证 workspace 可安装；版本号对齐消费方 semver，
+  # 由 link-workspace-packages=true 自动链接）。运行时真身：js-web-framework /
+  # vue3-biz-components-library 走 UMD 全局（见 print-host/src/assets.ts）
+  - '.local-stubs/js-eslint-config-library'
+  - '.local-stubs/js-web-framework'
+  - '.local-stubs/vue3-biz-components-library'
