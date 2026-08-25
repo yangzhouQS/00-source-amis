@@ -1,5 +1,6 @@
 // @vitest-environment jsdom
-import { getComponentMap, lookupMeta, registerDefaults } from "@cs/assembox-desktop-next";
+import { getComponentMap, lookupMeta, lookupSlotGate, registerDefaults } from "@cs/assembox-desktop-next";
+import { PcNestingRules } from "../scenarios/pc-desktop/nesting-rules";
 import { describe, expect, it } from "vitest";
 import { RENDER_TYPE_CATEGORIES } from "../scenarios/pc-desktop/nesting-categories";
 
@@ -49,5 +50,25 @@ describe("rENDER_TYPE_CATEGORIES 与渲染库对齐", () => {
     expect(RENDER_TYPE_CATEGORIES.YqTableAsync).toBe("element");
     expect(RENDER_TYPE_CATEGORIES.ListElement).toBe("columnElement");
     expect(RENDER_TYPE_CATEGORIES.UiSkeletonBlockSlot).toBe("placeholder");
+  });
+});
+
+describe("编辑器侧槽位门禁覆盖（nesting-rules PcNestingRules）", () => {
+  it("YqToolBar.defaultSlot 收紧为 layout（覆盖表），toolSlot/filterSlot 走渲染库表", () => {
+    const rules = new PcNestingRules();
+    // 覆盖表：defaultSlot 仅 layout
+    expect(rules.canNest("YqToolBar", "defaultSlot", "YqFlexLine")).toBe(true);
+    expect(rules.canNest("YqToolBar", "defaultSlot", "Button")).toBe(false);
+    expect(rules.canNest("YqToolBar", "defaultSlot", "YqTableAsync")).toBe(false);
+    // 渲染库表：toolSlot/filterSlot 仍收 lineElement
+    expect(rules.canNest("YqToolBar", "toolSlot", "Button")).toBe(true);
+    expect(rules.canNest("YqToolBar", "toolSlot", "YqFlexLine")).toBe(false);
+    expect(rules.canNest("YqToolBar", "filterSlot", "YqFilterItem")).toBe(true);
+  });
+
+  it("未覆盖宿主走渲染库 SLOTS 表（Panel.defaultSlot 不受限收口不变）", () => {
+    const rules = new PcNestingRules();
+    expect(rules.canNest("YqPanel", "defaultSlot", "Button")).toBe(true);
+    expect(rules.canNest("YqPanel", "defaultSlot", "YqTableAsync")).toBe(true);
   });
 });
