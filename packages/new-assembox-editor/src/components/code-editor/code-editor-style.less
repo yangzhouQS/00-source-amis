@@ -1,0 +1,57 @@
+/* 共享代码编辑器（lc-assem-code-editor，Monaco + 全屏）
+   使用方：schema-pane（源码面板）/ data-source-pane（方法・拦截器・全局配置） */
+
+.lc-assem-code-editor {
+  position: relative;
+  overflow: hidden;
+  border: 1px solid var(--color-border);
+  border-radius: 4px;
+
+  /* 全屏态：铺满视口，z-index 压过 el-drawer（~2001）/el-dialog（~2003+）弹层栈 */
+  &--full {
+    position: fixed;
+    inset: 0;
+    z-index: 3000;
+    border: none;
+    border-radius: 0;
+  }
+
+  &__loading {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    height: 100%;
+    font-size: 12px;
+    color: #909399;
+  }
+
+  /* 全屏切换角标：右上角，hover 显现（全屏时常驻以便退出） */
+  &__fs-btn {
+    position: absolute;
+    top: 4px;
+    right: 8px;
+    z-index: 10;
+    display: inline-flex;
+    gap: 2px;
+    align-items: center;
+    padding: 2px 6px;
+    font-size: 11px;
+    color: #606266;
+    cursor: pointer;
+    background: rgba(255, 255, 255, 0.85);
+    border: 1px solid var(--color-border);
+    border-radius: 3px;
+    opacity: 0;
+    transition: opacity var(--assem-transition-fast, 0.1s ease);
+
+    &:hover {
+      color: var(--color-brand, #0079f2);
+      border-color: var(--color-brand, #0079f2);
+    }
+  }
+
+  &:hover &__fs-btn,
+  &--full &__fs-btn {
+    opacity: 1;
+  }
+}

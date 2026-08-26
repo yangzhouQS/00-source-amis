@@ -1,16 +1,15 @@
-import type { Editor } from "../../../core/editor";
-import type { DsDocHandle } from "../doc/use-data-source-doc";
 import type { DsIssue } from "../doc/types";
-import { VueMonacoEditor } from "@guolao/vue-monaco-editor";
+import type { DsDocHandle } from "../doc/use-data-source-doc";
 import { ElMessage } from "element-plus";
 /**
  * 共享方法编辑器（Drawer）
  * 函数名/描述/enabled + Monaco fn 编辑 + ctx 能力速查 + 沙箱试运行
  */
-import { computed, defineComponent, onMounted, PropType, ref } from "vue";
+import { computed, defineComponent, PropType, ref } from "vue";
 import { useAssemNamespace } from "../../../hooks/use-assem-namespace";
-import { canCompileFn, hasBlockingIssues, validateSharedFn } from "../doc/validate";
+import { CodeEditor } from "../../../components/code-editor";
 import { defaultSharedFnCode } from "../constants";
+import { canCompileFn, hasBlockingIssues, validateSharedFn } from "../doc/validate";
 import "../data-source-pane-style.less";
 
 const ns = useAssemNamespace("ds-editor");
@@ -30,10 +29,15 @@ const CTX_CHEATSHEET: Array<{ sig: string; desc: string }> = [
 function tryRunFn(fnText: string): { logs: string[]; error: string | null; result: string } {
   const logs: string[] = [];
   const error: { msg: string | null } = { msg: null };
-  const mockConsole = {
-    log: (...args: unknown[]) => logs.push(args.map(a => formatValue(a)).join(" ")),
-    warn: (...args: unknown[]) => logs.push(`[warn] ${args.map(a => formatValue(a)).join(" ")}`),
-    error: (...args: unknown[]) => logs.push(`[error] ${args.map(a => formatValue(a)).join(" ")}`),
+  const formatValue = (v: unknown): string => {
+    if (typeof v === "string") {
+      return v;
+    }
+    try {
+      return JSON.stringify(v);
+    } catch {
+      return String(v);
+    }
   };
   const mockCtx = new Proxy(
     { $dataModels: {}, $requestFns: {}, $sharedFns: {}, $globalVars: { $context: {} }, $utils: {} },
@@ -47,24 +51,12 @@ function tryRunFn(fnText: string): { logs: string[]; error: string | null; resul
       },
     },
   );
-  const formatValue = (v: unknown): string => {
-    if (typeof v === "string") {
-      return v;
-    }
-    try {
-      return JSON.stringify(v);
-    }
-    catch {
-      return String(v);
-    }
-  };
   let result: unknown;
   try {
     // eslint-disable-next-line no-new-func
-    const factory = new Function(`return (${fnText});`)() as Function;
+    const factory = new Function(`return (${fnText});`)() as (ctx: unknown, payload: unknown) => unknown;
     result = factory(mockCtx, {});
-  }
-  catch (e) {
+  } catch (e) {
     error.msg = e instanceof Error ? e.message : String(e);
   }
   return { logs, error: error.msg, result: formatValue(result) };
@@ -73,7 +65,6 @@ function tryRunFn(fnText: string): { logs: string[]; error: string | null; resul
 export const FnEditor = defineComponent({
   name: "DsFnEditor",
   props: {
-    editor: { type: Object as PropType<Editor>, required: true },
     doc: { type: Object as PropType<DsDocHandle>, required: true },
     mode: { type: String as PropType<"add" | "edit">, required: true },
     name: { type: String, default: "" },
@@ -90,12 +81,6 @@ export const FnEditor = defineComponent({
     });
     const issues = ref<DsIssue[]>([]);
     const runOutput = ref<{ logs: string[]; error: string | null; result: string } | null>(null);
-
-    const monacoReady = ref(false);
-    onMounted(() => {
-      // Monaco loader 由宿主/演示配置（同 schema-pane），延迟标记以减少首帧卡顿
-      requestAnimationFrame(() => (monacoReady.value = true));
-    });
 
     const title = computed(() => (props.mode === "add" ? "新增方法" : `编辑方法：${props.name}`));
 
@@ -168,25 +153,12 @@ export const FnEditor = defineComponent({
 
               <div class={ns.e("section")}>
                 <div class={ns.e("section-title")}>函数体</div>
-                <div class={ns.e("editor")}>
-                  {monacoReady.value
-                    ? (
-                        <VueMonacoEditor
-                          value={draft.value.fn}
-                          onUpdate:value={(v: string) => (draft.value.fn = v)}
-                          language="javascript"
-                          theme="vs"
-                          options={{
-                            minimap: { enabled: false },
-                            fontSize: 12,
-                            automaticLayout: true,
-                            scrollBeyondLastLine: false,
-                            lineNumbers: "on",
-                          }}
-                        />
-                      )
-                    : <div class={ns.e("editor-loading")}>编辑器加载中…</div>}
-                </div>
+                <CodeEditor
+                  value={draft.value.fn}
+                  onUpdate:value={(v: string) => (draft.value.fn = v)}
+                  language="javascript"
+                  height={300}
+                />
               </div>
 
               <div class={ns.e("section")}>
@@ -210,12 +182,20 @@ export const FnEditor = defineComponent({
                   ? (
                       <div class={ns.e("run-output")}>
                         {runOutput.value.error
-                          ? <div class={ns.e("run-error")}>Error: {runOutput.value.error}</div>
+                          ? (
+                              <div class={ns.e("run-error")}>
+                                Error:
+                                {runOutput.value.error}
+                              </div>
+                            )
                           : null}
                         {runOutput.value.logs.map((l, i) => (
                           <div class={ns.e("run-log")} key={i}>{l}</div>
                         ))}
-                        <div class={ns.e("run-result")}>return → {runOutput.value.result || "undefined"}</div>
+                        <div class={ns.e("run-result")}>
+                          return →
+                          {runOutput.value.result || "undefined"}
+                        </div>
                       </div>
                     )
                   : <div class={ns.e("run-placeholder")}>点击「运行」查看 mock 执行结果</div>}

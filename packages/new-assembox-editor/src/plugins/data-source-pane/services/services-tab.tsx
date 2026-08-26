@@ -108,14 +108,11 @@ export const ServicesTab = defineComponent({
               onCommand={(cmd: string) => {
                 if (cmd === "edit") {
                   editing.value = { mode: "edit", name: item.id };
-                }
-                else if (cmd === "copy") {
+                } else if (cmd === "copy") {
                   copyService(item.id);
-                }
-                else if (cmd === "topUp") {
+                } else if (cmd === "topUp") {
                   toggleTopUp(item.id);
-                }
-                else if (cmd === "delete") {
+                } else if (cmd === "delete") {
                   removeService(item.id);
                 }
               }}

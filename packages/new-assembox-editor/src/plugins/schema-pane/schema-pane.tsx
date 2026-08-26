@@ -1,13 +1,14 @@
 import type { Editor } from "../../core/editor";
-import { VueMonacoEditor } from "@guolao/vue-monaco-editor";
 import { ElMessage } from "element-plus";
 /**
- * Schema 源码面板（Monaco JSON 编辑器）
+ * Schema 源码面板（Monaco JSON 编辑器 + 全屏放大）
  * 查看/编辑当前 schema，编辑后应用回画布
- * 使用 @guolao/vue-monaco-editor（CDN loader，免本地 worker 配置）
+ * Monaco 走共享 CodeEditor（CDN loader，免本地 worker 配置；
+ * 面板空间有限，右上角可全屏铺满视口编辑，ESC 退出）
  */
 import { defineComponent, PropType, ref, watch } from "vue";
 import { useAssemNamespace } from "../../hooks/use-assem-namespace";
+import { CodeEditor } from "../../components/code-editor";
 import "./schema-pane-style.less";
 
 const ns = useAssemNamespace("schema-pane");
@@ -54,18 +55,12 @@ export const SchemaPane = defineComponent({
             复制
           </el-button>
         </div>
-        <div class={ns.e("editor")} style={{ flex: 1, minHeight: 0 }}>
-          <VueMonacoEditor
+        <div class={ns.e("editor")}>
+          <CodeEditor
             value={text.value}
             onUpdate:value={(v: string) => (text.value = v)}
             language="json"
-            theme="vs"
-            options={{
-              minimap: { enabled: false },
-              fontSize: 12,
-              automaticLayout: true,
-              scrollBeyondLastLine: false,
-            }}
+            height="100%"
           />
         </div>
       </div>

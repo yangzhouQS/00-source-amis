@@ -1,6 +1,6 @@
 import type { Editor } from "../../../core/editor";
-import type { DsDocHandle } from "../doc/use-data-source-doc";
 import type { DsIssue, DsParamsConfig, DsServiceItem } from "../doc/types";
+import type { DsDocHandle } from "../doc/use-data-source-doc";
 import { ElMessage } from "element-plus";
 /**
  * 服务编辑器（Drawer 800px）
@@ -9,16 +9,16 @@ import { ElMessage } from "element-plus";
  */
 import { computed, defineComponent, PropType, reactive, ref } from "vue";
 import { useAssemNamespace } from "../../../hooks/use-assem-namespace";
-import { hasBlockingIssues, validateService } from "../doc/validate";
 import {
   DATA_MODEL_TYPE_OPTIONS,
   METHOD_OPTIONS,
   PARAMS_TYPE_OPTIONS,
 } from "../constants";
-import { DEFAULT_GROUP_NAME, cloneDoc } from "../doc/normalize";
+import { cloneDoc, DEFAULT_GROUP_NAME } from "../doc/normalize";
+import { hasBlockingIssues, validateService } from "../doc/validate";
 import { DsValueInput } from "../shared/type-value-input";
-import { ParamsModelEditor } from "./params-model-editor";
 import { InterceptorEditor } from "./interceptor-editor";
+import { ParamsModelEditor } from "./params-model-editor";
 import "../data-source-pane-style.less";
 
 const ns = useAssemNamespace("ds-editor");
@@ -290,7 +290,7 @@ export const ServiceEditor = defineComponent({
                     <InterceptorEditor
                       type="beforeReq"
                       modelValue={draft.item.beforeReq}
-                      onSave={(cfg) => (draft.item.beforeReq = cfg)}
+                      onSave={cfg => (draft.item.beforeReq = cfg)}
                     />
                   </div>
                   <div class={ns.e("interceptor")}>
@@ -301,7 +301,7 @@ export const ServiceEditor = defineComponent({
                     <InterceptorEditor
                       type="afterReq"
                       modelValue={draft.item.afterReq}
-                      onSave={(cfg) => (draft.item.afterReq = cfg)}
+                      onSave={cfg => (draft.item.afterReq = cfg)}
                     />
                   </div>
                 </div>

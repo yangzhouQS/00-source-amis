@@ -1,5 +1,4 @@
 import type { DsDocHandle } from "../doc/use-data-source-doc";
-import { VueMonacoEditor } from "@guolao/vue-monaco-editor";
 import { ElMessage } from "element-plus";
 /**
  * api.config 全局配置编辑器（Dialog + Monaco JSON）
@@ -7,6 +6,7 @@ import { ElMessage } from "element-plus";
  */
 import { defineComponent, PropType, ref, watch } from "vue";
 import { useAssemNamespace } from "../../../hooks/use-assem-namespace";
+import { CodeEditor } from "../../../components/code-editor";
 import "../data-source-pane-style.less";
 
 const ns = useAssemNamespace("ds-editor");
@@ -32,8 +32,7 @@ export const GlobalConfigEditor = defineComponent({
       let parsed: Record<string, any>;
       try {
         parsed = JSON.parse(text.value || "{}");
-      }
-      catch {
+      } catch {
         ElMessage.error("JSON 格式错误");
         return;
       }
@@ -62,20 +61,12 @@ export const GlobalConfigEditor = defineComponent({
           {{
             default: () => (
               <div class={[ns.b(), ns.e("global-config")]}>
-                <div class={ns.e("editor")} style={{ height: "360px" }}>
-                  <VueMonacoEditor
-                    value={text.value}
-                    onUpdate:value={(v: string) => (text.value = v)}
-                    language="json"
-                    theme="vs"
-                    options={{
-                      minimap: { enabled: false },
-                      fontSize: 12,
-                      automaticLayout: true,
-                      scrollBeyondLastLine: false,
-                    }}
-                  />
-                </div>
+                <CodeEditor
+                  value={text.value}
+                  onUpdate:value={(v: string) => (text.value = v)}
+                  language="json"
+                  height={360}
+                />
                 <div class={ns.e("section-hint")}>
                   每个请求的最终 axios 配置 = api.config（基底）→ 服务项 config 覆盖 → url/method。常用：baseURL / timeout / headers。
                 </div>
