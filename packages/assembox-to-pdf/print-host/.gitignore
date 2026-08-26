@@ -1,0 +1,4 @@
+dist/
+node_modules/
+# vendor 资产由 `pnpm --filter @cs/print-host vendor` 再生（CDN + node_modules 复制）
+public/vendor/

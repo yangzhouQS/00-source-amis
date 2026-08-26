@@ -1,0 +1,29 @@
+{
+  "name": "@cs/print-host",
+  "version": "0.1.0",
+  "description": "assembox 打印宿主页：加载打印场景并渲染，配合导出服务的就绪信号协议产出 PDF",
+  "type": "module",
+  "private": true,
+  "scripts": {
+    "dev": "vite",
+    "build": "vite build",
+    "vendor": "node scripts/vendor.mjs",
+    "preview": "vite preview"
+  },
+  "dependencies": {
+    "@cs/assembox-core-next": "workspace:*",
+    "@cs/assembox-desktop-next": "workspace:*",
+    "@cs/print-transform": "workspace:*",
+    "@element-plus/icons-vue": "^2.3.2",
+    "axios": "^1.7.0",
+    "element-plus": "^2.13.7",
+    "vue": "^3.5.41",
+    "vue-router": "^5.2.0"
+  },
+  "devDependencies": {
+    "@antv/g2plot": "^2.4.35",
+    "@vitejs/plugin-vue": "^6.0.8",
+    "typescript": "^5.9.3",
+    "vite": "^6.2.0"
+  }
+}

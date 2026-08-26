@@ -1,0 +1,7 @@
+{
+  "name": "@cs/vue3-biz-components-library",
+  "version": "0.2.0",
+  "type": "module",
+  "main": "dist/vue3-biz-components-library.js",
+  "exports": { ".": "./dist/vue3-biz-components-library.js" }
+}
