@@ -148,6 +148,29 @@ export function modelNameProp(defaultValue = ""): ComponentPropConfig {
   };
 }
 
+/** 清除方向类属性（方向枚举多选，UI 库映射 xxx-clear-${dir} 类）。
+ *  适用：YqBox/YqPanel/YqToolBar 的 clearPadding/clearBorder、
+ *  YqFlexLine 的 leftClearPadding/rightClearPadding 等。
+ *  枚举依据 element-plus-ui demo（02-layout-guide/04/02.vue checkbox-group：
+ *  值域 left/top/right/bottom）。 */
+export function clearDirectionProp(name: string, title: string): ComponentPropConfig {
+  return {
+    name,
+    title,
+    propType: { type: "arrayOf", value: "string" },
+    setter: "ArrayOfMultiSetter",
+    setterProps: {
+      options: [
+        { label: "左", value: "left" },
+        { label: "上", value: "top" },
+        { label: "右", value: "right" },
+        { label: "下", value: "bottom" },
+      ],
+    },
+    defaultValue: [],
+  };
+}
+
 // ═══════════════ 常用枚举 ═══════════════
 
 export const SIZE_ENUM = {

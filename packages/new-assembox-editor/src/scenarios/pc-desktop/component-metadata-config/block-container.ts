@@ -1,5 +1,5 @@
-import type { ComponentCatalogItem } from "../../../scenario/types";
-import { baseEvents } from "./shared";
+import type { ComponentCatalogItem } from '../../../scenario';
+import { baseEvents, clearDirectionProp } from "./shared";
 
 /**
  * 块容器组件（源码：components/block-contanier/ + block-element/assem-yq-navigation.vue）
@@ -22,9 +22,9 @@ export const blockContainerComponents: ComponentCatalogItem[] = [
         propType: { type: "oneOf", value: ["base", "small", "large"], labels: ["常规", "小", "大"] },
         defaultValue: "base",
       },
-      { name: "clearPadding", title: "清除内边距方向", propType: "json", defaultValue: [] },
+      clearDirectionProp("clearPadding", "清除内边距方向"),
       { name: "height", title: "高度", propType: "string", defaultValue: "" },
-      { name: "clearBorder", title: "清除边框方向", propType: "json", defaultValue: [] },
+      clearDirectionProp("clearBorder", "清除边框方向"),
     ],
     events: baseEvents(),
     // 数组槽（v-for 消费）
@@ -52,7 +52,7 @@ export const blockContainerComponents: ComponentCatalogItem[] = [
         propType: { type: "oneOf", value: ["base", "small", "large"], labels: ["常规", "小", "大"] },
         defaultValue: "base",
       },
-      { name: "clearPadding", title: "清除内边距方向", propType: "json", defaultValue: [] },
+      clearDirectionProp("clearPadding", "清除内边距方向"),
       { name: "height", title: "高度", propType: "string", defaultValue: "" },
     ],
     events: baseEvents(),
@@ -61,8 +61,7 @@ export const blockContainerComponents: ComponentCatalogItem[] = [
       { name: "defaultSlot", slotType: "array", description: "内容区" },
       { name: "toolSlot", slotType: "array", description: "头部工具区" },
     ],
-  },
-  {
+  },  {
     renderType: "YqToolBar",
     name: "工具栏",
     group: "container",
@@ -77,7 +76,7 @@ export const blockContainerComponents: ComponentCatalogItem[] = [
         propType: { type: "oneOf", value: ["base", "small", "large"], labels: ["常规", "小", "大"] },
         defaultValue: "base",
       },
-      { name: "clearPadding", title: "清除内边距方向", propType: "json", defaultValue: [] },
+      clearDirectionProp("clearPadding", "清除内边距方向"),
       { name: "border", title: "边框", propType: "boolean", defaultValue: false },
       { name: "filterGutter", title: "筛选项间距", propType: "number", defaultValue: undefined },
       { name: "toolMaxWidth", title: "工具区最大宽度", propType: "string", defaultValue: "" },

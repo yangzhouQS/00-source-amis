@@ -1,5 +1,5 @@
 import type { ComponentCatalogItem } from "../../../scenario/types";
-import { baseEvents } from "./shared";
+import { baseEvents, clearDirectionProp } from "./shared";
 
 /**
  * 布局组件（源码：components/layout/）
@@ -48,38 +48,10 @@ export const layoutComponents: ComponentCatalogItem[] = [
     props: [
       { name: "leftWidth", title: "左侧宽度", propType: "string", defaultValue: "50%" },
       { name: "leftPadding", title: "左侧内边距", propType: "boolean", defaultValue: true },
-      {
-        name: "leftClearPadding",
-        title: "左侧清除内边距方向",
-        // 方向枚举（UI 库映射 padding-clear-${dir} 类，flex-line.vue:39/49）
-        propType: { type: "arrayOf", value: "string" },
-        setter: "ArrayOfMultiSetter",
-        setterProps: {
-          options: [
-            { label: "左", value: "left" },
-            { label: "上", value: "top" },
-            { label: "右", value: "right" },
-            { label: "下", value: "bottom" },
-          ],
-        },
-        defaultValue: [],
-      },
+      // 方向枚举（UI 库映射 padding-clear-${dir} 类，flex-line.vue:39/49）
+      clearDirectionProp("leftClearPadding", "左侧清除边距方向"),
       { name: "rightPadding", title: "右侧内边距", propType: "boolean", defaultValue: true },
-      {
-        name: "rightClearPadding",
-        title: "右侧清除边距方向",
-        propType: { type: "arrayOf", value: "string" },
-        setter: "ArrayOfMultiSetter",
-        setterProps: {
-          options: [
-            { label: "左", value: "left" },
-            { label: "上", value: "top" },
-            { label: "右", value: "right" },
-            { label: "下", value: "bottom" },
-          ],
-        },
-        defaultValue: [],
-      },
+      clearDirectionProp("rightClearPadding", "右侧清除边距方向"),
       { name: "leftSpaceSize", title: "左子项间距", propType: "number", defaultValue: 8 },
       { name: "rightSpaceSize", title: "右子项间距", propType: "number", defaultValue: 8 },
     ],
