@@ -42,6 +42,9 @@
   }
 
   .lc-assem-component-pane__item {
+    /* grid/flex 子项默认 min-width:auto，长名称的最小固有宽度会撑开 1fr 轨道
+       导致三列不均——置 0 允许收缩，截断交给 __name 的 ellipsis */
+    min-width: 0;
     display: flex;
     flex-direction: column;
     align-items: center;

@@ -8,16 +8,14 @@ export default defineConfig({
   plugins: [vue(), vueJsx(), mockServer()],
   resolve: {
     alias: [
-      // 绕过 @cs/vue3-biz-components-library@0.1.8 坏 package.json：
-      // 其 "module": "src/index.ts" 指向未发布的源码目录，Vite dev 解析失败
-      // （"Failed to resolve entry"）。精确匹配（exact regex）指向根 node_modules
-      // 0.1.3 的 ESM 构建；运行时画布优先 UMD 全局，此路径仅 dev 静态导入链兜底。
+      // @cs/vue3-biz-components-library（根 node_modules 为 0.2.0 stub，真身是
+      // UMD 全局 Vue3BizComponentsLibrary）——ESM 引用桥接到运行时全局，
+      // 对齐 print-host src/shims/ 同款模式。desktop-next dist 仅导入
+      // useTableSetting；主页面全局由 index.html CDN 脚本注入，iframe 画布由
+      // 依赖清单注入。
       {
         find: /^@cs\/vue3-biz-components-library$/,
-        replacement: resolve(
-          __dirname,
-          "../../node_modules/@cs/vue3-biz-components-library/dist/vue3-biz-components-library.js",
-        ),
+        replacement: resolve(__dirname, "src/shims/vue3-biz-components-library.ts"),
       },
     ],
   },
