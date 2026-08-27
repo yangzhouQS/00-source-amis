@@ -104,4 +104,13 @@ body[data-design-mode="design"] {
   .yq-box:not(:has(> *)) {
     .assem-slot-placeholder();
   }
+
+  /* ── YqFlexBox：空格子占位（间接容器 itemConfig[i].defaultSlot）。
+     .yq-item-content 是 UI 库格子内容容器（flex-box/index.vue:18），
+     defaultSlot 为 null 时 wrapper 不渲染 slot → 无元素子级命中。
+     拖入走 YqFlexBox 命中 → defaultSlot → insertChildIntoOpts 间接容器
+     分支空壳优先填充（多个空格填第一个） ── */
+  .yq-flexbox .yq-item-content:not(:has(> *)) {
+    .assem-slot-placeholder();
+  }
 }
