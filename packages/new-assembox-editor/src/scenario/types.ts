@@ -104,6 +104,10 @@ export interface ComponentPropConfig {
   defaultValue?: any;
   setter?: string;
   setterProps?: Record<string, any>;
+  /** 面板布局：false 时顶层不占 label 列（复合 setter 自带结构时用，如格子配置） */
+  labelVisible?: boolean;
+  /** 面板布局：ObjectSetter 内两列网格（半宽，布尔/短枚举类字段用） */
+  halfWidth?: boolean;
 }
 
 /** 组件导出方法配置（defineExpose 暴露，供事件脚本/编排调用） */

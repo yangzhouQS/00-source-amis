@@ -253,11 +253,14 @@ export const SettingsPane = defineComponent({
       const resolved = resolveSetter(props.editor.setterRegistry, propConfig);
       const SetterComp = resolved.component;
       const currentValue = nodeOptions[propConfig.name];
+      // labelVisible=false：复合 setter（格子配置等）自带结构，不占 label 列让内容全宽
+      const hideLabel = propConfig.labelVisible === false;
 
       return (
         <el-form-item
           key={propConfig.name}
-          label={propConfig.title ?? propConfig.name}
+          label={hideLabel ? undefined : (propConfig.title ?? propConfig.name)}
+          labelWidth={hideLabel ? "0px" : undefined}
         >
           {SetterComp
             ? (

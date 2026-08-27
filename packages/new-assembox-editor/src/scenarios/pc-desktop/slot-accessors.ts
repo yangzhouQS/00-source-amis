@@ -49,6 +49,9 @@ export interface IndirectContainer {
   removeMode: "set-null" | "splice-entry";
   /** 创建新数组项（插入时用）；不提供则该容器不支持通过 insertNode 新增 */
   createEntry?: (node: any, genTempId: () => string) => any;
+  /** 宿主 __nodeOptions 上与数组长度冗余的字段（如 YqFlexBox.itemNum——渲染层
+   *  按它循环读数组，长度不同步即崩/新项不渲染）。createEntry 追加时自动同步 */
+  lengthField?: string;
 }
 
 export const INDIRECT_CONTAINERS: IndirectContainer[] = [
@@ -58,6 +61,7 @@ export const INDIRECT_CONTAINERS: IndirectContainer[] = [
     slotKey: "defaultSlot",
     label: "内容区",
     removeMode: "set-null",
+    lengthField: "itemNum",
     createEntry: node => ({
       isFixed: false,
       paddingSize: "base",
@@ -299,6 +303,15 @@ export function removeChildFromOpts(
   return undefined;
 }
 
+/** 间接容器宿主优先判定：该 slotKey 有间接容器定义且宿主持有对应数组字段。
+ *  YqFlexBox.itemConfig / TabPanel.tabPane 的 slotKey 与直接槽位键（defaultSlot）
+ *  重叠——direct-first 会误写顶层 defaultSlot（wrapper 不渲染该字段 → 孤儿子节点）。 */
+function findIndirectContainer(opts: any, slotKey: string) {
+  return INDIRECT_CONTAINERS.find(
+    c => c.slotKey === slotKey && Array.isArray(opts?.[c.arrayField]),
+  );
+}
+
 /** 向父节点 __nodeOptions 的指定槽位插入子节点 */
 export function insertChildIntoOpts(
   opts: any,
@@ -307,6 +320,31 @@ export function insertChildIntoOpts(
   index: number | undefined,
   genTempId: () => string,
 ): any | undefined {
+  // 1. 间接容器宿主优先（数组字段存在：YqFlexBox.itemConfig / TabPanel.tabPane，
+  //    其 slotKey 与直接槽键 defaultSlot 重叠——direct-first 会误写顶层字段成孤儿子节点）
+  const container = findIndirectContainer(opts, slotKey);
+  if (container) {
+    const empty = container.arrayField === "itemConfig"
+      ? opts[container.arrayField].find(
+          (it: any) => it?.[container.childProp] === null || it?.[container.childProp] === undefined,
+        )
+      : undefined;
+    if (empty) {
+      empty[container.childProp] = node;
+      return node;
+    }
+    const entry = container.createEntry!(node, genTempId);
+    const arr = opts[container.arrayField];
+    const at = index === undefined ? arr.length : Math.max(0, Math.min(index, arr.length));
+    arr.splice(at, 0, entry);
+    // 冗余长度字段同步（YqFlexBox.itemNum：渲染层按它循环，新格子不同步不渲染）
+    if (container.lengthField) {
+      opts[container.lengthField] = arr.length;
+    }
+    return node;
+  }
+
+  // 2. 直接槽位（含单节点语义）
   const direct = DIRECT_SLOTS.find(s => s.slotKey === slotKey);
   if (direct) {
     // 单节点槽（宿主 wrapper 期望单节点）：空 → 直接赋值；已占用 → 拒绝
@@ -330,33 +368,40 @@ export function insertChildIntoOpts(
     return node;
   }
 
-  const container = INDIRECT_CONTAINERS.find(c => c.slotKey === slotKey && c.createEntry);
-  if (!container || !container.createEntry) {
-    return undefined;
-  }
-  if (!Array.isArray(opts[container.arrayField])) {
-    opts[container.arrayField] = [];
-  }
-
-  if (container.arrayField === "itemConfig") {
-    const empty = opts[container.arrayField].find(
-      (it: any) => it?.[container.childProp] === null || it?.[container.childProp] === undefined,
-    );
-    if (empty) {
-      empty[container.childProp] = node;
-      return node;
+  // 3. 非重叠间接键兜底（columnSlots.columRender 等；数组未初始化时造壳）
+  const fallback = INDIRECT_CONTAINERS.find(c => c.slotKey === slotKey && c.createEntry);
+  if (fallback) {
+    if (!Array.isArray(opts[fallback.arrayField])) {
+      opts[fallback.arrayField] = [];
     }
+    const entry = fallback.createEntry!(node, genTempId);
+    const arr = opts[fallback.arrayField];
+    const at = index === undefined ? arr.length : Math.max(0, Math.min(index, arr.length));
+    arr.splice(at, 0, entry);
+    return node;
   }
 
-  const entry = container.createEntry(node, genTempId);
-  const arr = opts[container.arrayField];
-  const at = index === undefined ? arr.length : Math.max(0, Math.min(index, arr.length));
-  arr.splice(at, 0, entry);
-  return node;
+  return undefined;
 }
 
 /** 提取节点指定槽位的所有子节点 */
 export function getSlotChildrenList(opts: any, slotKey: string): any[] {
+  // 间接容器宿主优先（与 insertChildIntoOpts 同源：defaultSlot 键重叠时
+  // YqFlexBox/TabPanel 的子节点在 itemConfig/tabPane 内，不在顶层字段）
+  const indirect = findIndirectContainer(opts, slotKey);
+  if (indirect) {
+    const out: any[] = [];
+    for (const item of opts[indirect.arrayField]) {
+      const child = item?.[indirect.childProp];
+      if (Array.isArray(child)) {
+        out.push(...child.filter(isNode));
+      } else if (isNode(child)) {
+        out.push(child);
+      }
+    }
+    return out;
+  }
+
   const direct = DIRECT_SLOTS.find(s => s.slotKey === slotKey);
   if (direct) {
     const val = opts[direct.field];

@@ -30,7 +30,8 @@ const genId = (() => {
 })();
 
 function node(id: string, renderType = "Button"): any {
-  return { __nodeId: id, __nodeOptions: { renderType }, __nodeEvent: {} };
+  // __nodeType 必带：indirect 分支的 isNode 过滤依赖它（真实节点结构）
+  return { __nodeId: id, __nodeType: "renderNode", __nodeOptions: { renderType }, __nodeEvent: {} };
 }
 
 describe("isSingleNodeSlot / canInsertIntoSlot", () => {
@@ -102,5 +103,57 @@ describe("getSlotChildrenList / removeChildFromOpts 单节点槽兼容", () => {
     const removed = removeChildFromOpts(opts, "s1", n => n.__nodeId);
     expect(removed).toBe(s1);
     expect(opts.defaultSlot).toBeNull();
+  });
+});
+
+describe("间接容器宿主路由（defaultSlot 键重叠，indirect-first）", () => {
+  it("YqFlexBox：defaultSlot 插入走 itemConfig 空壳填充，不产生顶层 defaultSlot 孤儿字段", () => {
+    const opts = {
+      renderType: "YqFlexBox",
+      itemConfig: [
+        { tag: "item-1", defaultSlot: node("a", "YqBox") },
+        { tag: "item-2", defaultSlot: null },
+      ],
+    };
+    const btn = node("b1", "Button");
+    const r = insertChildIntoOpts(opts, "defaultSlot", btn, undefined, genId);
+    expect(r).toBe(btn);
+    // 填的是空壳 item-2，顶层不出现 defaultSlot 字段（wrapper 不渲染它）
+    expect(opts.itemConfig[1].defaultSlot).toBe(btn);
+    expect("defaultSlot" in opts).toBe(false);
+  });
+
+  it("YqFlexBox 无空壳时 createEntry 造新格子（追加）+ itemNum 冗余字段同步", () => {
+    const opts: any = {
+      renderType: "YqFlexBox",
+      itemNum: 1,
+      itemConfig: [{ tag: "item-1", defaultSlot: node("a", "YqBox") }],
+    };
+    insertChildIntoOpts(opts, "defaultSlot", node("b1", "Button"), undefined, genId);
+    expect(opts.itemConfig).toHaveLength(2);
+    expect(opts.itemConfig[1].defaultSlot.__nodeOptions.renderType).toBe("Button");
+    expect(opts.itemNum).toBe(2); // 渲染层按 itemNum 循环，必须同步
+  });
+
+  it("getSlotChildrenList：YqFlexBox defaultSlot 返回各格内容合集（供插入索引计算）", () => {
+    const a = node("a", "YqBox");
+    const b = node("b", "Button");
+    const opts = {
+      renderType: "YqFlexBox",
+      defaultSlot: [node("dirty", "Tag")], // 顶层脏数据应被忽略（wrapper 不渲染）
+      itemConfig: [
+        { tag: "item-1", defaultSlot: a },
+        { tag: "item-2", defaultSlot: b },
+      ],
+    };
+    expect(getSlotChildrenList(opts, "defaultSlot")).toEqual([a, b]);
+  });
+
+  it("直接槽宿主不受影响（YqBox.defaultSlot 仍走直接数组）", () => {
+    const opts: any = { renderType: "YqBox", defaultSlot: null };
+    const n1 = node("x1", "Button");
+    insertChildIntoOpts(opts, "defaultSlot", n1, undefined, genId);
+    expect(Array.isArray(opts.defaultSlot)).toBe(true);
+    expect(opts.defaultSlot[0]).toBe(n1);
   });
 });

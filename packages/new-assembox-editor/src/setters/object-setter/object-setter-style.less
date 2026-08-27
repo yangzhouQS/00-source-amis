@@ -1,5 +1,32 @@
 /* ObjectSetter */
 .lc-assem-object-setter {
   width: 100%;
-  padding: 4px 0;
+  padding: 2px 0;
+
+  .el-form-item__label {
+    font-size: 12px;
+  }
+
+  /* 两列网格模式（grid=true）：halfWidth 字段占一列，其余跨两列。
+     CSS grid 无 inline 元素的空白折行问题 */
+  &--grid {
+    .el-form {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      column-gap: 4px;
+    }
+
+    .el-form-item {
+      grid-column: 1 / -1;
+      margin-bottom: 6px;
+    }
+
+    .el-form-item.lc-assem-object-setter--half {
+      grid-column: auto;
+
+      .el-form-item__content {
+        min-width: 0;
+      }
+    }
+  }
 }

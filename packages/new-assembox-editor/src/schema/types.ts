@@ -35,6 +35,10 @@ export interface PropConfig {
   setter?: string;
   /** setter 附加参数 */
   setterProps?: Record<string, any>;
+  /** 面板布局：false 时顶层不占 label 列（复合 setter 自带结构时用，如格子配置） */
+  labelVisible?: boolean;
+  /** 面板布局：ObjectSetter 内两列网格（半宽，布尔/短枚举类字段用） */
+  halfWidth?: boolean;
   /** 是否隐藏（函数形式接收字段当前值） */
   hidden?: boolean | ((value: any) => boolean);
   /** 所属分组 */

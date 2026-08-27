@@ -11,20 +11,74 @@ export const layoutComponents: ComponentCatalogItem[] = [
     name: "弹性布局",
     group: "layout",
     category: "layout-item",
+    // scaffold 与 lib 运行时默认值（assem-yq-flex-box.vue useNodeOptions）严格对齐：
+    // width/height "100%"（渲染层默认，显式快照）；格子 defaultSlot null（空槽占位引导拖入，
+    // insertChildIntoOpts 间接容器分支空壳优先填充）；contentType 为旧版遗留（新版
+    // wrapper/UI 库均不消费），不再生成
     scaffold: {
       renderType: "YqFlexBox",
       isRow: true,
       itemNum: 1,
-      itemConfig: [{ isFixed: false, paddingSize: "base", clearPadding: [], isHidden: false, contentType: "container", defaultSlot: null }],
+      width: "100%",
+      height: "100%",
+      itemConfig: [
+        { isFixed: false, size: "", paddingSize: "base", clearPadding: [], showDragButton: false, dragButtonPosition: "", isHidden: false, defaultSlot: null },
+      ],
     },
     props: [
       { name: "isRow", title: "水平排列", propType: "boolean", defaultValue: true },
-      { name: "itemNum", title: "子项数量", propType: "number", defaultValue: 1 },
-      { name: "itemConfig", title: "子项配置", propType: "json", defaultValue: [] },
-      { name: "width", title: "宽度", propType: "string", defaultValue: "" },
-      { name: "height", title: "高度", propType: "string", defaultValue: "" },
+      { name: "width", title: "宽度", propType: "string", defaultValue: "100%" },
+      { name: "height", title: "高度", propType: "string", defaultValue: "100%" },
+      // itemNum 不提供编辑（Q2）：长度由 itemConfig 增删驱动，syncLengthField 回写
+      // 维持 schema 双字段一致（渲染层按 itemNum 循环读 itemConfig，不同步即崩）
+      {
+        name: "itemConfig",
+        title: "格子配置",
+        propType: "json",
+        // labelVisible=false：面板窄，不占顶层 label 列让格子编辑区全宽
+        labelVisible: false,
+        setter: "ArraySetter",
+        setterProps: {
+          itemSetter: {
+            setter: "ObjectSetter",
+            // 紧凑布局：内层 label 列收窄 + halfWidth 两列网格（窄面板给控件留宽）
+            props: { labelWidth: "68px", grid: true },
+          },
+          itemConfig: {
+            items: [
+              { name: "tag", title: "子项标识", propType: "string", setter: "LabelSetter", halfWidth: true },
+              { name: "isFixed", title: "固定区域", propType: "boolean", defaultValue: false, halfWidth: true },
+              { name: "size", title: "固定大小", propType: "string", defaultValue: "" },
+              { name: "paddingSize", title: "内边距", propType: { type: "oneOf", value: ["large", "base", "small"], labels: ["大", "常规", "小"] }, defaultValue: "base" },
+              clearDirectionProp("clearPadding", "清除内边距"),
+              { name: "showDragButton", title: "缩放按钮", propType: "boolean", defaultValue: false, halfWidth: true },
+              { name: "dragButtonPosition", title: "缩放位置", propType: { type: "oneOf", value: ["left", "right", "top", "bottom"], labels: ["左", "右", "上", "下"] } },
+              { name: "isFold", title: "默认折叠", propType: "boolean", defaultValue: false, halfWidth: true },
+              { name: "expandSize", title: "展开大小", propType: "string", defaultValue: "" },
+              { name: "isHidden", title: "隐藏区域", propType: "boolean", defaultValue: false, halfWidth: true },
+            ],
+          },
+          // 新格子初值（Q6）：ArraySetter initialValue 是**单项初值**（非数组）——
+          // defaultSlot null 走空槽占位；tag 由 rekey 补 item-N
+          initialValue: { isFixed: false, size: "", paddingSize: "base", clearPadding: [], showDragButton: false, dragButtonPosition: "", isHidden: false, defaultSlot: null },
+          // 折叠模式（窄面板空间优化）：子项默认收起，行头显示 tag，点击展开编辑
+          collapsible: true,
+          itemTitle: (item: any, index: number) => item?.tag || `格子 ${index + 1}`,
+          // 删除保护（对齐旧版）：二次确认（删格子连带格内子树，undo 可恢复）+ 至少保留 1 格
+          confirmRemove: "删除该格子将同时删除格子内的全部内容（可通过撤销恢复），确认删除？",
+          itemMinLength: 1,
+          // tag 是 UI 库 slot 命名键（item-N），增删/排序后按新 index 重排，
+          // 数据源头正确（UI 库 watchEffect 修正退化为双保险）
+          rekey: (item: any, index: number) => ({ ...item, tag: `item-${index + 1}` }),
+          // 长度回写兄弟字段（Q2：itemNum 单一事实源 = itemConfig.length）
+          syncLengthField: "itemNum",
+        },
+      },
     ],
     events: baseEvents(),
+    // 间接容器槽位（slot-accessors INDIRECT_CONTAINERS itemConfig[].defaultSlot，
+    // removeMode set-null 删子留壳）
+    slots: [{ name: "defaultSlot", slotType: "array", description: "格子内容" }],
   },
   {
     renderType: "YqFlexLine",
