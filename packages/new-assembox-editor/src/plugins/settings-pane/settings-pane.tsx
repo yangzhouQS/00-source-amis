@@ -264,6 +264,7 @@ export const SettingsPane = defineComponent({
                 h(SetterComp, {
                   value: currentValue,
                   defaultValue: propConfig.defaultValue,
+                  fieldName: propConfig.name,
                   onChange: (v: any) => {
                     props.editor.updateProps(node.__nodeId, { [propConfig.name]: v });
                   },

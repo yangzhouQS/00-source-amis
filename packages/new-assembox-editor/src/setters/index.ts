@@ -24,6 +24,7 @@ import { ObjectSetter } from "./object-setter";
 import { RadioGroupSetter } from "./radio-group-setter";
 import { RequestFnSetter } from "./request-fn-setter";
 import { SelectSetter } from "./select-setter";
+import { SlotToggleSetter } from "./slot-toggle-setter";
 import { StringSetter } from "./string-setter";
 import { StyleSetter } from "./style-setter";
 import { TextareaSetter } from "./textarea-setter";
@@ -63,6 +64,8 @@ export { RadioGroupSetter } from "./radio-group-setter";
 export { RequestFnSetter } from "./request-fn-setter";
 export { isFieldHidden, resolveSetter } from "./resolve";
 export { SelectSetter } from "./select-setter";
+export { SlotToggleSetter } from "./slot-toggle-setter";
+export { countSlotChildren, nextSlotValue } from "./slot-toggle-setter";
 // 基础类型
 export { StringSetter } from "./string-setter";
 export { StyleSetter } from "./style-setter";
@@ -93,6 +96,7 @@ export const builtinSetterMap = {
   StyleSetter,
   ModelNameSetter,
   ClassNameSetter,
+  SlotToggleSetter,
   VariableSetter,
   ExpressionSetter,
   LabelSetter,

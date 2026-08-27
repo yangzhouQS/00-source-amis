@@ -81,6 +81,10 @@ export const blockContainerComponents: ComponentCatalogItem[] = [
       { name: "border", title: "边框", propType: "boolean", defaultValue: false },
       { name: "filterGutter", title: "筛选项间距", propType: "number", defaultValue: undefined },
       { name: "toolMaxWidth", title: "工具区最大宽度", propType: "string", defaultValue: "" },
+      // 插槽启停切换（SlotToggleSetter 从下方 slots 声明反查槽位语义，无需重复配置）
+      { name: "defaultSlot", title: "默认插槽", propType: "json", setter: "SlotToggleSetter" },
+      { name: "toolSlot", title: "工具栏插槽", propType: "json", setter: "SlotToggleSetter" },
+      { name: "filterSlot", title: "过滤器插槽", propType: "json", setter: "SlotToggleSetter" },
     ],
     events: baseEvents(),
     // 槽位语义声明（docs/19）：defaultSlot 单节点（wrapper assem-yq-tool-bar.vue:31
