@@ -100,6 +100,9 @@ describe("yqToolBar resolver（筛选/工具/默认槽识别）", () => {
     expect(resolveToolBarSlot(root, filterItem)).toBe("filterSlot");
     expect(resolveToolBarSlot(root, toolSlot)).toBe("toolSlot");
     expect(resolveToolBarSlot(root, toolDefault)).toBe("defaultSlot");
+    // .yq-tool-func 容器兜底：空槽时 .yq-tool-slot 宽度坍缩，悬停落在函数区
+    // 间隙（含 more 展开位）也应归 toolSlot，不穿透回退 defaultSlot
+    expect(resolveToolBarSlot(root, func)).toBe("toolSlot");
     expect(resolveToolBarSlot(root, area)).toBeNull(); // 区域间隙不误判
   });
 

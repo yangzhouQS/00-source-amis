@@ -1,9 +1,11 @@
 /**
  * 设计态空槽位占位提示（借鉴旧版 style-override.less 的 lc-container-placeholder）
  *
- * 机制：多槽位组件的空槽区域在画布 DOM 中只含 Vue 注释节点（<!---->），
- * CSS :empty 对注释节点判定为空 → :after 伪元素渲染"拖拽组件到这里"提示，
- * 并给区域撑出最小高度（空槽原本高度 0，无法作为拖放目标）。
+ * 机制：空槽判空用 `:not(:has(> *))`——容器无**元素**子级即视为空。
+ * 不用 `:empty`：wrapper 模板的换行缩进会在内容周围残留空白文本节点
+ * （如 assem-yq--box 渲染后 childNodes 为 [text,text,DIV,text,text]），
+ * CSS :empty 对任何文本节点（含纯空白）都不匹配，删空后占位失效。
+ * :has() 只匹配元素节点，文本/注释一律忽略（Chrome 105+ 全支持）。
  *
  * 作用域：body[data-design-mode="design"]——inline/iframe 两种渲染器都会在
  * 画布 body 上设置该属性（renderer.ts / iframe-canvas-renderer.ts），
@@ -17,7 +19,7 @@
  */
 
 body[data-design-mode="design"] {
-  /* ── 通用占位 mixin（:empty 对 Vue 注释节点 <!----> 判空） ── */
+  /* ── 通用占位 mixin（无元素子级即空） ── */
   .assem-slot-placeholder() {
     position: relative;
     min-height: 30px;
@@ -50,23 +52,24 @@ body[data-design-mode="design"] {
   .yq-flex-line {
     min-height: 30px;
 
-    .yq-flex_line_left:empty,
-    .yq-flex_line_right:empty {
+    .yq-flex_line_left:not(:has(> *)),
+    .yq-flex_line_right:not(:has(> *)) {
       .assem-slot-placeholder();
     }
   }
 
-  /* ── YqToolBar：默认区空槽占位（#default，仅放 FlexLine；空槽时
-     .yq-tool-bar-tool 由 v-if 控制可能不存在，存在且空则占位） ── */
+  /* ── YqToolBar ── */
   .yq-tool-bar {
-    .yq-tool-bar-tool:empty {
+    /* 默认区空槽占位（#default，仅放 FlexLine；空槽时 .yq-tool-bar-tool
+       由 v-if 控制可能不存在，存在且无元素子级则占位） */
+    .yq-tool-bar-tool:not(:has(> *)) {
       .assem-slot-placeholder();
     }
 
     /* 筛选区空槽占位（#filter）：filterSlot 清空后 .yq-filter-content 下
-       残留空的 .el-row（有子元素，:empty 挂它身上）。
+       残留空的 .el-row（有子元素，判空挂它身上）。
        el-row 带行内负 margin（gutter -4px），:after 内缩 4px 对齐内容区 */
-    .yq-filter-content > .el-row:empty {
+    .yq-filter-content > .el-row:not(:has(> *)) {
       .assem-slot-placeholder();
 
       &::after {
@@ -78,7 +81,7 @@ body[data-design-mode="design"] {
     /* 工具按钮区空槽占位（#tool）：toolSlot 清空后 .yq-tool-slot 残留为空
        div（行内 max-width 限制下空内容宽度坍缩为 0）——补最小宽度使其
        成为可见投放区（140px < max-width 默认值，不破布局） */
-    .yq-tool-func > .yq-tool-slot:empty {
+    .yq-tool-func > .yq-tool-slot:not(:has(> *)) {
       .assem-slot-placeholder();
 
       min-width: 140px;
@@ -86,11 +89,19 @@ body[data-design-mode="design"] {
   }
 
   /* ── YqFilterItem：内容区空槽占位（#default，标签右侧挂输入控件；
-     清空后 .yq-filter_item_right 残留为空 div，:empty 直接命中；
+     清空后 .yq-filter_item_right 残留为空 div，无元素子级直接命中；
      高度对齐有内容时的输入框行高 ~30px） ── */
   .yq-filter-item {
-    .yq-filter_item_right:empty {
+    .yq-filter_item_right:not(:has(> *)) {
       .assem-slot-placeholder();
     }
+  }
+
+  /* ── YqBox：空容器占位（#default 数组槽，内容直挂 .yq-box 根、无内层包装）。
+     box 常带行内 height:100%——占位 ::after inset:0 撑满可用高度，垂直居中
+     提示；无高度时 min-height 30px 兜底。注意 assem-yq--box 渲染会在内容
+     周围残留空白文本节点，必须用 :not(:has(> *)) 而非 :empty ── */
+  .yq-box:not(:has(> *)) {
+    .assem-slot-placeholder();
   }
 }
