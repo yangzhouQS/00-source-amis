@@ -74,6 +74,15 @@ body[data-design-mode="design"] {
         left: 4px;
       }
     }
+
+    /* 工具按钮区空槽占位（#tool）：toolSlot 清空后 .yq-tool-slot 残留为空
+       div（行内 max-width 限制下空内容宽度坍缩为 0）——补最小宽度使其
+       成为可见投放区（140px < max-width 默认值，不破布局） */
+    .yq-tool-func > .yq-tool-slot:empty {
+      .assem-slot-placeholder();
+
+      min-width: 140px;
+    }
   }
 
   /* ── YqFilterItem：内容区空槽占位（#default，标签右侧挂输入控件；
