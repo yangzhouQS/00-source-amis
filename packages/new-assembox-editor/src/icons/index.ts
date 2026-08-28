@@ -9,6 +9,12 @@
  * 后续设计出图后在此补齐。
  */
 import type { Component } from "vue";
+import { IconFilterSummary } from "./pc/icon-filter-summary";
+import { IconFlexBox } from "./pc/icon-flex-box";
+import { IconGridBox } from "./pc/icon-grid-box";
+import { IconGridItem } from "./pc/icon-grid-item";
+import { IconImageCardPreview } from "./pc/icon-image-card-preview";
+import { IconLabel } from "./pc/icon-label";
 import { IconBaseSelect } from "./pc/icon-base-select";
 import { IconBox } from "./pc/icon-box";
 import { IconButton } from "./pc/icon-button";
@@ -49,6 +55,7 @@ import { IconStep } from "./pc/icon-step";
 import { IconSwitch } from "./pc/icon-switch";
 import { IconTableAsync } from "./pc/icon-table-async";
 import { IconTableEdit } from "./pc/icon-table-edit";
+import { IconFileTableUpload } from "./pc/icon-file-table-upload";
 import { IconTableOnly } from "./pc/icon-table-only";
 import { IconTableReport } from "./pc/icon-table-report";
 import { IconTableTree } from "./pc/icon-table-tree";
@@ -97,6 +104,15 @@ export const PC_RENDER_TYPE_ICONS: Record<string, Component> = {
   FormItem: IconFormItem,
   YqFilterItem: IconFilterItem,
   // 业务组件
+  // 布局
+  YqFlexBox: IconFlexBox,
+  GridBox: IconGridBox,
+  GridItem: IconGridItem,
+  // 显示类
+  YqLabel: IconLabel,
+  FilterSummary: IconFilterSummary,
+  YqImageCardPreview: IconImageCardPreview,
+  // 业务组件
   YqBasisCommonSelectApi: IconBaseSelect,
   YqDictionarySelect: IconDictionary,
   YqDictionaryTree: IconDictionaryTree,
@@ -104,7 +120,8 @@ export const PC_RENDER_TYPE_ICONS: Record<string, Component> = {
   YqOrganizationTreeSelect: IconOrgSelect,
   YqSelectComMaterial: IconMaterial,
   YqFileSimpleUpload: IconUpload,
-  YqFileTableUpload: IconUploadComp,
+  // 表格式多文件上传：新设计的表格+上传按钮图标（非旧版回形针 upload-comp）
+  YqFileTableUpload: IconFileTableUpload,
   YqFileImageCardUpload: IconFileUpload,
   // 表格/列表/其他块元素
   Form: IconForm,
