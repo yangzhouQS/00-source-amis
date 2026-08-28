@@ -55,7 +55,8 @@ export const ObjectSetter = defineComponent({
               return (
                 <el-form-item
                   key={prop.name}
-                  label={prop.title ?? prop.name}
+                  label={prop.labelVisible === false ? undefined : (prop.title ?? prop.name)}
+                  labelWidth={prop.labelVisible === false ? "0px" : undefined}
                   class={prop.halfWidth ? ns.m("half") : undefined}
                 >
                   {SetterComp

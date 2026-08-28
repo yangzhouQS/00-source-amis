@@ -62,6 +62,12 @@ export const ArraySetter = defineComponent({
     const expanded = ref<Set<number>>(new Set([0]));
 
     const getInitial = () => {
+      const nextIndex = (props.value ?? []).length;
+      if (typeof props.initialValue === "function") {
+        // 函数形式：(nextIndex) => item——新增项需要位置相关初值时用
+        // （如表格列 prop 唯一键 col-N，重复 prop = 数据错列）
+        return props.initialValue(nextIndex);
+      }
       if (props.initialValue !== undefined && props.initialValue !== "") {
         return JSON.parse(JSON.stringify(props.initialValue));
       }
