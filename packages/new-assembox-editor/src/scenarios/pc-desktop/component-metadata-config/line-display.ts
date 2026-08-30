@@ -220,7 +220,7 @@ export const lineDisplayComponents: ComponentCatalogItem[] = [
       { name: "clearFilterState", title: "清空筛选", signature: "function clearFilterState(shouldEmitSearch)" },
     ],
   },
-  {
+  /* {
     renderType: "UiSkeletonBlockSlot",
     name: "区块占位（内部）",
     group: "basic",
@@ -232,5 +232,5 @@ export const lineDisplayComponents: ComponentCatalogItem[] = [
       { name: "blockSourceRenderType", title: "来源组件类型", propType: "string", defaultValue: "" },
     ],
     events: baseEvents(),
-  },
+  }, */
 ];
