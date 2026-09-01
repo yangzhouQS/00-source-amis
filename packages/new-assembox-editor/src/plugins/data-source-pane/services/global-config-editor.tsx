@@ -1,5 +1,7 @@
 import type { DsDocHandle } from "../doc/use-data-source-doc";
 import { ElMessage } from "element-plus";
+import { Setting } from '@element-plus/icons-vue'
+
 /**
  * api.config 全局配置编辑器（Dialog + Monaco JSON）
  * 全局 axios 基底：baseURL/headers/timeout 等，每请求合并的第一层
@@ -50,7 +52,10 @@ export const GlobalConfigEditor = defineComponent({
 
     return () => (
       <>
-        <el-button size="small" onClick={() => (visible.value = true)}>全局配置</el-button>
+        <el-button
+          onClick={() => (visible.value = true)}
+          icon={Setting}
+        />
         <el-dialog
           v-model={visible.value}
           title="全局请求配置（dataSource.api.config）"
@@ -74,8 +79,8 @@ export const GlobalConfigEditor = defineComponent({
             ),
             footer: () => (
               <>
-                <el-button size="small" onClick={() => (visible.value = false)}>取消</el-button>
-                <el-button size="small" type="primary" disabled={text.value === lastApplied} onClick={save}>
+                <el-button onClick={() => (visible.value = false)}>取消</el-button>
+                <el-button type="primary" disabled={text.value === lastApplied} onClick={save}>
                   保存
                 </el-button>
               </>

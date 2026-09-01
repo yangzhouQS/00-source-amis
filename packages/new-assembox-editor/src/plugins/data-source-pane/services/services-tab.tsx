@@ -92,7 +92,7 @@ export const ServicesTab = defineComponent({
               {item.isTopUp
                 ? (
                     <el-tooltip content="已置顶">
-                      <Top class={ns.e("card-top-icon")} />
+                      <el-icon class={ns.e("card-top-icon")}><Top /></el-icon>
                     </el-tooltip>
                   )
                 : null}
