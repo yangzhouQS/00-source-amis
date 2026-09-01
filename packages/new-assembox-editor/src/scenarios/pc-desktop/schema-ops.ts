@@ -144,7 +144,8 @@ export class PcSchemaOps implements ISchemaOps {
       Object.assign(node.__nodeOptions, patch.__nodeOptions);
     }
     if (patch.__nodeEvent) {
-      Object.assign(node.__nodeEvent, patch.__nodeEvent);
+      // 整体替换（非合并）：事件绑定需要删除能力（delete key 后合并会保留旧 key）
+      node.__nodeEvent = patch.__nodeEvent;
     }
     if (patch.__nodeStyle) {
       node.__nodeStyle = { ...(node.__nodeStyle || {}), ...patch.__nodeStyle };

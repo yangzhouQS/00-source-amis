@@ -7,6 +7,9 @@ import * as monaco from "monaco-editor";
 import EditorWorker from "monaco-editor/editor/editor.worker.js?worker";
 // @ts-expect-error vite ?worker import
 import JsonWorker from "monaco-editor/language/json/json.worker.js?worker";
+// @ts-expect-error vite ?worker import — TS Worker 提供 JS/TS 语言服务（诊断/补全/代码操作），
+// 缺失时 getSyntacticDiagnostics / provideInlayHints / getCodeFixesAtPosition 等全崩
+import TsWorker from "monaco-editor/language/typescript/ts.worker.js?worker";
 /**
  * Demo 入口（PC 桌面场景）
  * 注册场景 → 创建编辑器实例 → 挂载 Workbench
@@ -27,6 +30,9 @@ import { getSavedSchema, saveButtonPlugin } from "./save-button-plugin";
   getWorker(_workerId: string, label: string) {
     if (label === "json") {
       return new JsonWorker();
+    }
+    if (label === "javascript" || label === "typescript") {
+      return new TsWorker();
     }
     return new EditorWorker();
   },

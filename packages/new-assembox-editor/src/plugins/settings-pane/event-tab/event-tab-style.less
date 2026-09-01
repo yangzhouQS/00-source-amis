@@ -1,0 +1,196 @@
+/* 事件 Tab（lc-assem-event-tab）：下拉添加 + 已绑定列表 + 代码编辑器 */
+
+.lc-assem-event-tab {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  padding: 4px 0;
+}
+
+/* ── 添加事件区 ── */
+.lc-assem-event-tab__add-bar {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+
+  .el-alert {
+    padding: 4px 8px;
+
+    .el-alert__content {
+      font-size: 11px;
+    }
+  }
+}
+
+.lc-assem-event-tab__dropdown-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  gap: 12px;
+}
+
+.lc-assem-event-tab__dropdown-bound {
+  font-size: 10px;
+  color: var(--assem-color-text-placeholder, #c0c4cc);
+}
+
+/* ── 已绑定事件列表 ── */
+.lc-assem-event-tab__bound-list {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.lc-assem-event-tab__bound-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 6px 8px;
+  background: #f0f7ff;
+  border: 1px solid rgba(0, 121, 242, 0.2);
+  border-radius: 4px;
+  cursor: pointer;
+  transition: border-color 0.12s;
+
+  &:hover {
+    border-color: var(--assem-color-brand, #0079f2);
+  }
+}
+
+.lc-assem-event-tab__bound-name {
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--assem-color-text-primary, #303133);
+}
+
+.lc-assem-event-tab__bound-ops {
+  display: flex;
+  flex-shrink: 0;
+  gap: 4px;
+  align-items: center;
+}
+
+/* ── 代码编辑器 Drawer ── */
+.lc-assem-event-tab__code-editor-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  height: 100%;
+}
+
+/* ── 片段生成区 ── */
+.lc-assem-event-tab__snippet-area {
+  display: flex;
+  flex-shrink: 0;
+  gap: 6px;
+  max-height: 200px;
+  padding: 6px;
+  background: #fafbfc;
+  border: 1px solid var(--assem-color-border-lighter, #f2f6fc);
+  border-radius: 4px;
+}
+
+.lc-assem-event-tab__snippet-categories {
+  display: flex;
+  flex-shrink: 0;
+  gap: 8px;
+  overflow-x: auto;
+  padding-right: 2px;
+}
+
+.lc-assem-event-tab__snippet-category {
+  display: flex;
+  flex-direction: column;
+  flex-shrink: 0;
+  gap: 2px;
+}
+
+.lc-assem-event-tab__snippet-cat-name {
+  padding: 2px 6px;
+  font-size: 10px;
+  font-weight: 600;
+  color: var(--assem-color-text-secondary, #909399);
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+}
+
+.lc-assem-event-tab__snippet-item {
+  padding: 3px 8px;
+  font-size: 11px;
+  color: var(--assem-color-text-regular, #606266);
+  cursor: pointer;
+  border-radius: 3px;
+  white-space: nowrap;
+  transition: all 0.12s;
+
+  &:hover {
+    color: var(--assem-color-brand, #0079f2);
+    background: rgba(0, 121, 242, 0.06);
+  }
+
+  &.is-active {
+    color: #fff;
+    background: var(--assem-color-brand, #0079f2);
+  }
+}
+
+.lc-assem-event-tab__snippet-detail {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 0;
+  overflow-y: auto;
+  padding-left: 6px;
+  border-left: 1px solid var(--assem-color-border-lighter, #f2f6fc);
+}
+
+.lc-assem-event-tab__snippet-desc {
+  font-size: 11px;
+  color: var(--assem-color-text-secondary, #909399);
+  line-height: 1.4;
+}
+
+.lc-assem-event-tab__snippet-param-row {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+}
+
+.lc-assem-event-tab__snippet-param-label {
+  flex-shrink: 0;
+  width: 64px;
+  overflow: hidden;
+  font-size: 11px;
+  color: var(--assem-color-text-regular, #606266);
+  text-align: right;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lc-assem-event-tab__snippet-empty {
+  display: flex;
+  flex: 1;
+  gap: 4px;
+  align-items: center;
+  justify-content: center;
+  font-size: 11px;
+  color: var(--assem-color-text-placeholder, #c0c4cc);
+  user-select: none;
+}
+
+.lc-assem-event-tab__code-editor-main {
+  flex: 1;
+  min-height: 0;
+}
+
+.lc-assem-event-tab__code-editor-footer {
+  display: flex;
+  flex-shrink: 0;
+  gap: 8px;
+  align-items: center;
+  justify-content: flex-end;
+  padding-top: 4px;
+  border-top: 1px solid var(--assem-color-border-lighter, #f2f6fc);
+}
