@@ -36,7 +36,6 @@ export const dataSourcePanePlugin: EditorPluginObject<DataSourcePluginOptions> =
     ],
   },
   setup(ctx, options) {
-    // 文档实例按 Editor 缓存（面板组件经 useDataSourceDoc(editor) 取同一实例）
     const doc = useDataSourceDoc(ctx.editor);
     ctx.di.register(DATA_SOURCE_DOC, doc);
     doc.setHostOptions(options ?? {});

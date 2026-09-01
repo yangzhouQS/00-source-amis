@@ -4,9 +4,10 @@
  */
 import type { EditorPluginObject } from "../core/plugin-types";
 import {
-  Box,
   Clock,
+  Coin,
   Document as DocIcon,
+  Grid,
   Histogram,
   Setting,
   Tickets,
@@ -64,7 +65,7 @@ export const componentsPanePlugin: EditorPluginObject = {
         panelProps: { panelName: "componentsPanePanel", area: "leftFixedArea" },
         props: {
           title: "组件库",
-          icon: Box,
+          icon: Grid,
           align: "top",
           description: "组件库",
         },

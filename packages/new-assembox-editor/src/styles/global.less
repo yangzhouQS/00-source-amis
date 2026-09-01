@@ -93,6 +93,7 @@ body {
   justify-content: center;
   width: var(--left-area-width);
   height: var(--left-area-width);
+  font-size: 14px; /* EP el-icon 是 1em —— dock 统一 14px，与其他面板图标一致 */
   cursor: pointer;
   color: var(--assem-color-text-regular);
   transition: all var(--assem-transition-base);
@@ -102,9 +103,10 @@ body {
     background-color: var(--color-hover);
   }
 
+  /* active 态：与 hover 同底色，仅文字/图标变品牌色区分 */
   &.lc-assem-dock--active {
     color: var(--color-brand);
-    background-color: var(--color-brand-light);
+    background-color: var(--color-hover);
   }
 
   &.is-disabled {
@@ -115,8 +117,16 @@ body {
   .lc-assem-dock__inner {
     display: flex;
     flex-direction: column;
-    align-items: center;
     gap: 2px;
+    align-items: center;
+
+    /* 图标统一 14px（1em），与大纲/源码/历史一致 */
+    .el-icon,
+    svg {
+      width: 14px;
+      height: 14px;
+      font-size: 14px;
+    }
 
     .lc-assem-dock__label {
       font-size: var(--assem-font-size-xs);
