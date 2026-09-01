@@ -113,4 +113,13 @@ body[data-design-mode="design"] {
   .yq-flexbox .yq-item-content:not(:has(> *)) {
     .assem-slot-placeholder();
   }
+
+  /* ── TabPanel：空页签内容占位（间接容器 tabPane[i].defaultSlot）。
+     el-tabs 的可见 pane 内容区为 #pane-{name} / .el-tab-pane；
+     defaultSlot 为 null 时 wrapper 不渲染 → 无元素子级命中。
+     拖入走 TabPanel 命中 → defaultSlot → insertChildIntoOpts 间接容器
+     active-pane-first（activeName 匹配的空页签优先填充）── */
+  .el-tabs__content .el-tab-pane:not(:has(> *)) {
+    .assem-slot-placeholder();
+  }
 }

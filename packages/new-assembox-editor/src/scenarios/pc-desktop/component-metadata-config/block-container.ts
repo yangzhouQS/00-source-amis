@@ -61,7 +61,8 @@ export const blockContainerComponents: ComponentCatalogItem[] = [
       { name: "defaultSlot", slotType: "array", description: "内容区" },
       { name: "toolSlot", slotType: "array", description: "头部工具区" },
     ],
-  },  {
+  },
+  {
     renderType: "YqToolBar",
     name: "工具栏",
     group: "container",
@@ -103,7 +104,7 @@ export const blockContainerComponents: ComponentCatalogItem[] = [
     category: "container-item",
     scaffold: { renderType: "TabPanel", activeName: "1", type: "", stretch: false, tabPosition: "top", tabPane: [{ name: "1", label: "选项卡1", lazy: false, disabled: false, isHidden: false, defaultSlot: null }] },
     props: [
-      { name: "activeName", title: "激活页签", propType: "string", defaultValue: "1" },
+      { name: "activeName", title: "激活页签", propType: "string", defaultValue: "1", setter: "ModelNameSetter" },
       {
         name: "type",
         title: "风格",
@@ -117,7 +118,42 @@ export const blockContainerComponents: ComponentCatalogItem[] = [
         propType: { type: "oneOf", value: ["top", "right", "bottom", "left"], labels: ["上", "右", "下", "左"] },
         defaultValue: "top",
       },
-      { name: "tabPane", title: "页签配置", propType: "json", defaultValue: [] },
+      {
+        name: "tabPane",
+        title: "页签配置",
+        propType: "json",
+        labelVisible: false,
+        setter: "ArraySetter",
+        setterProps: {
+          collapsible: true,
+          itemTitle: (item: any, index: number) => item?.label || item?.name || `页签 ${index + 1}`,
+          confirmRemove: "删除该页签将同时删除页签内的全部内容（可通过撤销恢复），确认删除？",
+          itemMinLength: 1,
+          itemSetter: {
+            setter: "ObjectSetter",
+            props: { labelWidth: "68px", grid: true },
+          },
+          itemConfig: {
+            items: [
+              { name: "name", title: "页签标识", propType: "string", defaultValue: "" },
+              { name: "label", title: "页签标题", propType: "string", defaultValue: "" },
+              { name: "lazy", title: "懒加载", propType: "boolean", defaultValue: false, halfWidth: true },
+              { name: "disabled", title: "禁用", propType: "boolean", defaultValue: false, halfWidth: true },
+              { name: "isHidden", title: "隐藏", propType: "boolean", defaultValue: false, halfWidth: true },
+            ],
+          },
+          // 新页签初值：name 唯一（tab-N，activeName 引用它）；label 带序号便于折叠行头区分。
+          // 注意：name 不参与 rekey —— activeName/事件可能引用它，排序后不应改名。
+          initialValue: (index: number) => ({
+            name: `tab-${index + 1}`,
+            label: `页签${index + 1}`,
+            lazy: false,
+            disabled: false,
+            isHidden: false,
+            defaultSlot: null,
+          }),
+        },
+      },
     ],
     events: [
       { name: "onMounted", title: "挂载后" },

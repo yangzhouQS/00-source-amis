@@ -1,6 +1,7 @@
 import type { SlotRegionResolver } from "./types";
 import { resolveFlexLineSlot } from "./flex-line";
 import { resolvePanelSlot } from "./panel";
+import { resolveTabPanelSlot } from "./tab-panel";
 import { resolveToolBarSlot } from "./tool-bar";
 
 /**
@@ -26,6 +27,7 @@ const SLOT_DOM_RESOLVERS: Record<string, SlotRegionResolver> = {
   YqFlexLine: resolveFlexLineSlot,
   YqPanel: resolvePanelSlot,
   YqToolBar: resolveToolBarSlot,
+  TabPanel: resolveTabPanelSlot,
 };
 
 /**

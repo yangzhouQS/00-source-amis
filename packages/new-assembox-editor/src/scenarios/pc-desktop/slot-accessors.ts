@@ -324,11 +324,29 @@ export function insertChildIntoOpts(
   //    其 slotKey 与直接槽键 defaultSlot 重叠——direct-first 会误写顶层字段成孤儿子节点）
   const container = findIndirectContainer(opts, slotKey);
   if (container) {
+    // TabPanel 特化：active-pane-first（用户悬停的是当前激活页签的内容区，
+    // "第一个空页签"策略会把组件挂到非目标页签——多页签时内容错乱）。
+    // activeName 是 el-tabs 的 v-model 初始值（可能被事件更新），非唯一可靠；
+    // 因此优先级：activeName 匹配的空页签 → 第一个空页签 → createEntry 追加
+    if (container.arrayField === "tabPane") {
+      const activePane = opts.tabPane.find(
+        (p: any) => p?.name === opts.activeName && p[container.childProp] == null,
+      );
+      if (activePane) {
+        activePane[container.childProp] = node;
+        return node;
+      }
+    }
+
     const empty = container.arrayField === "itemConfig"
       ? opts[container.arrayField].find(
           (it: any) => it?.[container.childProp] === null || it?.[container.childProp] === undefined,
         )
-      : undefined;
+      : container.arrayField === "tabPane"
+        ? opts[container.arrayField].find(
+            (it: any) => it?.[container.childProp] === null || it?.[container.childProp] === undefined,
+          )
+        : undefined;
     if (empty) {
       empty[container.childProp] = node;
       return node;

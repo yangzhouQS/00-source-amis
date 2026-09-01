@@ -157,3 +157,63 @@ describe("间接容器宿主路由（defaultSlot 键重叠，indirect-first）",
     expect(opts.defaultSlot[0]).toBe(n1);
   });
 });
+
+describe("TabPanel 页签插入路由（active-pane-first）", () => {
+  it("activeName 匹配的空页签优先填充（非第一个空页签）", () => {
+    const btn = node("btn1", "Button");
+    const opts: any = {
+      renderType: "TabPanel",
+      activeName: "tab-2", // 用户当前看到的是第 2 个页签
+      tabPane: [
+        { name: "tab-1", label: "页签1", defaultSlot: null },
+        { name: "tab-2", label: "页签2", defaultSlot: null },
+      ],
+    };
+    insertChildIntoOpts(opts, "defaultSlot", btn, undefined, genId);
+    // 应填 tab-2（active pane），不是 tab-1（first empty）
+    expect(opts.tabPane[1].defaultSlot).toBe(btn);
+    expect(opts.tabPane[0].defaultSlot).toBeNull();
+  });
+
+  it("active 页签已占用 → 第一个空页签兜底", () => {
+    const btn = node("btn2", "Button");
+    const occupied = node("old", "GridBox");
+    const opts: any = {
+      renderType: "TabPanel",
+      activeName: "tab-1",
+      tabPane: [
+        { name: "tab-1", defaultSlot: occupied },
+        { name: "tab-2", defaultSlot: null },
+      ],
+    };
+    insertChildIntoOpts(opts, "defaultSlot", btn, undefined, genId);
+    expect(opts.tabPane[1].defaultSlot).toBe(btn);
+  });
+
+  it("全部已占用 → createEntry 追加新页签", () => {
+    const btn = node("btn3", "Button");
+    const opts: any = {
+      renderType: "TabPanel",
+      activeName: "tab-1",
+      tabPane: [{ name: "tab-1", defaultSlot: node("a", "GridBox") }],
+    };
+    insertChildIntoOpts(opts, "defaultSlot", btn, undefined, genId);
+    expect(opts.tabPane).toHaveLength(2);
+    expect(opts.tabPane[1].defaultSlot).toBe(btn);
+    expect(opts.tabPane[1].name).toBeTruthy();
+  });
+
+  it("activeName 未命中任何页签（脏数据）→ 第一个空页签兜底", () => {
+    const btn = node("btn4", "Button");
+    const opts: any = {
+      renderType: "TabPanel",
+      activeName: "nonexistent",
+      tabPane: [
+        { name: "tab-1", defaultSlot: null },
+        { name: "tab-2", defaultSlot: null },
+      ],
+    };
+    insertChildIntoOpts(opts, "defaultSlot", btn, undefined, genId);
+    expect(opts.tabPane[0].defaultSlot).toBe(btn);
+  });
+});
