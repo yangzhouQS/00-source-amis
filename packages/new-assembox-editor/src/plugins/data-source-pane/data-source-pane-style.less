@@ -197,7 +197,31 @@
   }
 }
 
-/* 共享代码编辑器样式已提升至 src/components/code-editor/code-editor-style.less */
+  /* ---- 弹窗上下两区布局（内容区弹性 + 操作区固定右对齐，纯 CSS 实现，
+     不用 CDN yq-flex-box —— CDN 组件读 window.Vue（CDN 实例），
+     与编辑器 ESM Vue 的 slot 上下文不兼容会崩 renderSlot isCE） ---- */
+  .lc-assem-ds-editor__dialog-flex {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .lc-assem-ds-editor__dialog-flex-main {
+    flex: 1;
+    min-height: 0;
+  }
+
+  .lc-assem-ds-editor__dialog-flex-footer {
+    display: flex;
+    flex-shrink: 0;
+    gap: 8px;
+    align-items: center;
+    justify-content: flex-end;
+    padding-top: 4px;
+    border-top: 1px solid var(--assem-color-border-lighter, #f2f6fc);
+  }
+
+  /* ---- 共享代码编辑器样式已提升至 src/components/code-editor/code-editor-style.less ---- */
 
 /* ---- 编辑器 Drawer 公共布局（lc-assem-ds-editor） ---- */
 .lc-assem-ds-editor {

@@ -127,11 +127,9 @@ export const ModelsTab = defineComponent({
             modelValue={keyword.value}
             onUpdate:modelValue={(v: string) => (keyword.value = v)}
             placeholder="搜索模型名/描述"
-            size="small"
             clearable
           />
           <el-button
-            size="small"
             type="primary"
             onClick={() => (editing.value = { mode: "add", name: "" })}
           >

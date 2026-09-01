@@ -13,6 +13,9 @@ import "../data-source-pane-style.less";
 
 const ns = useAssemNamespace("ds-editor");
 
+/**
+ * 全局配置编辑器
+ */
 export const GlobalConfigEditor = defineComponent({
   name: "DsGlobalConfigEditor",
   props: {
@@ -50,6 +53,24 @@ export const GlobalConfigEditor = defineComponent({
       visible.value = false;
     };
 
+    // flex-box 布局：上方表单弹性撑满，下方操作区固定（flex-line 右侧插槽放按钮）
+    const flexConfig = [
+      {
+        tag: "item-1",
+        isFixed: false,
+        size: "",
+        paddingSize: "large",
+        clearPadding: [],
+      },
+      {
+        tag: "item-2",
+        isFixed: true,
+        size: "",
+        paddingSize: "large",
+        clearPadding: ['top'],
+      },
+    ];
+
     return () => (
       <>
         <el-button
@@ -65,25 +86,41 @@ export const GlobalConfigEditor = defineComponent({
         >
           {{
             default: () => (
-              <div class={[ns.b(), ns.e("global-config")]}>
-                <CodeEditor
-                  value={text.value}
-                  onUpdate:value={(v: string) => (text.value = v)}
-                  language="json"
-                  height={360}
-                />
-                <div class={ns.e("section-hint")}>
-                  每个请求的最终 axios 配置 = api.config（基底）→ 服务项 config 覆盖 → url/method。常用：baseURL / timeout / headers。
-                </div>
-              </div>
-            ),
-            footer: () => (
-              <>
-                <el-button onClick={() => (visible.value = false)}>取消</el-button>
-                <el-button type="primary" disabled={text.value === lastApplied} onClick={save}>
-                  保存
-                </el-button>
-              </>
+              <yq-flex-box
+                isRow={false}
+                itemNum={flexConfig.length}
+                itemConfig={flexConfig}
+              >
+                {{
+                  'item-1':()=>{
+                    return <div class={ns.e("dialog-flex-main")}>
+                      <CodeEditor
+                        value={text.value}
+                        onUpdate:value={(v: string) => (text.value = v)}
+                        language="json"
+                        height={360}
+                      />
+                      <div class={ns.e("section-hint")}>
+                        每个请求的最终 axios 配置 = api.config（基底）→ 服务项 config 覆盖 → url/method。常用：baseURL / timeout / headers。
+                      </div>
+                    </div>
+                  },
+                  'item-2':()=>{
+                    return <yq-flex-line>
+                      {{
+                        right: () => (
+                          <>
+                            <el-button onClick={() => (visible.value = false)}>取消</el-button>
+                            <el-button type="primary" disabled={text.value === lastApplied} onClick={save}>
+                              保存
+                            </el-button>
+                          </>
+                        ),
+                      }}
+                    </yq-flex-line>
+                  }
+                }}
+              </yq-flex-box>
             ),
           }}
         </el-dialog>

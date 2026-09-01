@@ -49,6 +49,9 @@ const CDN_BASE = "https://cdn.yearrow.com/files";
  */
 export const DEFAULT_PC_ASSETS: IframeAssetsManifest = {
   js: [
+    // 注意：Vue 不在清单中——dev 模式由 ESM Vue 经 win.Vue 注入（同一实例），
+    // 生产 canvas.html 由 <script> 标签加载 CDN Vue（与主文档完全隔离的独立实例）。
+    // 清单里加 Vue 会在 dev 模式覆盖 ESM Vue 为 CDN Vue，导致渲染器 ESM 代码失效。
     { src: `${CDN_BASE}/element-plus/2.13.7/index.full.min.js`, global: "ElementPlus", asPlugin: true },
     { src: `${CDN_BASE}/@element-plus/icons-vue/2.3.1/global.iife.min.js`, global: "ElementPlusIconsVue", asIcons: true },
     { src: `${CDN_BASE}/vue-router/4.2.5/vue-router.global.prod.js`, global: "VueRouter" },

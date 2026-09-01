@@ -78,7 +78,6 @@ export const FnsTab = defineComponent({
           </div>
           <div class={ns.e("card-ops")}>
             {/* <el-switch
-              size="small"
               modelValue={fnItem.enabled}
               onUpdate:modelValue={(v: boolean) => toggleEnabled(item.id, v)}
             /> */}
@@ -122,10 +121,9 @@ export const FnsTab = defineComponent({
             modelValue={keyword.value}
             onUpdate:modelValue={(v: string) => (keyword.value = v)}
             placeholder="搜索函数名/描述"
-            size="small"
             clearable
           />
-          <el-button size="small" type="primary" onClick={openAdd}>
+          <el-button type="primary" onClick={openAdd}>
             + 新增方法
           </el-button>
         </div>

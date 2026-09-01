@@ -19,6 +19,7 @@
     "lint:fix": "eslint --fix"
   },
   "dependencies": {
+    "@cs/element-plus-ui": "^1.1.0",
     "@cs/assembox-core-next": "workspace:*",
     "@cs/assembox-desktop-next": "workspace:*",
     "@element-plus/icons-vue": "^2.3.2",

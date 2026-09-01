@@ -95,17 +95,10 @@ async function main() {
   }
   app.use(ElementPlus);
 
-  // CDN 全局变量挂载（从 window 解析，由 index.html CDN script 注入）
-  const ElementPlusUi = (window as any).ElementPlusUi;
-  const TablePro = (window as any).TablePro;
-  if (ElementPlusUi) {
-    app.use(ElementPlusUi);
-  }
-  if (TablePro) {
-    app.use(TablePro);
-  }
-
-  app.use(window.Vue3BizComponentsLibrary);
+  // 完整资源隔离：CDN 组件（element-plus-ui / table-pro / vue3-biz）仅由 iframe 画布
+  // 内自行加载注册（assets 清单驱动），不挂到编辑器主文档的 ESM Vue app 上——
+  // CDN 组件读 window.Vue（CDN Vue），与编辑器 ESM Vue 是不同实例，
+  // 挂上来会导致 slot 上下文不兼容（renderSlot isCE 崩溃）
 
   app.mount("#app");
 }
