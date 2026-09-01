@@ -20,6 +20,7 @@ import { SetterRegistry } from "../registry/setter-registry";
 import * as TOKENS from "../registry/tokens";
 import { scenarioRegistry } from "../scenario/registry";
 import { mergeAssets, normalizeRenderDependencies } from "../simulator/iframe/protocol";
+import { PcIframeRenderer } from "../simulator/iframe/pc-iframe-renderer";
 import { Skeleton } from "../skeleton/skeleton";
 /**
  * Editor 门面
@@ -56,6 +57,12 @@ export interface EditorOptions {
   disableBuiltin?: boolean;
   /** 画布模式：inline（同 DOM 进程内） | iframe（资源隔离） */
   canvasMode?: "inline" | "iframe";
+  /**
+   * iframe 画布页 URL（仅 canvasMode="iframe" 时生效）。
+   * 默认 "/canvas.html"（Vite dev 环境由编辑器包 serve）。
+   * 宿主部署时指向实际路径，如 "./libs/@cs/assembox-editor-next/canvas.html"。
+   */
+  canvasUrl?: string;
   /**
    * 画布渲染依赖（外置可配，iframe 模式生效；对齐旧版 ASSEM_RENDER_DEPENDENCIES_KEY 契约）。
    * - 支持旧版扁平格式 [{ fileType, packageName, fileUrl, global? }]（宿主服务端解析后下发）
@@ -197,6 +204,10 @@ export class Editor {
       = options.canvasMode === "iframe" && this.profile.createIframeRenderer
         ? this.profile.createIframeRenderer(mergedAssets)
         : this.profile.createRenderer();
+    // iframe 画布页 URL（宿主部署时指向实际 canvas.html 路径）
+    if (options.canvasUrl && this.renderer instanceof PcIframeRenderer) {
+      this.renderer.setCanvasUrl(options.canvasUrl);
+    }
     this.renderer.onClick?.((nodeId, _e) => this.handleClick(nodeId));
     this.renderer.onHover?.(id => this.handleHover(id));
     this.renderer.onReady?.(() => this.handleRenderReady());

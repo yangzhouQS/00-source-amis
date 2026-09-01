@@ -109,6 +109,8 @@ export type {
   RenderDependencyItem,
 } from "./simulator/iframe/protocol";
 export { mergeAssets, normalizeRenderDependencies } from "./simulator/iframe/protocol";
+// iframe 画布渲染器（canvas.html 内侧运行；生产 canvas 部署用）
+export { IframeCanvasRenderer } from "./simulator/iframe/iframe-canvas-renderer";
 // 骨架层
 export { Skeleton } from "./skeleton/skeleton";
 export type { Area } from "./skeleton/skeleton";

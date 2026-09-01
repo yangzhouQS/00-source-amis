@@ -31,7 +31,8 @@ const EXTERNALS: Record<string, string> = {
   "element-plus": "ElementPlus",
   "@element-plus/icons-vue": "ElementPlusIconsVue",
   "@cs/vue3-biz-components-library": "Vue3BizComponentsLibrary",
-  "@cs/assembox-core-next": "AssemboxPackage",
+  // core-next 打入包内：编辑器仅用 adaptNodeTree（纯函数），不需要与宿主共享实例；
+  // 作为 external 会要求 head 额外加载 core-next UMD（其又依赖 lodash/CryptoJS/dayjs）
   "@cs/assembox-desktop-next": "AssemBoxDesktopNext",
 };
 
@@ -49,6 +50,7 @@ export default defineConfig({
   build: {
     outDir: "dist-lib",
     emptyOutDir: true,
+    sourcemap: true,
     lib: {
       entry: resolve(__dirname, "src/index.ts"),
       formats: ["iife"],

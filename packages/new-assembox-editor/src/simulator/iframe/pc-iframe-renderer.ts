@@ -108,6 +108,14 @@ export class PcIframeRenderer implements IRenderer {
     this.assets = assets;
   }
 
+  /** iframe 画布页 URL（默认 /canvas.html；宿主部署可改路径，如 ./libs/@cs/assembox-editor-next/canvas.html） */
+  private canvasUrl = "/canvas.html";
+
+  /** 设置画布页 URL（须在 mount 前调用） */
+  setCanvasUrl(url: string): void {
+    this.canvasUrl = url;
+  }
+
   async mount(
     container: HTMLElement,
     schema: any,
@@ -117,7 +125,7 @@ export class PcIframeRenderer implements IRenderer {
     this.schema = schema;
 
     const iframe = document.createElement("iframe");
-    iframe.src = "/canvas.html";
+    iframe.src = this.canvasUrl;
     iframe.style.cssText
       = "width:100%;height:100%;border:0;display:block;background:#fff;";
     iframe.setAttribute("name", "assembox-canvas");
