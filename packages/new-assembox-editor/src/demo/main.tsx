@@ -20,6 +20,8 @@ import { pcDesktopProfile } from "../scenarios/pc-desktop";
 import { moduleDependenciesSample } from "./module-dependencies-sample";
 // 默认测试 schema（供应商单表场景，取 uiSkeleton 作为编辑器 schema）
 import schemaJson from "./single-table-scene.json";
+// 保存按钮插件（topArea 右侧，外部注册方式，不侵入编辑器源码）
+import { getSavedSchema, saveButtonPlugin } from "./save-button-plugin";
 
 (globalThis as any).MonacoEnvironment = {
   getWorker(_workerId: string, label: string) {
@@ -41,11 +43,18 @@ async function main() {
   // 2. 创建编辑器实例（场景驱动，渲染器由 DesignerHost 挂载）
   //    传入完整 config：uiSkeleton + routerConfig + dataSource（多路由页面 + 数据源）
   const config = schemaJson as any;
+  // 2. 优先使用本地保存的 schema（保存按钮写入），回退默认 JSON
+  const saved = getSavedSchema("demo");
+  const schemaSource = saved ?? (schemaJson as any).uiSkeleton;
+  if (saved) {
+    console.log("[demo] 使用本地保存的 schema");
+  }
+
   const editor = createEditor({
     platform: "desktop",
     scenario: "pc-desktop",
     canvasMode: "iframe",
-    schema: config.uiSkeleton,
+    schema: schemaSource,
     routerConfig: config.routerConfig,
     dataSource: config.dataSource,
     // 宿主外置依赖（服务端下发）：归一化后与场景内置默认合并（宿主优先，内置兜底）
@@ -56,8 +65,14 @@ async function main() {
   // 暴露 editor 便于调试
   (window as any).editor = editor;
 
-  // 3. 启动编辑器（激活插件）
+  // 3. 注册保存按钮插件（须在 start 前注册，随全部插件一起激活；
+  //     topArea 右侧，外部注册方式，编辑器源码零改动）
+  editor.pluginManager.register(saveButtonPlugin);
+
+  // 4. 启动编辑器（激活插件，含保存按钮）
   await editor.start();
+
+  // 5. 注册键盘快捷键
 
   // 4. 注册键盘快捷键
   const { useEditorShortcuts } = await import("../hooks/use-editor-shortcuts");
