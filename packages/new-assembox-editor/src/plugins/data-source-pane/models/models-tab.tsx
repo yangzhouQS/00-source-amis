@@ -105,11 +105,7 @@ export const ModelsTab = defineComponent({
               }}
             >
               {{
-                default: () => (
-                  <el-button size="small" text>
-                    <More />
-                  </el-button>
-                ),
+                default: () => (<el-button icon={More} text />),
                 dropdown: () => (
                   <el-dropdown-menu>
                     <el-dropdown-item command="edit" icon={Edit}>编辑</el-dropdown-item>

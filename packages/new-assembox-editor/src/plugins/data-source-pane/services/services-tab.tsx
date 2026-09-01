@@ -119,8 +119,7 @@ export const ServicesTab = defineComponent({
             >
               {{
                 default: () => (
-                  <el-button size="small" text>
-                    <More />
+                  <el-button text icon={More}>
                   </el-button>
                 ),
                 dropdown: () => (
@@ -148,12 +147,10 @@ export const ServicesTab = defineComponent({
             modelValue={keyword.value}
             onUpdate:modelValue={(v: string) => (keyword.value = v)}
             placeholder="搜索编码/描述/url"
-            size="small"
             clearable
           />
           <GlobalConfigEditor doc={props.doc} />
           <el-button
-            size="small"
             type="primary"
             onClick={() => (editing.value = { mode: "add", name: "" })}
           >

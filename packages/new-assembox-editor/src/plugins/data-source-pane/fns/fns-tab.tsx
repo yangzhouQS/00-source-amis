@@ -77,11 +77,11 @@ export const FnsTab = defineComponent({
             <div class={ns.e("card-desc")} title={fnItem.description}>{fnItem.description || "—"}</div>
           </div>
           <div class={ns.e("card-ops")}>
-            <el-switch
+            {/* <el-switch
               size="small"
               modelValue={fnItem.enabled}
               onUpdate:modelValue={(v: boolean) => toggleEnabled(item.id, v)}
-            />
+            /> */}
             <el-dropdown
               trigger="click"
               onCommand={(cmd: string) => {
@@ -98,9 +98,7 @@ export const FnsTab = defineComponent({
             >
               {{
                 default: () => (
-                  <el-button size="small" text>
-                    <More />
-                  </el-button>
+                  <el-button icon={More} text />
                 ),
                 dropdown: () => (
                   <el-dropdown-menu>
