@@ -55,6 +55,12 @@ export interface DropLocation {
     height: number;
     horizontal: boolean;
   };
+  /** 产生本位置的感应区标识（树侧视图据此驱动高亮；画布 sensor 不填） */
+  source?: "canvas" | "outline";
+  /** 树侧三段命中语义（驱动 drag-over/drag-inner CSS） */
+  dropMode?: "before" | "after" | "inner";
+  /** 树侧命中的目标行节点 id（高亮目标行） */
+  targetNodeId?: import("../../schema/types").NodeId;
 }
 
 /** 拖拽感应区接口（同 DOM 容器 / iframe 各实现一个） */
@@ -87,7 +93,11 @@ export interface DragSensor {
 export interface DragonCallbacks {
   onDragstart?: (e: LocateEvent) => void;
   onDrag?: (e: LocateEvent, location: DropLocation | null) => void;
-  onDragend?: (dragObject: DragObject, location: DropLocation | null) => void;
-  /** 投放确认（执行 insert/move） */
-  onDrop?: (dragObject: DragObject, location: DropLocation) => void;
+  onDragend?: (
+    dragObject: DragObject,
+    location: DropLocation | null,
+    copy?: boolean,
+  ) => void;
+  /** 投放确认（执行 insert/move；copy=true 时 node 型按复制语义投放） */
+  onDrop?: (dragObject: DragObject, location: DropLocation, copy?: boolean) => void;
 }

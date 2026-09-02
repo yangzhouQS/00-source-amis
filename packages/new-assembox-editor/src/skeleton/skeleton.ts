@@ -175,8 +175,10 @@ export class Skeleton {
     widget.skeleton = this;
     area.container.add(widget);
 
-    // centerArea / rightArea 的面板默认激活（画布、设置面板常驻显示）
-    if (areaName === "centerArea" || areaName === "rightArea") {
+    // centerArea / rightArea 的面板默认激活（画布、设置面板常驻显示）；
+    // initInactive 例外：初始不激活（如大纲 backup 面板，拖拽时才切换显示）
+    const initInactive = config.type === "Panel" && config.panelProps?.initInactive;
+    if ((areaName === "centerArea" || areaName === "rightArea") && !initInactive) {
       widget.setActive(true);
     }
 

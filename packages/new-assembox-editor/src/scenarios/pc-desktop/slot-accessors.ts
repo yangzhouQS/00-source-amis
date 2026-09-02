@@ -312,6 +312,13 @@ function findIndirectContainer(opts: any, slotKey: string) {
   );
 }
 
+/** 该槽位在宿主上是否为间接容器形态（子节点存于 itemConfig/tabPane 等数组项内）。
+ *  供大纲树拖拽 Q1 守卫用：间接容器内子节点禁用 before/after
+ *  （insertChildIntoOpts 对该形态走"首个空格子"策略，按位插入不生效）。 */
+export function isIndirectChildSlot(opts: any, slotKey: string): boolean {
+  return findIndirectContainer(opts, slotKey) !== undefined;
+}
+
 /** 向父节点 __nodeOptions 的指定槽位插入子节点 */
 export function insertChildIntoOpts(
   opts: any,

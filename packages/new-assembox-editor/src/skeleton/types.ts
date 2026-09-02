@@ -30,6 +30,8 @@ export interface WidgetConfig {
     floatable?: boolean;
     /** 隐藏标题栏（含操作行） */
     hideTitleBar?: boolean;
+    /** 初始不激活（rightArea 默认激活的例外，如大纲 backup 面板） */
+    initInactive?: boolean;
   };
   /** 显示配置（标题/图标/对齐） */
   props?: {

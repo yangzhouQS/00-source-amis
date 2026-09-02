@@ -178,7 +178,10 @@ const PanelView = defineComponent({
       const cfg = panel.config;
       const title = cfg.props?.title;
       const hideTitleBar = cfg.panelProps?.hideTitleBar;
-      return h("div", { class: panelNs.b() }, [
+      // 保活隐藏：非激活但已初始化的面板挂 is-hidden（display:none）而非卸载，
+      // 保留内部状态（滚动位置/setter 展开态）。仅对未设 disabledPanelCache 的面板生效
+      // （disabledPanelCache 面板非激活时 content 已为 null，不会走到这里）。
+      return h("div", { class: [panelNs.b(), panel.state.active ? "" : "is-hidden"] }, [
         title && !hideTitleBar
           ? h("div", { class: panelNs.e("header") }, [
               h("span", { class: panelNs.e("title") }, title),

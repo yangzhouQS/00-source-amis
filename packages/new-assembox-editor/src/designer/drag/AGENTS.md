@@ -10,15 +10,23 @@
 drag/
 ├── dragon.ts            拖拽引擎：from（挂拖源）/boost（程序化启动）、传感器选择、
 │                        事件序列（mousedown 抖动>4px→dragstart→drag→drop/dragend）、
-│                        ESC 取消 / Alt 按住=复制语义、setDraggingState 通知渲染器
+│                        ESC 取消 / Alt|Ctrl 按住=复制语义（copy 传递到 onDrop）、
+│                        setDraggingState 通知渲染器
 ├── canvas-sensor.ts     画布感应器（DragSensor 实现）：三级命中 + 槽位几何解析 +
 │                        嵌套/后代/单节点槽三重校验 + 插入索引几何计算 + 指示线
+├── outline-sensor.ts    大纲树感应器（DragSensor 实现，宿主文档坐标系）：
+│                        data-node-id 反查行 + computeDropMode 三段命中 + canDropFor
+│                        守卫（Q1 间接容器平级拒绝/Q2 单节点槽占用/Q3 node 跨场景）+
+│                        DwellExpander 内聚（隐藏面板 rect 全零→天然失效）+
+│                        dragstart 快照（DragSnapshot：树+场景映射+根集合）
+│                        产出 DropLocation 扩展字段 source/dropMode/targetNodeId
+│                        供树视图驱动 drag-over/drag-inner 高亮；落地同走 onDrop
 ├── drag-ghost.tsx       拖拽跟随幽灵（半透明组件名预览，position:fixed 跟随鼠标）
 ├── drag-ghost-style.less
-├── types.ts             契约：DragObject / LocateEvent / DropLocation /
-│                        DragSensor（locate/clearIndicator/contentDocument）/
-│                        DragonCallbacks（onDragstart/onDrag/onDrop/onDragend）
-└── index.ts             barrel（Dragon / CanvasSensor / DragGhost / 类型）
+├── types.ts             契约：DragObject / LocateEvent / DropLocation（含
+│                        source/dropMode/targetNodeId 扩展）/ DragSensor /
+│                        DragonCallbacks（onDrop/onDragend 带 copy 参数）
+└── index.ts             barrel（Dragon / CanvasSensor / OutlineSensor / 类型）
 ```
 
 ## 核心链路
@@ -126,10 +134,10 @@ drag/
 
 | 模块 | 职责 |
 |---|---|
-| `core/editor.ts` | wireDragon（onDrop 落地）/ startComponentDrag / isDescendantNode |
+| `core/editor.ts` | wireDragon（onDrop 落地，含 copy 复制分支）/ startComponentDrag / startNodeDrag（树拖源）/ isDescendantNode |
 | `scenarios/pc-desktop/slot-dom/` | 多槽位几何解析规则（按组件拆分，命中①③调用） |
 | `scenarios/pc-desktop/slot-accessors.ts` | 槽位读写单一真相源（插入/单节点槽/间接容器） |
 | `scenarios/pc-desktop/nesting-rules.ts` | canNest（SLOTS + 覆盖表 + 静态 category） |
 | `designer/designer-host.tsx` | 画布内节点 from() 拖源注册 |
 | `plugins/components-pane/` | 面板拖源（startComponentDrag） |
-| `plugins/outline-pane/` | 大纲树拖源（canNestInto + move） |
+| `plugins/outline-pane/` | 大纲树面板：拖源 onMousedown→startNodeDrag + OutlineSensor 挂载 + tree-drag 纯函数（canDropFor/快照/dwell） |

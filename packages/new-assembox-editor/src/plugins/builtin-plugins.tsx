@@ -98,6 +98,10 @@ export const settingsPanePlugin: EditorPluginObject = {
 
 /**
  * 大纲树插件
+ * - 左侧 dock 常规入口（master）
+ * - 右侧 backup 面板：拖拽期间若两侧大纲树均不可见，临时切换显示
+ *   （对齐 lc-engine OutlinePlugin 的 switchPanes 状态机，详见
+ *    new-docs/outline-drag-unification-design.md §12 决策记录）
  */
 export const outlinePanePlugin: EditorPluginObject = {
   id: "builtin-outline-pane",
@@ -120,7 +124,50 @@ export const outlinePanePlugin: EditorPluginObject = {
         },
         disabledPanelCache: true,
       },
+      {
+        area: "rightArea",
+        type: "Panel",
+        name: "outlinePaneBackupPanel",
+        content: OutlinePane,
+        panelProps: { initInactive: true, hideTitleBar: true },
+        props: { title: "大纲", index: 1 },
+      },
     ],
+  },
+  setup(ctx) {
+    const skeleton = ctx.skeleton;
+    const backup = () => skeleton.getPanel("outlinePaneBackupPanel");
+    const settings = () => skeleton.getPanel("settingsPanel");
+    /** 左侧大纲（master）当前是否可见：fixed/float 两区任一激活即算 */
+    const masterVisible = () => skeleton.getPanel("outlinePanePanel")?.active === true;
+    /** 拖拽前 backup 是否已激活（拖拽起于 backup 内树时的还原依据） */
+    let backupWasActive = false;
+
+    /** 拖拽开始：两侧树都不可见 → 切换右侧属性面板为大纲树 */
+    const onDragstart = () => {
+      const b = backup();
+      if (!b) {
+        return;
+      }
+      backupWasActive = b.active;
+      if (!masterVisible() && !b.active) {
+        b.setActive(true);
+        settings()?.setActive(false);
+      }
+    };
+    /** 拖拽结束：仅还原本次切换（拖前已激活的场景不动） */
+    const onDragend = () => {
+      const b = backup();
+      if (!b) {
+        return;
+      }
+      if (!backupWasActive && b.active) {
+        b.setActive(false);
+        settings()?.setActive(true);
+      }
+    };
+    const off = ctx.editor.dragon.on({ onDragstart, onDragend });
+    return () => off();
   },
 };
 

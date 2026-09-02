@@ -267,7 +267,7 @@ export class Editor {
   /** 连接拖拽引擎：投放执行 + 拖拽态副作用 */
   private wireDragon(): void { // 投放执行
     this.dragon.on({
-      onDrop: (dragObject: DragObject, location: DropLocation) => {
+      onDrop: (dragObject: DragObject, location: DropLocation, copy?: boolean) => {
         // 嵌套校验（最终拦截，兜底防漏）
         const parentNode = this.schemaOps.getNodeById(
           this.store.schema,
@@ -313,7 +313,21 @@ export class Editor {
             );
           }
         } else if (dragObject.type === "node" && dragObject.nodeId) {
-          if (!this.isDescendantNode(dragObject.nodeId, location.containerId)) {
+          if (this.isDescendantNode(dragObject.nodeId, location.containerId)) {
+            return;
+          }
+          if (copy) {
+            // 复制投放（Alt/Ctrl 按住）：clone → 重生成 id → insert
+            // （单次 commit，undo 单步；对齐 duplicate 的成熟逻辑）
+            const node = this.schemaOps.getNodeById(this.store.schema, dragObject.nodeId);
+            if (!node) {
+              return;
+            }
+            const cloned = this.schemaOps.cloneNode(node);
+            this.regenerateNodeIds(cloned);
+            this.insert(location.containerId, location.region, cloned, location.index);
+            this.select(this.schemaOps.getNodeId(cloned));
+          } else {
             this.move(
               dragObject.nodeId,
               location.containerId,

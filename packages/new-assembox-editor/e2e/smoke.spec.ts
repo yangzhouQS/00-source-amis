@@ -13,28 +13,29 @@ import { expect, test } from "@playwright/test";
 const canvasFrame = (page: Page) => page.frameLocator("iframe").first();
 
 test("编辑器加载并渲染 demo 内容", async ({ page }) => {
-  await page.goto("/");
+  // domcontentloaded：页面 head 含 CDN 外联资源，等 load 事件会被慢 CDN 阻塞
+  await page.goto("/", { waitUntil: "domcontentloaded" });
 
   // 1. 主文档：编辑器骨架加载完成（左侧"组件库"面板可见）
   await expect(page.getByText("组件库").first()).toBeVisible({
     timeout: 15_000,
   });
 
-  // 2. 画布 iframe 内：demo schema 渲染的卡片标题
+  // 2. 画布 iframe 内：demo schema 渲染的单表演示工具栏
   const canvas = canvasFrame(page);
   await expect(
-    canvas.getByText("欢迎使用新版 assembox 编辑器"),
-  ).toBeVisible();
+    canvas.getByText("单表演示").first(),
+  ).toBeVisible({ timeout: 20_000 });
 
-  // 3. 画布 iframe 内：demo schema 渲染的按钮
-  await expect(canvas.getByRole("button", { name: "点击我" })).toBeVisible();
+  // 3. 画布 iframe 内：demo schema 渲染的查询按钮
+  await expect(canvas.getByRole("button", { name: "查询" }).first()).toBeVisible();
 });
 
 test("页面无致命控制台错误", async ({ page }) => {
   const errors: string[] = [];
   page.on("pageerror", err => errors.push(err.message));
 
-  await page.goto("/");
+  await page.goto("/", { waitUntil: "domcontentloaded" });
 
   // 等待编辑器骨架加载完成
   await expect(page.getByText("组件库").first()).toBeVisible({
@@ -42,8 +43,8 @@ test("页面无致命控制台错误", async ({ page }) => {
   });
   // 等待画布渲染稳定
   await expect(
-    canvasFrame(page).getByText("欢迎使用新版 assembox 编辑器"),
-  ).toBeVisible();
+    canvasFrame(page).getByText("单表演示").first(),
+  ).toBeVisible({ timeout: 20_000 });
 
   // 过滤掉已知的第三方库无害告警，仅关注真正的运行时错误
   const fatal = errors.filter(

@@ -3,8 +3,9 @@ import type { OutlineNode } from "../../core/store";
 /**
  * 大纲树单节点（自绘，参考 lc-engine tree-title.tsx）
  *
- * 职责：图标 + 标签（搜索高亮）+ 展开箭头 + 悬停删除按钮 + 拖拽事件上报
+ * 职责：图标 + 标签（搜索高亮）+ 展开箭头 + 悬停删除按钮 + 拖源 mousedown 上报
  * 递归渲染子节点（展开状态由父级共享 Set 控制）
+ * 拖拽统一走 Dragon（onMousedown → editor.startNodeDrag），无原生 HTML5 DnD
  */
 import { CaretRight, Delete } from "@element-plus/icons-vue";
 import { computed, defineComponent, h, PropType } from "vue";
@@ -38,7 +39,7 @@ export const TreeNode = defineComponent({
     /** 搜索模式：忽略 expandedIds，始终展开（匹配节点的父链需要可见） */
     forceExpand: { type: Boolean, default: false },
   },
-  emits: ["select", "toggle", "delete", "contextmenu", "dragstart", "dragover", "drop", "dragend"],
+  emits: ["select", "toggle", "delete", "contextmenu", "nodeMousedown"],
   setup(props, { emit }) {
     const hasChildren = computed(() => props.node.children.length > 0);
     const isExpanded = computed(() =>
@@ -88,7 +89,6 @@ export const TreeNode = defineComponent({
             ns.is("drag-inner", props.isDragOver === "inner"),
           ]}
           style={{ paddingLeft: `${props.depth * 14}px` }}
-          draggable={!isScene.value}
           data-node-id={props.node.id}
           onClick={() => emit("select", props.node)}
           onMouseenter={() => {
@@ -103,10 +103,7 @@ export const TreeNode = defineComponent({
             }
           }}
           onContextmenu={(e: MouseEvent) => emit("contextmenu", e, props.node)}
-          onDragstart={(e: DragEvent) => emit("dragstart", e, props.node)}
-          onDragover={(e: DragEvent) => emit("dragover", e, props.node)}
-          onDrop={(e: DragEvent) => emit("drop", e, props.node)}
-          onDragend={() => emit("dragend")}
+          onMousedown={(e: MouseEvent) => emit("nodeMousedown", e, props.node)}
         >
           {/* 展开箭头 */}
           {hasChildren.value && (
@@ -158,27 +155,24 @@ export const TreeNode = defineComponent({
         {/* 递归子节点 */}
         {hasChildren.value && isExpanded.value && (
           <div class={ns.e("children")}>
-            {props.node.children.map(child => (
-              <TreeNode
-                key={child.id}
-                editor={props.editor}
-                node={child}
-                depth={props.depth + 1}
-                expandedIds={props.expandedIds}
-                filterText={props.filterText}
-                forceExpand={props.forceExpand}
-                isDragOver={props.draggingId ? props.isDragOver : ""}
-                draggingId={props.draggingId}
-                onSelect={(n: OutlineNode) => emit("select", n)}
-                onToggle={(id: string) => emit("toggle", id)}
-                onDelete={(id: string) => emit("delete", id)}
-                onContextmenu={(e: MouseEvent, n: OutlineNode) => emit("contextmenu", e, n)}
-                onDragstart={(e: DragEvent, n: OutlineNode) => emit("dragstart", e, n)}
-                onDragover={(e: DragEvent, n: OutlineNode) => emit("dragover", e, n)}
-                onDrop={(e: DragEvent, n: OutlineNode) => emit("drop", e, n)}
-                onDragend={() => emit("dragend")}
-              />
-            ))}
+              {props.node.children.map(child => (
+                <TreeNode
+                  key={child.id}
+                  editor={props.editor}
+                  node={child}
+                  depth={props.depth + 1}
+                  expandedIds={props.expandedIds}
+                  filterText={props.filterText}
+                  forceExpand={props.forceExpand}
+                  isDragOver={props.draggingId ? props.isDragOver : ""}
+                  draggingId={props.draggingId}
+                  onSelect={(n: OutlineNode) => emit("select", n)}
+                  onToggle={(id: string) => emit("toggle", id)}
+                  onDelete={(id: string) => emit("delete", id)}
+                  onContextmenu={(e: MouseEvent, n: OutlineNode) => emit("contextmenu", e, n)}
+                  onNodeMousedown={(e: MouseEvent, n: OutlineNode) => emit("nodeMousedown", e, n)}
+                />
+              ))}
           </div>
         )}
       </>

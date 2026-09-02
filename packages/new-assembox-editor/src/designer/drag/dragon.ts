@@ -289,12 +289,12 @@ export class Dragon {
       }
       if (this._dragging) {
         this._dragging = false;
-        // 执行投放
+        // 执行投放（copy：Alt/Ctrl 按住 = 复制语义，node 型由消费方克隆落位）
         if (dragObj && loc) {
-          this.emit("onDrop", dragObj, loc);
+          this.emit("onDrop", dragObj, loc, _copy);
         }
         if (dragObj) {
-          this.emit("onDragend", dragObj, loc);
+          this.emit("onDragend", dragObj, loc, _copy);
         }
       }
       this.activeSensor?.deactiveSensor();

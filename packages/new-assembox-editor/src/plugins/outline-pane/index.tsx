@@ -16,11 +16,22 @@ import { Search } from "@element-plus/icons-vue";
 import { computed, defineComponent, onBeforeUnmount, onMounted, PropType, ref } from "vue";
 import { buildOutlineFromSchemaOps, buildOutlineGroupedByScene } from "../../core/store";
 import { useAssemNamespace } from "../../hooks/use-assem-namespace";
+import { OutlineSensor } from "../../designer/drag/outline-sensor";
 import { TreeNode } from "./tree-node";
-import { canDrop, computeDropMode, DwellExpander, executeDrop, type DropMode } from "./tree-drag";
+import { type DropMode } from "./tree-drag";
 import "./outline-pane-style.less";
 
 const ns = useAssemNamespace("outline-pane");
+
+/** 递归查找节点（dwell 折叠态查询用） */
+function findNode(nodes: OutlineNode[], id: string): OutlineNode | null {
+  for (const n of nodes) {
+    if (n.id === id) return n;
+    const hit = findNode(n.children, id);
+    if (hit) return hit;
+  }
+  return null;
+}
 
 /** 递归过滤：按 label 或组件显示名匹配，保留自身或后代匹配的节点 */
 function filterTree(nodes: OutlineNode[], text: string, editor: Editor): OutlineNode[] {
@@ -152,68 +163,66 @@ export const OutlinePane = defineComponent({
       action.action?.(captured);
     };
 
-    // ── 拖拽（自绘）──
+    // ── 拖拽（统一 Dragon：拖源 mousedown + sensor 投放 + onDrag 高亮）──
     const draggingId = ref("");
     const dragOverId = ref("");
     const dragOverMode = ref<DropMode>("inner");
-    const dwell = new DwellExpander();
 
-    const handleDragStart = (e: DragEvent, node: OutlineNode) => {
-      draggingId.value = node.id;
-      e.dataTransfer?.setData("text/plain", node.id);
-      if (e.dataTransfer) e.dataTransfer.effectAllowed = "move";
+    /** 拖源入口：左键 + 非交互元素豁免 → Dragon boost（4px 内 mouseup = 点击选中） */
+    const handleNodeMousedown = (e: MouseEvent, node: OutlineNode) => {
+      if (e.button !== 0) return;
+      if (node.id.startsWith("__scene__")) return;
+      const target = e.target as HTMLElement;
+      if (target.closest(`.${ns.e("node-actions")}, .${ns.e("node-arrow")}, button, input, .el-popper`)) return;
+      props.editor.startNodeDrag(e, node.id);
     };
 
-    const handleDragOver = (e: DragEvent, node: OutlineNode) => {
-      e.preventDefault();
-      if (e.dataTransfer) e.dataTransfer.dropEffect = "move";
-      if (!draggingId.value || node.id.startsWith("__scene__")) return;
+    // ── OutlineSensor 挂载（per 实例；dwell 内聚 sensor，Q6）──
+    const rootRef = ref<HTMLElement | null>(null);
+    let sensor: OutlineSensor | null = null;
+    let offDrag: (() => void) | null = null;
 
-      // 落点计算 + 校验
-      const el = (e.currentTarget as HTMLElement);
-      const mode = computeDropMode(el, e.clientY);
-      const ok = canDrop(props.editor, draggingId.value, node.id, mode, outlineData.value);
-
-      dragOverId.value = ok ? node.id : "";
-      dragOverMode.value = ok ? mode : "inner";
-
-      // dwell 悬停展开
-      const isCollapsed = node.children.length > 0 && !expandedIds.value.has(node.id);
-      dwell.hover(node.id, isCollapsed, (id) => {
-        const next = new Set(expandedIds.value);
-        next.add(id);
-        expandedIds.value = next;
+    onMounted(() => {
+      sensor = new OutlineSensor(props.editor, {
+        shell: () => rootRef.value,
+        onDwellExpand: (id) => {
+          const next = new Set(expandedIds.value);
+          next.add(id);
+          expandedIds.value = next;
+        },
+        isCollapsed: id => {
+          const n = findNode(filteredData.value, id);
+          return !!n && n.children.length > 0 && !expandedIds.value.has(id);
+        },
       });
-    };
-
-    const handleDrop = (e: DragEvent, node: OutlineNode) => {
-      e.preventDefault();
-      dwell.reset();
-      const dragId = draggingId.value || e.dataTransfer?.getData("text/plain") || "";
-      if (!dragId) return;
-      if (dragOverId.value === node.id) {
-        executeDrop(props.editor, dragId, node.id, dragOverMode.value);
-      }
-      clearDragState();
-    };
-
-    const handleDragEnd = () => {
-      dwell.reset();
-      clearDragState();
-    };
-
-    const clearDragState = () => {
-      draggingId.value = "";
-      dragOverId.value = "";
-      dragOverMode.value = "inner";
-    };
-
-    onBeforeUnmount(() => dwell.destroy());
+      offDrag = props.editor.dragon.on({
+        onDragstart: () => {
+          const obj = props.editor.dragon.dragObject;
+          draggingId.value = obj?.type === "node" ? obj.nodeId ?? "" : "";
+        },
+        onDrag: (_e, location) => {
+          // 仅大纲 sensor 产出的落点驱动树行高亮（source 扩展字段）
+          const loc = location as typeof location & { source?: string };
+          dragOverId.value = loc?.source === "outline" ? loc.targetNodeId ?? "" : "";
+          dragOverMode.value = loc?.source === "outline" ? loc.dropMode ?? "inner" : "inner";
+        },
+        onDragend: () => {
+          draggingId.value = "";
+          dragOverId.value = "";
+          dragOverMode.value = "inner";
+        },
+      });
+    });
+    onBeforeUnmount(() => {
+      offDrag?.();
+      sensor?.destroy();
+      sensor = null;
+    });
 
     return () => {
       const data = filteredData.value;
       return (
-        <div class={ns.b()}>
+        <div ref={rootRef} class={ns.b()}>
           {/* 搜索栏（P0） */}
           <el-input
             class={ns.e("search")}
@@ -247,10 +256,7 @@ export const OutlinePane = defineComponent({
                     onToggle={toggleExpand}
                     onDelete={handleDelete}
                     onContextmenu={handleContextMenu}
-                    onDragstart={handleDragStart}
-                    onDragover={handleDragOver}
-                    onDrop={handleDrop}
-                    onDragend={handleDragEnd}
+                    onNodeMousedown={handleNodeMousedown}
                   />
                 ))}
           </div>
