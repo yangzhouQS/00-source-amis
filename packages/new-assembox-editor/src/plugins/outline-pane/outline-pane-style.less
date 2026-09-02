@@ -1,59 +1,194 @@
-/* 大纲面板 */
-.lc-assem-outline-pane {
-  height: 100%;
-  overflow: auto;
-  padding: 4px;
+/* 大纲树（lc-assem-outline-pane）：自绘 BEM */
 
-  .el-tree {
+.lc-assem-outline-pane {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 4px;
+}
+
+.lc-assem-outline-pane__search {
+  flex-shrink: 0;
+  margin-bottom: 2px;
+}
+
+.lc-assem-outline-pane__tree {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+}
+
+/* ── 节点行 ── */
+.lc-assem-outline-pane__node {
+  display: flex;
+  gap: 4px;
+  align-items: center;
+  height: 26px;
+  padding-right: 4px;
+  cursor: pointer;
+  border-radius: 3px;
+  user-select: none;
+  transition: background 0.1s;
+
+  &:hover {
+    background: var(--assem-color-bg-hover, #f5f7fa);
+
+    .lc-assem-outline-pane__node-actions {
+      opacity: 1;
+    }
+  }
+
+  &.is-selected {
+    color: var(--assem-color-brand, #0079f2);
+    background: var(--assem-color-bg-hover, #f5f7fa);
+  }
+
+  /* hover 联动高亮（画布 hover → 树高亮 / 树 hover → 画布虚线框，detecting 双向） */
+  &.is-hovered {
+    color: var(--assem-color-brand, #0079f2);
+    background: var(--assem-color-bg-hover, #f5f7fa);
+
+    /* 左侧品牌色竖条指示（对齐 lc-engine detecting 视觉） */
+    box-shadow: inset 2px 0 0 0 var(--assem-color-brand, #0079f2);
+  }
+
+  &.is-drag-over {
+    box-shadow: inset 0 2px 0 0 var(--assem-color-brand, #0079f2);
+  }
+
+  &.is-drag-inner {
+    outline: 1px dashed var(--assem-color-brand, #0079f2);
+    outline-offset: -1px;
+    background: rgba(0, 121, 242, 0.04);
+  }
+
+  &.is-scene {
+    font-weight: 600;
+    color: var(--assem-color-text-secondary, #909399);
+    cursor: pointer;
     background: transparent;
   }
 }
 
-/* 右键菜单（自包含，与画布 ContextMenu 视觉一致） */
+.lc-assem-outline-pane__node-arrow {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  color: var(--assem-color-text-placeholder, #c0c4cc);
+  cursor: pointer;
+  transition: transform 0.15s;
+
+  &.is-expanded {
+    transform: rotate(90deg);
+  }
+
+  &:hover {
+    color: var(--assem-color-text-regular, #606266);
+  }
+}
+
+.lc-assem-outline-pane__node-arrow-spacer {
+  flex-shrink: 0;
+  width: 14px;
+  height: 14px;
+}
+
+.lc-assem-outline-pane__node-icon {
+  display: flex;
+  flex-shrink: 0;
+  align-items: center;
+  color: var(--assem-color-text-regular, #606266);
+
+  svg {
+    width: 14px;
+    height: 14px;
+  }
+}
+
+.lc-assem-outline-pane__node-label {
+  flex: 1;
+  overflow: hidden;
+  font-size: 12px;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+
+  mark {
+    padding: 0;
+    color: var(--assem-color-brand, #0079f2);
+    background: rgba(0, 121, 242, 0.1);
+    border-radius: 1px;
+  }
+}
+
+/* 实例名副标签（__nodeName 与显示名不同时显示） */
+.lc-assem-outline-pane__node-sub {
+  flex-shrink: 0;
+  max-width: 80px;
+  overflow: hidden;
+  font-size: 10px;
+  color: var(--assem-color-text-placeholder, #c0c4cc);
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.lc-assem-outline-pane__node-actions {
+  display: flex;
+  flex-shrink: 0;
+  gap: 0;
+  align-items: center;
+  opacity: 0;
+  transition: opacity 0.12s;
+}
+
+/* ── 子节点容器 ── */
+.lc-assem-outline-pane__children {
+  /* 缩进由 depth * 14px paddingLeft 控制 */
+}
+
+/* ── 右键菜单 ── */
 .lc-assem-outline-pane__context-menu {
   min-width: 120px;
-  padding: 4px;
-  background: var(--assem-color-bg-pane, #ffffff);
-  border: 1px solid var(--assem-color-border, #e4e7ed);
-  border-radius: var(--assem-radius-md, 4px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.12);
+  padding: 4px 0;
+  background: #fff;
+  border: 1px solid var(--assem-color-border-light, #ebeef5);
+  border-radius: 4px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
+}
 
-  &__item {
-    padding: 6px 12px;
-    font-size: var(--assem-font-size-text, 12px);
-    line-height: 1;
-    color: var(--assem-color-text-primary, #303133);
-    cursor: pointer;
-    border-radius: var(--assem-radius-sm, 2px);
-    white-space: nowrap;
+.lc-assem-outline-pane__context-menu-item {
+  padding: 4px 12px;
+  font-size: 12px;
+  color: var(--assem-color-text-regular, #606266);
+  cursor: pointer;
+  white-space: nowrap;
 
-    &:hover {
-      background: var(--assem-color-bg-hover, #f5f7fa);
-    }
-
-    &.lc-assem-is-danger {
-      color: var(--assem-color-danger, #f56c6c);
-    }
-
-    &.lc-assem-is-disabled {
-      color: var(--assem-color-text-placeholder, #c0c4cc);
-      cursor: not-allowed;
-
-      &:hover {
-        background: transparent;
-      }
-    }
+  &:hover {
+    color: var(--assem-color-brand, #0079f2);
+    background: var(--assem-color-bg-hover, #f5f7fa);
   }
 
-  &__separator {
-    height: 1px;
-    margin: 4px 0;
-    background: var(--assem-color-border-light, #ebeef5);
+  &.is-danger:hover {
+    color: var(--el-color-danger, #f56c6c);
   }
 
-  &__empty {
-    padding: 6px 12px;
-    font-size: var(--assem-font-size-text, 12px);
+  &.is-disabled {
     color: var(--assem-color-text-placeholder, #c0c4cc);
+    cursor: not-allowed;
+    pointer-events: none;
   }
+}
+
+.lc-assem-outline-pane__context-menu-separator {
+  height: 1px;
+  margin: 2px 8px;
+  background: var(--assem-color-border-lighter, #f2f6fc);
+}
+
+.lc-assem-outline-pane__context-menu-empty {
+  padding: 4px 12px;
+  font-size: 11px;
+  color: var(--assem-color-text-placeholder, #c0c4cc);
 }

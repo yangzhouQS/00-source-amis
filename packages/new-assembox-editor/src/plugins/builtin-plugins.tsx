@@ -20,7 +20,7 @@ import { dataSourcePanePlugin } from "./data-source-pane";
 import { DocLibraryLink } from "./doc-library/doc-library-link";
 import { EditorToolbar } from "./editor-toolbar/editor-toolbar";
 import { HistoryPane } from "./history-pane/history-pane";
-import { OutlinePane } from "./outline-pane/outline-pane";
+import { OutlinePane } from "./outline-pane";
 import { SceneSwitcher } from "./scene-switcher/scene-switcher";
 import { SchemaPane } from "./schema-pane/schema-pane";
 import { SettingsPane } from "./settings-pane/settings-pane";
