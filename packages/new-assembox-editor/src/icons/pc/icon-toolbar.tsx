@@ -1,29 +1,132 @@
 import { defineComponent } from "vue";
 
+/**
+ * YqToolBar 工作栏：付款单号查询输入 + 查询/过滤/重置（蓝）+ 添加/编辑/删除/导出按钮
+ * 设计稿 152×104，通过 viewBox 等比缩放适配面板（物料面板 18px、大纲树 14px 等方形容器）
+ */
 export const IconToolbar = defineComponent({
   name: "IconToolbar",
   setup() {
     return () => {
       return (
-        <svg xmlns="http://www.w3.org/2000/svg" width="56" height="56">
-          <g transform="translate(3 12)" fill="none" fill-rule="evenodd">
-            <path
-              d="M3 0h44a3 3 0 0 1 3 3v26a3 3 0 0 1-3 3H3a3 3 0 0 1-3-3V3a3 3 0 0 1 3-3zm0 1a2 2 0 0 0-2 2v26a2 2 0 0 0 2 2h44a2 2 0 0 0 2-2V3a2 2 0 0 0-2-2H3z"
-              fill="#CCC"
-              fill-rule="nonzero"
-            />
-            <rect fill="#86909C" x="4" y="5" width="11" height="3" rx="1" />
-            <rect fill="#CDCDCD" x="36" y="5" width="11" height="3" rx="1" />
-            <rect fill="#CDCDCD" x="4" y="12" width="11" height="3" rx="1" />
-            <rect fill="#CDCDCD" x="36" y="12" width="11" height="3" rx="1" />
-            <rect fill="#CDCDCD" x="20" y="5" width="11" height="3" rx="1" />
-            <rect fill="#CDCDCD" x="20" y="12" width="11" height="3" rx="1" />
-            <path
-              d="m45.906 27.439-2.238-2.242c.223-.276.398-.583.525-.921a3.14 3.14 0 0 0 .187-1.09c-.022-.897-.333-1.647-.932-2.25-.601-.604-1.353-.916-2.255-.936-.904.02-1.655.332-2.254.935-.602.604-.915 1.354-.939 2.252.024.902.337 1.653.939 2.254.599.6 1.35.912 2.254.939a3.26 3.26 0 0 0 1.08-.19c.34-.123.648-.297.924-.522l2.238 2.238a.344.344 0 0 0 .238.094.322.322 0 0 0 .23-.097.332.332 0 0 0 .003-.464zm-7.241-4.252c.015-.715.261-1.31.738-1.784.479-.477 1.075-.725 1.79-.745.715.02 1.31.268 1.784.745.477.474.725 1.069.745 1.784-.02.719-.268 1.317-.745 1.793-.474.475-1.069.722-1.784.742-.715-.02-1.311-.267-1.79-.742-.477-.476-.723-1.074-.738-1.793z"
-              fill="#000"
-              fill-rule="nonzero"
-            />
-          </g>
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          viewBox="0 0 152 104"
+          width="152"
+          height="104"
+        >
+          {/* 整体白色背景 */}
+          <rect x="0" y="0" width="152" height="104" fill="#fff" />
+          {/* 双层外框 */}
+          <rect
+            x="1"
+            y="1"
+            width="150"
+            height="102"
+            rx="12"
+            fill="none"
+            stroke="#333"
+            stroke-width="1"
+          />
+          <rect
+            x="5"
+            y="5"
+            width="142"
+            height="94"
+            rx="10"
+            fill="none"
+            stroke="#333"
+            stroke-width="1"
+          />
+          {/* 付款单号输入框 */}
+          <rect
+            x="12"
+            y="12"
+            width="80"
+            height="20"
+            rx="5"
+            fill="#fff"
+            stroke="#333"
+            stroke-width="1"
+          />
+          <circle
+            cx="24"
+            cy="22"
+            r="2"
+            fill="none"
+            stroke="#333"
+            stroke-width="1"
+            stroke-linecap="round"
+          />
+          <line
+            x1="26"
+            y1="24"
+            x2="27"
+            y2="25"
+            stroke="#333"
+            stroke-width="1"
+            stroke-linecap="round"
+          />
+          <text x="32" y="25" font-family="Arial, sans-serif" font-size="9" fill="#aaa">
+            付款单号
+          </text>
+          {/* 第一排蓝色按钮：查询/过滤/重置 */}
+          <rect x="102" y="12" width="18" height="16" rx="5" fill="#165DFF" />
+          <text x="106" y="23" font-family="Arial, sans-serif" font-size="9" fill="#fff">
+            查询
+          </text>
+          <rect x="102" y="34" width="18" height="16" rx="5" fill="#165DFF" />
+          <text x="106" y="45" font-family="Arial, sans-serif" font-size="9" fill="#fff">
+            过滤
+          </text>
+          <rect x="102" y="56" width="18" height="16" rx="5" fill="#165DFF" />
+          <text x="106" y="67" font-family="Arial, sans-serif" font-size="9" fill="#fff">
+            重置
+          </text>
+          {/* 第二排操作按钮：添加/编辑/删除/导出 */}
+          <rect
+            x="12"
+            y="38"
+            width="20"
+            height="16"
+            rx="5"
+            fill="#fff"
+            stroke="#333"
+            stroke-width="1"
+          />
+          <text x="18" y="49" font-family="Arial, sans-serif" font-size="9" fill="#333">
+            添加
+          </text>
+          <rect
+            x="38"
+            y="38"
+            width="20"
+            height="16"
+            rx="5"
+            fill="#fff"
+            stroke="#333"
+            stroke-width="1"
+          />
+          <text x="44" y="49" font-family="Arial, sans-serif" font-size="9" fill="#333">
+            编辑
+          </text>
+          <rect
+            x="64"
+            y="38"
+            width="20"
+            height="16"
+            rx="5"
+            fill="#fff"
+            stroke="#333"
+            stroke-width="1"
+          />
+          <text x="70" y="49" font-family="Arial, sans-serif" font-size="9" fill="#333">
+            删除
+          </text>
+          <rect x="12" y="60" width="16" height="16" rx="5" fill="#165DFF" />
+          <text x="16" y="71" font-family="Arial, sans-serif" font-size="9" fill="#fff">
+            导出
+          </text>
         </svg>
       );
     };
